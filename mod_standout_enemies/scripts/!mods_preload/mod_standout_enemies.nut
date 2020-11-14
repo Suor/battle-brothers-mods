@@ -1,4 +1,4 @@
-::mods_registerMod("mod_standout_enemies", 0.3, "Standout Enemies");
+::mods_registerMod("mod_standout_enemies", 0.31, "Standout Enemies");
 
 local gt = this.getroottable();
 
@@ -329,7 +329,7 @@ se.getPlan <- function(party) {
         priority = strategy.Priority;
 
         if ("Types" in strategy && !Util.all(strategy.Types, @(t) t in stats.Counts)) continue;
-        if ("AnyTypes" in strategy && !Util.any(strategy.Types, @(t) t in stats.Counts)) continue;
+        if ("AnyTypes" in strategy && !Util.any(strategy.AnyTypes, @(t) t in stats.Counts)) continue;
 
         local maturity = (scale - strategy.MinScale) / (strategy.MaxScale - strategy.MinScale);
         maturity = Math.minf(1, maturity);  // Cap it to 1
@@ -384,7 +384,7 @@ se.applyQuirk <- function(e, quirk) {
 
     if ("Prefix" in quirk) e.m.Name = quirk.Prefix + " " + se.cutName(e.m.Name);
     e.m.XP *= quirk.XPMult;
-    e.m.ResurrectionValue *= quirk.XPMult;  // More valuable to raise
+    if ("ResurrectionValue" in e.m) e.m.ResurrectionValue *= quirk.XPMult; // More valuable to raise
     quirk.apply(e);
 
     // Update from base properties to current and e.m.props
