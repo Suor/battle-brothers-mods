@@ -159,7 +159,7 @@ Strategy = se.Strategy <- {
         AnyTypes = ["bandit", "nomad"],
         function getPlan(stats, maturity) {
             local num = 1;  // One special bandit for a while
-            if (maturity > 0.15)  num = se.getQuirkedNum(stats, this.Types, maturity, 0.45, 0.7);
+            if (maturity > 0.15)  num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.45, 0.7);
 
             local quirks;
             switch (Rand.weighted([50, 50, 100], ["big", "fast", "mixed"])) {
