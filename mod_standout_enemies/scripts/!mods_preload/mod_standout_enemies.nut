@@ -194,7 +194,7 @@ Strategy = se.Strategy <- {
                 return null;
 
             local banditPlan = Strategy.Bandit.getPlan(stats, maturity);
-            local headshotPlan = Strategy.Headshot.getPlan(stats, Math.pow(maturity, 1.5));
+            local headshotPlan = Strategy.Headshot.getPlan(stats, maturity);
             return Util.merge(banditPlan, headshotPlan);
         }
     },
