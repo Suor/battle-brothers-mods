@@ -179,11 +179,11 @@ Strategy = se.Strategy <- {
     },
     Headshot = {
         Priority = 4,
-        MinScale = 0.5,
+        MinScale = 0.4,
         MaxScale = 1.3,
         AnyTypes = ["bandit_marksman", "noman_archer"],
         function getPlan(stats, maturity) {
-            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.0, 0.4);
+            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.05, 0.45);
             local quirks = array(num, Quirk.Headshot);
             // They don't go together so it's safe to queue both types
             return {bandit_marksman = quirks, noman_archer = quirks}
@@ -191,8 +191,8 @@ Strategy = se.Strategy <- {
     }
     BanditMixed = {
         Priority = 8,
-        MinScale = 0.6,
-        MaxScale = 1.4,
+        MinScale = 0.4,
+        MaxScale = 1.3,
         function getPlan(stats, maturity) {
             if (!("bandit" in stats.Counts || "nomad" in stats.Counts)
                 || !("bandit_marksman" in stats.Counts || "nomad_archer" in stats.Counts))
@@ -209,7 +209,7 @@ Strategy = se.Strategy <- {
         MaxScale = 1.1,
         Types = ["goblin"],
         function getPlan(stats, maturity) {
-            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.4, 0.66);
+            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.4, 0.7);
 
             switch (Rand.weighted([75, 33, 100], ["sly", "fast", "mixed"])) {
                 case "sly": return {goblin = array(num, Quirk.Sly)};
