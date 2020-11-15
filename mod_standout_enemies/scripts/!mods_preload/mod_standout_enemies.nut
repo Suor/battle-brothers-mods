@@ -63,10 +63,15 @@ local Quirk = se.Quirk <- {
     },
     Sly = {
         Prefix = "Sly",
-        XPMult = 1.2,
+        XPMult = 1.25,
         function apply(e) {
-            Mod.offense(e, 5);
-            Mod.bravery(e, 1.2);
+            Mod.offense(e, 10);
+            e.m.BaseProperties.DamageDirectMult *= 1.1;
+            Mod.bravery(e, 1.3);
+
+            // Harder to kill with a ranged weapon and uses overwhelm to defend himself in melee
+            e.m.BaseProperties.RangedDefense += 15;
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_overwhelm"));
 
             e.m.Skills.add(this.new("scripts/skills/racial/goblin_ambusher_racial"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_dodge"));
