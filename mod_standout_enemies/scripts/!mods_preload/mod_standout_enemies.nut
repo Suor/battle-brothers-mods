@@ -654,10 +654,8 @@ extend(Debug, {
         }
     });
 
-// ::mods_hookBaseClass() doesn't reach all the classes
     ::mods_hookBaseClass("entity/tactical/actor", function(cls) {
         this.logInfo("se: hook tactical/actor");
-        // Debug.log("actor", Util.keys(cls));
 
         // Save quirk to corpse and reapply on resurrection
         local onDeath = "onDeath" in cls ? cls.onDeath : null;
@@ -675,35 +673,24 @@ extend(Debug, {
             if (onResurrected) onResurrected(_info);
             if ("se_Quirk" in _info) se.applyQuirk(this, _info.se_Quirk);
         }
-
-        // // Make demounted goblin inherit a quirk
-        // if ("spawnGoblin" in cls) {
-        //     this.logInfo("se: fixing spawnGoblin");
-        //     local spawnGoblin = cls.spawnGoblin;
-        //     cls.spawnGoblin <- function (_info) {
-        //         spawnGoblin(_info);
-
-        //         if ("se_Quirk" in this.m) {
-        //             local goblin = _info.Tile.getEntity();
-        //             se.applyQuirk(goblin, this.m.se_Quirk);
-        //         }
-        //     }
-        // }
     })
 
-    // ::mods_hookClass("entity/tactical/enemies/goblin_wolfrider", function(cls) {
-    //     this.logInfo("se: hook goblin_wolfrider");
-    //     Debug.log("wolfrider cls", cls);
-    //     // Debug.log("wolfrider cls.m", "m" in cls);
+    // Since actor hook doesn't reach descendant of descendants
+    // and hooking goblin_wolfrider yields random shit, we do it this way
+    ::mods_hookBaseClass("entity/tactical/goblin", function(cls) {
+        // Make demounted goblin inherit a quirk
+        if ("spawnGoblin" in cls) {
+            this.logInfo("se: fixing spawnGoblin");
 
-    //     // local spawnGoblin = "spawnGoblin" in cls ? cls.spawnGoblin : null;
-    //     // cls.spawnGoblin <- function (_info) {
-    //     //     if (spawnGoblin) spawnGoblin(_info);
+            local spawnGoblin = cls.spawnGoblin;
+            cls.spawnGoblin <- function (_info) {
+                spawnGoblin(_info);
 
-    //     //     if ("se_Quirk" in this.m) {
-    //     //         local goblin = _info.Tile.getEntity();
-    //     //         se.applyQuirk(goblin, this.m.se_Quirk);
-    //     //     }
-    //     // }
-    // })
+                if ("se_Quirk" in this.m) {
+                    local goblin = _info.Tile.getEntity();
+                    se.applyQuirk(goblin, this.m.se_Quirk);
+                }
+            }
+        }
+    })
 });
