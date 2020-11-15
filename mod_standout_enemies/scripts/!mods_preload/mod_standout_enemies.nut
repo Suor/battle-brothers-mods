@@ -638,13 +638,17 @@ extend(Debug, {
 
         local setupEntity = cls.setupEntity;
         cls.setupEntity = function(e, t) {
-            this.logInfo("se: setupEntity " + e.getName() + " party " + t.Party.getName());
-
             setupEntity(e, t);
+
+            // Arena doesn't have party, simply skip
+            if (!("Party" in t)) return;
+
+            this.logInfo("se: setupEntity " + e.getName() + " party " + t.Party.getName());
             se.setupEntity(se.getPlan(t.Party), e, t);
         }
     });
 
+// ::mods_hookBaseClass() doesn't reach all the classes
     ::mods_hookBaseClass("entity/tactical/actor", function(cls) {
         this.logInfo("se: hook tactical/actor");
         // Debug.log("actor", Util.keys(cls));
