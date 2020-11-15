@@ -51,6 +51,37 @@ local Quirk = se.Quirk <- {
             Mod.scale(e, 1.12);
         }
     },
+    Fearless = {
+        Prefix = "Fearless",
+        XPMult = 1.2,
+        function apply(e) {
+            // Vary so that some keep longer
+            e.m.BaseProperties.Bravery += Math.rand(20, 50);
+        }
+    },
+    Dreadful = {
+        Prefix = "Dreadful",
+        XPMult = 4,
+        function apply(e) {
+            e.m.BaseProperties.Bravery += 50;
+
+            // Cheaper warcry with double effect and high priority, makes bros run
+            local warcry = e.getSkills().getSkillByID("actives.warcry");
+            if (warcry) {
+                warcry.m.FatigueCost = 5;
+
+                // Double effect
+                local onDelayedEffect = warcry.onDelayedEffect;
+                warcry.onDelayedEffect = function(_tag) {
+                    onDelayedEffect(_tag);
+                    onDelayedEffect(_tag);
+                }
+
+                // Use it more often
+                e.m.AIAgent.m.Properties.BehaviorMult[this.Const.AI.Behavior.ID.Warcry] = 5;
+            }
+        }
+    },
     Headshot = {
         Noun = "Headshot",
         XPMult = 1.25,
@@ -114,6 +145,7 @@ local Quirk = se.Quirk <- {
             // Resurrects like a stubborn one
             if (e.m.IsResurrected) {
                 e.setHitpointsPct(0.75);     // Up from 0.45
+                // TODO: make bigger for fallen hero?
                 e.m.ResurrectionChance = 60; // Ressurect 2.5 times on average after first one
                 e.m.IsResurrected = false;
             } else {
@@ -217,6 +249,54 @@ Strategy = se.Strategy <- {
                 case "fast": return {goblin = array(num, Quirk.Fast)};
                 case "mixed": return {goblin = Rand.choices(num, [Quirk.Fast, Quirk.Sly, Quirk.Sly])};
             }
+        }
+    },
+    Orc = {
+        Priority = 4,
+        MinScale = 0.5,
+        MaxScale = 1.5,
+        AnyTypes = ["orc", "orc_warlord"],
+        function getPlan(stats, maturity) {
+            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.5, 1);
+            // Good chance for at least one, even early on
+            if (num == 0 && Rand.chance(0.33 + maturity * 2)) num++;
+            if (num == 0) return null;
+
+            // Warlords take their share first, 1 is guaranteed
+            local warlords = "orc_warlord" in stats.Counts ? stats.Counts["orc_warlord"] : 0;
+            local warlordsNum = 0;
+            local warlordsQuirks = [];
+            if (warlords) {
+                warlordsNum = 1 + Rand.poly(Math.min(num, warlords) - 1, 0.5);
+                num -= warlordsNum;
+
+                // Some chance to make a dreadful warlord
+                if (Rand.chance(maturity / 2)) {
+                    warlordsQuirks.push(Quirk.Dreadful);
+                    warlordsNum--;
+                }
+                warlordsQuirks.extend(array(warlordsNum, Quirk.Fearless));
+            }
+
+            // Mix fearless with ordinary orcs,
+            // also ensures we'll distribute these between berserkers and warriors
+            local quirks = array(num, Quirk.Fearless);
+            for (local i = stats.Counts["orc"] - num; i > 0; i-- ) {
+                Rand.insert(quirks, null)
+            }
+
+            return {orc = quirks, orc_warlord = warlordsQuirks};
+        }
+    },
+    Greenskin = {
+        Priority = 8,
+        MinScale = 0.5,
+        MaxScale = 1.5,
+        Types = ["orc", "goblin"]
+        function getPlan(stats, maturity) {
+            local orcPlan = Strategy.Orc.getPlan(stats, maturity);
+            local goblinPlan = Strategy.Goblin.getPlan(stats, Math.pow(maturity, 0.5));
+            return Util.merge(orcPlan, goblinPlan);
         }
     },
     Zombie = {
@@ -358,18 +438,15 @@ se.partyStats <- function(party) {
         FactionType = this.World.FactionManager.getFaction(party.getFaction()).getType(),
         Total = party.m.Troops.len(),
         Counts = {},
+        // Types = [],
     }
 
-    // foreach (t in party.world_entity.m.Troops) {
     foreach (t in party.m.Troops) {
         local type = se.getTroopType(t);
+        // stats.Types.push(type);
         if (type in stats.Counts) stats.Counts[type]++;
         else stats.Counts[type] <- 1;
     }
-
-    // // Descending by num, to easily get the most numerous
-    // stats.ByNum <- Util.mapTable(stats.Counts, @(type, cnt) {Type = type, Num = cnt});
-    // stats.ByNum.sort(@(a, b) b.Num <=> a.Num);
 
     Debug.log("stats", stats);
     return stats;
@@ -379,7 +456,7 @@ se.setupEntity <- function (plan, e, t) {
     local type = se.getTroopType(t);
     if (type in plan && plan[type].len()) {
         local quirk = plan[type].remove(0);
-        se.applyQuirk(e, quirk);
+        if (quirk != null) se.applyQuirk(e, quirk);
     }
 }
 
@@ -401,8 +478,8 @@ se.applyQuirk <- function(e, quirk) {
 se.ShortNames <- {
     "Goblin Skirmisher": "Goblin",
     "Goblin Wolfrider": "Wolfrider",
-    "Brigand Raider": "Raider"
-    "Fallen Hero": "Hero"
+    "Brigand Raider": "Raider",
+    "Fallen Hero": "Hero",
 }
 
 se.cutName <- function(name) {
@@ -418,14 +495,13 @@ se.getTroopType <- function(t) {
 
     if (Util.startswith(name, "zombie") && name != "zombie_boss") return "zombie";
     if (Util.startswith(name, "skeleton")) return "skeleton";
-    if (Util.startswith(name, "orc")) return "orc";
+    if (name == "orc_berserker" || name == "orc_warrior") return "orc";
     if (name == "bandit_raider" || name == "bandit_leader") return "bandit";
     if (name == "nomad_outlaw" || name == "nomad_leader") return "nomad";
     // For whatever reason exp name == "goblin_figther" returns false here ???
     if (Util.startswith(name, "goblin")) {
         if (name.find("fighter") || name.find("wolfrider")) return "goblin"
     }
-    if (name == "goblin_figther" || name == "goblin_wolfrider") return "goblin";
     if (name.find("wolf")) return "wolf";
 
     // varios scum, including low versions won't be promoted anyway
