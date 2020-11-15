@@ -6,4 +6,36 @@ Number of quirked enemies increases with current day and difficulty. First ones 
 
 I won't list possible things you can encounter, exploring should be more fun.
 
-**NOTE:** This is first public version. Things should work, but balance might be off. Please open a bug if you have an issue. New ideas also welcome, even though I have some of my own not yet implemented.
+
+## Install
+
+Download a zip from [NexusMods][] and put it into `data` dir.
+
+
+## Tinkering
+
+Put `scripts` dir into Battle Brothers `data` dir. Then:
+
+```bash
+cd scripts/!mods_preload
+<edit> mod_standout_enemies.nut
+```
+
+Optionally you can run a "test", which will at least check syntax and maybe find some typos saving you a couple of game restarts:
+
+```bash
+squirrel test_mod_standout_enemies.nut
+```
+
+You will need squirrel installed for this to work
+
+
+## Feedback
+
+This is a first public version. Things should work, but balance might be off. Please open an issue if you have one.
+
+New ideas are also welcome, even though I have some of my own not yet implemented. You can ask or suggest thing on [NexusMods posts][nm-posts]
+
+
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/331
+[nm-posts]: https://www.nexusmods.com/battlebrothers/mods/331?tab=posts
