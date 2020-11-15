@@ -379,7 +379,9 @@ se.setupEntity <- function (plan, e, t) {
 
 se.applyQuirk <- function(e, quirk) {
     this.logInfo("se: Apply " + quirk.pp + " to " + e.getName());
-    e.m.se_Quirk <- quirk;  // Save to transfer to corpse and reapply on resurrection
+    // Save to transfer to corpse and reapply on resurrection,
+    // also used to transfer to surviving goblin of goblin wolfrider
+    e.m.se_Quirk <- quirk;
 
     if ("Prefix" in quirk) e.m.Name = quirk.Prefix + " " + se.cutName(e.m.Name);
     e.m.XP *= quirk.XPMult;
@@ -532,6 +534,12 @@ extend(Util, {
         return res;
     }
 
+    function keys(data) {
+        local res = [];
+        foreach (key, _ in data) res.push(key);
+        return res;
+    }
+
     function merge(t1, t2) {
         if (t1 == null) return t2;
         if (t2 == null) return t1;
@@ -581,7 +589,7 @@ local function joinLength(items, sepLen) {
 extend(Debug, {
     PP_MAX_LENGTH = 50,
 
-    function pp(data, level = 0) {
+    function pp(data, level = 0, funcs = true) {
         local function ppCont(items, level, start, end) {
             if (joinLength(items, 2) <= this.PP_MAX_LENGTH - level * 4 - 2) {
                 return start + join(", ", items) + end;
@@ -600,18 +608,23 @@ extend(Debug, {
         if (typeof data == "table") {
             if ("pp" in data) return data.pp;
 
-            local items = Util.mapTable(data, @(k, v) k + " = " + Debug.pp(v, level + 1));
+            local items = [];
+            foreach (k, v in data) {
+                if (!funcs && typeof v == "function") continue;
+                items.push(k + " = " + Debug.pp(v, level + 1, funcs))
+            }
+            // local items = Util.mapTable(data, @(k, v) k + " = " + Debug.pp(v, level + 1));
             return ppCont(items, level, "{", "}") + endln;
         } else if (typeof data == "array") {
-            local items = data.map(@(item) Debug.pp(item, level + 1));
+            local items = data.map(@(item) Debug.pp(item, level + 1, funcs));
             return ppCont(items, level, "[", "]") + endln;
         } else {
             return "" + data + endln;  // More robust than .tostring()
         }
     }
 
-    function log(name, data) {
-        this.logInfo("<pre>se: " + name + " = " + Debug.pp(data) + "</pre>");
+    function log(name, data, funcs = true) {
+        this.logInfo("<pre>se: " + name + " = " + Debug.pp(data, 0, funcs) + "</pre>");
     }
 })
 
@@ -634,6 +647,7 @@ extend(Debug, {
 
     ::mods_hookBaseClass("entity/tactical/actor", function(cls) {
         this.logInfo("se: hook tactical/actor");
+        // Debug.log("actor", Util.keys(cls));
 
         // Save quirk to corpse and reapply on resurrection
         local onDeath = "onDeath" in cls ? cls.onDeath : null;
@@ -651,5 +665,35 @@ extend(Debug, {
             if (onResurrected) onResurrected(_info);
             if ("se_Quirk" in _info) se.applyQuirk(this, _info.se_Quirk);
         }
+
+        // // Make demounted goblin inherit a quirk
+        // if ("spawnGoblin" in cls) {
+        //     this.logInfo("se: fixing spawnGoblin");
+        //     local spawnGoblin = cls.spawnGoblin;
+        //     cls.spawnGoblin <- function (_info) {
+        //         spawnGoblin(_info);
+
+        //         if ("se_Quirk" in this.m) {
+        //             local goblin = _info.Tile.getEntity();
+        //             se.applyQuirk(goblin, this.m.se_Quirk);
+        //         }
+        //     }
+        // }
     })
+
+    // ::mods_hookClass("entity/tactical/enemies/goblin_wolfrider", function(cls) {
+    //     this.logInfo("se: hook goblin_wolfrider");
+    //     Debug.log("wolfrider cls", cls);
+    //     // Debug.log("wolfrider cls.m", "m" in cls);
+
+    //     // local spawnGoblin = "spawnGoblin" in cls ? cls.spawnGoblin : null;
+    //     // cls.spawnGoblin <- function (_info) {
+    //     //     if (spawnGoblin) spawnGoblin(_info);
+
+    //     //     if ("se_Quirk" in this.m) {
+    //     //         local goblin = _info.Tile.getEntity();
+    //     //         se.applyQuirk(goblin, this.m.se_Quirk);
+    //     //     }
+    //     // }
+    // })
 });
