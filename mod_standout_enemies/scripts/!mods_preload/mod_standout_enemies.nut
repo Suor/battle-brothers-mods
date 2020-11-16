@@ -226,7 +226,7 @@ Strategy = se.Strategy <- {
         MaxScale = 1.3,
         AnyTypes = ["bandit_marksman", "noman_archer"],
         function getPlan(stats, maturity) {
-            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.05, 0.45);
+            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.1, 0.5);
             local quirks = array(num, Quirk.Headshot);
             // They don't go together so it's safe to queue both types
             return {bandit_marksman = quirks, noman_archer = quirks}
@@ -312,12 +312,12 @@ Strategy = se.Strategy <- {
     },
     Zombie = {
         Priority = 4,
-        MinScale = 0.3,
+        MinScale = 0.25,
         MaxScale = 1.1,
         Types = ["zombie"],
         function getPlan(stats, maturity) {
             // Max higher than 1 makes them all special more likely and earlier
-            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.5, 1.2);
+            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.6, 1.2);
             if (num == 0) return null;
 
             local res;
@@ -347,7 +347,7 @@ Strategy = se.Strategy <- {
     },
     Necromancer = {
         Priority = 4,
-        MinScale = 0.55,
+        MinScale = 0.4,
         MaxScale = 1.2,
         Types = ["necromancer"],
         function getPlan(stats, maturity) {
@@ -361,7 +361,7 @@ Strategy = se.Strategy <- {
     },
     NecroZombie = {
         Priority = 8,
-        MinScale = 0.7,
+        MinScale = 0.5,
         MaxScale = 1.5,
         Types = ["zombie", "necromancer"],
         function getPlan(stats, maturity) {
