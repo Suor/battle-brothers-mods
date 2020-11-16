@@ -15,7 +15,7 @@ if ("dofile" in gt) {
         }
         Assets = {getCombatDifficulty = @() 1}
         function getTime() {
-            return {Days = 95}
+            return {Days = 110}
         }
     }
     Math <- {
@@ -57,6 +57,8 @@ if ("dofile" in gt) {
                     DamageTotalMult = 1.0
                     HitpointsMult = 1.0
                     BraveryMult = 1.0
+                    IsAffectedByNight = true
+                    HitChance = [25 75]
                 }
                 Skills = {
                     function add(skill) {}
@@ -93,22 +95,20 @@ if ("dofile" in gt) {
         };
     }
 
-    local party = {
-        m = {
-            Troops = [
-                {Script = ".../zombie", Variant = 0}
-                {Script = ".../zombie", Variant = 0}
-                {Script = ".../zombie", Variant = 0}
-                {Script = ".../zombie", Variant = 0}
-                {Script = ".../zombie_knight", Variant = 0}
-                {Script = ".../necromancer", Variant = 0}
-            ]
+    function makeParty(name, faction, troopScripts) {
+        print("hi\n")
+        print(troopScripts + "\n");
+        local party = {
+            m = {
+                Troops = troopScripts.map(@(t) {Script = ".../" + t, Variant = 0})
+            }
+            getName = @() name
+            getFaction = @() faction
+        };
+        foreach (t in party.m.Troops) {
+            t.Party <- party.weakref();
         }
-        getName = @() "test-party"
-        getFaction = @() "undead"
-    };
-    foreach (t in party.m.Troops) {
-        t.Party <- party.weakref();
+        return party
     }
 
     // Mod hooks fake
@@ -126,10 +126,29 @@ if ("dofile" in gt) {
     // Load mod script to check for syntax at least
     dofile("mod_standout_enemies.nut", true);
 
-    // Test run setupEntity for fake party
-    foreach (t in party.m.Troops) {
-        TacticalEntityManager.setupEntity(makeEntity(t), t);
+    function setupParty(party) {
+        foreach (t in party.m.Troops) {
+            TacticalEntityManager.setupEntity(makeEntity(t), t);
+        }
     }
+
+    function concat(...){
+        local res = [];
+        foreach (arr in vargv) res.extend(arr);
+        return res
+    }
+
+    // Test necro zombie party
+    setupParty(makeParty(
+        "necro-zombie", "undead",
+        ["zombie", "zombie", "zombie", "zombie", "zombie", "zombie_knight", "necromancer"]
+    ));
+
+    // Test bandits party
+    setupParty(makeParty(
+        "mixed-bandits", "bandits",
+        concat(array(6, "bandit_raider"), array(4, "bandit_marksman"))
+    ));
 
     // Testing anything else
     local Debug = StandoutEnemies.Debug;
