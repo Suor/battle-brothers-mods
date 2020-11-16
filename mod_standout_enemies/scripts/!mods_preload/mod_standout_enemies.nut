@@ -690,7 +690,7 @@ local function joinLength(items, sepLen) {
 }
 
 extend(Debug, {
-    PP_MAX_LENGTH = 50,
+    PP_MAX_LENGTH = 80,
 
     function pp(data, level = 0, funcs = true) {
         local function ppCont(items, level, start, end) {
