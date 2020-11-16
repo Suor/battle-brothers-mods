@@ -69,9 +69,34 @@ local Quirk = se.Quirk <- {
             e.m.BaseProperties.Bravery += Math.rand(25, 50);
         }
     },
+    // This one only works for orc berserkers now
+    Furious = {
+        Prefix = "Furious",
+        XPMult = 1.2,
+        function apply(e) {
+            // Some little bonus to show yourself properly in battle
+            e.m.BaseProperties.Bravery += 10;
+
+            local rage = e.getSkills().getSkillByID("effects.berserker_rage");
+
+            // Start with some rage
+            rage.addRage(12);
+
+            // Grow rage twice faster
+            local addRage = rage.addRage;
+            rage.addRage = function(rage) {
+                addRage(rage * 2);
+            }
+
+            // Get some rage on every time being attacked
+            rage.onBeingAttacked =  function(_attacker, _skill, _properties) {
+                addRage(2);
+            }
+        }
+    },
     Dreadful = {
         Prefix = "Dreadful",
-        XPMult = 4,
+        XPMult = 3,
         function apply(e) {
             e.m.BaseProperties.Bravery += 50;
 
@@ -233,23 +258,9 @@ Strategy = se.Strategy <- {
             local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.1, 0.5);
             local quirks = array(num, Quirk.Headshot);
             // They don't go together so it's safe to queue both types
-            return {bandit_marksman = quirks, noman_archer = quirks}
+            return {bandit_marksman = quirks, nomad_archer = quirks}
         }
     }
-    BanditMixed = {
-        Priority = 8,
-        MinScale = 0.4,
-        MaxScale = 1.3,
-        function getPlan(stats, maturity) {
-            if (!("bandit" in stats.Counts || "nomad" in stats.Counts)
-                || !("bandit_marksman" in stats.Counts || "nomad_archer" in stats.Counts))
-                return null;
-
-            local banditPlan = Strategy.Bandit.getPlan(stats);
-            local headshotPlan = Strategy.Headshot.getPlan(stats);
-            return Util.merge(banditPlan, headshotPlan);
-        }
-    },
     Goblin = {
         Priority = 4,
         MinScale = 0.35,
@@ -269,49 +280,49 @@ Strategy = se.Strategy <- {
         Priority = 4,
         MinScale = 0.5,
         MaxScale = 1.5,
-        AnyTypes = ["orc", "orc_warlord"],
+        AnyTypes = ["orc_warrior", "orc_berserker", "orc_warlord"],
         function getPlan(stats, maturity) {
             local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.5, 1);
             // Good chance for at least one, even early on
             if (num == 0 && Rand.chance(0.33 + maturity * 2)) num++;
             if (num == 0) return null;
 
-            // Warlords take their share first, 1 is guaranteed
-            local warlords = stats.count("orc_warlord");
-            local warlordsQuirks = [];
-            if (warlords) {
-                local warlordsNum = 1 + Rand.poly(Math.min(num, warlords) - 1, 0.5);
-                num -= warlordsNum;
+            local nums = {orc_warlord = 0, orc_warrior = 0, orc_berserker = 0};
+
+            // Warlords always take one
+            if (stats.count("orc_warlord")) {
+                nums.orc_warlord++;
+                num--;
+            }
+
+            // The rest are distributed "honestly"
+            local weights = [0.5, 0.25, 0.25];
+            local types = ["orc_warlord", "orc_warrior", "orc_berserker"];
+            for (; num > 0;) {
+                local who = Rand.weighted(weights, types);
+                if (nums[who] < stats.count(who)) {
+                    nums[who]++;
+                    num--;
+                }
+            }
+
+            local plan = {};
+
+            // Warlords
+            if (nums.orc_warlord) {
+                plan.orc_warlord <- array(nums.orc_warlord, Quirk.Fearless);
 
                 // Some chance to make a dreadful warlord from scale 0.8,
                 // ends in fifty-fifty at scale 2
                 local dreadfulMaturity = sf.maturity(stats.scale, 0.8, 2.0);
                 if (dreadfulMaturity > 0 && Rand.chance(0.1 + dreadfulMaturity * 0.4)) {
-                    warlordsQuirks.push(Quirk.Dreadful);
-                    warlordsNum--;
+                    plan.orc_warlord[0] = Quirk.Dreadful;
                 }
-                warlordsQuirks.extend(array(warlordsNum, Quirk.Fearless));
             }
 
-            // Mix fearless with ordinary orcs,
-            // also ensures we'll distribute these between berserkers and warriors
-            local quirks = array(num, Quirk.Fearless);
-            for (local i = stats.Counts["orc"] - num; i > 0; i-- ) {
-                Rand.insert(quirks, null)
-            }
-
-            return {orc = quirks, orc_warlord = warlordsQuirks};
-        }
-    },
-    Greenskin = {
-        Priority = 8,
-        MinScale = 0.5,
-        MaxScale = 1.5,
-        Types = ["orc", "goblin"]
-        function getPlan(stats, maturity) {
-            local orcPlan = Strategy.Orc.getPlan(stats);
-            local goblinPlan = Strategy.Goblin.getPlan(stats);
-            return Util.merge(orcPlan, goblinPlan);
+            plan.orc_warrior <- array(num, Quirk.Fearless);
+            plan.orc_berserker <- Rand.choices(nums.orc_berserker, [Quirk.Fearless, Quirk.Furious]);
+            return plan;
         }
     },
     Zombie = {
@@ -464,12 +475,32 @@ extend(se, {
             // local maturity = se.getMaturity(stats.scale, strategy.MinScale, strategy.MaxScale);
             // Debug.log("plan for " + strategy.Name + "(" + maturity + ")", plan);
             plans.push(plan);
-            weights.push("Weight" in strategy ? strategy.Weight : 100);
+            // weights.push("Weight" in strategy ? strategy.Weight : 100);
         }
 
-        local res = party.m.se_Plan <- plans.len() ? Rand.weighted(weights, plans) : {};
-        Debug.log("the chosen plan", res);
-        return res;
+        local finalPlan = se.mergePlans(plans);
+        Debug.log("the final plan", finalPlan);
+        return party.m.se_Plan <- finalPlan;
+    }
+
+    function mergePlans(plans) {
+        if (plans.len() == 0) return {};
+        if (plans.len() == 1) return plans[0];
+
+        local merged = {};
+
+        foreach (p in plans) {
+            foreach (type, quirks in p) {
+                if (!(type in merged)) merged[type] <- [];
+                merged[type].push(quirks)
+            }
+        }
+
+        foreach (type, options in merged) {
+            merged[type] = Rand.choice(options)
+        }
+
+        return merged;
     }
 
     function getMaturity(scale, min, max) {
@@ -532,7 +563,6 @@ extend(se, {
 
         if (Util.startswith(name, "zombie") && name != "zombie_boss") return "zombie";
         if (Util.startswith(name, "skeleton")) return "skeleton";
-        if (name == "orc_berserker" || name == "orc_warrior") return "orc";
         if (name == "bandit_raider" || name == "bandit_leader") return "bandit";
         if (name == "nomad_outlaw" || name == "nomad_leader") return "nomad";
         // For whatever reason exp name == "goblin_figther" returns false here ???
