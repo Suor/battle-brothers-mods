@@ -721,6 +721,8 @@ extend(Debug, {
         } else if (typeof data == "array") {
             local items = data.map(@(item) Debug.pp(item, level + 1, funcs));
             return ppCont(items, level, "[", "]") + endln;
+        } else if (data == null) {
+            return "null" + endln;
         } else {
             return "" + data + endln;  // More robust than .tostring()
         }
