@@ -96,9 +96,13 @@ local Quirk = se.Quirk <- {
         Noun = "Headshot",
         XPMult = 1.25,
         function apply(e) {
-            e.m.Name = split(e.m.Name, " ")[0] + this.Noun;
+            e.m.Name = split(e.m.Name, " ")[0] + " " + this.Noun;
 
-            Mod.offense(e, 5);
+            Mod.offense(e, 10);
+            e.m.BaseProperties.RangedDefense += 10;
+
+            e.m.BaseProperties.IsAffectedByNight = false;
+
             e.m.BaseProperties.HitChance = [65, 35];  // Up from 75/25
             e.m.Skills.add(this.new("scripts/skills/perks/perk_head_hunter"));
         }
