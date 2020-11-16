@@ -4,7 +4,7 @@ SCRIPT = scripts/\!mods_preload/mod_standout_enemies.nut
 TEST_SCRIPT = scripts/\!mods_preload/test_mod_standout_enemies.nut
 
 zip:
-	FILENAME=$$(git tag | grep standout-enemies | tail -1).zip; \
+	FILENAME=mod_$$(git tag | grep standout-enemies | tail -1 | perl -pE 's/-/_/g').zip; \
 	rm $${FILENAME}; \
 	zip -r $${FILENAME} scripts
 
