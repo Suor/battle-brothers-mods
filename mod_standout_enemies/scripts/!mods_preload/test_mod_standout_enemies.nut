@@ -15,7 +15,7 @@ if ("dofile" in gt) {
         }
         Assets = {getCombatDifficulty = @() 1}
         function getTime() {
-            return {Days = 175}
+            return {Days = 95}
         }
     }
     Math <- {

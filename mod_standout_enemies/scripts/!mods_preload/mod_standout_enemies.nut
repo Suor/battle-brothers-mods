@@ -10,6 +10,16 @@ local Mod = se.Mod <- {}, Rand = se.Rand <- {}, Util = se.Util <- {}, Debug = se
 
 local Config = se.Config <- {
     ScaleDays = [80, 90, 100]  // scale varies by days and combat difficulty
+    ShortNames = {
+        "Goblin Skirmisher": "Goblin",
+        "Goblin Wolfrider": "Wolfrider",
+        "Brigand Raider": "Raider",
+        "Fallen Hero": "Hero",
+    }
+    function cutName(name) {
+        if (name in this.ShortNames) return this.ShortNames[name];
+        return name;
+    }
 }
 
 
@@ -231,8 +241,8 @@ Strategy = se.Strategy <- {
                 || !("bandit_marksman" in stats.Counts || "nomad_archer" in stats.Counts))
                 return null;
 
-            local banditPlan = Strategy.Bandit.getPlan(stats, maturity);
-            local headshotPlan = Strategy.Headshot.getPlan(stats, maturity);
+            local banditPlan = Strategy.Bandit.getPlan(stats);
+            local headshotPlan = Strategy.Headshot.getPlan(stats);
             return Util.merge(banditPlan, headshotPlan);
         }
     },
@@ -263,15 +273,16 @@ Strategy = se.Strategy <- {
             if (num == 0) return null;
 
             // Warlords take their share first, 1 is guaranteed
-            local warlords = "orc_warlord" in stats.Counts ? stats.Counts["orc_warlord"] : 0;
-            local warlordsNum = 0;
+            local warlords = stats.count("orc_warlord");
             local warlordsQuirks = [];
             if (warlords) {
-                warlordsNum = 1 + Rand.poly(Math.min(num, warlords) - 1, 0.5);
+                local warlordsNum = 1 + Rand.poly(Math.min(num, warlords) - 1, 0.5);
                 num -= warlordsNum;
 
-                // Some chance to make a dreadful warlord
-                if (Rand.chance(maturity / 2)) {
+                // Some chance to make a dreadful warlord from scale 0.9,
+                // ends in fifty-fifty at scale 2
+                local dreadfulMaturity = sf.maturity(stats.scale, 0.9, 2.0);
+                if (dreadfulMaturity > 0 && Rand.chance(0.1 + dreadfulMaturity * 0.4)) {
                     warlordsQuirks.push(Quirk.Dreadful);
                     warlordsNum--;
                 }
@@ -294,8 +305,8 @@ Strategy = se.Strategy <- {
         MaxScale = 1.5,
         Types = ["orc", "goblin"]
         function getPlan(stats, maturity) {
-            local orcPlan = Strategy.Orc.getPlan(stats, maturity);
-            local goblinPlan = Strategy.Goblin.getPlan(stats, Math.pow(maturity, 0.5));
+            local orcPlan = Strategy.Orc.getPlan(stats);
+            local goblinPlan = Strategy.Goblin.getPlan(stats);
             return Util.merge(orcPlan, goblinPlan);
         }
     },
@@ -356,8 +367,8 @@ Strategy = se.Strategy <- {
         function getPlan(stats, maturity) {
             local necroPlan = Strategy.Necromancer.getPlan(stats, maturity);
 
-            // A little bit less zombies if necro is quirked while scale < 1
-            local zombieMaturity = Math.pow(maturity, necroPlan ? 0.25 : 0.2);
+            // A little bit less quirked zombies if necro is quirked
+            local zombieMaturity = necroPlan ? se.getMaturity(stats.scale, 0.35, 1.2) : null;
             local zombiePlan = Strategy.Zombie.getPlan(stats, zombieMaturity);
 
             local res = Util.merge(necroPlan, zombiePlan);
@@ -375,15 +386,18 @@ Strategy = se.Strategy <- {
         }
     },
 }
+// Make passing maturity optional
+foreach (_name, strategy in Strategy) {
+    local name = _name;  // for closure
+    local getPlan = strategy.getPlan;
+    strategy.getPlan = function(stats, maturity = null) {
+        if (maturity == null) maturity = se.getMaturity(stats.scale, this.MinScale, this.MaxScale);
+        if (maturity == 0) return null;
 
-se.getQuirkedNum <- function (stats, types, maturity, minPart, maxPart) {
-    local count = Util.sum(types.map(@(t) t in stats.Counts ? stats.Counts[t] : 0));
-    if (count == 0) return 0;
-
-    local min = minPart * maturity * count;
-    local max = maxPart * maturity * count;
-    if (max < 1) return Rand.chance(Math.pow(max, 0.1) / 2) ? 1 : 0;
-    return Math.rand(min, max)
+        local plan = getPlan(stats, maturity)
+        Debug.log("plan for " + name + "(" + maturity + ")", plan);
+        return plan;
+    }
 }
 
 // Sorted by descending priority to start from the highest and skip tail if possible
@@ -395,120 +409,6 @@ foreach (name, strategy in Strategy) {
 SortedStrategies.sort(@(a, b) b.Priority <=> a.Priority);
 
 
-se.getPlan <- function(party) {
-    // Plan for each party once
-    if ("se_Plan" in party.m) return party.m.se_Plan;
-    this.logInfo("se: getPlan " + party.getName());
-
-    local stats = se.partyStats(party);
-    local scaleDays = Config.ScaleDays[gt.World.Assets.getCombatDifficulty()];
-    local scale = 1.0 * gt.World.getTime().Days / scaleDays;
-    this.logInfo("se: scale " + scale);
-
-    local plans = [], weights = [], priority = 9000;
-    foreach (strategy in SortedStrategies) {
-        // this.logInfo("se: evaluating strategy " + strategy.Name);
-        if (strategy.MinScale > scale) continue;
-
-        if ((strategy.Priority < priority) && plans.len()) break;
-        priority = strategy.Priority;
-
-        if ("Types" in strategy && !Util.all(strategy.Types, @(t) t in stats.Counts)) continue;
-        if ("AnyTypes" in strategy && !Util.any(strategy.AnyTypes, @(t) t in stats.Counts)) continue;
-
-        local maturity = (scale - strategy.MinScale) / (strategy.MaxScale - strategy.MinScale);
-        maturity = Math.minf(1, maturity);  // Cap it to 1
-        local plan = strategy.getPlan(stats, maturity);
-        if (!plan) continue;
-
-        Debug.log("plan for " + strategy.Name + "(" + maturity + ")", plan);
-        plans.push(plan);
-        weights.push("Weight" in strategy ? strategy.Weight : 100);
-    }
-
-    local res = party.m.se_Plan <- plans.len() ? Rand.weighted(weights, plans) : {};
-    Debug.log("the chosen plan", res);
-    return res;
-}
-
-se.partyStats <- function(party) {
-    this.logInfo("se: partyStats " + party.getName());
-
-    local stats = {
-        FactionType = this.World.FactionManager.getFaction(party.getFaction()).getType(),
-        Total = party.m.Troops.len(),
-        Counts = {},
-        // Types = [],
-    }
-
-    foreach (t in party.m.Troops) {
-        local type = se.getTroopType(t);
-        // stats.Types.push(type);
-        if (type in stats.Counts) stats.Counts[type]++;
-        else stats.Counts[type] <- 1;
-    }
-
-    Debug.log("stats", stats);
-    return stats;
-}
-
-se.setupEntity <- function (plan, e, t) {
-    local type = se.getTroopType(t);
-    if (type in plan && plan[type].len()) {
-        local quirk = plan[type].remove(0);
-        if (quirk != null) se.applyQuirk(e, quirk);
-    }
-}
-
-se.applyQuirk <- function(e, quirk) {
-    this.logInfo("se: Apply " + quirk.pp + " to " + e.getName());
-    // Save to transfer to corpse and reapply on resurrection,
-    // also used to transfer to surviving goblin of goblin wolfrider
-    e.m.se_Quirk <- quirk;
-
-    if ("Prefix" in quirk) e.m.Name = quirk.Prefix + " " + se.cutName(e.m.Name);
-    e.m.XP *= quirk.XPMult;
-    if ("ResurrectionValue" in e.m) e.m.ResurrectionValue *= quirk.XPMult; // More valuable to raise
-    quirk.apply(e);
-
-    // Update from base properties to current and e.m.props
-    e.m.Skills.update();
-}
-
-se.ShortNames <- {
-    "Goblin Skirmisher": "Goblin",
-    "Goblin Wolfrider": "Wolfrider",
-    "Brigand Raider": "Raider",
-    "Fallen Hero": "Hero",
-}
-
-se.cutName <- function(name) {
-    if (name in se.ShortNames) return se.ShortNames[name];
-    return name;
-}
-
-se.getTroopType <- function(t) {
-    if (t.Variant != 0) return "champion";  // Skip champions
-
-    local nameParts = split(t.Script, "/");
-    local name = nameParts[nameParts.len() - 1];
-
-    if (Util.startswith(name, "zombie") && name != "zombie_boss") return "zombie";
-    if (Util.startswith(name, "skeleton")) return "skeleton";
-    if (name == "orc_berserker" || name == "orc_warrior") return "orc";
-    if (name == "bandit_raider" || name == "bandit_leader") return "bandit";
-    if (name == "nomad_outlaw" || name == "nomad_leader") return "nomad";
-    // For whatever reason exp name == "goblin_figther" returns false here ???
-    if (Util.startswith(name, "goblin")) {
-        if (name.find("fighter") || name.find("wolfrider")) return "goblin"
-    }
-    if (name.find("wolf")) return "wolf";
-
-    // varios scum, including low versions won't be promoted anyway
-    return name;
-}
-
-
 // Since we use forward declarations we can't override, we should extend tables.
 local function extend(dst, src) {
     foreach (key, value in src) {
@@ -516,6 +416,127 @@ local function extend(dst, src) {
     }
     return dst;
 }
+
+extend(se, {
+    function getQuirkedNum(stats, types, maturity, minPart, maxPart) {
+        local count = Util.sum(types.map(stats.count));
+        if (count == 0) return 0;
+
+        local min = minPart * maturity * count;
+        local max = maxPart * maturity * count;
+        this.logInfo("getQuirkedNum min " + min + " max " + max);
+        if (max < 1) return Rand.chance(Math.pow(max, 0.1) / 2) ? 1 : 0;
+        return Math.rand(min, max)
+    }
+
+    function getPlan(party) {
+        // Plan for each party once
+        if ("se_Plan" in party.m) return party.m.se_Plan;
+        this.logInfo("se: getPlan " + party.getName());
+
+        local stats = se.partyStats(party);
+        local scaleDays = Config.ScaleDays[gt.World.Assets.getCombatDifficulty()];
+        stats.scale <- 1.0 * gt.World.getTime().Days / scaleDays;
+        Debug.log("stats", stats, false);
+
+        local plans = [], weights = [], priority = 9000;
+        foreach (strategy in SortedStrategies) {
+            if (strategy.MinScale > stats.scale) continue;
+
+            if ((strategy.Priority < priority) && plans.len()) break;
+            priority = strategy.Priority;
+
+            // TODO: should I move this into Quirk.getPlan() decorator?
+            if ("Types" in strategy && !Util.all(strategy.Types, stats.count)) continue;
+            if ("AnyTypes" in strategy && !Util.any(strategy.AnyTypes, stats.count)) continue;
+
+            local plan = strategy.getPlan(stats);
+            if (!plan) continue;
+
+            // local maturity = se.getMaturity(stats.scale, strategy.MinScale, strategy.MaxScale);
+            // Debug.log("plan for " + strategy.Name + "(" + maturity + ")", plan);
+            plans.push(plan);
+            weights.push("Weight" in strategy ? strategy.Weight : 100);
+        }
+
+        local res = party.m.se_Plan <- plans.len() ? Rand.weighted(weights, plans) : {};
+        Debug.log("the chosen plan", res);
+        return res;
+    }
+
+    function getMaturity(scale, min, max) {
+        local maturity = (scale - min) / (max - min);
+        return Math.maxf(0, Math.minf(1, maturity));  // Cap into [0, 1]
+    }
+
+    function partyStats(party) {
+        this.logInfo("se: partyStats " + party.getName());
+
+        local stats;
+        stats = {
+            FactionType = this.World.FactionManager.getFaction(party.getFaction()).getType(),
+            Total = party.m.Troops.len(),
+            Counts = {},
+            function count(type) {
+                return type in stats.Counts ? stats.Counts[type] : 0;
+            }
+        }
+
+        foreach (t in party.m.Troops) {
+            local type = se.getTroopType(t);
+            if (type in stats.Counts) stats.Counts[type]++;
+            else stats.Counts[type] <- 1;
+        }
+
+        return stats;
+    }
+
+    function setupEntity(plan, e, t) {
+        local type = se.getTroopType(t);
+        if (type in plan && plan[type].len()) {
+            local quirk = plan[type].remove(0);
+            if (quirk != null) se.applyQuirk(e, quirk);
+        }
+    }
+
+    function applyQuirk(e, quirk) {
+        this.logInfo("se: Apply " + quirk.pp + " to " + e.getName());
+
+        // Save to transfer to corpse and reapply on resurrection,
+        // also used to transfer to surviving goblin of goblin wolfrider
+        e.m.se_Quirk <- quirk;
+
+        if ("Prefix" in quirk) e.m.Name = quirk.Prefix + " " + Config.cutName(e.m.Name);
+        e.m.XP *= quirk.XPMult;
+        if ("ResurrectionValue" in e.m) e.m.ResurrectionValue *= quirk.XPMult; // More valuable
+
+        quirk.apply(e);
+
+        // Update from base properties to current and e.m.*
+        e.m.Skills.update();
+    }
+
+    function getTroopType(t) {
+        if (t.Variant != 0) return "champion";  // Skip champions
+
+        local nameParts = split(t.Script, "/");
+        local name = nameParts[nameParts.len() - 1];
+
+        if (Util.startswith(name, "zombie") && name != "zombie_boss") return "zombie";
+        if (Util.startswith(name, "skeleton")) return "skeleton";
+        if (name == "orc_berserker" || name == "orc_warrior") return "orc";
+        if (name == "bandit_raider" || name == "bandit_leader") return "bandit";
+        if (name == "nomad_outlaw" || name == "nomad_leader") return "nomad";
+        // For whatever reason exp name == "goblin_figther" returns false here ???
+        if (Util.startswith(name, "goblin")) {
+            if (name.find("fighter") || name.find("wolfrider")) return "goblin"
+        }
+        if (name.find("wolf")) return "wolf";
+
+        // varios scum, including low versions won't be promoted anyway
+        return name;
+    }
+})
 
 
 // Modification shortcuts
