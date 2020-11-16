@@ -66,7 +66,7 @@ local Quirk = se.Quirk <- {
         XPMult = 1.2,
         function apply(e) {
             // Vary so that some keep longer
-            e.m.BaseProperties.Bravery += Math.rand(20, 50);
+            e.m.BaseProperties.Bravery += Math.rand(25, 50);
         }
     },
     Dreadful = {
@@ -283,9 +283,9 @@ Strategy = se.Strategy <- {
                 local warlordsNum = 1 + Rand.poly(Math.min(num, warlords) - 1, 0.5);
                 num -= warlordsNum;
 
-                // Some chance to make a dreadful warlord from scale 0.9,
+                // Some chance to make a dreadful warlord from scale 0.8,
                 // ends in fifty-fifty at scale 2
-                local dreadfulMaturity = sf.maturity(stats.scale, 0.9, 2.0);
+                local dreadfulMaturity = sf.maturity(stats.scale, 0.8, 2.0);
                 if (dreadfulMaturity > 0 && Rand.chance(0.1 + dreadfulMaturity * 0.4)) {
                     warlordsQuirks.push(Quirk.Dreadful);
                     warlordsNum--;
