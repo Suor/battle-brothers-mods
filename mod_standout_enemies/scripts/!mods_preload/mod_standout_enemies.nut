@@ -428,9 +428,13 @@ extend(se, {
 
         local min = minPart * maturity * count;
         local max = maxPart * maturity * count;
-        this.logInfo("getQuirkedNum min " + min + " max " + max);
-        if (max < 1) return Rand.chance(Math.pow(max, 0.1) / 2) ? 1 : 0;
-        return Math.rand(min, max)
+        if (max < 1) {
+            this.logInfo("se: getQuirkedNum min " + min + " max " + max + " chance " + Math.pow(max, 0.1) / 2);
+            return Rand.chance(Math.pow(max, 0.1) / 2) ? 1 : 0;
+        }
+        local roll = Math.rand(min * 100, max * 100);
+        this.logInfo("se: getQuirkedNum min " + min + " max " + max + " roll " + roll * 0.01);
+        return roll / 100;
     }
 
     function getPlan(party) {
