@@ -89,7 +89,7 @@ local Quirk = se.Quirk <- {
             }
 
             // Get some rage on every time being attacked
-            rage.onBeingAttacked =  function(_attacker, _skill, _properties) {
+            rage.onBeingAttacked <- function(_attacker, _skill, _properties) {
                 addRage(2);
             }
         }
@@ -314,13 +314,13 @@ Strategy = se.Strategy <- {
 
                 // Some chance to make a dreadful warlord from scale 0.8,
                 // ends in fifty-fifty at scale 2
-                local dreadfulMaturity = sf.maturity(stats.scale, 0.8, 2.0);
+                local dreadfulMaturity = se.getMaturity(stats.scale, 0.8, 2.0);
                 if (dreadfulMaturity > 0 && Rand.chance(0.1 + dreadfulMaturity * 0.4)) {
                     plan.orc_warlord[0] = Quirk.Dreadful;
                 }
             }
 
-            plan.orc_warrior <- array(num, Quirk.Fearless);
+            plan.orc_warrior <- array(nums.orc_warrior, Quirk.Fearless);
             plan.orc_berserker <- Rand.choices(nums.orc_berserker, [Quirk.Fearless, Quirk.Furious]);
             return plan;
         }

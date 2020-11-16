@@ -7,6 +7,7 @@ if ("dofile" in gt) {
         print(s + "\n")
     }
     Const <- {SkillType = {Active = 1}}
+    local Days = 110;
     World <- {
         FactionManager = {
             function getFaction(faction) {
@@ -15,7 +16,7 @@ if ("dofile" in gt) {
         }
         Assets = {getCombatDifficulty = @() 1}
         function getTime() {
-            return {Days = 110}
+            return {Days = Days}
         }
     }
     Math <- {
@@ -38,9 +39,10 @@ if ("dofile" in gt) {
         print("original: setupEntity for " + t.Script + "\n")
     }};
     function makeEntity(t) {
+        local name = t.Script.slice(4).toupper();
         return {
             m = {
-                Name = t.Script.find("zombie") != null ? "Zombie" : "Necromancer"
+                Name = name
                 XP = 100
                 IsResurrected = false
                 ResurrectionChance = 66
@@ -56,6 +58,7 @@ if ("dofile" in gt) {
                     Initiative = 40
                     DamageTotalMult = 1.0
                     HitpointsMult = 1.0
+                    Bravery = 40
                     BraveryMult = 1.0
                     IsAffectedByNight = true
                     HitChance = [25 75]
@@ -89,6 +92,12 @@ if ("dofile" in gt) {
                             {m = {ID = "actives.raise_undead", ActionPointCost = 3, FatigueCost = 10}}
                             {m = {ID = "actives.knock", ActionPointCost = 4, FatigueCost = 15}}
                         ]
+                    }
+                    function getSkillByID(_id) {
+                        if (_id == "effects.berserker_rage") {
+                            return {addRage = @(r) r}
+                        }
+                        return null;
                     }
                 }
             }
@@ -148,6 +157,13 @@ if ("dofile" in gt) {
     setupParty(makeParty(
         "mixed-bandits", "bandits",
         concat(array(6, "bandit_raider"), array(4, "bandit_marksman"))
+    ));
+
+    // Test orcs party
+    Days = 190;
+    setupParty(makeParty(
+        "horde", "orcs",
+        concat(array(4, "orc_warrior"), array(6, "orc_berserker"), array(2, "orc_warlord"))
     ));
 
     // Testing anything else
