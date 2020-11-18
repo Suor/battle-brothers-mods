@@ -253,7 +253,7 @@ Strategy = se.Strategy <- {
         Priority = 4,
         MinScale = 0.4,
         MaxScale = 1.3,
-        AnyTypes = ["bandit_marksman", "noman_archer"],
+        AnyTypes = ["bandit_marksman", "nomad_archer"],
         function getPlan(stats, maturity) {
             local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.1, 0.5);
             local quirks = array(num, Quirk.Headshot);
