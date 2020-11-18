@@ -98,7 +98,9 @@ local Quirk = se.Quirk <- {
         Prefix = "Dreadful",
         XPMult = 3,
         function apply(e) {
+            // Won't run, recieve less damage to stay longer
             e.m.BaseProperties.Bravery += 50;
+            e.m.BaseProperties.DamageReceivedTotalMult *= 0.66;
 
             // Cheaper warcry with double effect and high priority, makes bros run
             local warcry = e.getSkills().getSkillByID("actives.warcry");
@@ -124,12 +126,13 @@ local Quirk = se.Quirk <- {
             e.m.Name = split(e.m.Name, " ")[0] + " " + this.Noun;
 
             Mod.offense(e, 10);
-            e.m.BaseProperties.RangedDefense += 10;
+            e.m.BaseProperties.RangedDefense += 15;
 
             e.m.BaseProperties.IsAffectedByNight = false;
 
             e.m.BaseProperties.HitChance = [65, 35];  // Up from 75/25
             e.m.Skills.add(this.new("scripts/skills/perks/perk_head_hunter"));
+            e.m.Skills.add(this.new("scripts/skills/perks/fast_adaptation"));
         }
     },
     Sly = {
@@ -252,10 +255,10 @@ Strategy = se.Strategy <- {
     Headshot = {
         Priority = 4,
         MinScale = 0.4,
-        MaxScale = 1.3,
+        MaxScale = 1.2,
         AnyTypes = ["bandit_marksman", "nomad_archer"],
         function getPlan(stats, maturity) {
-            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.1, 0.5);
+            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.15, 0.5);
             local quirks = array(num, Quirk.Headshot);
             // They don't go together so it's safe to queue both types
             return {bandit_marksman = quirks, nomad_archer = quirks}
