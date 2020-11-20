@@ -443,10 +443,10 @@ extend(se, {
         local min = minPart * maturity * count;
         local max = maxPart * maturity * count;
         if (max < 1) {
-            this.logInfo("se: getQuirkedNum min " + min + " max " + max + " chance " + Math.pow(max, 0.1) / 2);
-            return Rand.chance(Math.pow(max, 0.1) / 2) ? 1 : 0;
+            this.logInfo("se: getQuirkedNum min " + min + " max " + max + " chance " + (Math.pow(max, 0.1) / 2) + min);
+            return Rand.chance(Math.pow(max, 0.1) / 2 + min) ? 1 : 0;
         }
-        local roll = Math.rand(min * 100, max * 100);
+        local roll = Math.rand(min * 100, max * 100 + 99);
         this.logInfo("se: getQuirkedNum min " + min + " max " + max + " roll " + roll * 0.01);
         return roll / 100;
     }
