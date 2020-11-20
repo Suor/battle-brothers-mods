@@ -72,10 +72,10 @@ local Quirk = se.Quirk <- {
     // This one only works for orc berserkers now
     Furious = {
         Prefix = "Furious",
-        XPMult = 1.2,
+        XPMult = 1.3,
         function apply(e) {
             // Some little bonus to show yourself properly in battle
-            e.m.BaseProperties.Bravery += 10;
+            e.m.BaseProperties.Bravery += 15;
 
             local rage = e.getSkills().getSkillByID("effects.berserker_rage");
 
@@ -88,8 +88,16 @@ local Quirk = se.Quirk <- {
                 addRage(rage * 2);
             }
 
+            // Add some rage on miss
+            rage.onTargetMissed <- function(_skill, _targetEntity) {
+                addRage(2);
+            }
+
             // Get some rage on every time being attacked
-            rage.onBeingAttacked <- function(_attacker, _skill, _properties) {
+            rage.onMissed <- function(_attacker, _skill, _dontShake = false) {
+                addRage(1);
+            }
+            rage.onDamageReceived <- function(_attacker, _damageHitpoints, _damageArmor) {
                 addRage(2);
             }
         }
