@@ -62,6 +62,7 @@ if ("dofile" in gt) {
                     BraveryMult = 1.0
                     IsAffectedByNight = true
                     HitChance = [25 75]
+                    DamageReceivedTotalMult = 1.0
                 }
                 Skills = {
                     function add(skill) {}
