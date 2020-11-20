@@ -132,7 +132,7 @@ local Quirk = se.Quirk <- {
 
             e.m.BaseProperties.HitChance = [65, 35];  // Up from 75/25
             e.m.Skills.add(this.new("scripts/skills/perks/perk_head_hunter"));
-            e.m.Skills.add(this.new("scripts/skills/perks/fast_adaptation"));
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_fast_adaption"));
         }
     },
     Sly = {
