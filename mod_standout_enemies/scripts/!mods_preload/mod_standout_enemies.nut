@@ -246,8 +246,8 @@ Strategy = se.Strategy <- {
         MaxScale = 1.2,
         AnyTypes = ["bandit", "nomad"],
         function getPlan(stats, maturity) {
-            local num = 1;  // One special bandit for a while
-            if (maturity > 0.15)  num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.45, 0.7);
+            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.45, 0.7);
+            num = num || 1;  // One guaranteed special bandit
 
             local quirks;
             switch (Rand.weighted([50, 50, 100], ["big", "fast", "mixed"])) {
@@ -448,14 +448,13 @@ extend(se, {
         local count = Util.sum(types.map(stats.count));
         if (count == 0) return 0;
 
-        local min = minPart * maturity * count;
-        local max = maxPart * maturity * count;
-        if (max < 1) {
-            this.logInfo("se: getQuirkedNum min " + min + " max " + max + " chance " + (Math.pow(max, 0.1) / 2) + min);
-            return Rand.chance(Math.pow(max, 0.1) / 2 + min) ? 1 : 0;
-        }
+        // Start from 15% of effect and scale to 100% linearly.
+        // The things should appear at the MinScale, not days later.
+        local mod = 0.15 + 0.85 * maturity;
+        local min = minPart * mod * count;
+        local max = maxPart * mod * count;
         local roll = Math.rand(min * 100, max * 100 + 99);
-        this.logInfo("se: getQuirkedNum min " + min + " max " + max + " roll " + roll * 0.01);
+        this.logInfo("se: getQuirkedNum min " + min + " max " + (max + 0.99) + " roll " + roll * 0.01);
         return roll / 100;
     }
 
