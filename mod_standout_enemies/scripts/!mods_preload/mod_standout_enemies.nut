@@ -494,6 +494,7 @@ extend(se, {
 
         foreach (p in plans) {
             foreach (type, quirks in p) {
+                if (quirks.len() == 0) continue;  // Empty suggestions are ignored
                 if (!(type in merged)) merged[type] <- [];
                 merged[type].push(quirks)
             }
