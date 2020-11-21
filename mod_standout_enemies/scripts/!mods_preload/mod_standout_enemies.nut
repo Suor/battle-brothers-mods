@@ -256,7 +256,7 @@ Strategy = se.Strategy <- {
                 case "mixed": quirks = Rand.choices(num, [Quirk.Fast, Quirk.Big]); break;
             }
 
-            // They don't go together so it's safe to queue both types
+            // They don't go together so it's safe to queue both types to same array
             return {bandit = quirks, nomad = quirks};
         }
     },
@@ -267,8 +267,10 @@ Strategy = se.Strategy <- {
         AnyTypes = ["bandit_marksman", "nomad_archer"],
         function getPlan(stats, maturity) {
             local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.15, 0.5);
+            if (num == 0) return null;
+
+            // They don't go together so it's safe to queue both types to same array
             local quirks = array(num, Quirk.Headshot);
-            // They don't go together so it's safe to queue both types
             return {bandit_marksman = quirks, nomad_archer = quirks}
         }
     }
@@ -279,6 +281,7 @@ Strategy = se.Strategy <- {
         Types = ["goblin"],
         function getPlan(stats, maturity) {
             local num = se.getQuirkedNum(stats, this.Types, maturity, 0.4, 0.7);
+            if (num == 0) return null;
 
             switch (Rand.weighted([75, 33, 100], ["sly", "fast", "mixed"])) {
                 case "sly": return {goblin = array(num, Quirk.Sly)};
@@ -362,11 +365,6 @@ Strategy = se.Strategy <- {
 
             // Rarely add a masterwork zombie
             if (Rand.chance(maturity - 0.5)) Rand.insert(res.zombie, Quirk.Masterwork);
-
-            // // DEBUG
-            // // res.zombie = array(10, Quirk.Masterwork)
-            // Rand.insert(res.zombie, Quirk.Masterwork);
-            // Rand.insert(res.zombie, Quirk.Masterwork);
 
             return res;
         }
@@ -480,12 +478,7 @@ extend(se, {
             if ("AnyTypes" in strategy && !Util.any(strategy.AnyTypes, stats.count)) continue;
 
             local plan = strategy.getPlan(stats);
-            if (!plan) continue;
-
-            // local maturity = se.getMaturity(stats.scale, strategy.MinScale, strategy.MaxScale);
-            // Debug.log("plan for " + strategy.Name + "(" + maturity + ")", plan);
-            plans.push(plan);
-            // weights.push("Weight" in strategy ? strategy.Weight : 100);
+            if (plan) plans.push(plan);
         }
 
         local finalPlan = se.mergePlans(plans);
