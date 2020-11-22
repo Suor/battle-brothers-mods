@@ -168,6 +168,7 @@ local Quirk = se.Quirk <- {
             e.m.Skills.add(this.new("scripts/skills/perks/perk_nine_lives"));
 
             if (e.m.IsResurrected) {
+                e.setHitpointsPct(0.60);     // Up from 0.45
                 e.m.ResurrectionChance = 60; // Ressurect 2.5 times on average after first one
                 e.m.IsResurrected = false;
             } else {
