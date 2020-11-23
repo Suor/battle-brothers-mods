@@ -244,10 +244,10 @@ Strategy = se.Strategy <- {
     Bandit = {
         Priority = 4,
         MinScale = 0.35,
-        MaxScale = 1.2,
+        MaxScale = 1.1,
         AnyTypes = ["bandit", "nomad"],
         function getPlan(stats, maturity) {
-            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.45, 0.7);
+            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.45, 0.75);
             num = num || 1;  // One guaranteed special bandit
 
             local quirks;
@@ -278,10 +278,10 @@ Strategy = se.Strategy <- {
     Goblin = {
         Priority = 4,
         MinScale = 0.35,
-        MaxScale = 1.1,
+        MaxScale = 1.2,
         Types = ["goblin"],
         function getPlan(stats, maturity) {
-            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.4, 0.7);
+            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.4, 0.75);
             if (num == 0) return null;
 
             switch (Rand.weighted([75, 33, 100], ["sly", "fast", "mixed"])) {
@@ -299,7 +299,7 @@ Strategy = se.Strategy <- {
         function getPlan(stats, maturity) {
             local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.5, 1);
             // Good chance for at least one, even early on
-            if (num == 0 && Rand.chance(0.33 + maturity * 2)) num++;
+            if (num == 0 && Rand.chance(0.5 + maturity * 2)) num++;
             if (num == 0) return null;
 
             local nums = {orc_warlord = 0, orc_warrior = 0, orc_berserker = 0};
