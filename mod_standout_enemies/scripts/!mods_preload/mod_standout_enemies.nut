@@ -411,13 +411,12 @@ Strategy = se.Strategy <- {
         }
     },
 }
-// Make passing maturity optional
+// Make passing maturity optional and adding logging to all .getPlan() methods
 foreach (_name, strategy in Strategy) {
     local name = _name;  // for closure
     local getPlan = strategy.getPlan;
     strategy.getPlan = function(stats, maturity = null) {
         if (maturity == null) maturity = se.getMaturity(stats.scale, this.MinScale, this.MaxScale);
-        if (maturity == 0) return null;
 
         local plan = getPlan(stats, maturity)
         Debug.log("plan for " + name + "(" + maturity + ")", plan);
