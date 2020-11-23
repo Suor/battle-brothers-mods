@@ -52,13 +52,13 @@ local Quirk = se.Quirk <- {
         }
     },
     Big = {
-        Prefix = "Big",
+        Prefix = "Huge",
         XPMult = 1.2,
         function apply(e) {
             Mod.offense(e, 0, 1.25);
-            Mod.defense(e, -5, 1.7);
+            Mod.defense(e, -5, 1.75);
             Mod.bravery(e, 1.5);  // More hits need to be brave longer
-            Mod.scale(e, 1.12);
+            Mod.scale(e, 1.2);  // Actually bigger sprites :)
         }
     },
     Fearless = {
