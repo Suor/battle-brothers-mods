@@ -138,7 +138,7 @@ local Quirk = se.Quirk <- {
 
             e.m.BaseProperties.IsAffectedByNight = false;
 
-            e.m.BaseProperties.HitChance = [65, 35];  // Up from 75/25
+            e.m.BaseProperties.HitChance = [60, 40];  // Up from 75/25
             e.m.Skills.add(this.new("scripts/skills/perks/perk_head_hunter"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_fast_adaption"));
         }
