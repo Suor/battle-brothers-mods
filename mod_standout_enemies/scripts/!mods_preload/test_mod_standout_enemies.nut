@@ -11,7 +11,7 @@ if ("dofile" in gt) {
     World <- {
         FactionManager = {
             function getFaction(faction) {
-                return {getType = @() faction}
+                return {getType = @() faction, ClassName = "undead_faction"}
             }
         }
         Assets = {getCombatDifficulty = @() 1}

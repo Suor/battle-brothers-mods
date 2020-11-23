@@ -517,11 +517,12 @@ extend(se, {
     function partyStats(party) {
         this.logInfo("se: partyStats " + party.getName());
 
+        local faction = this.World.FactionManager.getFaction(party.getFaction());
         local stats;
         stats = {
-            FactionType = this.World.FactionManager.getFaction(party.getFaction()).getType(),
-            Total = party.m.Troops.len(),
-            Counts = {},
+            FactionType = faction ? faction.ClassName : null,
+            Total = party.m.Troops.len()
+            Counts = {}
             function count(type) {
                 return type in stats.Counts ? stats.Counts[type] : 0;
             }
