@@ -3,11 +3,19 @@ SUBDIR = scripts/\!mods_preload
 SCRIPT = scripts/\!mods_preload/mod_standout_enemies.nut
 TEST_SCRIPT = scripts/\!mods_preload/test_mod_standout_enemies.nut
 
+SHELL := /bin/bash
+
+# TODO: check for stages changes in zip and sync targets
+
 test:
 	cd $(SUBDIR);squirrel test_mod_standout_enemies.nut
 
 zip:
-	FILENAME=mod_$$(git tag | grep standout-enemies | tail -1 | perl -pE 's/-/_/g').zip; \
+	LAST_TAG=$$(git tag | grep standout-enemies | tail -1); \
+	HEAD_SHA=$$(git rev-parse HEAD); \
+	TAG_SHA=$$(git rev-parse $$LAST_TAG); \
+	MODIFIED=$$( ([[ $$HEAD_SHA = $$TAG_SHA ]] && git diff --quiet scripts) || echo _modified); \
+	FILENAME=mod_$$(echo $$LAST_TAG | perl -pE 's/-/_/g')$${MODIFIED}.zip; \
 	rm $${FILENAME}; \
 	zip -r $${FILENAME} scripts
 
