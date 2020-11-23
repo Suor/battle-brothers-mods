@@ -351,12 +351,15 @@ Strategy = se.Strategy <- {
             if (num == 0) return null;
 
             local res;
-            switch (Rand.weighted([100, 40, 80], ["stubborn", "big", "mixed"])) {
+            switch (Rand.weighted([100, 40, 20, 80], ["stubborn", "big", "fast", "mixed"])) {
                 case "stubborn":
                     res = {zombie = array(num, Quirk.Stubborn)};
                     break;
                 case "big":
                     res = {zombie = array(num, Quirk.Big)};
+                    break;
+                case "fast":
+                    res = {zombie = array(num, Quirk.Fast)};
                     break;
                 case "mixed":
                     local quirks = [Quirk.Fast, Quirk.Big, Quirk.Stubborn, Quirk.Stubborn];
