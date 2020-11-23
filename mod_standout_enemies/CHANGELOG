@@ -20,4 +20,23 @@
 0.5
 - added furious Orc Berserkers
 
-...
+0.41
+- quirked orcs
+- buffed sly goblins and headshots
+- made demounted goblin inherit a quirk
+- scaling adjustments
+
+0.33
+- fixed arena
+
+0.32
+- more varying zombie groups
+- more special marksmen and archers
+- fixed battle with brigands and nomads
+
+0.31
+- fixed hang up on combat start
+
+0.3
+- initial public release
+- contains special brigands, nomads, goblins, zombies and necromancers
