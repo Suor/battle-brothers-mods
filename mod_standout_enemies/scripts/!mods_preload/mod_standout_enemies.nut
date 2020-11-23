@@ -218,7 +218,6 @@ local Quirk = se.Quirk <- {
             local skills = e.getSkills().getAllSkillsOfType(gt.Const.SkillType.Active);
             foreach (s in skills) {
                 if (s.m.ID == "actives.raise_undead" || s.m.ID == "actives.possess_undead") {
-                    // this.logInfo("se: necro " + e.getName() + " " + s.m.ID);
                     s.m.ActionPointCost = 2;
                     s.m.FatigueCost = 6;
                 }
