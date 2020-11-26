@@ -15,6 +15,8 @@ local Config = se.Config <- {
         "Goblin Wolfrider": "Wolfrider",
         "Brigand Raider": "Raider",
         "Fallen Hero": "Hero",
+        "Barbarian Chosen": "Chosen",
+        "Barbarian Reaver": "Reaver",
     }
     function cutName(name) {
         if (name in this.ShortNames) return this.ShortNames[name];
@@ -74,13 +76,23 @@ Quirk = se.Quirk <- {
         Prefix = "Furious",
         XPMult = 1.35,
         function apply(e) {
-            // Some little bonus to show yourself properly in battle
-            e.m.BaseProperties.Bravery += 15;
+            Mod.offense(e, 5);  // Not really impressive when he misses all the time
+            e.m.BaseProperties.MeleeDefense += 5;  // Don't protect from ranged
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_underdog"))  // Tends to stay last
 
+            // Some little bonus to show yourself properly in battle
+            e.m.BaseProperties.Bravery += 20;
+
+            // Get rage effect or add it
             local rage = e.getSkills().getSkillByID("effects.berserker_rage");
             if (!rage) {
                 rage = this.new("scripts/skills/effects/berserker_rage_effect");
                 e.m.Skills.add(rage);
+
+                // Adapt actor to work with berserker rage
+                e.updateRageVisuals <- function(_rage) {
+                    if (_rage > 6) this.setDirty(true);
+                }
             }
 
             // Start with some rage
@@ -305,12 +317,13 @@ Strategy = se.Strategy <- {
         Priority = 4,
         MinScale = 0.5,
         MaxScale = 1.5,
-        Types = ["barbarian_chosen"],
+        Types = ["barbarian_champion"],  // These are called chosen in game
         function getPlan(stats, maturity) {
             local num = se.getQuirkedNum(stats, this.Types, maturity, 0.1, 0.2);
+            num++; // DEBUG
             if (num == 0) return null;
 
-            return {barbarian_chosen = array(num, Quirk.Furious)}
+            return {barbarian_champion = array(num, Quirk.Furious)}
         }
     },
     Goblin = {

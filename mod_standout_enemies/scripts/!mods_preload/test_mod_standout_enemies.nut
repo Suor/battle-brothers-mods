@@ -194,7 +194,7 @@ if ("dofile" in gt) {
         "barbarian-horde", "barbarians",
         concat(array(4, "barbarian_thrall"),
                array(3, "barbarian_marauder"),
-               array(5, "barbarian_chosen"))
+               array(5, "barbarian_champion"))
     ));
 
     // Testing anything else
