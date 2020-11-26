@@ -6,7 +6,10 @@ if ("dofile" in gt) {
     logInfo <- function(s) {
         print(s + "\n")
     }
-    Const <- {SkillType = {Active = 1}}
+    Const <- {
+        SkillType = {Active = 1}
+        ItemSlot = {Body = 2, Head = 3}
+    }
     local Days = 110;
     World <- {
         FactionManager = {
@@ -31,7 +34,14 @@ if ("dofile" in gt) {
         }
         pow = pow
     }
-    new <- function (script) {return script}
+    new <- function (script) {
+        return {
+            script = script
+            function getArmor() {return 39}
+            function getArmorMax() {return 80}
+            function setArmor(val) {}
+        }
+    }
     createColor <- function (color) {return color}
 
     // Test run setupEntity for fake party
@@ -41,6 +51,7 @@ if ("dofile" in gt) {
     function makeEntity(t) {
         local name = t.Script.slice(4).toupper();
         return {
+            ClassName = name
             m = {
                 Name = name
                 XP = 100
@@ -63,6 +74,16 @@ if ("dofile" in gt) {
                     IsAffectedByNight = true
                     HitChance = [25 75]
                     DamageReceivedTotalMult = 1.0
+                }
+                Items = {
+                    function getItemAtSlot(s) {
+                        return Math.rand(0, 1) ? null : {
+                            function getArmor() {return 39}
+                            function getArmorMax() {return 80}
+                            function setArmor(val) {}
+                        }
+                    }
+                    function equip(item) {}
                 }
                 Skills = {
                     function add(skill) {}

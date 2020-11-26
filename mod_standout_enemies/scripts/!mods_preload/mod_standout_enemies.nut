@@ -25,7 +25,8 @@ local Config = se.Config <- {
 
 // Available quirks
 
-local Quirk = se.Quirk <- {
+local Quirk;  // Forward declaration
+Quirk = se.Quirk <- {
     Fast = {
         Prefix = "Agile",
         XPMult = 1.3,
@@ -167,12 +168,28 @@ local Quirk = se.Quirk <- {
             Mod.defense(e, 0, 1.2);
             e.m.Skills.add(this.new("scripts/skills/perks/perk_nine_lives"));
 
-            if (e.m.IsResurrected) {
-                e.setHitpointsPct(0.60);     // Up from 0.45
+            if (!e.m.IsResurrected) {
+                // Ensure helmet, these are better than average zombie has
+                local helmets = ["kettle_hat" "padded_kettle_hat" "dented_nasal_helmet" "mail_coif"];
+                Mod.ensureHelmet(e, helmets);
+            }
+            this.stubborn(e, 0.60, 0.25);
+        }
+        function stubborn(e, hpPct, armorPct) {
+            if (!e.m.IsResurrected) {
+                e.m.ResurrectionChance = 100;  // Definitely resurrect first time
+
+                // Make helmet and armor better
+                Mod.addArmorPct(e, "head", 0.16);
+                Mod.addArmorPct(e, "body", 0.16);
+            } else {
+                // Adjust resurects
+                e.setHitpointsPct(hpPct);    // Up from 0.45
                 e.m.ResurrectionChance = 60; // Ressurect 2.5 times on average after first one
                 e.m.IsResurrected = false;
-            } else {
-                e.m.ResurrectionChance = 100;  // Definitely resurrect first time
+
+                // Regenerate armor a bit
+                Mod.addArmorPct(e, "body", armorPct + Rand.range(-0.1, 0.1));
             }
         }
     },
@@ -189,19 +206,14 @@ local Quirk = se.Quirk <- {
 
             // Half-vampire :)
             e.m.Skills.add(this.new("scripts/skills/racial/vampire_racial"));
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_nine_lives"));
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_nimble"));
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_steel_brow"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_anticipation"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_crippling_strikes"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_nine_lives"));
 
             // Resurrects like a stubborn one
-            if (e.m.IsResurrected) {
-                e.setHitpointsPct(0.75);     // Up from 0.45
-                // TODO: make bigger for fallen hero?
-                e.m.ResurrectionChance = 60; // Ressurect 2.5 times on average after first one
-                e.m.IsResurrected = false;
-            } else {
-                e.m.ResurrectionChance = 100;  // Definitrly resurrect first time
-            }
+            Quirk.Stubborn.stubborn(e, 0.75, 0.35);
 
             // Reddish head and body and no hair
             Mod.color(e, "head", "#ffaaaa", 0.9);
@@ -238,7 +250,7 @@ foreach (name, quirk in Quirk) quirk.pp <- name;
 
 // Strategies that decide what to do with the whole party
 
-local Strategy = null;  // Forward declaration
+local Strategy;  // Forward declaration
 Strategy = se.Strategy <- {
     Bandit = {
         Priority = 4,
@@ -346,7 +358,7 @@ Strategy = se.Strategy <- {
         Types = ["zombie"],
         function getPlan(stats, maturity) {
             // Max higher than 1 makes them all special more likely and earlier
-            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.6, 1.2);
+            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.6, 1.1);
             if (num == 0) return null;
 
             local res;
@@ -366,8 +378,14 @@ Strategy = se.Strategy <- {
                     break;
             }
 
-            // Rarely add a masterwork zombie
-            if (Rand.chance(maturity - 0.5)) Rand.insert(res.zombie, Quirk.Masterwork);
+            // Rarely add some masterwork zombies
+            if (maturity > 0.5 && Rand.chance(maturity * 0.5)) {
+                local numMasterwork = Rand.poly(stats.count("zombie") / 8, maturity - 0.5);
+                Rand.insert(res.zombie, Quirk.Masterwork, numMasterwork);
+            }
+
+            // DEBUG
+            // Rand.insert(res.zombie, Quirk.Masterwork);
 
             return res;
         }
@@ -401,11 +419,11 @@ Strategy = se.Strategy <- {
             local res = Util.merge(necroPlan, zombiePlan);
 
             // Each skilled necro might have a masterwork
-            if (maturity >= 0.3 && "necromancer" in res) {
-                local num = Rand.poly(res.necromancer.len(), 0.5);
+            if (maturity >= 0.25 && "necromancer" in res) {
+                local num = Rand.poly(res.necromancer.len(), 0.5 + maturity * 0.25);
                 if (num) {
                     if (!("zombie" in res)) res.zombie <- [];
-                    for (local i = 0; i < num; i++) Rand.insert(res.zombie, Quirk.Masterwork);
+                    Rand.insert(res.zombie, Quirk.Masterwork, num);
                 }
             }
 
@@ -605,6 +623,25 @@ extend(Mod, {
         e.m.BaseProperties.BraveryMult *= braveryMult;
     }
 
+    // Items
+    function ensureHelmet(e, options) {
+        local helmet = e.m.Items.getItemAtSlot(gt.Const.ItemSlot.Head);
+        if (!helmet) {
+            helmet = this.new("scripts/items/helmets/" + Rand.choice(options));
+            e.m.Items.equip(helmet);
+        }
+    }
+
+    function addArmorPct(e, part, pct) {
+        local slot = part == "head" ? gt.Const.ItemSlot.Head : gt.Const.ItemSlot.Body;
+        local piece = e.m.Items.getItemAtSlot(slot);
+        if (piece) {
+            local armor = piece.getArmor();
+            local armorMax = piece.getArmorMax();
+            piece.setArmor(Math.min(armorMax, armor + pct * armorMax));
+        }
+    }
+
     // Presentation
     function scale(e, scaleMult) {
         // This doesn't take care of the corpse size unfortunately
@@ -635,9 +672,19 @@ extend(Mod, {
 // Utilities
 
 extend(Rand, {
-    chance = @(prob) this.Math.rand(1, 1000) <= prob * 1000,
-    choice = @(arr) arr[this.Math.rand(0, arr.len() - 1)],
+    function chance(prob) {
+        if (prob <= 0) return false;
+        return this.Math.rand(1, 1000) <= prob * 1000;
+    }
 
+    function choice(arr) {
+        return arr[this.Math.rand(0, arr.len() - 1)];
+    }
+    function choices(num, arr) {
+        local res = [];
+        for (local i = 0; i < num; i++) res.push(Rand.choice(arr));
+        return res;
+    }
     function weighted(weights, choices) {
         local total = Util.sum(weights);
         local roll = this.Math.rand(1, 1000) * total / 1000.0;
@@ -649,23 +696,23 @@ extend(Rand, {
         }
         return choices[choices.len() - 1];  // To be safe
     }
-
-    function choices(num, arr) {
-        local res = [];
-        for (local i = 0; i < num; i++) res.push(Rand.choice(arr));
-        return res;
-    }
-
-    function insert(arr, item) {
-        local index = Math.rand(0, arr.len());
-        arr.insert(index, item);
+    function insert(arr, item, num = 1) {
+        for (local i = 0; i < num; i++) {
+            local index = Math.rand(0, arr.len());
+            arr.insert(index, item);
+        }
     }
 
     function poly(tries, prob) {
+        if (prob <= 0 || tries == 0) return 0;
+
         local num = 0;
         for (local i = 0; i < tries; i++)
             if (Rand.chance(prob)) num++;
         return num;
+    }
+    function range(from, to) {
+        return Math.rand(from * 1000, to * 1000) / 1000.0;
     }
 })
 
