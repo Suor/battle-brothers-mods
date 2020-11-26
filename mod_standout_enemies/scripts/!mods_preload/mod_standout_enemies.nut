@@ -61,7 +61,7 @@ Quirk = se.Quirk <- {
             Mod.offense(e, 0, 1.25);
             Mod.defense(e, -5, 1.75);
             Mod.bravery(e, 1.5);  // More hits need to be brave longer
-            Mod.scale(e, 1.2);  // Actually bigger sprites :)
+            Mod.scale(e, 1.15);  // Actually bigger sprites :)
         }
     },
     Fearless = {
