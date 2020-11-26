@@ -169,12 +169,6 @@ if ("dofile" in gt) {
         return res
     }
 
-    // Test necro zombie party
-    setupParty(makeParty(
-        "necro-zombie", "undead",
-        ["zombie", "zombie", "zombie", "zombie", "zombie", "zombie_knight", "necromancer"]
-    ));
-
     // Test bandits party
     setupParty(makeParty(
         "mixed-bandits", "bandits",
@@ -186,6 +180,21 @@ if ("dofile" in gt) {
     setupParty(makeParty(
         "horde", "orcs",
         concat(array(4, "orc_warrior"), array(6, "orc_berserker"), array(2, "orc_warlord"))
+    ));
+
+    // Test necro zombie party
+    Days = 110;
+    setupParty(makeParty(
+        "necro-zombie", "undead",
+        ["zombie", "zombie", "zombie", "zombie", "zombie", "zombie_knight", "necromancer"]
+    ));
+
+    // Test barbarians party
+    setupParty(makeParty(
+        "barbarian-horde", "barbarians",
+        concat(array(4, "barbarian_thrall"),
+               array(3, "barbarian_marauder"),
+               array(5, "barbarian_chosen"))
     ));
 
     // Testing anything else

@@ -70,15 +70,18 @@ Quirk = se.Quirk <- {
             e.m.BaseProperties.Bravery += Math.rand(25, 50);
         }
     },
-    // This one only works for orc berserkers now
     Furious = {
         Prefix = "Furious",
-        XPMult = 1.3,
+        XPMult = 1.35,
         function apply(e) {
             // Some little bonus to show yourself properly in battle
             e.m.BaseProperties.Bravery += 15;
 
             local rage = e.getSkills().getSkillByID("effects.berserker_rage");
+            if (!rage) {
+                rage = this.new("scripts/skills/effects/berserker_rage_effect");
+                e.m.Skills.add(rage);
+            }
 
             // Start with some rage
             rage.addRage(12);
@@ -286,6 +289,30 @@ Strategy = se.Strategy <- {
             return {bandit_marksman = quirks, nomad_archer = quirks}
         }
     }
+    Barbarian = {
+        Priority = 4,
+        MinScale = 0.35,
+        MaxScale = 1.1,
+        Types = ["barbarian"],
+        function getPlan(stats, maturity) {
+            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.5, 0.9);
+            if (num == 0) return null;
+
+            return {barbarian = array(num, Quirk.Fearless)}
+        }
+    },
+    BarbarianChosen = {
+        Priority = 4,
+        MinScale = 0.5,
+        MaxScale = 1.5,
+        Types = ["barbarian_chosen"],
+        function getPlan(stats, maturity) {
+            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.1, 0.2);
+            if (num == 0) return null;
+
+            return {barbarian_chosen = array(num, Quirk.Furious)}
+        }
+    },
     Goblin = {
         Priority = 4,
         MinScale = 0.35,
@@ -598,13 +625,15 @@ extend(se, {
         if (Util.startswith(name, "skeleton")) return "skeleton";
         if (name == "bandit_raider" || name == "bandit_leader") return "bandit";
         if (name == "nomad_outlaw" || name == "nomad_leader") return "nomad";
+        if (name == "barbarian_thrall" || name == "barbarian_marauder") return "barbarian";
         // For whatever reason exp name == "goblin_figther" returns false here ???
         if (Util.startswith(name, "goblin")) {
             if (name.find("fighter") || name.find("wolfrider")) return "goblin"
         }
         if (name.find("wolf")) return "wolf";
 
-        // varios scum, including low versions won't be promoted anyway
+        // The rest go as is. This includes both ones we want to handle separately
+        // and varios scum, including low versions won't be promoted anyway
         return name;
     }
 })
