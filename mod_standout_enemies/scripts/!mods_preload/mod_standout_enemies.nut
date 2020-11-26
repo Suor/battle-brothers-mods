@@ -326,11 +326,19 @@ Strategy = se.Strategy <- {
             local types = ["orc_warlord", "orc_warrior", "orc_berserker"];
             for (; num > 0;) {
                 local who = Rand.weighted(weights, types);
-                if (nums[who] < stats.count(who)) {
-                    nums[who]++;
-                    num--;
+
+                if (nums[who] >= stats.count(who)) {
+                    local i = types.find(who);
+                    weights.remove(i);
+                    types.remove(i);
+                    if (types.len() == 0) break;
                 }
+
+                nums[who]++;
+                num--;
             }
+            // local addNums = Rand.busket(num, weights, types, types.map(stats.count));
+            // foreach (type, addNum in addNums) nums[type] += addNum;
 
             local plan = {};
 
