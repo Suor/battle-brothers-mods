@@ -320,7 +320,6 @@ Strategy = se.Strategy <- {
         Types = ["barbarian_champion"],  // These are called chosen in game
         function getPlan(stats, maturity) {
             local num = se.getQuirkedNum(stats, this.Types, maturity, 0.1, 0.2);
-            num++; // DEBUG
             if (num == 0) return null;
 
             return {barbarian_champion = array(num, Quirk.Furious)}
@@ -591,8 +590,6 @@ extend(se, {
                 for (; quirks.len() > 0;) {
                     if (types.len() == 0) break;
                     local who = types.len() > 1 ? Rand.weighted(weights, types) : types[0];
-                    print("Choosing weights=" + rstrip(Debug.pp(weights))
-                                + " types=" + rstrip(Debug.pp(types)) + " = " + who + "\n")
 
                     // Shrink types if cap is reached
                     if (!(who in this.Counts) || plan[who].len() >= this.Counts[who]) {
