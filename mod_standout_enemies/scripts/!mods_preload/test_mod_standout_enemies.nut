@@ -169,32 +169,38 @@ if ("dofile" in gt) {
         return res
     }
 
+    // Test necro zombie party
+    srand(0);
+    Days = 95;
+    setupParty(makeParty(
+        "necro-zombie", "undead",
+        concat(array(6, "zombie"), ["zombie_yeoman" "zombie_knight" "necromancer"])
+    ));
+
     // Test bandits party
+    srand(7);
+    Days = 95;
     setupParty(makeParty(
         "mixed-bandits", "bandits",
         concat(array(6, "bandit_raider"), array(4, "bandit_marksman"))
     ));
 
     // Test orcs party
-    Days = 190;
+    srand(4);
+    Days = 115;
     setupParty(makeParty(
         "horde", "orcs",
-        concat(array(4, "orc_warrior"), array(6, "orc_berserker"), array(2, "orc_warlord"))
-    ));
-
-    // Test necro zombie party
-    Days = 110;
-    setupParty(makeParty(
-        "necro-zombie", "undead",
-        ["zombie", "zombie", "zombie", "zombie", "zombie", "zombie_knight", "necromancer"]
+        concat(array(4, "orc_warrior"), array(4, "orc_berserker"), array(2, "orc_warlord"))
     ));
 
     // Test barbarians party
+    srand(2);
+    Days = 95;
     setupParty(makeParty(
         "barbarian-horde", "barbarians",
         concat(array(4, "barbarian_thrall"),
                array(3, "barbarian_marauder"),
-               array(5, "barbarian_champion"))
+               array(3, "barbarian_champion"))
     ));
 
     // Testing anything else

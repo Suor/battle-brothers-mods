@@ -353,49 +353,29 @@ Strategy = se.Strategy <- {
             if (num == 0 && Rand.chance(0.5 + maturity * 2)) num++;
             if (num == 0) return null;
 
-            local nums = {orc_warlord = 0, orc_warrior = 0, orc_berserker = 0};
-
-            // Warlords always take one
-            if (stats.count("orc_warlord")) {
-                nums.orc_warlord++;
-                num--;
-            }
-
-            // The rest are distributed "honestly"
-            local weights = [0.5, 0.25, 0.25];
-            local types = ["orc_warlord", "orc_warrior", "orc_berserker"];
-            for (; num > 0;) {
-                local who = Rand.weighted(weights, types);
-
-                if (nums[who] >= stats.count(who)) {
-                    local i = types.find(who);
-                    weights.remove(i);
-                    types.remove(i);
-                    if (types.len() == 0) break;
-                }
-
-                nums[who]++;
-                num--;
-            }
-            // local addNums = Rand.busket(num, weights, types, types.map(stats.count));
-            // foreach (type, addNum in addNums) nums[type] += addNum;
-
             local plan = {};
 
-            // Warlords
-            if (nums.orc_warlord) {
-                plan.orc_warlord <- array(nums.orc_warlord, Quirk.Fearless);
+            // Warlords always take one
+            stats.grow(plan, [Quirk.Fearless], [1], ["orc_warlord"]);
+            num -= plan.orc_warlord.len();  // There might be no warlord
 
-                // Some chance to make a dreadful warlord from scale 0.8,
-                // ends in fifty-fifty at scale 2
+            // The rest are distributed "honestly"
+            local weights = [2 1 1];
+            local types = ["orc_warlord" "orc_warrior" "orc_berserker"];
+            stats.grow(plan, array(num, Quirk.Fearless), weights, types);
+
+            // Some chance to make a dreadful warlord from scale 0.8,
+            // ends in fifty-fifty at scale 2
+            if (plan.orc_warlord.len() > 0) {
                 local dreadfulMaturity = se.getMaturity(stats.scale, 0.8, 2.0);
-                if (dreadfulMaturity > 0 && Rand.chance(0.1 + dreadfulMaturity * 0.4)) {
+                if (dreadfulMaturity >= 0 && Rand.chance(0.1 + dreadfulMaturity * 0.4)) {
                     plan.orc_warlord[0] = Quirk.Dreadful;
                 }
             }
 
-            plan.orc_warrior <- array(nums.orc_warrior, Quirk.Fearless);
-            plan.orc_berserker <- Rand.choices(nums.orc_berserker, [Quirk.Fearless, Quirk.Furious]);
+            // Make half of quirked berserkers Furious
+            plan.orc_berserker.apply(@(q) Rand.chance(0.5) ? Quirk.Furious : q);
+
             return plan;
         }
     },
@@ -403,39 +383,38 @@ Strategy = se.Strategy <- {
         Priority = 4,
         MinScale = 0.25,
         MaxScale = 1.1,
-        Types = ["zombie"],
+        AnyTypes = ["zombie", "zombie_good"],
         function getPlan(stats, maturity) {
             // Max higher than 1 makes them all special more likely and earlier
-            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.6, 1.1);
+            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.6, 1.1);
             if (num == 0) return null;
 
-            local res;
+            local quirks;
             switch (Rand.weighted([100, 40, 20, 80], ["stubborn", "big", "fast", "mixed"])) {
                 case "stubborn":
-                    res = {zombie = array(num, Quirk.Stubborn)};
-                    break;
+                    quirks = array(num, Quirk.Stubborn); break;
                 case "big":
-                    res = {zombie = array(num, Quirk.Big)};
-                    break;
+                    quirks = array(num, Quirk.Big); break;
                 case "fast":
-                    res = {zombie = array(num, Quirk.Fast)};
-                    break;
+                    quirks = array(num, Quirk.Fast); break;
                 case "mixed":
-                    local quirks = [Quirk.Fast, Quirk.Big, Quirk.Stubborn, Quirk.Stubborn];
-                    res = {zombie = Rand.choices(num, quirks)};
+                    local options = [Quirk.Fast, Quirk.Big, Quirk.Stubborn, Quirk.Stubborn];
+                    quirks = Rand.choices(num, options);
                     break;
             }
+
+            local plan = {};
 
             // Rarely add some masterwork zombies
             if (maturity > 0.5 && Rand.chance(maturity * 0.5)) {
-                local numMasterwork = Rand.poly(stats.count("zombie") / 8, maturity - 0.5);
-                Rand.insert(res.zombie, Quirk.Masterwork, numMasterwork);
+                local total = Util.sum(this.AnyTypes.map(stats.count));
+                local masters = Rand.poly(total / 8, maturity - 0.5);
+                stats.grow(plan, array(masters, Quirk.Masterwork), [1 0], ["zombie_good" "zombie"]);
             }
 
-            // DEBUG
-            // Rand.insert(res.zombie, Quirk.Masterwork);
+            stats.grow(plan, quirks, [1 1], ["zombie_good" "zombie"]);
 
-            return res;
+            return plan;
         }
     },
     Necromancer = {
@@ -456,7 +435,8 @@ Strategy = se.Strategy <- {
         Priority = 8,
         MinScale = 0.5,
         MaxScale = 1.5,
-        Types = ["zombie", "necromancer"],
+        Types = ["necromancer"],
+        AnyTypes = ["zombie", "zombie_good"],
         function getPlan(stats, maturity) {
             local necroPlan = Strategy.Necromancer.getPlan(stats, maturity);
 
@@ -464,18 +444,26 @@ Strategy = se.Strategy <- {
             local zombieMaturity = necroPlan ? se.getMaturity(stats.scale, 0.35, 1.2) : null;
             local zombiePlan = Strategy.Zombie.getPlan(stats, zombieMaturity);
 
-            local res = Util.merge(necroPlan, zombiePlan);
+            local plan = Util.merge(necroPlan, zombiePlan);
 
             // Each skilled necro might have a masterwork
-            if (maturity >= 0.25 && "necromancer" in res) {
-                local num = Rand.poly(res.necromancer.len(), 0.5 + maturity * 0.25);
+            if (maturity >= 0.25 && "necromancer" in plan) {
+                local num = Rand.poly(plan.necromancer.len(), 0.5 + maturity * 0.25);
                 if (num) {
-                    if (!("zombie" in res)) res.zombie <- [];
-                    Rand.insert(res.zombie, Quirk.Masterwork, num);
+                    // Separate masterwork from other quirks
+                    local quirks = Util.concat(plan.zombie, plan.zombie_good);
+                    num += quirks.filter(@(_, q) q == Quirk.Masterwork).len();
+                    quirks = quirks.filter(@(_, q) q != Quirk.Masterwork);
+
+                    // Replan, masterwork goes to good zombies first, the rest a spreaded evenly
+                    plan.zombie = [];
+                    plan.zombie_good = [];
+                    stats.grow(plan, array(num, Quirk.Masterwork), [1 0], ["zombie_good" "zombie"]);
+                    stats.grow(plan, quirks, [1 1], ["zombie_good" "zombie"]);
                 }
             }
 
-            return res;
+            return plan;
         }
     },
 }
@@ -592,6 +580,31 @@ extend(se, {
             function count(type) {
                 return type in stats.Counts ? stats.Counts[type] : 0;
             }
+            function grow(plan, _quirks, _weights, _types) {
+                // Clone these to not modify arguments
+                local quirks = clone _quirks, weights = clone _weights, types = clone _types;
+
+                // Add empty arrays to plan
+                foreach (who in types)
+                    if (!(who in plan)) plan[who] <- [];
+
+                for (; quirks.len() > 0;) {
+                    if (types.len() == 0) break;
+                    local who = types.len() > 1 ? Rand.weighted(weights, types) : types[0];
+                    print("Choosing weights=" + rstrip(Debug.pp(weights))
+                                + " types=" + rstrip(Debug.pp(types)) + " = " + who + "\n")
+
+                    // Shrink types if cap is reached
+                    if (!(who in this.Counts) || plan[who].len() >= this.Counts[who]) {
+                        local i = types.find(who);
+                        weights.remove(i);
+                        types.remove(i);
+                        continue;
+                    }
+
+                    Rand.insert(plan[who], quirks.remove(0));
+                }
+            }
         }
 
         foreach (t in party.m.Troops) {
@@ -634,7 +647,8 @@ extend(se, {
         local nameParts = split(t.Script, "/");
         local name = nameParts[nameParts.len() - 1];
 
-        if (Util.startswith(name, "zombie") && name != "zombie_boss") return "zombie";
+        if (name == "zombie") return "zombie";
+        if (Util.startswith(name, "zombie") && name != "zombie_boss") return "zombie_good";
         if (Util.startswith(name, "skeleton")) return "skeleton";
         if (name == "bandit_raider" || name == "bandit_leader") return "bandit";
         if (name == "nomad_outlaw" || name == "nomad_leader") return "nomad";
@@ -773,10 +787,10 @@ extend(Util, {
         return s.slice(0, sub.len()) == sub;
     }
 
-    function mapTable(data, func) {
+    function concat(...){
         local res = [];
-        foreach (key, value in data) res.push(func(key, value));
-        return res;
+        foreach (arr in vargv) res.extend(arr);
+        return res
     }
 
     function keys(data) {
@@ -858,7 +872,6 @@ extend(Debug, {
                 if (!funcs && typeof v == "function") continue;
                 items.push(k + " = " + Debug.pp(v, level + 1, funcs))
             }
-            // local items = Util.mapTable(data, @(k, v) k + " = " + Debug.pp(v, level + 1));
             return ppCont(items, level, "{", "}") + endln;
         } else if (typeof data == "array") {
             local items = data.map(@(item) Debug.pp(item, level + 1, funcs));
