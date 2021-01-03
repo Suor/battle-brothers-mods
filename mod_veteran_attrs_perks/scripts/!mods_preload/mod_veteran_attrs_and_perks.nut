@@ -1,6 +1,5 @@
-::mods_registerMod("mod_veteran_attrs_odd_perks", 1.4, "Veteran attrs and perks buff");
-::mods_queue("mod_veteran_attrs_odd_perks", "mod_hooks(>=17)", function()
-{
+::mods_registerMod("mod_veteran_attrs_perks", 1.4, "Veteran attrs and perks buff");
+::mods_queue("mod_veteran_attrs_perks", "mod_hooks(>=17)", function() {
   this.logInfo("vap: loading");
 
   local patchPlayer = function(obj) {
