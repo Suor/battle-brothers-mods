@@ -1,5 +1,5 @@
-::mods_registerMod("mod_veteran_attrs_odd_perks", 1.3, "Veteran attrs and perks buff");
-::mods_queue("mod_veteran_attrs_odd_perks", null, function()
+::mods_registerMod("mod_veteran_attrs_odd_perks", 1.4, "Veteran attrs and perks buff");
+::mods_queue("mod_veteran_attrs_odd_perks", "mod_hooks(>=17)", function()
 {
   this.logInfo("vap: loading");
 
@@ -62,21 +62,7 @@
     }
   }
 
-  // Freshly hired bros don't fire new hook and hence don't get a patched class,
-  // so we need to patch it like this
   ::mods_hookNewObject("entity/tactical/player", patchPlayer);
-  ::mods_hookNewObject("ui/screens/world/modules/world_town_screen/town_hire_dialog_module",
-    function (cls) {
-      this.logInfo("vap: patching town_hire_dialog_module class");
-
-      local onHireRosterEntry = cls.onHireRosterEntry;
-      cls.onHireRosterEntry = function(_entityID) {
-        local entry = this.findEntityWithinRoster(_entityID);
-        if(entry) patchPlayer(entry);
-        return onHireRosterEntry(_entityID)
-      }
-    }
-  );
 
   // Need to hook this too since perks are added there too,
   // breaking updateLevel() abstraction
