@@ -1,3 +1,15 @@
+// Uncomment a section below with a desired behavior and comment out the other one.
+// Adjust variables to your liking.
+
+// Give an extra perk on listed levels
+local perkLevels = [13, 16, 20, 25, 31];
+local givePerk = @(l) perkLevels.find(l) != null;
+
+//// Give an extra perk every N levels after a certain one
+// local N = 3, afterLevel = 11;
+// local givePerk = @(l) l > afterLevel && (l - afterLevel) % N == 0;
+
+
 ::mods_registerMod("mod_vap", 1.4, "Veteran attrs and perks buff");
 ::mods_queue("mod_vap", "mod_hooks(>=17)", function() {
   this.logInfo("vap: loading");
@@ -57,7 +69,7 @@
       this.logInfo("vap: Leveling up " + this.getName() + " from " + level + " to " + m.Level);
       // give a perk point every for certain levels
       for (; ++level <= m.Level;)
-        if (level >= 14 && level % 3 == 2) m.PerkPoints++;
+        if (givePerk(level)) m.PerkPoints++;
     }
   }
 
