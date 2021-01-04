@@ -1,14 +1,14 @@
 DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
 SUBDIR = scripts/\!mods_preload
-SCRIPT = scripts/\!mods_preload/mod_veteran_attrs_and_perks.nut
-TEST_SCRIPT = scripts/\!mods_preload/test_mod_veteran_attrs_and_perks.nut
+SCRIPT = scripts/\!mods_preload/mod_vap.nut
+TEST_SCRIPT = scripts/\!mods_preload/test_mod_vap.nut
 
 SHELL := /bin/bash
 
 # TODO: check for stages changes in zip and sync targets
 
 test:
-	cd $(SUBDIR);squirrel test_mod_standout_enemies.nut
+	cd $(SUBDIR);squirrel test_mod_vap.nut
 
 zip:
 	LAST_TAG=$$(git tag | grep vap | tail -1); \
