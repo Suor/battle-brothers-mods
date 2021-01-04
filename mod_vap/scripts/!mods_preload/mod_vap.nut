@@ -56,7 +56,7 @@
 
       this.logInfo("vap: Leveling up " + this.getName() + " from " + level + " to " + m.Level);
       // give a perk point every for certain levels
-      for (; ++level <= newLevel;)
+      for (; ++level <= m.Level;)
         if (level >= 14 && level % 3 == 2) m.PerkPoints++;
     }
   }
