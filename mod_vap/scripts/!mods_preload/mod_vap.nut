@@ -15,24 +15,24 @@ local givePerk = @(l) perkLevels.find(l) != null;
   this.logInfo("vap: loading");
 
   local patchPlayer = function(obj) {
-    this.logInfo("vap: patching a player object " + obj.getName());
-
     // Prevent from patching twice.
     // Not sure how this happens, but it does sometimes for new hires, who get levels later.
     if("addExtraPerks" in obj) return;
+
+    this.logInfo("vap: patching a player object " + obj.getName());
 
     // Give rolls of 2 on veteran levels to attrs with talents sometimes
     local getAttributeLevelUpValues = obj.getAttributeLevelUpValues;
     obj.getAttributeLevelUpValues = function()
     {
       if(m.Attributes[0].len() != 0) return getAttributeLevelUpValues(); // no bonus if not in veteran levels
+      this.logInfo("vap: extra attrs values " + obj.getName());
 
       local v = getAttributeLevelUpValues();
       local extra = function(t, bonus = 0)
       {
-        if(t == 0) return 0;
-        local max = (t == 1 ? 5 : t == 2 ? 3 : 2) - bonus;
-        return max <= 1 || Math.rand(1, max) == 1 ? 1 : 0;
+        local chance = 33.3 * t * (1 + bonus);
+        return Math.rand(0, chance + 99) / 100;
       }
 
       v.hitpointsIncrease += extra(m.Talents[Const.Attributes.Hitpoints]);
