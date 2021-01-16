@@ -33,7 +33,9 @@ subl:
 
 sync:
 	git diff --quiet scripts || { git diff scripts && exit 123; }; \
-	cp -R $(DATA_DIR)$(SUBDIR)/* ${SUBDIR}
+	cp $(DATA_DIR)$(SCRIPT) $(SCRIPT)
+	cp $(DATA_DIR)$(TEST_SCRIPT) $(TEST_SCRIPT)
 
 sync-force:
-	cp -R $(DATA_DIR)$(SUBDIR)/* ${SUBDIR}
+	cp $(DATA_DIR)$(SCRIPT) $(SCRIPT)
+	cp $(DATA_DIR)$(TEST_SCRIPT) $(TEST_SCRIPT)
