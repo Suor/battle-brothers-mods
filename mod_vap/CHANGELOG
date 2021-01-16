@@ -1,3 +1,6 @@
+1.6
+- changed veteran attrs logic a bit
+
 1.5
 - initial public release
 - adds extra perks on configurable levels. Defaults to 13, 16, 20, 25 and 31
