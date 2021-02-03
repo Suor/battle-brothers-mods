@@ -14,6 +14,7 @@ local Config = se.Config <- {
         "Goblin Skirmisher": "Goblin",
         "Goblin Wolfrider": "Wolfrider",
         "Brigand Raider": "Raider",
+        "Nomad Outlaw": "Outlaw",
         "Fallen Hero": "Hero",
         "Barbarian Chosen": "Chosen",
         "Barbarian Reaver": "Reaver",
