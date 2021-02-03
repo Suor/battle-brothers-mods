@@ -379,6 +379,22 @@ Strategy = se.Strategy <- {
             return plan;
         }
     },
+    Ghoul = {
+        Priority = 4,
+        MinScale = 0.3,
+        MaxScale = 1.1,
+        Types = ["ghoul"],
+        function getPlan(stats, maturity) {
+            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.5, 0.9);
+            if (num == 0) return null;
+
+            switch (Rand.weighted([33, 50, 100], ["sly", "fast", "mixed"])) {
+                case "sly": return {ghoul = array(num, Quirk.Sly)};
+                case "fast": return {ghoul = array(num, Quirk.Fast)};
+                case "mixed": return {ghoul = Rand.choices(num, [Quirk.Fast, Quirk.Sly])};
+            }
+        }
+    },
     Zombie = {
         Priority = 4,
         MinScale = 0.25,
