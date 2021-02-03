@@ -145,7 +145,7 @@ Quirk = se.Quirk <- {
     },
     Headshot = {
         Noun = "Headshot",
-        XPMult = 1.25,
+        XPMult = 1.3,
         function apply(e) {
             e.m.Name = split(e.m.Name, " ")[0] + " " + this.Noun;
 
@@ -154,7 +154,7 @@ Quirk = se.Quirk <- {
 
             e.m.BaseProperties.IsAffectedByNight = false;
 
-            e.m.BaseProperties.HitChance = [60, 40];  // Up from 75/25
+            e.m.BaseProperties.HitChance = [50, 50];  // Up from 75/25
             e.m.Skills.add(this.new("scripts/skills/perks/perk_head_hunter"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_fast_adaption"));
         }
