@@ -386,11 +386,22 @@ Strategy = se.Strategy <- {
         AnyTypes = ["zombie", "zombie_good"],
         function getPlan(stats, maturity) {
             // Max higher than 1 makes them all special more likely and earlier
-            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.6, 1.1);
+            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.45, 1.15);
             if (num == 0) return null;
 
+            local plan = {};
+
+            // Sometimes add some masterwork zombies
+            if (maturity > 0.5 && Rand.chance(maturity * 0.5)) {
+                local masters = Rand.poly(num / 4, maturity - 0.4);
+                stats.grow(plan, array(masters, Quirk.Masterwork), [1 0], ["zombie_good" "zombie"]);
+                num -= masters;
+            }
+
+            // Once in a while they are all stubborn, which makes for a long battle.
+            // More common though we demonstrate variety.
             local quirks;
-            switch (Rand.weighted([100, 40, 20, 80], ["stubborn", "big", "fast", "mixed"])) {
+            switch (Rand.weighted([16, 21, 21, 42], ["stubborn", "big", "fast", "mixed"])) {
                 case "stubborn":
                     quirks = array(num, Quirk.Stubborn); break;
                 case "big":
@@ -398,22 +409,10 @@ Strategy = se.Strategy <- {
                 case "fast":
                     quirks = array(num, Quirk.Fast); break;
                 case "mixed":
-                    local options = [Quirk.Fast, Quirk.Big, Quirk.Stubborn, Quirk.Stubborn];
-                    quirks = Rand.choices(num, options);
+                    quirks = Rand.choices(num, [Quirk.Fast, Quirk.Big, Quirk.Stubborn]);
                     break;
             }
-
-            local plan = {};
-
-            // Rarely add some masterwork zombies
-            if (maturity > 0.5 && Rand.chance(maturity * 0.5)) {
-                local total = Util.sum(this.AnyTypes.map(stats.count));
-                local masters = Rand.poly(total / 8, maturity - 0.5);
-                stats.grow(plan, array(masters, Quirk.Masterwork), [1 0], ["zombie_good" "zombie"]);
-            }
-
             stats.grow(plan, quirks, [1 1], ["zombie_good" "zombie"]);
-
             return plan;
         }
     },
@@ -455,7 +454,7 @@ Strategy = se.Strategy <- {
                     num += quirks.filter(@(_, q) q == Quirk.Masterwork).len();
                     quirks = quirks.filter(@(_, q) q != Quirk.Masterwork);
 
-                    // Replan, masterwork goes to good zombies first, the rest a spreaded evenly
+                    // Replan, masterwork goes to good zombies first, the rest is spreaded evenly
                     plan.zombie = [];
                     plan.zombie_good = [];
                     stats.grow(plan, array(num, Quirk.Masterwork), [1 0], ["zombie_good" "zombie"]);
@@ -766,7 +765,7 @@ extend(Rand, {
     }
 
     function poly(tries, prob) {
-        if (prob <= 0 || tries == 0) return 0;
+        if (prob <= 0 || tries < 1) return 0;
 
         local num = 0;
         for (local i = 0; i < tries; i++)
