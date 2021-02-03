@@ -66,7 +66,7 @@ Quirk = se.Quirk <- {
     },
     Fearless = {
         Prefix = "Fearless",
-        XPMult = 1.2,
+        XPMult = 1.15,
         function apply(e) {
             // Vary so that some keep longer
             e.m.BaseProperties.Bravery += Math.rand(25, 50);
@@ -161,7 +161,7 @@ Quirk = se.Quirk <- {
     },
     Sly = {
         Prefix = "Sly",
-        XPMult = 1.25,
+        XPMult = 1.3,
         function apply(e) {
             Mod.offense(e, 10);
             e.m.BaseProperties.DamageDirectMult *= 1.1;
@@ -217,7 +217,7 @@ Quirk = se.Quirk <- {
             e.m.BaseProperties.Initiative += 25;
 
             Mod.offense(e, 10, 1.15);
-            Mod.defense(e, 10, 1.7);
+            Mod.defense(e, 15, 1.7);
 
             // Half-vampire :)
             e.m.Skills.add(this.new("scripts/skills/racial/vampire_racial"));
@@ -239,7 +239,7 @@ Quirk = se.Quirk <- {
     },
     SkilledNecro = {
         Prefix = "Skilled",
-        XPMult = 1.7,
+        XPMult = 1.8,
         function apply(e) {
             // This means necromancer will be able to cast 3 spells each turn
             local skills = e.getSkills().getAllSkillsOfType(gt.Const.SkillType.Active);
@@ -270,10 +270,10 @@ Strategy = se.Strategy <- {
     Bandit = {
         Priority = 4,
         MinScale = 0.35,
-        MaxScale = 1.1,
+        MaxScale = 1.15,
         AnyTypes = ["bandit", "nomad"],
         function getPlan(stats, maturity) {
-            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.45, 0.75);
+            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.5, 0.8);
             num = num || 1;  // One guaranteed special bandit
 
             local quirks;
@@ -307,7 +307,7 @@ Strategy = se.Strategy <- {
         MaxScale = 1.1,
         Types = ["barbarian"],
         function getPlan(stats, maturity) {
-            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.5, 0.9);
+            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.6, 0.9);
             if (num == 0) return null;
 
             return {barbarian = array(num, Quirk.Fearless)}
