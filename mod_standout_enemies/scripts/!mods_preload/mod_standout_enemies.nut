@@ -372,8 +372,9 @@ Strategy = se.Strategy <- {
                 }
             }
 
-            // Make half of quirked berserkers Furious
-            plan.orc_berserker.apply(@(q) Rand.chance(0.5) ? Quirk.Furious : q);
+            // Small chance to make all quirked berserkers Furious, but usually turn half of them
+            local allFury = maturity > 0.5 && Rand.chance(0.15);
+            plan.orc_berserker.apply(@(q) allFury || Rand.chance(0.5) ? Quirk.Furious : q);
 
             return plan;
         }
