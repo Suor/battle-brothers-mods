@@ -127,8 +127,6 @@ if ("dofile" in gt) {
     }
 
     function makeParty(name, faction, troopScripts) {
-        print("hi\n")
-        print(troopScripts + "\n");
         local party = {
             m = {
                 Troops = troopScripts.map(@(t) {Script = ".../" + t, Variant = 0})
@@ -170,11 +168,11 @@ if ("dofile" in gt) {
     }
 
     // Test necro zombie party
-    srand(0);
+    srand(13);
     Days = 95;
     setupParty(makeParty(
         "necro-zombie", "undead",
-        concat(array(6, "zombie"), ["zombie_yeoman" "zombie_knight" "necromancer"])
+        concat(array(6, "zombie"), ["zombie_yeoman" "zombie_yeoman" "zombie_knight" "necromancer"])
     ));
 
     // Test bandits party
