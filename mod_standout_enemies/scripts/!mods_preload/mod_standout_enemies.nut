@@ -74,7 +74,7 @@ Quirk = se.Quirk <- {
     },
     Furious = {
         Prefix = "Furious",
-        XPMult = 1.35,
+        XPMult = 1.4,
         function apply(e) {
             Mod.offense(e, 5);  // Not really impressive when he misses all the time
             e.m.BaseProperties.MeleeDefense += 5;  // Don't protect from ranged
@@ -106,7 +106,7 @@ Quirk = se.Quirk <- {
 
             // Add some rage on miss
             rage.onTargetMissed <- function(_skill, _targetEntity) {
-                addRage(2);
+                addRage(3);
             }
 
             // Get some rage on every time being attacked
@@ -114,7 +114,7 @@ Quirk = se.Quirk <- {
                 addRage(1);
             }
             rage.onDamageReceived <- function(_attacker, _damageHitpoints, _damageArmor) {
-                addRage(2);
+                addRage(3);
             }
         }
     },
