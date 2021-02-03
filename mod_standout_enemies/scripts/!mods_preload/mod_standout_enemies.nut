@@ -603,8 +603,7 @@ extend(se, {
                 foreach (who in types)
                     if (!(who in plan)) plan[who] <- [];
 
-                for (; quirks.len() > 0;) {
-                    if (types.len() == 0) break;
+                while (quirks.len() > 0 && types.len() > 0) {
                     local who = types.len() > 1 ? Rand.weighted(weights, types) : types[0];
 
                     // Shrink types if cap is reached
@@ -617,6 +616,8 @@ extend(se, {
 
                     Rand.insert(plan[who], quirks.remove(0));
                 }
+
+                return plan;
             }
         }
 
@@ -670,7 +671,8 @@ extend(se, {
         if (Util.startswith(name, "goblin")) {
             if (name.find("fighter") || name.find("wolfrider")) return "goblin"
         }
-        if (name.find("wolf")) return "wolf";
+        if (name == "wolf" || name == "direwolf") return "wolf";
+        if (name == "hyena" || name == "hyena_high") return "hyena";
 
         // The rest go as is. This includes both ones we want to handle separately
         // and varios scum, including low versions won't be promoted anyway
