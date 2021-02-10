@@ -286,7 +286,7 @@ Strategy = se.Strategy <- {
         MaxScale = 1.15,
         AnyTypes = ["bandit", "nomad"],
         function getPlan(stats, maturity) {
-            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.5, 0.8);
+            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.4, 0.8);
             num = num || 1;  // One guaranteed special bandit
 
             local quirks;
