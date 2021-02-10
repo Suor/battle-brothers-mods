@@ -2,6 +2,7 @@ DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
 SUBDIR = scripts/\!mods_preload
 SCRIPT = scripts/\!mods_preload/mod_standout_enemies.nut
 TEST_SCRIPT = scripts/\!mods_preload/test_mod_standout_enemies.nut
+LIB = scripts/\!mods_preload/!stdlib.nut
 
 SHELL := /bin/bash
 
@@ -35,7 +36,9 @@ sync:
 	git diff --quiet scripts || { git diff scripts && exit 123; }; \
 	cp $(DATA_DIR)$(SCRIPT) $(SCRIPT)
 	cp $(DATA_DIR)$(TEST_SCRIPT) $(TEST_SCRIPT)
+	cp $(DATA_DIR)$(LIB) $(LIB)
 
 sync-force:
 	cp $(DATA_DIR)$(SCRIPT) $(SCRIPT)
 	cp $(DATA_DIR)$(TEST_SCRIPT) $(TEST_SCRIPT)
+	cp $(DATA_DIR)$(LIB) $(LIB)

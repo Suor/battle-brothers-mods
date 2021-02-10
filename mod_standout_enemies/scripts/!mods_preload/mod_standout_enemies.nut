@@ -5,8 +5,11 @@ local gt = this.getroottable();
 // Alias things to make it easier for us inside. These are still global and accessible from outside,
 // so if anyone will want to write a mod for this mod then it should be easy enough )
 local se = gt.StandoutEnemies <- {};
-local Mod = se.Mod <- {}, Rand = se.Rand <- {}, Util = se.Util <- {}, Debug = se.Debug <- {};
+local Mod = se.Mod <- {};
 
+// Short refs to stdlib
+local Rand = ::std.Rand, Str = ::std.Str, Util = ::std.Util, Hook = ::std.Hook;
+local Debug = se.Debug <- ::std.Debug.with({prefix = "se: "});
 
 local Config = se.Config <- {
     ScaleDays = [80, 90, 100]  // scale varies by days and combat difficulty
@@ -505,15 +508,7 @@ foreach (name, strategy in Strategy) {
 SortedStrategies.sort(@(a, b) b.Priority <=> a.Priority);
 
 
-// Since we use forward declarations we can't override, we should extend tables.
-local function extend(dst, src) {
-    foreach (key, value in src) {
-        dst[key] <- value
-    }
-    return dst;
-}
-
-extend(se, {
+Util.extend(se, {
     function getQuirkedNum(stats, types, maturity, minPart, maxPart) {
         local count = Util.sum(types.map(stats.count));
         if (count == 0) return 0;
@@ -536,7 +531,7 @@ extend(se, {
         local stats = se.partyStats(party);
         local scaleDays = Config.ScaleDays[gt.World.Assets.getCombatDifficulty()];
         stats.scale <- 1.0 * gt.World.getTime().Days / scaleDays;
-        Debug.log("stats", stats, false);
+        Debug.log("stats", stats, {funcs = false});
 
         local plans = [], weights = [], priority = 9000;
         foreach (strategy in SortedStrategies) {
@@ -663,13 +658,13 @@ extend(se, {
         local name = nameParts[nameParts.len() - 1];
 
         if (name == "zombie") return "zombie";
-        if (Util.startswith(name, "zombie") && name != "zombie_boss") return "zombie_good";
-        if (Util.startswith(name, "skeleton")) return "skeleton";
+        if (Str.startswith(name, "zombie") && name != "zombie_boss") return "zombie_good";
+        if (Str.startswith(name, "skeleton")) return "skeleton";
         if (name == "bandit_raider" || name == "bandit_leader") return "bandit";
         if (name == "nomad_outlaw" || name == "nomad_leader") return "nomad";
         if (name == "barbarian_thrall" || name == "barbarian_marauder") return "barbarian";
         // For whatever reason exp name == "goblin_figther" returns false here ???
-        if (Util.startswith(name, "goblin")) {
+        if (Str.startswith(name, "goblin")) {
             if (name.find("fighter") || name.find("wolfrider")) return "goblin"
         }
         if (name == "wolf" || name == "direwolf") return "wolf";
@@ -684,7 +679,7 @@ extend(se, {
 
 // Modification shortcuts
 
-extend(Mod, {
+Util.extend(Mod, {
     function offense(e, skill, damageMult = 1.0) {
         local b = e.m.BaseProperties;
         b.MeleeSkill += skill;
@@ -749,160 +744,6 @@ extend(Mod, {
 })
 
 
-// Utilities
-
-extend(Rand, {
-    function chance(prob) {
-        if (prob <= 0) return false;
-        return this.Math.rand(1, 1000) <= prob * 1000;
-    }
-
-    function choice(arr) {
-        return arr[this.Math.rand(0, arr.len() - 1)];
-    }
-    function choices(num, arr) {
-        local res = [];
-        for (local i = 0; i < num; i++) res.push(Rand.choice(arr));
-        return res;
-    }
-    function weighted(weights, choices) {
-        local total = Util.sum(weights);
-        local roll = this.Math.rand(1, 1000) * total / 1000.0;
-
-        local sofar = 0;
-        for (local i = 0; i < weights.len(); i++) {
-            sofar += weights[i];
-            if (roll <= sofar) return choices[i]
-        }
-        return choices[choices.len() - 1];  // To be safe
-    }
-    function insert(arr, item, num = 1) {
-        for (local i = 0; i < num; i++) {
-            local index = Math.rand(0, arr.len());
-            arr.insert(index, item);
-        }
-    }
-
-    function poly(tries, prob) {
-        if (prob <= 0 || tries < 1) return 0;
-
-        local num = 0;
-        for (local i = 0; i < tries; i++)
-            if (Rand.chance(prob)) num++;
-        return num;
-    }
-    function range(from, to) {
-        return Math.rand(from * 1000, to * 1000) / 1000.0;
-    }
-})
-
-
-extend(Util, {
-    function startswith(s, sub) {
-        if (s.len() < sub.len()) return false;
-        return s.slice(0, sub.len()) == sub;
-    }
-
-    function concat(...){
-        local res = [];
-        foreach (arr in vargv) res.extend(arr);
-        return res
-    }
-
-    function keys(data) {
-        local res = [];
-        foreach (key, _ in data) res.push(key);
-        return res;
-    }
-
-    function merge(t1, t2) {
-        if (t1 == null) return t2;
-        if (t2 == null) return t1;
-        return extend(clone t1, t2);
-    }
-
-    function sum(arr) {
-        return arr.reduce(@(a, b) a + b);
-    }
-
-    function all(arr, func) {
-        foreach (item in arr) {
-            if (!func(item)) return false;
-        }
-        return true;
-    }
-
-    function any(arr, func) {
-        foreach (item in arr) {
-            if (func(item)) return true;
-        }
-        return false;
-    }
-})
-
-
-// Debug things
-
-local function indent(level, s) {
-    return format("%"+ (level * 4) + "s", "") + s;
-}
-
-local function join(sep, lines) {
-    local s = "";
-    foreach (i, line in lines) {
-        if (i > 0) s += sep;
-        s += line;
-    }
-    return s;
-}
-
-local function joinLength(items, sepLen) {
-    if (items.len() == 0) return 0;
-    return Util.sum(items.map(@(s) s.len())) + (items.len() - 1) * sepLen;
-}
-
-extend(Debug, {
-    PP_MAX_LENGTH = 80,
-
-    function pp(data, level = 0, funcs = true) {
-        local function ppCont(items, level, start, end) {
-            if (joinLength(items, 2) <= this.PP_MAX_LENGTH - level * 4 - 2) {
-                return start + join(", ", items) + end;
-            } else {
-                local lines = [start];
-                lines.extend(items.map(@(item) indent(level + 1, item)));
-                lines.push(indent(level, end));
-                return join("\n", lines);
-            }
-        }
-
-        if (level > 3) return "...";
-
-        local endln = (level == 0 ? "\n" : "");
-
-        if (typeof data == "table") {
-            if ("pp" in data) return data.pp;
-
-            local items = [];
-            foreach (k, v in data) {
-                if (!funcs && typeof v == "function") continue;
-                items.push(k + " = " + Debug.pp(v, level + 1, funcs))
-            }
-            return ppCont(items, level, "{", "}") + endln;
-        } else if (typeof data == "array") {
-            local items = data.map(@(item) Debug.pp(item, level + 1, funcs));
-            return ppCont(items, level, "[", "]") + endln;
-        } else if (data == null) {
-            return "null" + endln;
-        } else {
-            return "" + data + endln;  // More robust than .tostring()
-        }
-    }
-
-    function log(name, data, funcs = true) {
-        this.logInfo("<pre>se: " + name + " = " + Debug.pp(data, 0, funcs) + "</pre>");
-    }
-})
 
 
 ::mods_queue("mod_standout_enemies", null, function()
