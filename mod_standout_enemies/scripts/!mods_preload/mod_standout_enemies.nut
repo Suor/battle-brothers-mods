@@ -744,15 +744,10 @@ Util.extend(Mod, {
 })
 
 
-
-
-::mods_queue("mod_standout_enemies", null, function()
-{
+::mods_queue("mod_standout_enemies", "mod_hooks(>=19)", function() {
     this.logInfo("se: loading");
 
     ::mods_hookClass("entity/tactical/tactical_entity_manager", function(cls) {
-        this.logInfo("se: hook tactical_entity_manager");
-
         local setupEntity = cls.setupEntity;
         cls.setupEntity = function(e, t) {
             setupEntity(e, t);
@@ -765,25 +760,17 @@ Util.extend(Mod, {
         }
     });
 
-    ::mods_hookBaseClass("entity/tactical/actor", function(cls) {
-        this.logInfo("se: hook tactical/actor");
-
+    ::mods_hookDescendants("entity/tactical/actor", function(cls) {
         // Save quirk to corpse and reapply on resurrection
-        local onDeath = "onDeath" in cls ? cls.onDeath : null;
-        cls.onDeath <- function (_killer, _skill, _tile, _fatalityType) {
-            if (onDeath) onDeath(_killer, _skill, _tile, _fatalityType);
-            if (_tile == null) return;
-            if (!("se_Quirk" in this.m)) return;
-
-            local corpse = _tile.Properties.get("Corpse");
-            corpse.se_Quirk <- this.m.se_Quirk;
-        }
-
-        local onResurrected = "onResurrected" in cls ? cls.onResurrected : null;
-        cls.onResurrected <- function (_info) {
-            if (onResurrected) onResurrected(_info);
+        Hook.after(cls, "onDeath", function(_killer, _skill, _tile, _fatalityType) {
+            if (_tile && "se_Quirk" in this.m) {
+                local corpse = _tile.Properties.get("Corpse");
+                corpse.se_Quirk <- this.m.se_Quirk;
+            }
+        })
+        Hook.after(cls, "onResurrected", function(_info) {
             if ("se_Quirk" in _info) se.applyQuirk(this, _info.se_Quirk);
-        }
+        })
     })
 
     // Since actor hook doesn't reach descendant of descendants
@@ -791,17 +778,12 @@ Util.extend(Mod, {
     ::mods_hookBaseClass("entity/tactical/goblin", function(cls) {
         // Make demounted goblin inherit a quirk
         if ("spawnGoblin" in cls) {
-            this.logInfo("se: fixing spawnGoblin");
-
-            local spawnGoblin = cls.spawnGoblin;
-            cls.spawnGoblin <- function (_info) {
-                spawnGoblin(_info);
-
+            Hook.after(cls, "spawnGoblin", function(_info) {
                 if ("se_Quirk" in this.m) {
                     local goblin = _info.Tile.getEntity();
                     se.applyQuirk(goblin, this.m.se_Quirk);
                 }
-            }
+            })
         }
     })
 });
