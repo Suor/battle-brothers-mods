@@ -37,17 +37,16 @@ Quirk = se.Quirk <- {
         Prefix = "Agile",
         XPMult = 1.3,
         function apply(e) {
-            // More action points and initiative
+            // More action points and initiative, add stamina and fatigue recovery to compensate
             e.m.BaseProperties.ActionPoints += 3;
             e.m.BaseProperties.Initiative += 25;
+            e.m.BaseProperties.Stamina += 25;
+            e.m.BaseProperties.FatigueRecoveryRate += 5;
 
             // Give adrenaline
             e.m.Skills.add(this.new("scripts/skills/perks/perk_adrenalin"));
             e.m.AIAgent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_adrenaline"));
 
-            // More action points plus adrenaline drains stamina so we add some
-            e.m.BaseProperties.Stamina += 25;
-            e.m.BaseProperties.FatigueRecoveryRate += 5;
 
             // Being fast helps hit and not being hit, but reduces damage to compensate
             Mod.offense(e, 10, 0.85);
@@ -155,12 +154,45 @@ Quirk = se.Quirk <- {
 
             Mod.offense(e, 10);
             e.m.BaseProperties.RangedDefense += 15;
-
             e.m.BaseProperties.IsAffectedByNight = false;
-
             e.m.BaseProperties.HitChance = [50, 50];  // Up from 75/25
+
             e.m.Skills.add(this.new("scripts/skills/perks/perk_head_hunter"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_fast_adaption"));
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_pathfinder"));
+            e.m.Skills.add(this.new("scripts/skills/actives/footwork"));
+
+            // TODO: nomads/bandits
+            Mod.ensureHelmet(e, ["full_leather_cap", "rusty_mail_coif"], 70);
+        }
+    },
+    Quickshot = {
+        Noun = "Quickshot",
+        XPMult = 1.2,
+        function apply(e) {
+            e.m.Name = split(e.m.Name, " ")[0] + " " + this.Noun;
+
+            // More action points and initiative, add stamina and fatigue recovery to compensate
+            e.m.BaseProperties.ActionPoints += 3;
+            e.m.BaseProperties.Initiative += 30;
+            e.m.BaseProperties.Stamina += 25;
+            e.m.BaseProperties.FatigueRecoveryRate += 5;
+
+            // Bad shooter doesn't even try to shoot head
+            Mod.offense(e, -10);
+            e.m.BaseProperties.RangedDefense += 15;
+            e.m.BaseProperties.HitChance = [90, 10];  // Down from 75/25
+
+            // Can't make an aimed shot, overwhelms instead
+            e.m.Skills.removeByID("actives.aimed_shot")
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_overwhelm"));
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_dodge"));
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_pathfinder"));
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_quick_hands"));
+            e.m.Skills.add(this.new("scripts/skills/actives/footwork"));
+
+            // TODO: nomads/bandits
+            Mod.ensureHelmet(e, ["open_leather_cap", "full_leather_cap"], 60);
         }
     },
     Sly = {
@@ -300,17 +332,31 @@ Strategy = se.Strategy <- {
             return {bandit = quirks, nomad = quirks};
         }
     },
-    Headshot = {
+    Shot = {
         Priority = 4,
         MinScale = 0.4,
         MaxScale = 1.2,
         AnyTypes = ["bandit_marksman", "nomad_archer"],
         function getPlan(stats, maturity) {
-            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.15, 0.5);
+            local scenario = Rand.weighted([55, 35, 10], ["head", "fast", "mixed"]);
+            local min, max;
+            switch (scenario) {
+                case "head": min = 0.15; max = 0.5; break;
+                case "fast": min = 0.3; max = 1; break;
+                case "mixed": min = 0.2; max = 0.75; break;
+            }
+
+            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, min, max);
             if (num == 0) return null;
 
+            local quirks;
+            switch (scenario) {
+                case "head": quirks = array(num, Quirk.Headshot); break;
+                case "fast": quirks = array(num, Quirk.Quickshot); break;
+                case "mixed": quirks = Rand.choices(num, [Quirk.Headshot, Quirk.Quickshot]); break;
+            }
+
             // They don't go together so it's safe to queue both types to same array
-            local quirks = array(num, Quirk.Headshot);
             return {bandit_marksman = quirks, nomad_archer = quirks}
         }
     }
@@ -708,7 +754,6 @@ Util.extend(Mod, {
     }
 
     // Items
-    function ensureHelmet(e, options) {
     function ensureWeapon(e, options, value = 0) {
         local weapon = e.m.Items.getItemAtSlot(gt.Const.ItemSlot.Mainhand);
         if (!weapon || weapon.m.Value < value) {
@@ -717,8 +762,10 @@ Util.extend(Mod, {
             e.m.Items.equip(weapon);
         }
     }
+    function ensureHelmet(e, options, value = 0) {
         local helmet = e.m.Items.getItemAtSlot(gt.Const.ItemSlot.Head);
-        if (!helmet) {
+        if (!helmet || helmet.m.Value < value) {
+            if (helmet) e.m.Items.unequip(helmet);
             helmet = this.new("scripts/items/helmets/" + Rand.choice(options));
             e.m.Items.equip(helmet);
         }
