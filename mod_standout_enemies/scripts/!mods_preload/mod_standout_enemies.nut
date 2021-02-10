@@ -74,7 +74,7 @@ Quirk = se.Quirk <- {
                     upgrades.extend([
                          "leather_neckguard_upgrade" "mail_patch_upgrade" "metal_plating_upgrade"
                     ])
-                    if ("getEthnicity" in e && e.getEthnicity() == 1)
+                    if (Mod.isSouthern(e))
                         upgrades.extend(["hyena_fur_upgrade" "serpent_skin_upgrade"])
                     else {
                         upgrades.extend(["direwolf_pelt_upgrade"]);
@@ -203,7 +203,7 @@ Quirk = se.Quirk <- {
             // Bad shooter doesn't even try to shoot head
             Mod.offense(e, -10);
             e.m.BaseProperties.RangedDefense += 15;
-            e.m.BaseProperties.HitChance = [90, 10];  // Down from 75/25
+            e.m.BaseProperties.HitChance = [95, 5];  // Down from 75/25
 
             // Can't make an aimed shot, overwhelms instead
             e.m.Skills.removeByID("actives.aimed_shot")
@@ -215,6 +215,13 @@ Quirk = se.Quirk <- {
 
             // TODO: nomads/bandits
             Mod.ensureHelmet(e, ["open_leather_cap", "full_leather_cap"], 60);
+
+            // Ensure not using a crossbow
+            local weapon = Mod.getWeapon(e);
+            if (weapon.m.ID.find("crossbow") != null) {
+                local bow = Mod.isSouthern(e) ? "oriental/composite_bow" : "hunting_bow";
+                Mod.setWeapon(e, [bow]);
+            }
         }
     },
     Sly = {
@@ -776,8 +783,14 @@ Util.extend(Mod, {
     }
 
     // Items
+    function getWeapon(e) {
+        return e.m.Items.getItemAtSlot(gt.Const.ItemSlot.Mainhand);
+    }
+    function setWeapon(e, options) {
+        Mod.ensureWeapon(e, options, 1000000000);
+    }
     function ensureWeapon(e, options, value = 0) {
-        local weapon = e.m.Items.getItemAtSlot(gt.Const.ItemSlot.Mainhand);
+        local weapon = Mod.getWeapon(e);
         if (!weapon || weapon.m.Value < value) {
             if (weapon) e.m.Items.unequip(weapon);
             weapon = this.new("scripts/items/weapons/" + Rand.choice(options));
@@ -811,6 +824,11 @@ Util.extend(Mod, {
             local armorMax = piece.getArmorMax();
             piece.setArmor(Math.min(armorMax, armor + pct * armorMax));
         }
+    }
+
+    // Tests
+    function isSouthern(e) {
+        return "getEthnicity" in e && e.getEthnicity() == 1
     }
 
     // Presentation
