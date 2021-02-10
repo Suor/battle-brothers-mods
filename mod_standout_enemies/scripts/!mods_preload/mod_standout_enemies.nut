@@ -357,7 +357,7 @@ Strategy = se.Strategy <- {
     Orc = {
         Priority = 4,
         MinScale = 0.5,
-        MaxScale = 1.5,
+        MaxScale = 1.7,
         AnyTypes = ["orc_warrior", "orc_berserker", "orc_warlord"],
         function getPlan(stats, maturity) {
             local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.5, 1);
@@ -385,9 +385,9 @@ Strategy = se.Strategy <- {
                 }
             }
 
-            // Small chance to make all quirked berserkers Furious, but usually turn half of them
-            local allFury = maturity > 0.5 && Rand.chance(0.15);
-            plan.orc_berserker.apply(@(q) allFury || Rand.chance(0.5) ? Quirk.Furious : q);
+            // Small chance to make more berserkers Furious, but usually turn about one third
+            local moreFury = maturity > 0.75 && Rand.chance(0.15 * maturity);
+            plan.orc_berserker.apply(@(q) Rand.chance(moreFury ? 0.75 : 0.35) ? Quirk.Furious : q);
 
             return plan;
         }
