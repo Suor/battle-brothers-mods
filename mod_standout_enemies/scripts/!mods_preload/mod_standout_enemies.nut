@@ -235,10 +235,19 @@ Quirk = se.Quirk <- {
             Quirk.Stubborn.stubborn(e, 0.75, 0.35);
 
             // Reddish head and body and no hair
-            Mod.color(e, "head", "#ffaaaa", 0.9);
-            Mod.color(e, "injury", "#ffaaaa", 0.9);
-            Mod.color(e, "body", "#ffaaaa", 0.9);
-            e.getSprite("hair").Visible = false;
+            Mod.color(e, "head", "#ff9999", 0.9);
+            Mod.color(e, "injury", "#ff9999", 0.9);
+            Mod.color(e, "body", "#ff9999", 0.9);
+
+            Mod.ensureWeapon(e, ["scramasax", "khopesh", "boar_spear", "hand_axe"], 500);
+
+            // Cleaned up and bald
+            e.getSprite("body_blood").Visible = false;
+            e.getSprite("dirt").Visible = false;
+            e.onAppearanceChanged <- function( _appearance, _setDirty = true ) {
+                _appearance.HideHair = true;
+                e.actor.onAppearanceChanged(_appearance, true);
+            }
         }
     },
     SkilledNecro = {
@@ -700,6 +709,14 @@ Util.extend(Mod, {
 
     // Items
     function ensureHelmet(e, options) {
+    function ensureWeapon(e, options, value = 0) {
+        local weapon = e.m.Items.getItemAtSlot(gt.Const.ItemSlot.Mainhand);
+        if (!weapon || weapon.m.Value < value) {
+            if (weapon) e.m.Items.unequip(weapon);
+            weapon = this.new("scripts/items/weapons/" + Rand.choice(options));
+            e.m.Items.equip(weapon);
+        }
+    }
         local helmet = e.m.Items.getItemAtSlot(gt.Const.ItemSlot.Head);
         if (!helmet) {
             helmet = this.new("scripts/items/helmets/" + Rand.choice(options));
