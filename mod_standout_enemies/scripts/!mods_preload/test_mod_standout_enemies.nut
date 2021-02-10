@@ -8,7 +8,7 @@ if ("dofile" in gt) {
     }
     Const <- {
         SkillType = {Active = 1}
-        ItemSlot = {Body = 2, Head = 3}
+        ItemSlot = {Mainhand = 0, Body = 2, Head = 3}
     }
     local Days = 110;
     World <- {
@@ -58,6 +58,7 @@ if ("dofile" in gt) {
                 IsResurrected = false
                 ResurrectionChance = 66
                 ResurrectionValue = 2.0
+                DecapitateBloodAmount = 1.0
                 BaseProperties = {
                     ActionPoints = 7
                     MeleeSkill = 50
@@ -78,15 +79,20 @@ if ("dofile" in gt) {
                 Items = {
                     function getItemAtSlot(s) {
                         return Math.rand(0, 1) ? null : {
+                            m = {ID = "weapon.crossbow", Value = 350}
                             function getArmor() {return 39}
                             function getArmorMax() {return 80}
                             function setArmor(val) {}
+                            function getUpgrade() {return null}
+                            function setUpgrade(val) {}
                         }
                     }
                     function equip(item) {}
+                    function unequip(item) {}
                 }
                 Skills = {
                     function add(skill) {}
+                    function removeByID (id) {}
                     function update() {}
                 }
                 AIAgent = {
@@ -151,8 +157,12 @@ if ("dofile" in gt) {
     ::mods_hookBaseClass <- function (x, func) {
         func({})
     }
+    ::mods_hookDescendants <- function (x, func) {
+        func({SuperName = "actor", actor = {onDeath = 1, onResurrected = 1}})
+    }
 
     // Load mod script to check for syntax at least
+    dofile("!stdlib.nut", true);
     dofile("mod_standout_enemies.nut", true);
 
     function setupParty(party) {
@@ -176,23 +186,23 @@ if ("dofile" in gt) {
     ));
 
     // Test bandits party
-    srand(7);
+    srand(53); // 11
     Days = 95;
     setupParty(makeParty(
         "mixed-bandits", "bandits",
-        concat(array(6, "bandit_raider"), array(4, "bandit_marksman"))
+        concat(array(6, "bandit_raider"), array(6, "bandit_marksman"))
     ));
 
     // Test orcs party
     srand(4);
-    Days = 115;
+    Days = 125;
     setupParty(makeParty(
         "horde", "orcs",
         concat(array(4, "orc_warrior"), array(4, "orc_berserker"), array(2, "orc_warlord"))
     ));
 
     // Test barbarians party
-    srand(2);
+    srand(6);
     Days = 95;
     setupParty(makeParty(
         "barbarian-horde", "barbarians",
@@ -206,11 +216,14 @@ if ("dofile" in gt) {
 
     // Check something about Squirrel
     local function main() {
-        // Debug.log("x", {
-        //     x = {y = 2},
-        //     log = [200,300,400,500,600,700,800]
-        // });
+        Debug.log("x", {
+            x = {y = 2},
+            y = {z = {a = {b = 123}}},
+            log = [200,300,400,500,600,700,800]
+            function a() {}
+            function b() {}
+        }, {depth = 3, width = 50});
     }
 
-    main();
+    // main();
 }
