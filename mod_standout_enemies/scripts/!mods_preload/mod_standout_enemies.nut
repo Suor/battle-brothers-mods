@@ -47,7 +47,6 @@ Quirk = se.Quirk <- {
             e.m.Skills.add(this.new("scripts/skills/perks/perk_adrenalin"));
             e.m.AIAgent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_adrenaline"));
 
-
             // Being fast helps hit and not being hit, but reduces damage to compensate
             Mod.offense(e, 10, 0.85);
             Mod.defense(e, 5);
@@ -68,16 +67,19 @@ Quirk = se.Quirk <- {
 
             // A chance to add some armor upgrade
             if (Mod.getArmor(e) && Rand.chance(0.5)) {
-                local upgrades = [
-                    "leather_shoulderguards_upgrade" "leather_neckguard_upgrade"
-                    "double_mail_upgrade" "mail_patch_upgrade"
-                    "metal_plating_upgrade"
-                ];
-                if ("getEthnicity" in e && e.getEthnicity() == 1)
-                    upgrades.extend(["hyena_fur_upgrade" "serpent_skin_upgrade"])
-                else {
+                local upgrades = ["leather_shoulderguards_upgrade" "double_mail_upgrade"];
+                if (e.ClassName.find("barbarian") != null)
                     upgrades.extend(["direwolf_pelt_upgrade"]);
-                    if (Rand.chance(0.5)) upgrades.push("light_padding_replacement_upgrade")
+                else {
+                    upgrades.extend([
+                         "leather_neckguard_upgrade" "mail_patch_upgrade" "metal_plating_upgrade"
+                    ])
+                    if ("getEthnicity" in e && e.getEthnicity() == 1)
+                        upgrades.extend(["hyena_fur_upgrade" "serpent_skin_upgrade"])
+                    else {
+                        upgrades.extend(["direwolf_pelt_upgrade"]);
+                        if (Rand.chance(0.5)) upgrades.push("light_padding_replacement_upgrade");
+                    }
                 }
                 Mod.ensureArmorUpgrade(e, upgrades);
             }
