@@ -64,7 +64,27 @@ Quirk = se.Quirk <- {
             Mod.offense(e, 0, 1.25);
             Mod.defense(e, -5, 1.75);
             Mod.bravery(e, 1.5);  // More hits need to be brave longer
-            Mod.scale(e, 1.15);  // Actually bigger sprites :)
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_stalwart"));
+
+            // A chance to add some armor upgrade
+            if (Mod.getArmor(e) && Rand.chance(0.5)) {
+                local upgrades = [
+                    "leather_shoulderguards_upgrade" "leather_neckguard_upgrade"
+                    "double_mail_upgrade" "mail_patch_upgrade"
+                    "metal_plating_upgrade"
+                ];
+                if ("getEthnicity" in e && e.getEthnicity() == 1)
+                    upgrades.extend(["hyena_fur_upgrade" "serpent_skin_upgrade"])
+                else {
+                    upgrades.extend(["direwolf_pelt_upgrade"]);
+                    if (Rand.chance(0.5)) upgrades.push("light_padding_replacement_upgrade")
+                }
+                Mod.ensureArmorUpgrade(e, upgrades);
+            }
+
+            // Actually bigger sprites and more blood
+            Mod.scale(e, 1.15);
+            e.m.DecapitateBloodAmount *= 2.0;
         }
     },
     Fearless = {
@@ -369,7 +389,7 @@ Strategy = se.Strategy <- {
             local num = se.getQuirkedNum(stats, this.Types, maturity, 0.6, 0.9);
             if (num == 0) return null;
 
-            return {barbarian = array(num, Quirk.Fearless)}
+            return {barbarian = Rand.choices(num, [Quirk.Fearless, Quirk.Fearless, Quirk.Big])}
         }
     },
     BarbarianChosen = {
@@ -769,6 +789,16 @@ Util.extend(Mod, {
             helmet = this.new("scripts/items/helmets/" + Rand.choice(options));
             e.m.Items.equip(helmet);
         }
+    }
+    function getArmor(e) {
+        return e.m.Items.getItemAtSlot(gt.Const.ItemSlot.Body);
+    }
+    function ensureArmorUpgrade(e, options) {
+        local armor = Mod.getArmor(e);
+        if (armor.getUpgrade()) return;
+
+        local upgrade = this.new("scripts/items/armor_upgrades/" + Rand.choice(options));
+        armor.setUpgrade(upgrade);
     }
 
     function addArmorPct(e, part, pct) {
