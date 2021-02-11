@@ -47,7 +47,7 @@ Quirk = se.Quirk <- {
             e.m.Skills.add(this.new("scripts/skills/perks/perk_adrenalin"));
             e.m.AIAgent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_adrenaline"));
 
-            // Being fast helps hit and not being hit, but reduces damage to compensate
+            // Being fast helps hit and not being hit, reduce damage to compensate
             Mod.offense(e, 10, 0.85);
             Mod.defense(e, 5);
             Mod.bravery(e, 1.3);
