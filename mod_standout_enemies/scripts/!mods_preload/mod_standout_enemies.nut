@@ -66,20 +66,16 @@ Quirk = se.Quirk <- {
             e.m.Skills.add(this.new("scripts/skills/perks/perk_stalwart"));
 
             // A chance to add some armor upgrade
-            if (Mod.getArmor(e) && Rand.chance(0.5)) {
+            local armor = Mod.getArmor(e), cond = armor ? armor.getArmorMax() : 0;
+            if (cond >= 45 && Rand.chance(0.25)) {
                 local upgrades = ["leather_shoulderguards_upgrade" "double_mail_upgrade"];
-                if (e.ClassName.find("barbarian") != null)
+                if (cond >= 80) upgrades.extend(["mail_patch_upgrade" "metal_plating_upgrade"]);
+                if (Mod.isSouthern(e)) {
+                    upgrades.extend(["hyena_fur_upgrade"])
+                    if (cond >= 100 && Rand.chance(0.5)) upgrades.push("serpent_skin_upgrade");
+                } else {
                     upgrades.extend(["direwolf_pelt_upgrade"]);
-                else {
-                    upgrades.extend([
-                         "leather_neckguard_upgrade" "mail_patch_upgrade" "metal_plating_upgrade"
-                    ])
-                    if (Mod.isSouthern(e))
-                        upgrades.extend(["hyena_fur_upgrade" "serpent_skin_upgrade"])
-                    else {
-                        upgrades.extend(["direwolf_pelt_upgrade"]);
-                        if (Rand.chance(0.5)) upgrades.push("light_padding_replacement_upgrade");
-                    }
+                    if (cond >= 90 && Rand.chance(0.5)) upgrades.push("additional_padding_upgrade");
                 }
                 Mod.ensureArmorUpgrade(e, upgrades);
             }
