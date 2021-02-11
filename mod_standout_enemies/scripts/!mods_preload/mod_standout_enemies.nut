@@ -320,11 +320,10 @@ Quirk = se.Quirk <- {
                 }
             }
 
-            // A bit harder to shoot
-            e.m.BaseProperties.RangedDefense += 15;
-
-            // Many his zombies die, need extra bravery
-            Mod.bravery(e, 1.5);
+            e.m.BaseProperties.RangedDefense += 15; // A bit harder to shoot
+            Mod.bravery(e, 1.5); // Many his zombies die, need extra bravery
+            // Have some fancy weapon
+            Mod.ensureWeapon(e, ["oriental/qatal_dagger", "ancient/khopesh", "rondel_dagger"], 300)
         }
     },
 }
