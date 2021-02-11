@@ -214,7 +214,7 @@ Quirk = se.Quirk <- {
 
             // Ensure not using a crossbow
             local weapon = Mod.getWeapon(e);
-            if (weapon.m.ID.find("crossbow") != null) {
+            if (!weapon || weapon.m.ID.find("crossbow") != null) {
                 local bow = Mod.isSouthern(e) ? "oriental/composite_bow" : "hunting_bow";
                 Mod.setWeapon(e, [bow]);
             }
