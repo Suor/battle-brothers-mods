@@ -874,17 +874,22 @@ Util.extend(Mod, {
         }
     });
 
-    ::mods_hookDescendants("entity/tactical/actor", function(cls) {
+    ::mods_hookBaseClass("entity/tactical/actor", function(cls) {
         // Save quirk to corpse and reapply on resurrection
-        Hook.after(cls, "onDeath", function(_killer, _skill, _tile, _fatalityType) {
+        local onDeath = "onDeath" in cls ? cls.onDeath : null;
+        cls.onDeath <- function (_killer, _skill, _tile, _fatalityType) {
+            if (onDeath) onDeath(_killer, _skill, _tile, _fatalityType);
             if (_tile && "se_Quirk" in this.m) {
                 local corpse = _tile.Properties.get("Corpse");
                 corpse.se_Quirk <- this.m.se_Quirk;
             }
-        })
-        Hook.after(cls, "onResurrected", function(_info) {
+        }
+
+        local onResurrected = "onResurrected" in cls ? cls.onResurrected : null;
+        cls.onResurrected <- function (_info) {
+            if (onResurrected) onResurrected(_info);
             if ("se_Quirk" in _info) se.applyQuirk(this, _info.se_Quirk);
-        })
+        }
     })
 
     // Since actor hook doesn't reach descendant of descendants
@@ -892,12 +897,14 @@ Util.extend(Mod, {
     ::mods_hookBaseClass("entity/tactical/goblin", function(cls) {
         // Make demounted goblin inherit a quirk
         if ("spawnGoblin" in cls) {
-            Hook.after(cls, "spawnGoblin", function(_info) {
+            local spawnGoblin = cls.spawnGoblin;
+            cls.spawnGoblin <- function (_info) {
+                spawnGoblin(_info);
                 if ("se_Quirk" in this.m) {
                     local goblin = _info.Tile.getEntity();
                     se.applyQuirk(goblin, this.m.se_Quirk);
                 }
-            })
+            }
         }
     })
 });
