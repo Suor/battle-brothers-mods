@@ -140,8 +140,28 @@ local AutoReload = true; // should we try to automatically reload if we have unu
           }
         }
 
+        // Military agents don't have this
+        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_disengage"));
+        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_throw_net"));
+        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_adrenaline"));
+        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_pickup_weapon"));
+        // Disabled since doesn't consult offhand/backpack at all
+        // agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_throw_bomb"));
+
+        // Until we properly use standard bearer
+        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_rally"));
+
+        // Use shield wall and split sheld less
+        agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Shieldwall] = 0.75;
+        agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.SplitShield] = 0.75;
+
+        // Should not be needed as long as we set IsControlledByPlayer to true
         agent.removeBehavior(Const.AI.Behavior.ID.Retreat); // retreat is always chosen for players if available, so remove it
         agent.m.Properties.TargetPriorityHittingAlliesMult *= 0.2; // reduce the chance of friendly fire
+
+        // Affects .isPlayerCnotrolled(), which affects many behaviors and logging
+        // this.m.IsControlledByPlayer = false;
+
         agent.setActor(this);
         setAIAgent(agent);
       }
@@ -157,6 +177,8 @@ local AutoReload = true; // should we try to automatically reload if we have unu
             local skill = getSkills().getSkillByID("effects.charmed");
             if(skill != null) skill.m.OriginalAgent = m._oldAgent;
           }
+          // Return control
+          // this.m.IsControlledByPlayer = true;
           delete m._oldAgent;
         }
       }
