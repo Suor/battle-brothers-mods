@@ -41,4 +41,5 @@ sync-force:
 	cp $(DATA_DIR)$(TEST_SCRIPT) $(TEST_SCRIPT)
 
 sync-back:
+	mkdir -p $(DATA_DIR)$(SUBDIR)
 	cp $(SCRIPT) $(DATA_DIR)$(SCRIPT)
