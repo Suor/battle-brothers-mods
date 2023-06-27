@@ -33,7 +33,7 @@ local givePerk = @(l) perkLevels.find(l) != null;
       local v = getAttributeLevelUpValues();
       local extra = function(t, bonus = 0)
       {
-        local chance = talentValue * t * (1 + bonus);
+        local chance = talentValue * t * (1 + bonus) * 100;
         return Math.rand(0, chance + 99) / 100;
       }
 
