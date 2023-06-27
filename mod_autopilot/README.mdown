@@ -1,0 +1,21 @@
+# Autopilot Mod
+
+*This is authored by AdamMil01 and modified by me. Original version is available [here](original)*
+
+This mod adds some automation and quality-of-life improvements to battles: fast item switching, auto-passing, auto-shieldwalling (and other skills), ignoring bros, and AI control. See fuller description on Nexus Mods page above.
+
+My modifications include:
+
+- use rally the troops
+- pick up a weapon
+- use nets
+- use adrenalin
+- shield wall and split shields less
+
+
+## Install
+
+Download, zip the dirs and put it into `data` dir.
+
+
+[original]: https://www.nexusmods.com/battlebrothers/mods/62
