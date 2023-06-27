@@ -12,7 +12,7 @@ local givePerk = @(l) perkLevels.find(l) != null;
 // local givePerk = @(l) l > afterLevel && (l - afterLevel) % N == 0;
 
 
-::mods_registerMod("mod_vap", 1.6, "Veteran attrs and perks");
+::mods_registerMod("mod_vap", 1.7, "Veteran attrs and perks");
 ::mods_queue("mod_vap", "mod_hooks(>=17)", function() {
   this.logInfo("vap: loading");
 
