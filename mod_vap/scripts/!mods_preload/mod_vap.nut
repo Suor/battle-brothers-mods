@@ -1,6 +1,8 @@
 // Uncomment a section below with a desired behavior and comment out the other one.
 // Adjust variables to your liking.
 
+local talentValue = 0.25;
+
 // Give an extra perk on listed levels
 local perkLevels = [13, 16, 20, 25, 31];
 local givePerk = @(l) perkLevels.find(l) != null;
@@ -31,7 +33,7 @@ local givePerk = @(l) perkLevels.find(l) != null;
       local v = getAttributeLevelUpValues();
       local extra = function(t, bonus = 0)
       {
-        local chance = 33.3 * t * (1 + bonus);
+        local chance = talentValue * t * (1 + bonus);
         return Math.rand(0, chance + 99) / 100;
       }
 
