@@ -1,6 +1,10 @@
 // Uncomment a section below with a desired behavior and comment out the other one.
 // Adjust variables to your liking.
 
+// Each star gives this amount on average on top of 1 you get as veteran.
+// I.e. with 1 star you will get 2 every 4th level, with 2 stars every other, etc.
+// If the value * stars > 1 you might get more than 2 sometimes.
+// This value is doubled for initiative.
 local talentValue = 0.25;
 
 // Give an extra perk on listed levels
