@@ -29,27 +29,21 @@ local givePerk = @(l) perkLevels.find(l) != null;
 
     // Give rolls of 2 on veteran levels to attrs with talents sometimes
     local getAttributeLevelUpValues = obj.getAttributeLevelUpValues;
-    obj.getAttributeLevelUpValues = function()
-    {
-      if(m.Attributes[0].len() != 0) return getAttributeLevelUpValues(); // no bonus if not in veteran levels
-      this.logInfo("vap: extra attrs values " + obj.getName());
+    obj.getAttributeLevelUpValues = function() {
+      // only do this once, also filled in already for non-veteran levels
+      if(m.Attributes[0].len() == 0) {
+          this.logInfo("vap: extra attrs values " + obj.getName());
 
-      local v = getAttributeLevelUpValues();
-      local extra = function(t, bonus = 0)
-      {
-        local chance = talentValue * t * (1 + bonus) * 100;
-        return Math.rand(0, chance + 99) / 100;
+          local extra = function(t, bonus = 0) {
+            local chance = talentValue * 2 * t * (1 + bonus) * 100;
+            return Math.rand(0, chance + 99) / 100;
+          }
+          for( local i = 0; i != Const.Attributes.COUNT; i = ++i ) {
+            local bonus = i == Const.Attributes.Initiative ? 1 : 0;
+            this.m.Attributes[i].insert(0, 1 + extra(m.Talents[i], bonus));
+          }
       }
-
-      v.hitpointsIncrease += extra(m.Talents[Const.Attributes.Hitpoints]);
-      v.braveryIncrease += extra(m.Talents[Const.Attributes.Bravery]);
-      v.fatigueIncrease += extra(m.Talents[Const.Attributes.Fatigue]);
-      v.initiativeIncrease += extra(m.Talents[Const.Attributes.Initiative], 1);
-      v.meleeSkillIncrease += extra(m.Talents[Const.Attributes.MeleeSkill]);
-      v.rangeSkillIncrease += extra(m.Talents[Const.Attributes.RangedSkill]);
-      v.meleeDefenseIncrease += extra(m.Talents[Const.Attributes.MeleeDefense]);
-      v.rangeDefenseIncrease += extra(m.Talents[Const.Attributes.RangedDefense]);
-      return v;
+      return getAttributeLevelUpValues()
     }
 
     // Add an extra perk point for each odd level
