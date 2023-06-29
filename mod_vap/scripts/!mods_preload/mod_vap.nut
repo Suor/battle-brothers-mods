@@ -2,17 +2,17 @@
 // Adjust variables to your liking.
 
 // Each star gives this amount on average on top of 1 you get as veteran.
-// I.e. with 1 star you will get 2 every 4th level, with 2 stars every other, etc.
+// I.e. with 1 star you will get 2 every 6th level, with 3 stars every other, etc.
 // If the value * stars > 1 you might get more than 2 sometimes.
 // This value is doubled for initiative.
-local talentValue = 0.25;
+local talentValue = 0.166;
 
 // Give an extra perk on listed levels
 local perkLevels = [13, 16, 20, 25, 31];
 local givePerk = @(l) perkLevels.find(l) != null;
 
 //// Give an extra perk every N levels after a certain one
-// local N = 3, afterLevel = 11;
+// local N = 3, afterLevel = 11
 // local givePerk = @(l) l > afterLevel && (l - afterLevel) % N == 0;
 
 
