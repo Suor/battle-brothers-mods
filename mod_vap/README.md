@@ -1,10 +1,14 @@
 # Veteran Attrs and Perks Mod
 
-Adds an extra perk on certain veteran levels, defaults to 13, 16, 20, 25 and 31. May be configured. Also gives some chance to roll 2 to any skill with talent on veteran levels.
+Veterans will sometimes get better roll than just 1 for attributes they have talents in. Also gives extra perks for veterans at certain levels.
 
-To configure levels with perks open `scripts/!mod_preload/mod_vap.nut` and adjust values at the top of the file.
+Talents provide 0.16 point per level per star on average compared to 0.5 on non-veteran levels.
+Extra perks default to 13, 16, 20, 25 and 31. May be configured or set to every n-th level.
 
-The attributes idea was taken from [Slight veteran level buff][slightvb] mod.
+To configure things open `scripts/!mod_preload/mod_vap.nut` and adjust values at the top of the file.
+
+The attributes idea was taken from [Slight veteran level buff][slightvb] mod. Compared to that this is configurable, no longer looses attribute rolls on character screen exit and has other fixes.
+
 
 ## Install
 
