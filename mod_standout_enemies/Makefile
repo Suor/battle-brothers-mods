@@ -46,3 +46,4 @@ sync-force:
 sync-back:
 	mkdir -p $(DATA_DIR)$(SUBDIR)
 	cp $(SCRIPT) $(DATA_DIR)$(SCRIPT)
+	cp $(LIB) $(DATA_DIR)$(LIB)
