@@ -296,7 +296,7 @@ Quirk = se.Quirk <- {
             Mod.color(e, "injury", "#ff9999", 0.9);
             Mod.color(e, "body", "#ff9999", 0.9);
 
-            Mod.ensureWeapon(e, ["scramasax", "khopesh", "boar_spear", "hand_axe"], 500);
+            Mod.ensureWeapon(e, ["scramasax", "ancient/khopesh", "boar_spear", "hand_axe"], 500);
 
             // Cleaned up and bald
             e.getSprite("body_blood").Visible = false;
