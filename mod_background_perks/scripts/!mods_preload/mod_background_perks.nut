@@ -4,7 +4,9 @@
 ::mods_hookNewObject("entity/tactical/player", function ( o ) {
     local baseSetStartValuesEx = o.setStartValuesEx;
     o.setStartValuesEx = function ( _backgrounds ) {
-        local scale = 1.0 + Math.minf(0, Math.maxf(1, this.World.getTime().Days / 50));
+        local scale = 1.0 + Math.maxf(0, Math.minf(1, this.World.getTime().Days / 100.0));
+        if (::mods_getRegisteredMod("mod_stupid_game")) scale += 1.0;
+        this.logInfo("bp: " + this.getName() + " scale " + scale);
 
         function unlockPerkBasedOnBackground( _perk, _chance = 100 ) {
             if (this.hasPerk(_perk)) return;
@@ -19,7 +21,7 @@
         baseSetStartValuesEx(_backgrounds);
         local originalPerkPoints = this.m.PerkPoints;
         local background = this.m.Background;
-        this.logInfo("bp: Rollling " + this.getName() + " background " + background.getID());
+        this.logInfo("bp: *** Rollling " + this.getName() + " background " + background.getID());
         this.unlockPerkBasedOnBackground("perk.gifted", 4);
         this.unlockPerkBasedOnBackground("perk.hold_out", 4);
         // this.unlockPerkBasedOnBackground("perk.adrenaline", 2);
