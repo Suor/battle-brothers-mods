@@ -154,6 +154,7 @@ local AutoReload = true; // should we try to automatically reload if we have unu
         // Use shield wall and split sheld less
         agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Shieldwall] = 0.75;
         agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.SplitShield] = 0.75;
+        agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.KnockBack] = 0.75;
 
         // Should not be needed as long as we set IsControlledByPlayer to true
         agent.removeBehavior(Const.AI.Behavior.ID.Retreat); // retreat is always chosen for players if available, so remove it
