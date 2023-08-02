@@ -29,6 +29,8 @@
         {
             this.unlockPerkBasedOnBackground("perk.hold_out", 5);
             this.unlockPerkBasedOnBackground("perk.shield_expert", 5);
+            this.unlockPerkBasedOnBackground("perk.brawny", 5);
+            this.unlockPerkBasedOnBackground("perk.fortified_mind", 5);
             this.unlockPerkBasedOnBackground("perk.rally_the_troops", 10);
             this.unlockPerkBasedOnBackground("perk.mastery.sword", 8);
         }
@@ -36,19 +38,21 @@
         if (background.getID() == "background.apprentice")
         {
             this.unlockPerkBasedOnBackground("perk.student");
-            this.unlockPerkBasedOnBackground("perk.gifted", 15);
+            this.unlockPerkBasedOnBackground("perk.gifted", 25);
         }
 
         if (background.getID() == "background.assassin")
         {
             this.unlockPerkBasedOnBackground("perk.mastery.dagger");
             this.unlockPerkBasedOnBackground("perk.backstabber", 50);
+            this.unlockPerkBasedOnBackground("perk.crippling_strikes", 25);
         }
 
         if (background.getID() == "background.barbarian")
         {
-            this.unlockPerkBasedOnBackground("perk.adrenaline", 50);
+            this.unlockPerkBasedOnBackground("perk.adrenaline", 25);
             this.unlockPerkBasedOnBackground("perk.relentless", 50);
+            this.unlockPerkBasedOnBackground("perk.colossus", 15);
         }
 
         if (background.getID() == "background.bastard")
@@ -72,11 +76,13 @@
         if (background.getID() == "background.beggar")
         {
             this.unlockPerkBasedOnBackground("perk.underdog");
+            this.unlockPerkBasedOnBackground("perk.nine_lives", 10);
+            this.unlockPerkBasedOnBackground("perk.bags_and_belts", 10);
         }
 
         if (background.getID() == "background.bowyer")
         {
-            this.unlockPerkBasedOnBackground("perk.bullseye", 15);
+            this.unlockPerkBasedOnBackground("perk.bullseye", 25);
             this.unlockPerkBasedOnBackground("perk.quick_hands", 25);
             this.unlockPerkBasedOnBackground("perk.mastery.bow", 5);
         }
@@ -87,6 +93,9 @@
             this.unlockPerkBasedOnBackground("perk.overwhelm", 5);
             this.unlockPerkBasedOnBackground("perk.steel_brow", 5);
             this.unlockPerkBasedOnBackground("perk.relentless", 35);
+            this.unlockPerkBasedOnBackground("perk.underdog", 10);
+            this.unlockPerkBasedOnBackground("perk.mastery.mace", 10);
+            this.unlockPerkBasedOnBackground("perk.dodge", 3);
         }
 
         if (background.getID() == "background.butcher")
@@ -99,6 +108,8 @@
         if (background.getID() == "background.caravan_hand")
         {
             this.unlockPerkBasedOnBackground("perk.bags_and_belts");
+            this.unlockPerkBasedOnBackground("perk.quick_hands", 10);
+            this.unlockPerkBasedOnBackground("perk.colossus", 3);
         }
 
         if (background.getID() == "background.companion")
@@ -109,7 +120,9 @@
         if (background.getID() == "background.cultist")
         {
             this.unlockPerkBasedOnBackground("perk.fearsome", 35);
+            this.unlockPerkBasedOnBackground("perk.mastery.dagger", 25);
             this.unlockPerkBasedOnBackground("perk.relentless", 20);
+            this.unlockPerkBasedOnBackground("perk.fortified_mind", 10);
         }
 
         if (background.getID() == "background.cripple")
@@ -124,7 +137,8 @@
             this.unlockPerkBasedOnBackground("perk.fearsome", 20);
             this.unlockPerkBasedOnBackground("perk.relentless", 20);
             this.unlockPerkBasedOnBackground("perk.fortified_mind", 20);
-            this.unlockPerkBasedOnBackground("perk.mastery.sword", 10);
+            this.unlockPerkBasedOnBackground("perk.mastery.sword", 15);
+            this.unlockPerkBasedOnBackground("perk.reach_advantage", 10);
         }
 
         if (background.getID() == "background.daytaler")
@@ -133,6 +147,7 @@
             this.unlockPerkBasedOnBackground("perk.colossus", 2);
             this.unlockPerkBasedOnBackground("perk.recover", 5);
             this.unlockPerkBasedOnBackground("perk.fast_adaption", 35);
+            this.unlockPerkBasedOnBackground("perk.pathfinder", 2);
         }
 
         if (background.getID() == "background.deserter")
@@ -140,6 +155,7 @@
             this.unlockPerkBasedOnBackground("perk.dodge", 25);
             this.unlockPerkBasedOnBackground("perk.backstabber", 25);
             this.unlockPerkBasedOnBackground("perk.nine_lives", 25);
+            this.unlockPerkBasedOnBackground("perk.footwork", 15);
         }
 
         if (background.getID() == "background.disowned_noble")
@@ -147,16 +163,20 @@
             this.unlockPerkBasedOnBackground("perk.rally_the_troops", 2);
             this.unlockPerkBasedOnBackground("perk.backstabber", 40);
             this.unlockPerkBasedOnBackground("perk.mastery.sword", 8);
+            this.unlockPerkBasedOnBackground("perk.shield_expert", 8);
         }
 
         if (background.getID() == "background.eunuch")
         {
             this.unlockPerkBasedOnBackground("perk.taunt");
+            this.unlockPerkBasedOnBackground("perk.dodge", 10);
+            this.unlockPerkBasedOnBackground("perk.nine_lives", 3);
         }
 
         if (background.getID() == "background.farmhand")
         {
             this.unlockPerkBasedOnBackground("perk.colossus", 15);
+            this.unlockPerkBasedOnBackground("perk.bags_and_belts", 5);
         }
 
         if (background.getID() == "background.fisherman")
@@ -170,6 +190,7 @@
             this.unlockPerkBasedOnBackground("perk.mastery.flail", 50);
             this.unlockPerkBasedOnBackground("perk.indomitable", 5);
             this.unlockPerkBasedOnBackground("perk.relentless", 5);
+            this.unlockPerkBasedOnBackground("perk.nine_lives", 3);
         }
 
         if (background.getID() == "background.gambler")
@@ -182,6 +203,7 @@
         if (background.getID() == "background.gravedigger")
         {
             this.unlockPerkBasedOnBackground("perk.brawny", 50);
+            this.unlockPerkBasedOnBackground("perk.fortified_mind", 3);
         }
 
         if (background.getID() == "background.graverobber")
@@ -193,11 +215,14 @@
         if (background.getID() == "background.hedge_knight")
         {
             this.unlockPerkBasedOnBackground("perk.fearsome", 20);
+            this.unlockPerkBasedOnBackground("perk.battle_forged", 50);
+            this.unlockPerkBasedOnBackground("perk.brawny", 25);
         }
 
         if (background.getID() == "background.historian")
         {
             this.unlockPerkBasedOnBackground("perk.student");
+            this.unlockPerkBasedOnBackground("perk.gifted", 25);
             this.unlockPerkBasedOnBackground("perk.underdog", 10);
         }
 
@@ -205,12 +230,14 @@
         {
             this.unlockPerkBasedOnBackground("perk.underdog", 40);
             this.unlockPerkBasedOnBackground("perk.relentless", 30);
+            this.unlockPerkBasedOnBackground("perk.lone_wolf", 10);
         }
 
         if (background.getID() == "background.hunter")
         {
-            this.unlockPerkBasedOnBackground("perk.bullseye", 10);
+            this.unlockPerkBasedOnBackground("perk.bullseye", 18);
             this.unlockPerkBasedOnBackground("perk.mastery.bow", 5);
+            this.unlockPerkBasedOnBackground("perk.mastery.crossbow", 3);
         }
 
         if (background.getID() == "background.juggler")
@@ -219,6 +246,7 @@
             this.unlockPerkBasedOnBackground("perk.nimble", 15);
             this.unlockPerkBasedOnBackground("perk.dodge", 25);
             this.unlockPerkBasedOnBackground("perk.anticipation", 5);
+            this.unlockPerkBasedOnBackground("perk.head_hunter", 5);
         }
 
         if (background.getID() == "background.killer_on_the_run")
@@ -226,32 +254,41 @@
             this.unlockPerkBasedOnBackground("perk.duelist", 90);
             this.unlockPerkBasedOnBackground("perk.adrenaline", 40);
             this.unlockPerkBasedOnBackground("perk.relentless", 10);
+            this.unlockPerkBasedOnBackground("perk.head_hunter", 5);
+            this.unlockPerkBasedOnBackground("perk.killing_frenzy", 2);
         }
 
         if (background.getID() == "background.lumberjack")
         {
-            this.unlockPerkBasedOnBackground("perk.brawny", 10);
-            this.unlockPerkBasedOnBackground("perk.mastery.axe", 40);
-            this.unlockPerkBasedOnBackground("perk.colossus", 5);
+            this.unlockPerkBasedOnBackground("perk.brawny", 15);
+            this.unlockPerkBasedOnBackground("perk.mastery.axe", 50);
+            this.unlockPerkBasedOnBackground("perk.colossus", 10);
         }
 
         if (background.getID() == "background.mason")
         {
+            this.unlockPerkBasedOnBackground("perk.student", 10);
             this.unlockPerkBasedOnBackground("perk.recover", 2);
             this.unlockPerkBasedOnBackground("perk.brawny", 35);
+            this.unlockPerkBasedOnBackground("perk.mastery.hammer", 5);
         }
 
         if (background.getID() == "background.messenger")
         {
-            this.unlockPerkBasedOnBackground("perk.recover", 2);
+            this.unlockPerkBasedOnBackground("perk.recover", 5);
             this.unlockPerkBasedOnBackground("perk.pathfinder", 50);
+            this.unlockPerkBasedOnBackground("perk.footwork", 5);
+            this.unlockPerkBasedOnBackground("perk.bags_and_belts", 5);
         }
 
         if (background.getID() == "background.militia")
         {
             this.unlockPerkBasedOnBackground("perk.mastery.polearm", 15);
             this.unlockPerkBasedOnBackground("perk.mastery.spear", 15);
+            this.unlockPerkBasedOnBackground("perk.shield_expert", 10);
             this.unlockPerkBasedOnBackground("perk.rotation", 50);
+            this.unlockPerkBasedOnBackground("perk.steel_brow", 5);
+            this.unlockPerkBasedOnBackground("perk.recover", 3);
         }
 
         if (background.getID() == "background.miller")
@@ -263,7 +300,7 @@
 
         if (background.getID() == "background.miner")
         {
-            this.unlockPerkBasedOnBackground("perk.mastery.hammer", 40);
+            this.unlockPerkBasedOnBackground("perk.mastery.hammer", 50);
             this.unlockPerkBasedOnBackground("perk.steel_brow", 60);
             this.unlockPerkBasedOnBackground("perk.hold_out", 25);
         }
@@ -279,6 +316,7 @@
         if (background.getID() == "background.monk")
         {
             this.unlockPerkBasedOnBackground("perk.fortified_mind");
+            this.unlockPerkBasedOnBackground("perk.student", 10);
         }
 
         if (background.getID() == "background.orc_slayer")
@@ -292,6 +330,8 @@
         if (background.getID() == "background.peddler")
         {
             this.unlockPerkBasedOnBackground("perk.quick_hands", 50);
+            this.unlockPerkBasedOnBackground("perk.throwing", 10);
+            this.unlockPerkBasedOnBackground("perk.bags_and_belts", 10);
         }
 
         if (background.getID() == "background.pimp")
@@ -302,8 +342,11 @@
         if (background.getID() == "background.poacher")
         {
             this.unlockPerkBasedOnBackground("perk.nimble", 35);
-            this.unlockPerkBasedOnBackground("perk.bullseye", 10);
+            this.unlockPerkBasedOnBackground("perk.bullseye", 12);
+            this.unlockPerkBasedOnBackground("perk.quick_hands", 10);
             this.unlockPerkBasedOnBackground("perk.mastery.bow", 5);
+            this.unlockPerkBasedOnBackground("perk.mastery.crossbow", 3);
+            this.unlockPerkBasedOnBackground("perk.mastery.throwing", 3);
         }
 
         if (background.getID() == "background.raider")
@@ -317,6 +360,8 @@
             this.unlockPerkBasedOnBackground("perk.mastery.polearm", 3);
             this.unlockPerkBasedOnBackground("perk.mastery.spear", 2);
             this.unlockPerkBasedOnBackground("perk.mastery.crossbow", 1);
+            this.unlockPerkBasedOnBackground("perk.underdog", 1);
+            this.unlockPerkBasedOnBackground("perk.crippling_strikes", 1);
         }
 
         if (background.getID() == "background.ratcatcher")
@@ -347,6 +392,7 @@
             this.unlockPerkBasedOnBackground("perk.mastery.polearm", 6);
             this.unlockPerkBasedOnBackground("perk.mastery.spear", 3);
             this.unlockPerkBasedOnBackground("perk.mastery.crossbow", 1);
+            this.unlockPerkBasedOnBackground("perk.shield_expert", 5);
         }
 
         if (background.getID() == "background.sellsword")
@@ -361,6 +407,7 @@
             this.unlockPerkBasedOnBackground("perk.mastery.spear", 2);
             this.unlockPerkBasedOnBackground("perk.mastery.crossbow", 3);
             this.unlockPerkBasedOnBackground("perk.mastery.bow", 5);
+            this.unlockPerkBasedOnBackground("perk.lone_wolf", 5);
         }
 
         if (background.getID() == "background.servant")
@@ -368,36 +415,43 @@
             this.unlockPerkBasedOnBackground("perk.steel_brow", 50);
             this.unlockPerkBasedOnBackground("perk.gifted", 15);
             this.unlockPerkBasedOnBackground("perk.bags_and_belts", 10);
+            this.unlockPerkBasedOnBackground("perk.quick_hands", 5);
         }
 
         if (background.getID() == "background.shepherd")
         {
             this.unlockPerkBasedOnBackground("perk.pathfinder", 20);
             this.unlockPerkBasedOnBackground("perk.bullseye", 15);
+            this.unlockPerkBasedOnBackground("perk.pathfinder", 10);
         }
 
         if (background.getID() == "background.squire")
         {
-            this.unlockPerkBasedOnBackground("perk.student", 10);
+            this.unlockPerkBasedOnBackground("perk.student", 15);
+            this.unlockPerkBasedOnBackground("perk.gifted", 7);
         }
 
         if (background.getID() == "background.swordmaster")
         {
             this.unlockPerkBasedOnBackground("perk.mastery.sword");
+            this.unlockPerkBasedOnBackground("perk.duelist", 15);
             this.unlockPerkBasedOnBackground("perk.nimble", 25);
             this.unlockPerkBasedOnBackground("perk.footwork", 25);
+            this.unlockPerkBasedOnBackground("perk.rotation", 5);
         }
 
         if (background.getID() == "background.tailor")
         {
             this.unlockPerkBasedOnBackground("perk.quick_hands");
             this.unlockPerkBasedOnBackground("perk.underdog", 20);
+            this.unlockPerkBasedOnBackground("perk.quick_hands", 20);
         }
 
         if (background.getID() == "background.thief")
         {
             this.unlockPerkBasedOnBackground("perk.quick_hands");
-            this.unlockPerkBasedOnBackground("perk.mastery.dagger", 15);
+            this.unlockPerkBasedOnBackground("perk.mastery.dagger", 25);
+            this.unlockPerkBasedOnBackground("perk.crippling_strikes", 10);
         }
 
         if (background.getID() == "background.vagabond")
@@ -405,21 +459,24 @@
             this.unlockPerkBasedOnBackground("perk.pathfinder", 40);
             this.unlockPerkBasedOnBackground("perk.recover", 20);
             this.unlockPerkBasedOnBackground("perk.footwork", 20);
+            this.unlockPerkBasedOnBackground("perk.colossus", 7);
         }
 
         if (background.getID() == "background.wildman")
         {
-            this.unlockPerkBasedOnBackground("perk.berserk", 2);
-            this.unlockPerkBasedOnBackground("perk.killing_frenzy", 2);
+            this.unlockPerkBasedOnBackground("perk.berserk", 5);
+            this.unlockPerkBasedOnBackground("perk.killing_frenzy", 5);
             this.unlockPerkBasedOnBackground("perk.adrenaline", 50);
-            this.unlockPerkBasedOnBackground("perk.relentless", 5);
+            this.unlockPerkBasedOnBackground("perk.relentless", 7);
+            this.unlockPerkBasedOnBackground("perk.colossus", 7);
         }
 
         if (background.getID() == "background.witchhunter")
         {
-            this.unlockPerkBasedOnBackground("perk.bullseye", 10);
+            this.unlockPerkBasedOnBackground("perk.bullseye", 14);
             this.unlockPerkBasedOnBackground("perk.fortified_mind", 10);
-            this.unlockPerkBasedOnBackground("perk.mastery.crossbow", 20);
+            this.unlockPerkBasedOnBackground("perk.mastery.crossbow", 25);
+            this.unlockPerkBasedOnBackground("perk.lone_wolf", 10);
         }
 
         if (this.m.PerkPointsSpent > 0)
