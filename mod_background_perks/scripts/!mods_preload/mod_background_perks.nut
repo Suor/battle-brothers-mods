@@ -22,7 +22,7 @@
         this.logInfo("bp: Rollling " + this.getName() + " background " + background.getID());
         this.unlockPerkBasedOnBackground("perk.gifted", 4);
         this.unlockPerkBasedOnBackground("perk.hold_out", 4);
-        this.unlockPerkBasedOnBackground("perk.adrenaline", 2);
+        // this.unlockPerkBasedOnBackground("perk.adrenaline", 2);
         this.unlockPerkBasedOnBackground("perk.relentless", 4);
 
         if (background.getID() == "background.adventurous_noble")
