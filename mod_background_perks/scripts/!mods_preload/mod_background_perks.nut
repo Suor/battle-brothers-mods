@@ -2,7 +2,7 @@ local Debug = ::std.Debug.with({prefix = "bp: ", width = 160});
 ::BgPerks <- {
     ID = "mod_background_perks"
     Name = "Background Perks"
-    Version = 0.1
+    Version = 2.0
 };
 ::BgPerks.chances <- {
     ALL = {"student": 1 "gifted": 4 "hold_out": 4 "relentless": 4}
