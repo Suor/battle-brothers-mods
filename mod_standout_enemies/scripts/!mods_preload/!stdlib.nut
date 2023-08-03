@@ -206,8 +206,9 @@ extend(Hook, {
         local super = cls[methodName];
         cls[methodName] = function (...) {
             local args = Util.concat([this], vargv);
-            super.acall(args);
+            local res = super.acall(args);
             func.acall(args);
+            return res;
         };
     }
 
