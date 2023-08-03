@@ -708,6 +708,9 @@ Util.extend(se, {
     }
 
     function setupEntity(plan, e, t) {
+        // // In case two parties are combined we may try to apply 2 quirks to one enemy
+        // if ("se_Quirk" in e.m) return;
+
         local type = se.getTroopType(t);
         if (type in plan && plan[type].len()) {
             local quirk = plan[type].remove(0);
