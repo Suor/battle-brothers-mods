@@ -1,4 +1,4 @@
-::mods_registerMod("mod_beast_loot", 0.1, "Beast Loot");
+::mods_registerMod("mod_beast_loot", 0.11, "Beast Loot");
 ::mods_queue("mod_beast_loot", "mod_hooks(>=19)", function() {
     this.logInfo("bl: loading mod_beast_loot");
 
