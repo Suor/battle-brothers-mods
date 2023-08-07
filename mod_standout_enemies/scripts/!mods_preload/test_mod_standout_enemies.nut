@@ -117,8 +117,8 @@ if ("dofile" in gt) {
                 return {
                     function getAllSkillsOfType(type) {
                         return [
-                            {m = {ID = "actives.raise_undead", ActionPointCost = 3, FatigueCost = 10}}
-                            {m = {ID = "actives.knock", ActionPointCost = 4, FatigueCost = 15}}
+                            makeSkill("actives.raise_undead", {ActionPointCost = 3, FatigueCost = 10})
+                            makeSkill("actives.knock", {ActionPointCost = 4, FatigueCost = 15})
                         ]
                     }
                     function getSkillByID(_id) {
@@ -144,6 +144,13 @@ if ("dofile" in gt) {
             t.Party <- party.weakref();
         }
         return party
+    }
+
+    function makeSkill(id, props) {
+        return {
+            m = ::std.Util.merge({ID = id}, props)
+            b = clone props
+        }
     }
 
     // Mod hooks fake
