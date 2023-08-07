@@ -400,7 +400,7 @@ Strategy = se.Strategy <- {
     },
     BarbarianChosen = {
         Priority = 4,
-        MinScale = 0.5,
+        MinScale = 0.6,
         MaxScale = 1.5,
         Types = ["barbarian_champion"],  // These are called chosen in game
         function getPlan(stats, maturity) {
@@ -428,7 +428,7 @@ Strategy = se.Strategy <- {
     },
     Orc = {
         Priority = 4,
-        MinScale = 0.8,
+        MinScale = 0.6,
         MaxScale = 1.8,
         AnyTypes = ["orc_warrior", "orc_berserker", "orc_warlord"],
         function getPlan(stats, maturity) {
