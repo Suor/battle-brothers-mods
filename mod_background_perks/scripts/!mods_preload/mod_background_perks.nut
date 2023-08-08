@@ -1,4 +1,4 @@
-local Debug = ::std.Debug.with({prefix = "bp: ", width = 160});
+// local Debug = ::std.Debug.with({prefix = "bp: ", width = 160});
 ::BgPerks <- {
     ID = "mod_background_perks"
     Name = "Background Perks"
@@ -522,8 +522,8 @@ local Debug = ::std.Debug.with({prefix = "bp: ", width = 160});
                 report[key] += " SUCCESS";
             }
         }
-        Debug.log("rolls", report);
-        Debug.log("perks", perks);
+        // Debug.log("rolls", report);
+        // Debug.log("perks", perks);
 
         // Unlock them
         foreach (perk in perks) this.unlockPerk("perk." + perk);
