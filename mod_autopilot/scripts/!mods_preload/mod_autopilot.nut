@@ -148,6 +148,9 @@ local AutoReload = true; // should we try to automatically reload if we have unu
         // Disabled since doesn't consult offhand/backpack at all
         // agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_throw_bomb"));
 
+        // TODO: use adrenaline less
+        //       fix the link to original mod in README
+
         // Until we properly use standard bearer
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_rally"));
 
