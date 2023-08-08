@@ -37,8 +37,7 @@
 	{
 		vargv.insert(0, this);
 		local ret = getRosterTooltip.acall(vargv);
-		// TODO: decide on this id better, used to be 6
-		this.m.FunFacts.extendTooltip(ret, 1000);
+		this.m.FunFacts.extendTooltip(ret, 6);
 		return ret;
 	}
 

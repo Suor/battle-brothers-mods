@@ -17,22 +17,6 @@
         local damage = onDamageReceived(_attacker, _damageSkill, _hitInfo);
         this.m.Skills.add = skillAdd;
 
-        // // Remember injuries before
-        // local oldInjuries = {};
-        // foreach (skill in ::std.Util.concat(this.m.Skills, this.m.SkillsToAdd)) {
-        //     if (!skill.isGarbage() && ::mods_isClass(skill, "injury"))
-        //         oldInjuries[skill.ClassName] <- true;
-        // }
-
-        // local damage = onDamageReceived(_attacker, _damageSkill, _hitInfo);
-
-        // // Find new injuries
-        // local injuries = [];
-        // foreach (skill in ::std.Util.concat(this.m.Skills, this.m.SkillsToAdd)) {
-        //     if (!skill.isGarbage() && ::mods_isClass(skill, "injury") && !(skill.ClassName in oldInjuries))
-        //         injuries.push(skill);
-        // }
-
         foreach (injury in injuries) {
             if ("FunFacts" in this.m) this.m.FunFacts.onInjury(_attacker, injury);
             if ("FunFacts" in _attacker.m) _attacker.m.FunFacts.onInjuryDealt(this, injury);
