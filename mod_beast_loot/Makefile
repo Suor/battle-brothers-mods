@@ -12,9 +12,7 @@ test:
 
 zip:
 	LAST_TAG=$$(git tag | grep beast-loot | tail -1); \
-	HEAD_SHA=$$(git rev-parse HEAD); \
-	TAG_SHA=$$(git rev-parse $$LAST_TAG); \
-	MODIFIED=$$( ([[ $$HEAD_SHA = $$TAG_SHA ]] && git diff --quiet scripts) || echo _modified); \
+	MODIFIED=$$( git diff $$LAST_TAG --quiet scripts || echo _modified); \
 	NAME=$$(echo $$LAST_TAG | perl -pE 's/-/_/g'); \
 	FILENAME=mod_$$([[ "$$NAME" != "" ]] && echo $$NAME || echo beast_loot)$${MODIFIED}.zip; \
 	rm $${FILENAME}; \
