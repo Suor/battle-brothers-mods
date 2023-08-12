@@ -15,7 +15,6 @@ this.fun_facts <- {
             // Flee = 0
         },
         // Ranks = {}
-        IDCounter = 0 // TODO
         Version = 2
     },
 
@@ -78,115 +77,68 @@ this.fun_facts <- {
         ::FunFacts.Debug.log("onBattleSkipped ", this.m.Stats.BattlesSkipped);
     }
 
-    function makeTooltipSegment( _icon, _rank, _text )
-    {
-        local rank = _rank == 0 ? "" : "#" + _rank + " ";
-
-        return {
-            id = this.m.IDCounter++,
-            type = "hint",
-            text = rank + _text,
-            icon = _icon
-        }
-    }
-
     function extendTooltip( _tooltip, _idCounter ) {
-        this.m.IDCounter = _idCounter;
-
         local function red(text) {return ::MSU.Text.colorRed(text + "")}
-
-        // _idCounter++;
-        // _tooltip.extend([
-        //     {
-        //         id = _idCounter,
-        //         type = "hint",
-        //         icon = "ui/icons/kills.png",
-        //         text = "Killed [color=" + this.Const.UI.Color.NegativeValue + "]" + this.m.Stats.Kills.len() + "[/color] things"
-        //     },
-        //     // this.makeTooltipSegment("ui/icons/damage_dealt.png", this.m.Ranks.DamageDealt,
-        //     //     format("DMG Dealt %s[img]gfx/mods/fun_facts/health_mini.png[/img]%s[img]gfx/mods/fun_facts/armor_body_mini.png[/img]",
-        //     //         ::MSU.Text.colorGreen(this.m.Stats.DamageDealtHitpoints.tostring()),
-        //     //         ::MSU.Text.colorGreen(this.m.Stats.DamageDealtArmor.tostring()))),
-        // ]);
+        local function green(text) {return ::MSU.Text.colorGreen(text + "")}
+        local function addHint(icon, text) {
+            if (text == "") return;
+            _idCounter++;
+            _tooltip.push({id = _idCounter, type = "hint", icon = icon, text = text});
+        }
 
         local kills = this.m.Stats.Kills.len();
         if (kills > 0) {
-            local message = "";
-            local fatalityMessages = {
-                "1": "Chopped %s heads",
-                "2": "Gutted %s enemies",
-                "3": "Smashed %s heads",
-            };
-
-            // Summarize fatalities
-            local fatalities = ::MSU.Class.WeightedContainer();
-            foreach (kill in this.m.Stats.Kills) fatalities.add(kill.Fatality);
-            ::FunFacts.Debug.log("fatalities", fatalities.toArray(false));
-            if (fatalities.contains(this.Const.FatalityType.None))
-                fatalities.remove(this.Const.FatalityType.None);
-
-            if (fatalities.len() > 0) {
-                local favorite = fatalities.max();
-                local favoriteCount = fatalities.getWeight(favorite);
-                if (favoriteCount >= 3 && favorite.tostring() in fatalityMessages) {
-                    local template = fatalityMessages[favorite.tostring()];
-                    message += format(template, red(favoriteCount))
-                    if (kills > favoriteCount) {
-                        message += format(", among %s total enemies slain", red(kills));
-                    }
-                }
+            local chopped = 0, gutted = 0, smashed = 0;
+            foreach (kill in this.m.Stats.Kills) {
+                if (kill.Fatality == 1) chopped++;
+                if (kill.Fatality == 2) gutted++;
+                if (kill.Fatality == 3) smashed++;
             }
 
-            if (message != "") {
-                _idCounter++;
-                _tooltip.push({
-                    id = _idCounter, type = "hint", icon = "ui/icons/kills.png", text = message
-                })
+            local text = "";
+            if (chopped >= 3) {
+                text = format("Chopped %s heads", red(chopped));
+                if (smashed > 0) text += format(", smashed %s more", red(smashed));
+            } else if (smashed >= 3) {
+                text = format("Smashed %s heads", red(smashed));
+                if (chopped > 0) text += format(", chopped %s more", red(chopped));
+            } else if (gutted >= 3) {
+                text = format("Gutted %s enemies", red(gutted));
             }
+
+            addHint("ui/icons/kills.png", text);
         }
+
         if (this.m.Stats.Injuries.len() > 0) {
-            _idCounter++;
-            _tooltip.push({
-                id = _idCounter,
-                type = "hint",
-                icon = "ui/icons/damage_received.png",
-                text = "Suffered " + this.m.Stats.Injuries.len() + " injuries"
-            })
+            addHint("ui/icons/damage_received.png",
+                format("Suffered %s injuries", red(this.m.Stats.Injuries.len())))
         }
         if (this.m.Stats.InjuriesDealt.len() > 0) {
-            _idCounter++;
-            _tooltip.push({
-                id = _idCounter
-                type = "hint"
-                icon = "ui/icons/damage_dealt.png"
-                text = "Delivered " + this.m.Stats.InjuriesDealt.len() + " injuries"
-            })
-        }
-        if (this.m.Stats.NineLivesSaves > 0 || this.m.Stats.NineLivesUses > 0) {
-            local text = this.m.Stats.NineLivesSaves > 0
-                ? "Saved " + this.m.Stats.NineLivesSaves + " times by nine lives"
-                : "Never saved by nine lives";
-            if (this.m.Stats.NineLivesUses > this.m.Stats.NineLivesSaves) {
-                text += ", used it " + this.m.Stats.NineLivesUses + " times";
-            }
-            _idCounter++;
-            _tooltip.push({
-                id = _idCounter
-                type = "hint"
-                icon = "ui/perks/perk_07.png"
-                text = text
-            })
-        }
-        if (this.m.Stats.BattlesSkipped > 0) {
-            _idCounter++;
-            _tooltip.push({
-                id = _idCounter
-                type = "hint"
-                icon = "ui/icons/camp.png"
-                text = "Slacked for " + this.m.Stats.BattlesSkipped + " battles"
-            })
+            addHint("ui/icons/damage_dealt.png",
+                format("Delivered %s injuries", red(this.m.Stats.InjuriesDealt.len())))
         }
 
+        if (this.m.Stats.NineLivesSaves > 0 || this.m.Stats.NineLivesUses > 0) {
+            local uses = this.m.Stats.NineLivesUses;
+            local saves = this.m.Stats.NineLivesSaves;
+            local text;
+            if (uses > saves) {
+                text = "Used nine lives " + (uses  > 1 ? uses + " times" : "once");
+                if (saves == 0) {
+                    text += uses > 1 ? ", died every time" : ", died anyway"
+                } else {
+                    text += ", survived " + (saves  > 1 ? saves + " times" : "once")
+                }
+            } else {
+                text = "Saved by nine lives " + (saves  > 1 ? saves + " times" : "once")
+            }
+            addHint("ui/perks/perk_07.png", text);
+        }
+
+        if (this.m.Stats.BattlesSkipped > 0) {
+            local text = "Slacked for " + this.m.Stats.BattlesSkipped + " battles of total " + this.m.Stats.Battles;
+            addHint("ui/icons/camp.png", text)
+        }
     }
 
     // function clearRanks()
