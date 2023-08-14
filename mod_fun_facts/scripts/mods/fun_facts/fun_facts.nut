@@ -1,3 +1,5 @@
+local Str = ::std.Str;
+
 this.fun_facts <- {
     m = {
         Stats = {
@@ -6,6 +8,7 @@ this.fun_facts <- {
             InjuriesDealt = []
             HitsDealt = {}
             HitsReceived = {}
+            BattlesLog = []
             Battles = 0
             BattlesSkipped = 0
             BattlesInReserve = 0
@@ -17,6 +20,23 @@ this.fun_facts <- {
         // Ranks = {}
         Version = 2
     },
+
+    function onBattle(_player) {
+        this.m.Stats.Battles++;
+        local record = {
+            Kills = _player.m.CombatStats.Kills
+            XPGained = _player.m.CombatStats.XPGained
+            Fled = _player.m.ff_fled
+            Returned = _player.m.ff_returned
+        };
+        ::FunFacts.Debug.log("onBattle ", record);
+        this.m.Stats.BattlesLog.push(record);
+    }
+
+    function onBattleSkipped() {
+        this.m.Stats.BattlesSkipped++;
+        ::FunFacts.Debug.log("onBattleSkipped ", this.m.Stats.BattlesSkipped);
+    }
 
     function onKill(_target, _fatalityType) {
         // ::FunFacts.Debug.log("onKill target", _target);
@@ -72,11 +92,6 @@ this.fun_facts <- {
         ::FunFacts.Debug.log("onNineLivesSave ", this.m.Stats.NineLivesSaves);
     }
 
-    function onBattleSkipped() {
-        this.m.Stats.BattlesSkipped++;
-        ::FunFacts.Debug.log("onBattleSkipped ", this.m.Stats.BattlesSkipped);
-    }
-
     function extendTooltip( _tooltip, _idCounter ) {
         local function red(text) {return ::MSU.Text.colorRed(text + "")}
         local function green(text) {return ::MSU.Text.colorGreen(text + "")}
@@ -107,6 +122,27 @@ this.fun_facts <- {
             }
 
             addHint("ui/icons/kills.png", text);
+
+            local function getTroopType(name) {
+                if (Str.startswith(name, "zombie")) return "zombie";
+                if (Str.startswith(name, "skeleton")) return "skeleton";
+                if (Str.startswith(name, "bandit")) return "bandit";
+                if (Str.startswith(name, "nomad")) return "nomad";
+                if (Str.startswith(name, "barbarian")) return "barbarian";
+                if (Str.startswith(name, "goblin")) return "goblin";
+                if (Str.startswith(name, "orc")) return "orc";
+                if (Str.startswith(name, "ghoul")) return "ghoul";
+                if (Str.startswith(name, "vampire")) return "vampire";
+                if (Str.startswith(name, "mercenary")) return "mercenary";
+                if (name == "wolf" || name == "direwolf") return "wolf";
+                if (name == "hyena" || name == "hyena_high") return "hyena";
+                return name;
+            }
+            local killsByClass = ::MSU.Class.WeightedContainer();
+            foreach (kill in this.m.Stats.Kills) killsByClass.add(getTroopType(kill.ClassName));
+            local killsByClassSorted = killsByClass.toArray(false);
+            killsByClassSorted.sort(@(a, b) b[0] <=> a[0])
+            ::FunFacts.Debug.log("killsByClass", killsByClassSorted);
         }
 
         if (this.m.Stats.Injuries.len() > 0) {
@@ -136,8 +172,16 @@ this.fun_facts <- {
         }
 
         if (this.m.Stats.BattlesSkipped > 0) {
-            local text = "Slacked for " + this.m.Stats.BattlesSkipped + " battles of total " + this.m.Stats.Battles;
-            addHint("ui/icons/camp.png", text)
+            local total = this.m.Stats.BattlesSkipped + this.m.Stats.Battles;
+            local text = "Slacked for " + this.m.Stats.BattlesSkipped + " battles of total " + total;
+            addHint("ui/icons/campfire.png", text)
+        }
+
+        local fled = 0;
+        foreach (battle in this.m.Stats.BattlesLog) fled += battle.Fled;
+        if (fled > 0) {
+            local text = format("Fled %s times", red(fled));
+            addHint("ui/icons/tracking_disabled.png", text);
         }
     }
 

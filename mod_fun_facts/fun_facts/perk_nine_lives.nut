@@ -1,32 +1,35 @@
 ::mods_hookExactClass("skills/perks/perk_nine_lives", function (o) {
+    local function getFunFacts(skill) {
+        local actor = skill.getContainer().getActor();
+         return "FunFacts" in actor.m ? actor.m.FunFacts : null;
+    }
+
     local setSpent = o.setSpent;
     o.setSpent = function (_f) {
         local wasSpent = this.m.IsSpent;
         setSpent(_f);
         if (!wasSpent && this.m.IsSpent) {
-            local actor = this.getContainer().getActor();
-            if ("FunFacts" in actor.m) actor.m.FunFacts.onNineLivesUse();
+            local ff = getFunFacts(this);
+            if (ff) ff.onNineLivesUse();
         }
     }
 
     local onDeath = "onDeath" in o ? o.onDeath : null;
     o.onDeath <- function (_fatalityType) {
-        this.m.Died = true;
+        if (getFunFacts(this)) this.m.ff_Died = true;
         if (onDeath) onDeath(_fatalityType);
     }
 
     local onCombatStarted = o.onCombatStarted;
     o.onCombatStarted = function () {
-        this.m.Died <- false;
+        if (getFunFacts(this)) this.m.ff_Died <- false;
         return onCombatStarted()
     }
 
     local onCombatFinished = o.onCombatFinished;
     o.onCombatFinished = function () {
-        if (this.m.IsSpent && !this.m.Died) {
-            local actor = this.getContainer().getActor();
-            if ("FunFacts" in actor.m) actor.m.FunFacts.onNineLivesSave();
-        }
+        local ff = getFunFacts(this);
+        if (this.m.IsSpent && ff && !this.m.ff_Died) if (ff) ff.onNineLivesSave();
 
         return onCombatFinished()
     }
