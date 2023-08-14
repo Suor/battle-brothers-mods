@@ -1,3 +1,6 @@
+2.0.0
+- rewrite configuration code to use MSU
+
 1.8
 - fixed attr increases droppping to 1 on character/inventory window close
 - fixed talentValue setting
