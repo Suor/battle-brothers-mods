@@ -588,4 +588,44 @@ local AutoReload = true; // should we try to automatically reload if we have unu
       }
     }
   });
+
+  ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_ranged", function (o) {
+    this.logInfo("ap: hook ai_engage_ranged");
+
+    // The problem with this is while we go through tiles a target might become invalid,
+    // usually after a ranged bro shoots someone and we are evaluating his next shot
+    local selectBestTargetTile = o.selectBestTargetTile;
+    o.selectBestTargetTile = function (_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded) {
+      local res;
+      local failed = false;
+      local gen = selectBestTargetTile(_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded);
+
+      // try/catch on the whole thing dumps core, so we need to wrap resume only
+      while (true) {
+        try {
+          res = resume gen;
+        } catch (exception) {
+          this.logInfo("ap: caught " + exception + " in selectBestTargetTile");
+          failed = true;
+          break;
+        }
+        // Proxy "results"
+        if (res != null) return res;
+        yield res;
+      }
+
+      if (failed) {
+        // Remove no longer valid targets and potential dangers,
+        // i.e. ones with actor not having getIdealRange
+        this.m.ValidTargets = this.m.ValidTargets.filter(@(_, t) !t.Actor.isNull());
+        this.m.PotentialDanger = this.m.PotentialDanger.filter(@(_, t) !t.isNull());
+
+        // Retry
+        gen = selectBestTargetTile(_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded);
+        foreach (res in gen) yield res;
+        return true;
+      }
+    }
+
+  });
 });
