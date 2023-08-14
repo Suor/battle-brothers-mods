@@ -1,25 +1,78 @@
-// Uncomment a section below with a desired behavior and comment out the other one.
-// Adjust variables to your liking.
+::VAP <- {
+    ID = "mod_vap"
+    Name = "Veteran Attrs and Perks"
+    Version = "2.0.0"
+};
 
-// Each star gives this amount on average on top of 1 you get as veteran.
-// I.e. with 1 star you will get 2 every 6th level, with 3 stars every other, etc.
-// If the value * stars > 1 you might get more than 2 sometimes.
-// This value is doubled for initiative.
-local talentValue = 0.166;
+::mods_registerMod(::VAP.ID, ::VAP.Version, ::VAP.Name);
+::mods_queue(::VAP.ID, "mod_hooks(>=17), mod_msu(>=1.2.6)", function() {
+    ::VAP.Mod <- ::MSU.Class.Mod(::VAP.ID, ::VAP.Version, ::VAP.Name);
 
-// Give an extra perk on listed levels
-local perkLevels = [13, 16, 20, 25, 31];
-local givePerk = @(l) perkLevels.find(l) != null;
+    // pages
+    local page = ::VAP.Mod.ModSettings.addPage("General");
 
-//// Give an extra perk every N levels after a certain one
-// local N = 3, afterLevel = 11
-// local givePerk = @(l) l > afterLevel && (l - afterLevel) % N == 0;
+    // helpers
+    local function add(elem) {
+        page.addElement(elem);
+        elem.Data.NewCampaign <- true;
+        return elem;
+    }
+    local function safeToInteger(n) {
+        try {
+            return n.tointeger();
+        } catch (err) {
+            this.logInfo("vap: ERROR failed to convert to number: " + n);
+            return 0;
+        }
+    }
 
+    local talentDiv = add(::MSU.Class.RangeSetting("TalentDiv", 3, 2, 5, 1, "Talent Divisor"));
+    talentDiv.setDescription("Non-veterans get 0.5 per level per star on average. "
+                           + "Veterans will get this times less.");
+    ::VAP.getTalentValue <- function () {
+        return 0.5 / talentDiv.getValue();
+    }
 
-::mods_registerMod("mod_vap", 1.8, "Veteran attrs and perks");
-::mods_queue("mod_vap", "mod_hooks(>=17)", function() {
-  this.logInfo("vap: loading");
+    add(::MSU.Class.SettingsDivider("Div1"));
 
+    // perks
+    local perksMode = add(::MSU.Class.EnumSetting(
+        "PerksMode", "preset", ["none" "preset" "every nth"], "Perks Mode"));
+    add(::MSU.Class.SettingsSpacer("PerksSpacer", "35rem", "8rem"));
+    local perksPreset = add(::MSU.Class.StringSetting("PerksPreset", "13, 16, 20, 25, 31",
+        "Give a perk on these levels", "Level numbers separated by space or comma"));
+    local perksNth = add(::MSU.Class.RangeSetting("PerksNth", 2, 1, 10, 1, "Every Nth Level",
+        "Starting from but not including 11"));
+
+    if (::mods_getRegisteredMod("mod_ultrabros")) {
+        foreach(setting in [perksMode, perksPreset, perksNth])
+            setting.lock("This is overtaken by Ultra Bros");
+    }
+
+    ::VAP.getGivePerk <- function () {
+        local mode = perksMode.getValue();
+        if (mode == "none") {
+            this.logInfo("vap: perks " + mode);
+            return @(l) false;
+        }
+        if (mode == "preset") {
+            local preset = perksPreset.getValue();
+            this.logInfo("vap: perks " + mode + " " + preset);
+            local levels_ = split(preset, ", ");
+            local levels = levels_.map(safeToInteger);
+            return @(l) levels.find(l) != null;
+        }
+        if (mode == "every nth") {
+            local n = safeToInteger(perksNth.getValue());
+            this.logInfo("vap: perks " + mode + " " + n);
+            local afterLevel = 11;
+            return @(l) l > afterLevel && (l - afterLevel) % n == 0;
+        }
+        this.logInfo("vap: ERROR unknown perk mode: " + mode);
+        return @(l) false;
+    }
+
+  // Older code or The Meat of it
   local patchPlayer = function(obj) {
     // Prevent from patching twice.
     // Not sure how this happens, but it does sometimes for new hires, who get levels later.
@@ -34,11 +87,12 @@ local givePerk = @(l) perkLevels.find(l) != null;
       if(m.Attributes[0].len() == 0) {
           this.logInfo("vap: extra attrs values " + obj.getName());
 
+          local talentValue = ::VAP.getTalentValue();
           local extra = function(t, bonus = 0) {
             local chance = talentValue * 2 * t * (1 + bonus) * 100;
             return Math.rand(0, chance + 99) / 100;
           }
-          for( local i = 0; i != Const.Attributes.COUNT; i = ++i ) {
+          for (local i = 0; i < Const.Attributes.COUNT; i++) {
             local bonus = i == Const.Attributes.Initiative ? 1 : 0;
             this.m.Attributes[i].insert(0, 1 + extra(m.Talents[i], bonus));
           }
@@ -67,9 +121,12 @@ local givePerk = @(l) perkLevels.find(l) != null;
       if (level >= m.Level) return;
 
       this.logInfo("vap: Leveling up " + this.getName() + " from " + level + " to " + m.Level);
-      // give a perk point every for certain levels
-      for (; ++level <= m.Level;)
+      // give a perk point for certain levels
+      local givePerk = ::VAP.getGivePerk();
+      for (; ++level <= m.Level;) {
+        this.logInfo("vap: givePerk(" + level + ") = " + givePerk(level));
         if (givePerk(level)) m.PerkPoints++;
+      }
     }
   }
 
