@@ -49,7 +49,7 @@ Quirk = se.Quirk <- {
 
             // Being fast helps hit and not being hit, reduce damage to compensate
             Mod.offense(e, 10, 0.85);
-            Mod.defense(e, 5);
+            Mod.defense(e, 5, 0.8);
             Mod.bravery(e, 1.3);
 
             // Slightly red head
@@ -61,13 +61,14 @@ Quirk = se.Quirk <- {
         XPMult = 1.2,
         function apply(e) {
             Mod.offense(e, 0, 1.25);
-            Mod.defense(e, -5, 1.75);
+            Mod.defense(e, -5, 1.8);
             Mod.bravery(e, 1.5);  // More hits need to be brave longer
+            e.m.BaseProperties.Initiative -= Math.rand(5, 10); // Somewhat slow
             e.m.Skills.add(this.new("scripts/skills/perks/perk_stalwart"));
 
             // A chance to add some armor upgrade
             local armor = Mod.getArmor(e), cond = armor ? armor.getArmorMax() : 0;
-            if (cond >= 45 && Rand.chance(0.25)) {
+            if (cond >= 45 && Rand.chance(0.4)) {
                 local upgrades = ["leather_shoulderguards_upgrade" "double_mail_upgrade"];
                 if (cond >= 80) upgrades.extend(["mail_patch_upgrade" "metal_plating_upgrade"]);
                 if (Mod.isSouthern(e)) {
@@ -278,7 +279,7 @@ Quirk = se.Quirk <- {
             e.m.BaseProperties.Initiative += 25;
 
             Mod.offense(e, 10, 1.15);
-            Mod.defense(e, 15, 1.7);
+            Mod.defense(e, 15, 1.5);
 
             // Half-vampire :)
             e.m.Skills.add(this.new("scripts/skills/racial/vampire_racial"));
@@ -286,7 +287,6 @@ Quirk = se.Quirk <- {
             e.m.Skills.add(this.new("scripts/skills/perks/perk_nimble"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_steel_brow"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_anticipation"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_crippling_strikes"));
 
             // Resurrects like a stubborn one
             Quirk.Stubborn.stubborn(e, 0.75, 0.35);
