@@ -6,24 +6,36 @@ this.fun_facts <- {
             Kills = []
             Injuries = []
             InjuriesDealt = []
-            HitsDealt = {}
-            HitsReceived = {}
+            // HitsDealt = {}
+            // HitsReceived = {}
             BattlesLog = []
             Battles = 0
             BattlesSkipped = 0
-            BattlesInReserve = 0
+            // BattlesInReserve = 0
             NineLivesUses = 0
             NineLivesSaves = 0
-            // NineLives = 0
             // Flee = 0
-        },
+        }
         // Ranks = {}
+        Name = "<not-set>"
         Version = 2
-    },
+    }
+
+    function setName(_name) {
+        this.logInfo("ff: setName to " + _name + " from " + this.m.Name);
+        this.m.Name = _name;
+    }
+
+    function getLastBattleId() {
+        if (this.m.Stats.BattlesLog.len() == 0) return null;
+        local lastBattle = this.m.Stats.BattlesLog.top();
+        return "Id" in lastBattle ? lastBattle.Id : null;
+    }
 
     function onBattle(_player) {
         this.m.Stats.Battles++;
         local record = {
+            Id = ::FunFacts.getBattleId()
             Kills = _player.m.CombatStats.Kills
             XPGained = _player.m.CombatStats.XPGained
             Fled = _player.m.ff_fled
@@ -43,6 +55,7 @@ this.fun_facts <- {
         // ::FunFacts.Debug.log("onKill fatality", _fatalityType);
 
         local record = {
+            BattleId = ::FunFacts.getBattleId()
             IsPlayer = _target.isPlayerControlled()
             Name = _target.getName()
             ClassName = _target.ClassName
@@ -60,6 +73,7 @@ this.fun_facts <- {
 
     function onInjury(_attacker, _injury) {
         local record = {
+            BattleId = ::FunFacts.getBattleId()
             Injury = _injury.m.ID.slice("injury.".len())
             AttackerClass = _attacker.ClassName
             AttackerName = _attacker.getName()
@@ -72,6 +86,7 @@ this.fun_facts <- {
 
     function onInjuryDealt(_target, _injury) {
         local record = {
+            BattleId = ::FunFacts.getBattleId()
             Injury = _injury.m.ID.slice("injury.".len())
             TargetClass = _target.ClassName
             TargetName = _target.getName()
@@ -93,6 +108,8 @@ this.fun_facts <- {
     }
 
     function extendTooltip( _tooltip, _idCounter ) {
+        // ::FunFacts.Debug.log("battleId", ::FunFacts.getBattleId());
+
         local function red(text) {return ::MSU.Text.colorRed(text + "")}
         local function green(text) {return ::MSU.Text.colorGreen(text + "")}
         local function addHint(icon, text) {

@@ -1,18 +1,25 @@
-::mods_hookExactClass("entity/tactical/player", function (o)
-{
+::mods_hookExactClass("entity/tactical/player", function (o) {
+    this.logInfo("ff: Hook entity/tactical/player");
     o.m.FunFacts <- null;
 
     local create = o.create;
-    o.create = function( ... )
-    {
+    o.create = function( ... ) {
         vargv.insert(0, this);
         local ret = create.acall(vargv);
         // this.logInfo("ff: player new fun_facts");
         this.m.FunFacts = ::new("scripts/mods/fun_facts/fun_facts");
+        this.m.FunFacts.setName(this.getName());
         // this.logInfo("ff: fun_facts.Version "
         //         + ("Version" in this.m.FunFacts.m ? this.m.FunFacts.m.Version : 0));
         return ret;
     }
+
+    local setName = o.setName;
+    o.setName = function(_value) {
+        setName(_value);
+        this.m.FunFacts.setName(_value);
+    }
+
 
     local onBeforeCombatResult = o.onBeforeCombatResult;
     o.onBeforeCombatResult = function( ... ) {
@@ -84,6 +91,7 @@
             this.logInfo("ff: player.onDeserialize saved version at least 0.1.1");
             this.m.FunFacts.onDeserialize(
                 ::FunFacts.Mod.Serialization.getDeserializationEmulator("FunFacts", this.getFlags()));
+            this.m.FunFacts.setName(this.m.Name);
         } else {
             this.logInfo("ff: player.onDeserialize saved version OLD");
         }

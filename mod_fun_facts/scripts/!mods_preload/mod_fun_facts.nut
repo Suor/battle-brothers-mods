@@ -1,74 +1,103 @@
+local Array = {
+    function max(arr) {
+
+    }
+}
+
 ::FunFacts <- {
     ID = "mod_fun_facts"
     Name = "Fun Facts"
-    Version = "0.1.2"
-	// ActiveUser = null,
-	// ActiveTarget = null,
-	// MinHitChance = 5,
-	// MaxHitChance = 95,
-	// evaluateRanks = null,
-	// DummyStats = ::new("scripts/mods/fun_facts/fun_facts")
-	// IsLoading = false,
-	LastFallen = null
+    Version = "0.1.3"
+    // ActiveUser = null,
+    // ActiveTarget = null,
+    // MinHitChance = 5,
+    // MaxHitChance = 95,
+    // evaluateRanks = null,
+    // DummyStats = ::new("scripts/mods/fun_facts/fun_facts")
+    // IsLoading = false,
+    LastFallen = null
+    BattleId = null
 };
 ::FunFacts.Debug <- ::std.Debug.with({prefix = "ff: "})
+::FunFacts.getBattleId <- function() {
+    if (this.BattleId) return this.BattleId;
+
+    local bros = ::World.getPlayerRoster().getAll();
+    local fallen = ::World.Statistics.getFallen();
+    local ffs = bros.map(@(b) b.m.FunFacts);
+    ffs.extend(fallen.filter(@(_, f) "FunFacts" in f).map(@(f) f.FunFacts));
+
+    // // Repair batlles with bad ids
+    // foreach (ff in ffs) {
+    //     local prev = 0;
+    //     ::FunFacts.Debug.log("battles for " + ff.m.Name, ff.m.Stats.BattlesLog);
+    //     foreach (battle in ff.m.Stats.BattlesLog) {
+    //         if (!("Id" in battle)) continue;
+    //         if (battle.Id <= prev) battle.Id = prev + 1;
+    //         prev = battle.Id;
+    //     }
+    //     ::FunFacts.Debug.log("FIXED battles for " + ff.m.Name, ff.m.Stats.BattlesLog);
+    // }
+
+    local maxId = 0;
+    foreach (ff in ffs) {
+        local lastId = ff.getLastBattleId();
+        if (lastId != null && lastId > maxId) maxId = lastId;
+    }
+
+    this.BattleId = maxId + 1;
+    return this.BattleId;
+}
+::FunFacts.incrBattleId <- function() {
+    if (this.BattleId) this.BattleId++;
+}
 
 ::mods_registerMod(::FunFacts.ID, ::FunFacts.Version, ::FunFacts.Name);
 ::mods_queue(::FunFacts.ID, "mod_msu(>=1.2.0)", function() {
-	::FunFacts.Mod <- ::MSU.Class.Mod(::FunFacts.ID, ::FunFacts.Version, ::FunFacts.Name);
+    ::FunFacts.Mod <- ::MSU.Class.Mod(::FunFacts.ID, ::FunFacts.Version, ::FunFacts.Name);
 
-	::FunFacts.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHub, "https://github.com/Suor/battle-brothers-mods");
-	// ::FunFacts.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods, "https://www.nexusmods.com/battlebrothers/mods/...");
-	::FunFacts.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHub);
+    ::FunFacts.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHub, "https://github.com/Suor/battle-brothers-mods");
+    // ::FunFacts.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods, "https://www.nexusmods.com/battlebrothers/mods/...");
+    ::FunFacts.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHub);
 
-	// local currentStatGetter;
 
-	// local function compareByStat(_a, _b)
-	// {
-	// 	return _b.m.FunFacts_Stats[currentStatGetter]() <=> _a.m.FunFacts_Stats[currentStatGetter]();
-	// }
+    // ::FunFacts.Debug("battleId", ::FunFacts.getBattleId());
+    // local currentStatGetter;
 
-	// ::FunFacts.evaluateRanks = function()
-	// {
-	// 	if (::FunFacts.IsLoading) return;
-	// 	local bros = ::World.getPlayerRoster().getAll();
-	// 	local ranks = clone ::FunFacts.DummyStats.m.Ranks;
-	// 	foreach (statKey, statArray in ::FunFacts.DummyStats.m.Ranks)
-	// 	{
-	// 		local clonedBros = clone bros;
-	// 		ranks[statKey] = clonedBros;
-	// 		currentStatGetter = "get" + statKey;
-	// 		clonedBros.sort(compareByStat);
+    // local function compareByStat(_a, _b)
+    // {
+    //     return _b.m.FunFacts_Stats[currentStatGetter]() <=> _a.m.FunFacts_Stats[currentStatGetter]();
+    // }
 
-	// 		local lastChange = 0;
-	// 		for (local i = 0; i < clonedBros.len(); ++i)
-	// 		{
-	// 			if (clonedBros[i].m.FunFacts_Stats[currentStatGetter]() != clonedBros[lastChange].m.FunFacts_Stats[currentStatGetter]())
-	// 			{
-	// 				lastChange = i;
-	// 			}
-	// 			clonedBros[i].m.FunFacts_Stats.m.Ranks[statKey] = lastChange + 1;
-	// 		}
-	// 	}
-	// }
+    // ::FunFacts.evaluateRanks = function()
+    // {
+    //     if (::FunFacts.IsLoading) return;
+    //     local bros = ::World.getPlayerRoster().getAll();
+    //     local ranks = clone ::FunFacts.DummyStats.m.Ranks;
+    //     foreach (statKey, statArray in ::FunFacts.DummyStats.m.Ranks)
+    //     {
+    //         local clonedBros = clone bros;
+    //         ranks[statKey] = clonedBros;
+    //         currentStatGetter = "get" + statKey;
+    //         clonedBros.sort(compareByStat);
 
-	::FunFacts.Mod.Tooltips.setTooltips({
-		Fallen = ::MSU.Class.CustomTooltip(@(_data) ::World.Statistics.FunFacts_getTooltipForFallen(_data.FunFacts_Idx))
-	});
+    //         local lastChange = 0;
+    //         for (local i = 0; i < clonedBros.len(); ++i)
+    //         {
+    //             if (clonedBros[i].m.FunFacts_Stats[currentStatGetter]() != clonedBros[lastChange].m.FunFacts_Stats[currentStatGetter]())
+    //             {
+    //                 lastChange = i;
+    //             }
+    //             clonedBros[i].m.FunFacts_Stats.m.Ranks[statKey] = lastChange + 1;
+    //         }
+    //     }
+    // }
 
-	foreach (file in ::IO.enumerateFiles("fun_facts")) {
-		this.logInfo("ff: loading " + file);
-		::include(file);
-	}
-	// ::include("fun_facts/actor");
-	// ::include("fun_facts/player");
-	// ::include("fun_facts/player_corpse_stub");
-	// ::include("fun_facts/stats_collector");
-	// ::include("fun_facts/statistics_manager");
-	// ::include("fun_facts/tactical_state");
-	// ::include("fun_facts/world_obituary_screen");
-	// ::include("fun_facts/world_player_roster");
-	// ::include("fun_facts/world_state");
+    ::FunFacts.Mod.Tooltips.setTooltips({
+        Fallen = ::MSU.Class.CustomTooltip(
+            @(_data) ::World.Statistics.FunFacts_getTooltipForFallen(_data.FunFacts_Idx))
+    });
 
-	::mods_registerJS("fun_facts/world_obituary_screen.js");
+    foreach (file in ::IO.enumerateFiles("fun_facts")) ::include(file);
+    ::mods_registerJS("fun_facts/world_obituary_screen.js");
 });

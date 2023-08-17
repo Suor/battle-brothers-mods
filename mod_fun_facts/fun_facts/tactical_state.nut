@@ -18,5 +18,6 @@
             }
         }
         onBattleEnded();
+        ::FunFacts.incrBattleId();
     }
 })
