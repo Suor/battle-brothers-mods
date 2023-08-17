@@ -452,7 +452,7 @@ Strategy = se.Strategy <- {
             // ends in fifty-fifty at scale 2
             if (plan.orc_warlord.len() > 0) {
                 local dreadfulMaturity = se.getMaturity(stats.scale, 0.8, 2.0);
-                if (dreadfulMaturity >= 0 && Rand.chance(0.1 + dreadfulMaturity * 0.4)) {
+                if (dreadfulMaturity > 0 && Rand.chance(0.1 + dreadfulMaturity * 0.4)) {
                     plan.orc_warlord[0] = Quirk.Dreadful;
                 }
             }
