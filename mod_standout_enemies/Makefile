@@ -1,8 +1,8 @@
-DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
+MOD_NAME = standout_enemies
+TAG_NAME = standout-enemies
+SOURCES = scripts
 SUBDIR = scripts/\!mods_preload
-SCRIPT = scripts/\!mods_preload/mod_standout_enemies.nut
-TEST_SCRIPT = scripts/\!mods_preload/test_mod_standout_enemies.nut
-LIB = scripts/\!mods_preload/!stdlib.nut
+DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
 
 SHELL := /bin/bash
 
@@ -12,38 +12,16 @@ test:
 	cd $(SUBDIR);squirrel test_mod_standout_enemies.nut
 
 zip:
-	LAST_TAG=$$(git tag | grep standout-enemies | tail -1); \
-	HEAD_SHA=$$(git rev-parse HEAD); \
-	TAG_SHA=$$(git rev-parse $$LAST_TAG); \
-	MODIFIED=$$( ([[ $$HEAD_SHA = $$TAG_SHA ]] && git diff --quiet scripts) || echo _modified); \
-	FILENAME=mod_$$(echo $$LAST_TAG | perl -pE 's/-/_/g')$${MODIFIED}.zip; \
+	LAST_TAG=$$(git tag | grep $(TAG_NAME) | tail -1); \
+	MODIFIED=$$( git diff $$LAST_TAG --quiet $(SOURCES) || echo _MODIFIED); \
+	NAME=$$(echo $$LAST_TAG | perl -pE 's/-/_/g'); \
+	FILENAME=mod_$$([[ "$$NAME" != "" ]] && echo $$NAME || echo $(MOD_NAME))$${MODIFIED}.zip; \
 	rm $${FILENAME}; \
-	zip -r $${FILENAME} scripts
+	zip -r $${FILENAME} $(SOURCES)
 
-diff:
-	diff $(DATA_DIR)$(SCRIPT) $(SCRIPT)
-
-meld:
-	meld $(DATA_DIR)$(SCRIPT) $(SCRIPT)
-
-meld-test:
-	meld $(DATA_DIR)$(TEST_SCRIPT) $(TEST_SCRIPT)
-
-subl:
-	subl $(DATA_DIR)$(SCRIPT)
-
-sync:
-	git diff --quiet scripts || { git diff scripts && exit 123; }; \
-	cp $(DATA_DIR)$(SCRIPT) $(SCRIPT)
-	cp $(DATA_DIR)$(TEST_SCRIPT) $(TEST_SCRIPT)
-	cp $(DATA_DIR)$(LIB) $(LIB)
-
-sync-force:
-	cp $(DATA_DIR)$(SCRIPT) $(SCRIPT)
-	cp $(DATA_DIR)$(TEST_SCRIPT) $(TEST_SCRIPT)
-	cp $(DATA_DIR)$(LIB) $(LIB)
-
-sync-back:
-	mkdir -p $(DATA_DIR)$(SUBDIR)
-	cp $(SCRIPT) $(DATA_DIR)$(SCRIPT)
-	cp $(LIB) $(DATA_DIR)$(LIB)
+install:
+	FILENAME=mod_$(MOD_NAME)_TMP.zip; \
+	rm $${FILENAME}; \
+	zip -r $${FILENAME} $(SOURCES); \
+	cp $${FILENAME} $(DATA_DIR)$${FILENAME}; \
+	rm $${FILENAME}
