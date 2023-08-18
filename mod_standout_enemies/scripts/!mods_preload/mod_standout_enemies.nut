@@ -16,6 +16,7 @@ local Config = se.Config <- {
     ShortNames = {
         "Goblin Skirmisher": "Goblin",
         "Goblin Wolfrider": "Wolfrider",
+        "Orc Berserker": "Berserker",
         "Brigand Raider": "Raider",
         "Nomad Outlaw": "Outlaw",
         "Fallen Hero": "Hero",
