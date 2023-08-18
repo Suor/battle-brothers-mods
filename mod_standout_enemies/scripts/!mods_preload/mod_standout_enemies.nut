@@ -340,7 +340,6 @@ foreach (name, quirk in Quirk) quirk.pp <- name;
 local Strategy;  // Forward declaration
 Strategy = se.Strategy <- {
     Bandit = {
-        Priority = 4,
         MinScale = 0.35,
         MaxScale = 1.15,
         AnyTypes = ["bandit", "nomad"],
@@ -360,7 +359,6 @@ Strategy = se.Strategy <- {
         }
     },
     Shot = {
-        Priority = 4,
         MinScale = 0.4,
         MaxScale = 1.2,
         AnyTypes = ["bandit_marksman", "nomad_archer"],
@@ -388,7 +386,6 @@ Strategy = se.Strategy <- {
         }
     }
     Barbarian = {
-        Priority = 4,
         MinScale = 0.35,
         MaxScale = 1.1,
         Types = ["barbarian"],
@@ -400,7 +397,6 @@ Strategy = se.Strategy <- {
         }
     },
     BarbarianChosen = {
-        Priority = 4,
         MinScale = 0.6,
         MaxScale = 1.5,
         Types = ["barbarian_champion"],  // These are called chosen in game
@@ -412,7 +408,6 @@ Strategy = se.Strategy <- {
         }
     },
     Goblin = {
-        Priority = 4,
         MinScale = 0.35,
         MaxScale = 1.2,
         Types = ["goblin"],
@@ -428,7 +423,6 @@ Strategy = se.Strategy <- {
         }
     },
     Orc = {
-        Priority = 4,
         MinScale = 0.6,
         MaxScale = 1.8,
         AnyTypes = ["orc_warrior", "orc_berserker", "orc_warlord"],
@@ -466,7 +460,6 @@ Strategy = se.Strategy <- {
         }
     },
     Ghoul = {
-        Priority = 4,
         MinScale = 0.3,
         MaxScale = 1.1,
         Types = ["ghoul"],
@@ -482,7 +475,6 @@ Strategy = se.Strategy <- {
         }
     },
     Zombie = {
-        Priority = 4,
         MinScale = 0.25,
         MaxScale = 1.1,
         AnyTypes = ["zombie", "zombie_good"],
@@ -519,7 +511,6 @@ Strategy = se.Strategy <- {
         }
     },
     Necromancer = {
-        Priority = 4,
         MinScale = 0.4,
         MaxScale = 1.2,
         Types = ["necromancer"],
@@ -533,7 +524,7 @@ Strategy = se.Strategy <- {
         }
     },
     NecroZombie = {
-        Priority = 8,
+        Priority = 10,
         MinScale = 0.5,
         MaxScale = 1.5,
         Types = ["necromancer"],
@@ -584,7 +575,8 @@ foreach (_name, strategy in Strategy) {
 // Sorted by descending priority to start from the highest and skip tail if possible
 local SortedStrategies = [];
 foreach (name, strategy in Strategy) {
-    strategy.Name <- name
+    // strategy.Name <- name
+    if (!("Priority" in strategy)) strategy.Priority <- 0;
     SortedStrategies.push(strategy);
 }
 SortedStrategies.sort(@(a, b) b.Priority <=> a.Priority);
