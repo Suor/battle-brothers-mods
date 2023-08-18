@@ -25,6 +25,7 @@ local Config = se.Config <- {
     }
     function cutName(name) {
         if (name in this.ShortNames) return this.ShortNames[name];
+        name = Str.cutPrefix(name, "Ancient ");
         return name;
     }
 }
@@ -67,9 +68,9 @@ Quirk = se.Quirk <- {
             e.m.BaseProperties.Initiative -= Math.rand(5, 10); // Somewhat slow
             e.m.Skills.add(this.new("scripts/skills/perks/perk_stalwart"));
 
-            // A chance to add some armor upgrade
+            // A chance to add some armor upgrade, not for skeletons
             local armor = Mod.getArmor(e), cond = armor ? armor.getArmorMax() : 0;
-            if (cond >= 45 && Rand.chance(0.4)) {
+            if (cond >= 45 && !e.getFlags().has("skeleton") && Rand.chance(0.4)) {
                 local upgrades = ["leather_shoulderguards_upgrade" "double_mail_upgrade"];
                 if (cond >= 80) upgrades.extend(["mail_patch_upgrade" "metal_plating_upgrade"]);
                 if (Mod.isSouthern(e)) {
@@ -357,7 +358,34 @@ Strategy = se.Strategy <- {
             // They don't go together so it's safe to queue both types to same array
             return {bandit = quirks, nomad = quirks};
         }
-    },
+    }
+    SkeletonLight = {
+        MinScale = 0.3,
+        MaxScale = 0.9,
+        Types = ["skeleton_light"],
+        function getPlan(stats, maturity) {
+            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.2, 0.7);
+            return {skeleton_light = array(num, Quirk.Big)}
+        }
+    }
+    SkeletonMedium = {
+        MinScale = 0.5,
+        MaxScale = 1.0,
+        Types = ["skeleton_medium"],
+        function getPlan(stats, maturity) {
+            local num = Rand.poly(1 + maturity * 4, 0.1 + 0.4 * maturity);
+            return {skeleton_medium = array(num, Quirk.Big)}
+        }
+    }
+    SkeletonHeavy = {
+        MinScale = 0.6,
+        MaxScale = 1.2,
+        Types = ["skeleton_heavy"],
+        function getPlan(stats, maturity) {
+            local num = Rand.poly(1 + maturity * 2, 0.1 + 0.4 * maturity);
+            return {skeleton_heavy = array(num, Quirk.Big)}
+        }
+    }
     Shot = {
         MinScale = 0.4,
         MaxScale = 1.2,
@@ -736,7 +764,8 @@ Util.extend(se, {
 
         if (name == "zombie") return "zombie";
         if (Str.startswith(name, "zombie") && name != "zombie_boss") return "zombie_good";
-        if (Str.startswith(name, "skeleton")) return "skeleton";
+        if (Str.startswith(name, "skeleton_medium")) return "skeleton_medium";
+        if (Str.startswith(name, "skeleton_heavy")) return "skeleton_heavy";
         if (name == "bandit_raider" || name == "bandit_leader") return "bandit";
         if (name == "nomad_outlaw" || name == "nomad_leader") return "nomad";
         if (name == "barbarian_thrall" || name == "barbarian_marauder") return "barbarian";
@@ -803,7 +832,7 @@ Util.extend(Mod, {
     }
     function ensureArmorUpgrade(e, options) {
         local armor = Mod.getArmor(e);
-        if (armor.getUpgrade()) return;
+        if (!armor || armor.getUpgrade()) return;
 
         local upgrade = this.new("scripts/items/armor_upgrades/" + Rand.choice(options));
         armor.setUpgrade(upgrade);

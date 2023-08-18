@@ -79,7 +79,11 @@ if ("dofile" in gt) {
                 Items = {
                     function getItemAtSlot(s) {
                         return Math.rand(0, 1) ? null : {
-                            m = {ID = "weapon.crossbow", Value = 350}
+                            m = {
+                                ID = "weapon.crossbow"
+                                Value = 350
+                                function setUpgrade(upgrade) {}
+                            }
                             function getArmor() {return 39}
                             function getArmorMax() {return 80}
                             function setArmor(val) {}
@@ -127,6 +131,11 @@ if ("dofile" in gt) {
                         }
                         return null;
                     }
+                }
+            }
+            function getFlags() {
+                return {
+                    function has(tag) {return false}
                 }
             }
         };
