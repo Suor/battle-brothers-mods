@@ -134,7 +134,7 @@ local function joinLength(items, sepLen) {
 }
 
 extend(Debug, {
-    DEFAULTS = {prefix = "", width = 80, depth = 3, funcs = "count"}
+    DEFAULTS = {prefix = "", width = 100, depth = 3, funcs = "count"}
 
     // Pretty print a data structure. Options:
     //     width   max line width in chars
@@ -157,6 +157,15 @@ extend(Debug, {
         if (level >= options.depth) return "" + data;  // More robust than .tostring()
 
         local endln = (level == 0 ? "\n" : "");
+
+        if (typeof data == "instance") {
+            try {
+
+                data = data.getdelegate();
+            } catch (exception) {
+                // do nothing
+            }
+        }
 
         if (typeof data == "table") {
             if ("pp" in data) return data.pp;
@@ -192,6 +201,10 @@ extend(Debug, {
         return Util.merge(this, {DEFAULTS = Util.merge(this.DEFAULTS, options)})
     }
 })
+
+::std.debug <- function(data) {
+    this.logInfo("<pre>" + Debug.pp(data) + "</pre>")
+}
 
 
 extend(Hook, {
