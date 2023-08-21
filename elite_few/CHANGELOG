@@ -1,0 +1,16 @@
+- exclude Drunkard trait but allow Bloodthirsty for masters
+
+2.0 (The first rewrite following the original 1.2)
+Compatibility:
+- made compatibile with mods like Ultra Bros and Starting Perks by Background
+- fixed some newer DLC changes overwritten by the original mod
+- overall better other mods and future compatibility
+- autodetect ranged origins
+Math fixes:
+- made talent chances calculation to match the description (there was off by 1 error)
+- removed hardcoded to 1 in 10 for gladiator origin, ignoring multiplier
+- added 1 in 30 limit for very high cost backgrounds, multiplier applies on top
+- removed integer division rounding in master chance and party strength calculation
+
+Not really:
+- fixed trait calculation messing up seeded starts
