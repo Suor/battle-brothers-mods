@@ -2,7 +2,7 @@
 ::BgPerks <- {
     ID = "mod_background_perks"
     Name = "Background Perks"
-    Version = 2.0
+    Version = 2.1
 };
 ::BgPerks.chances <- {
     ALL = {"gifted": 3}
