@@ -23,7 +23,7 @@ extend(Str, {
         if (s.len() < sub.len()) return false;
         return s.slice(-sub.len()) == sub;
     }
-    function cutPrefix(s, sub) {
+    function cutprefix(s, sub) {
         return Str.startswith(s, sub) ? s.slice(sub.len()) : s;
     }
     function join(sep, lines) {

@@ -35,11 +35,21 @@ if ("dofile" in gt) {
         pow = pow
     }
     new <- function (script) {
+        if (script == "scripts/skills/cursed_skill" || script == "scripts/skills/cursed_effect") {
+            dofile("../../" + script + ".nut");
+        }
+
         return {
             script = script
             function getArmor() {return 39}
             function getArmorMax() {return 80}
             function setArmor(val) {}
+        }
+    }
+    inherit <- function (super, props) {
+        return {
+            super = super
+            props = props
         }
     }
     createColor <- function (color) {return color}
@@ -201,6 +211,14 @@ if ("dofile" in gt) {
         concat(array(6, "zombie"), ["zombie_yeoman" "zombie_yeoman" "zombie_knight" "necromancer"])
     ));
 
+    // Test skeletons
+    srand(4);
+    Days = 95;
+    setupParty(makeParty(
+        "skeletons", "undead",
+        concat(array(6, "skeleton_light"), array(6, "skeleton_medium"), array(6, "skeleton_heavy"))
+    ));
+
     // Test bandits party
     srand(53); // 11
     Days = 95;
@@ -229,6 +247,10 @@ if ("dofile" in gt) {
 
     // Testing anything else
     local Debug = StandoutEnemies.Debug;
+
+    // At least check syntax
+    new("scripts/skills/cursed_skill");
+    new("scripts/skills/cursed_effect");
 
     // Check something about Squirrel
     local function main() {

@@ -25,7 +25,7 @@ local Config = se.Config <- {
     }
     function cutName(name) {
         if (name in this.ShortNames) return this.ShortNames[name];
-        name = Str.cutPrefix(name, "Ancient ");
+        name = Str.cutprefix(name, "Ancient ");
         return name;
     }
 }
@@ -330,6 +330,16 @@ Quirk = se.Quirk <- {
             Mod.ensureWeapon(e, ["oriental/qatal_dagger", "ancient/khopesh", "rondel_dagger"], 300)
         }
     },
+    Cursed = {
+        Prefix = "Cursed",
+        XPMult = 1.3,
+        function apply(e) {
+            // Give bravery and defense to make him stay for longer
+            Mod.bravery(e, 1.7);
+            e.m.BaseProperties.MeleeDefense += 15;
+            e.m.Skills.add(new("scripts/skills/cursed_skill"));
+        }
+    },
 }
 
 // Add names for debugging purposes
@@ -359,31 +369,20 @@ Strategy = se.Strategy <- {
             return {bandit = quirks, nomad = quirks};
         }
     }
-    SkeletonLight = {
-        MinScale = 0.3,
-        MaxScale = 0.9,
-        Types = ["skeleton_light"],
+    Skeleton = {
+        MinScale = 0.3
+        MaxScale = 1.1
+        AnyTypes = ["skeleton_light" "skeleton_medium" "skeleton_heavy"]
         function getPlan(stats, maturity) {
-            local num = se.getQuirkedNum(stats, this.Types, maturity, 0.2, 0.7);
-            return {skeleton_light = array(num, Quirk.Big)}
-        }
-    }
-    SkeletonMedium = {
-        MinScale = 0.5,
-        MaxScale = 1.0,
-        Types = ["skeleton_medium"],
-        function getPlan(stats, maturity) {
-            local num = Rand.poly(1 + maturity * 4, 0.1 + 0.4 * maturity);
-            return {skeleton_medium = array(num, Quirk.Big)}
-        }
-    }
-    SkeletonHeavy = {
-        MinScale = 0.6,
-        MaxScale = 1.2,
-        Types = ["skeleton_heavy"],
-        function getPlan(stats, maturity) {
-            local num = Rand.poly(1 + maturity * 2, 0.1 + 0.4 * maturity);
-            return {skeleton_heavy = array(num, Quirk.Big)}
+            local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.2, 0.4);
+            local cursed = num / (Math.rand(1, 4) + (num >= 6 ? 1 : 0));
+            this.logInfo("cursed " + cursed);
+            num -= cursed;
+
+            local plan = {};
+            if (cursed > 0) stats.grow(plan, array(cursed, Quirk.Cursed), [4 2 1], this.AnyTypes);
+            if (num > 0) stats.grow(plan, array(num, Quirk.Big), [4 2 1], this.AnyTypes);
+            return plan;
         }
     }
     Shot = {
@@ -443,11 +442,34 @@ Strategy = se.Strategy <- {
             local num = se.getQuirkedNum(stats, this.Types, maturity, 0.4, 0.75);
             if (num == 0) return null;
 
-            switch (Rand.weighted([75, 33, 100], ["sly", "fast", "mixed"])) {
-                case "sly": return {goblin = array(num, Quirk.Sly)};
-                case "fast": return {goblin = array(num, Quirk.Fast)};
-                case "mixed": return {goblin = Rand.choices(num, [Quirk.Fast, Quirk.Sly, Quirk.Sly])};
+            // local scenarios = [
+            //     {weight = 75, quirks = @(n) array(n, Quirk.Sly)}
+            //     {weight = 50, quirks = @(n) array(n, Quirk.Fast)}
+            //     {weight = 100, quirks = @(n) Rand.choices(n, [Quirk.Fast, Quirk.Sly, Quirk.Sly])}
+            // ];
+            // if (maturity > 0.5) {
+            //     scenarios.push(
+            //         {weight = 100, quirks = @(n) Rand.choices(n, [Quirk.Sly, Quirk.Cursed])})
+            // }
+            // local plan = {goblin = se.roll(scenarios).quirks(num)};
+
+            local plan = {};
+
+            // Sometimes add some masterwork zombies
+            if (maturity > 0.5 && Rand.chance(maturity * 0.5)) {
+                local cursed = Rand.poly(num / 3, maturity - 0.5);
+                num -= cursed;
+                this.logInfo("se: Cursed goblins " + cursed + " maturity " + maturity + " scale " + stats.scale);
+                stats.grow(plan, array(cursed, Quirk.Cursed), [1], ["goblin"]);
             }
+
+            local quirks = [];
+            switch (Rand.weighted([75, 33, 100], ["sly", "fast", "mixed"])) {
+                case "sly": quirks = array(num, Quirk.Sly);
+                case "fast": quirks = array(num, Quirk.Fast);
+                case "mixed": quirks = Rand.choices(num, [Quirk.Fast, Quirk.Sly, Quirk.Sly]);
+            }
+            return stats.grow(plan, quirks, [1], ["goblin"]);
         }
     },
     Orc = {
@@ -516,6 +538,7 @@ Strategy = se.Strategy <- {
             // Sometimes add some masterwork zombies
             if (maturity > 0.5 && Rand.chance(maturity * 0.5)) {
                 local masters = Rand.poly(num / 4, maturity - 0.4);
+                this.logInfo("se: Masterwork zombie " + masters + " maturity " + maturity + " scale " + stats.scale);
                 stats.grow(plan, array(masters, Quirk.Masterwork), [1 0], ["zombie_good" "zombie"]);
                 num -= masters;
             }
@@ -552,11 +575,11 @@ Strategy = se.Strategy <- {
         }
     },
     NecroZombie = {
-        Priority = 10,
-        MinScale = 0.5,
-        MaxScale = 1.5,
-        Types = ["necromancer"],
-        AnyTypes = ["zombie", "zombie_good"],
+        Priority = 10
+        MinScale = 0.5
+        MaxScale = 1.5
+        Types = ["necromancer"]
+        AnyTypes = ["zombie" "zombie_good"]
         function getPlan(stats, maturity) {
             local necroPlan = Strategy.Necromancer.getPlan(stats, maturity);
 
@@ -585,7 +608,19 @@ Strategy = se.Strategy <- {
 
             return plan;
         }
-    },
+    }
+    // Test = {
+    //     Priority = 100
+    //     MinScale = 0.0
+    //     MaxScale = 1.0
+    //     AnyTypes = ["bandit" "nomad" "zombie" "zombie_good" "goblin"
+    //                 "skeleton_light"  "skeleton_medium" "skeleton_heavy"
+    //                 "orc_warrior"  "orc_berserker" "orc_warlord"]
+    //     function getPlan(stats, maturity) {
+    //         local weights = array(this.AnyTypes.len(), 1);
+    //         return stats.grow({}, array(5, Quirk.Cursed), weights, this.AnyTypes);
+    //     }
+    // }
 }
 // Make passing maturity optional and adding logging to all .getPlan() methods
 foreach (_name, strategy in Strategy) {
@@ -872,6 +907,8 @@ Util.extend(Mod, {
     }
 
     function color(e, part, color, brightness = 1, saturation = 1) {
+        if (!e.hasSprite(part)) return;
+
         local sprite = e.getSprite(part);
         sprite.Color = this.createColor(color);
         sprite.setBrightness(brightness);
@@ -901,7 +938,7 @@ Util.extend(Mod, {
             // Arena doesn't have party, simply skip
             if (!("Party" in t)) return;
 
-            this.logInfo("se: setupEntity " + e.getName() + " party " + t.Party.getName());
+            // this.logInfo("se: setupEntity " + e.getName() + " party " + t.Party.getName());
             se.setupEntity(se.getPlan(t.Party), e, t);
         }
     });
