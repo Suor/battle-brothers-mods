@@ -1,14 +1,14 @@
-// local Debug = ::std.Debug.with({prefix = "bp: ", width = 160});
+// local Debug = ::std.Debug.with({prefix = "bp: ", width = 120});
 ::BgPerks <- {
     ID = "mod_background_perks"
     Name = "Background Perks"
     Version = 2.0
 };
 ::BgPerks.chances <- {
-    ALL = {"student": 1 "gifted": 4 "hold_out": 4 "relentless": 4}
+    ALL = {"gifted": 3}
 
     adventurous_noble = {
-        "hold_out": 5
+        "steel_brow": 5
         "shield_expert": 5
         "brawny": 5
         "fortified_mind": 5
@@ -19,6 +19,7 @@
 
     anatomist = {
         "crippling_strikes": 50
+        "hold_out": 15
         "student": 20
         "gifted": 10
     }
@@ -26,23 +27,27 @@
     apprentice = {
         "student": 100
         "gifted": 25
+        "relentless": 5
     }
 
     assassin = {
-        "mastery.dagger": 100
+        "mastery.dagger": 33
         "backstabber": 50
-        "crippling_strikes": 25
+        "crippling_strikes": 33
+        "coup_de_grace": 33
+        "head_hunter": 3
     }
 
     barbarian = {
         "adrenaline": 25
         "relentless": 50
         "colossus": 15
+        "pathfinder": 10
     }
 
     bastard = {
         "backstabber": 20
-        "hold_out": 20
+        "hold_out": 10
         "rally_the_troops": 5
         "underdog": 5
         "relentless": 5
@@ -69,16 +74,16 @@
     }
 
     bowyer = {
-        "bullseye": 25
+        "bullseye": 15
         "quick_hands": 25
-        "mastery.bow": 5
+        "mastery.bow": 25
     }
 
     brawler = {
         "taunt": 20
         "overwhelm": 5
-        "steel_brow": 5
-        "relentless": 35
+        "steel_brow": 10
+        "relentless": 20
         "underdog": 10
         "mastery.mace": 10
         "dodge": 3
@@ -109,7 +114,7 @@
 
     cripple = {
         "nine_lives": 50
-        "hold_out": 25
+        "hold_out": 33
         "underdog": 5
     }
 
@@ -123,17 +128,17 @@
 
     daytaler = {
         "brawny": 5
-        "colossus": 2
-        "recover": 5
+        "colossus": 3
+        "recover": 10
         "fast_adaption": 35
         "pathfinder": 2
     }
 
     deserter = {
         "dodge": 25
-        "backstabber": 25
         "nine_lives": 25
         "footwork": 15
+        "pathfinder": 10
     }
 
     disowned_noble = {
@@ -158,6 +163,7 @@
 
     fisherman = {
         "mastery.throwing": 20
+        "mastery.spear": 5
         "quick_hands": 25
     }
 
@@ -169,7 +175,7 @@
     }
 
     gambler = {
-        "nine_lives": 75
+        "nine_lives": 25
         "fast_adaption": 50
         "anticipation": 20
         "relentless": 10
@@ -179,16 +185,16 @@
         "underdog": 15
         "coup_de_grace": 20
         "mastery.mace": 6
-        "mastery.flail": 4
+        "mastery.flail": 5
         "mastery.hammer": 2
         "mastery.axe": 3
         "mastery.cleaver": 4
-        "mastery.sword": 5
+        "mastery.sword": 3
         "mastery.spear": 4
         "mastery.throwing": 5
-        "shield_expert": 5
+        "shield_expert": 2
         "dodge": 5
-        "reach_advantage": 3
+        "reach_advantage": 5
         "lone_wolf": 3
         "fast_adaption": 2
         "nine_lives": 1
@@ -214,18 +220,20 @@
         "student": 100
         "gifted": 25
         "underdog": 10
+        "pathfinder": 15
     }
 
     houndmaster = {
         "underdog": 40
         "relentless": 30
-        "lone_wolf": 10
+        "lone_wolf": 15
     }
 
     hunter = {
-        "bullseye": 18
-        "mastery.bow": 5
-        "mastery.crossbow": 3
+        "bullseye": 33
+        "mastery.bow": 7
+        "mastery.crossbow": 5
+        "mastery.throwing": 5
     }
 
     juggler = {
@@ -253,14 +261,15 @@
     manhunter = {
         "pathfinder": 20
         "fearsome": 40
-        "mastery.flail": 10
+        "mastery.cleaver": 10
+        "head_hunter": 5
     }
 
     mason = {
         "student": 10
         "recover": 2
         "brawny": 35
-        "mastery.hammer": 5
+        "mastery.hammer": 10
     }
 
     messenger = {
@@ -268,6 +277,7 @@
         "pathfinder": 50
         "footwork": 5
         "bags_and_belts": 5
+        "relentless": 3
     }
 
     militia = {
@@ -288,7 +298,7 @@
     miner = {
         "mastery.hammer": 50
         "steel_brow": 60
-        "hold_out": 25
+        "hold_out": 15
     }
 
     minstrel = {
@@ -309,6 +319,7 @@
         "colossus": 10
         "recover": 5
         "rotation": 5
+        "mastery.cleaver": 3
     }
 
     orc_slayer = {
@@ -322,8 +333,8 @@
     paladin =  {
         "fortified_mind": 50
         "relentless": 15
-        "hold_out": 15
-        "steel_brow": 15
+        "hold_out": 5
+        "steel_brow": 20
         "student": 10
         "fast_adaption": 3
     }
@@ -340,22 +351,22 @@
     }
 
     poacher = {
-        "nimble": 35
-        "bullseye": 12
+        "nimble": 30
+        "bullseye": 15
         "quick_hands": 10
-        "mastery.bow": 5
-        "mastery.crossbow": 3
-        "mastery.throwing": 3
+        "mastery.bow": 4
+        "mastery.crossbow": 4
+        "mastery.throwing": 4
     }
 
     raider = {
         "mastery.mace": 2
-        "mastery.flail": 2
+        "mastery.flail": 5
         "mastery.hammer": 2
         "mastery.axe": 4
         "mastery.cleaver": 1
         "mastery.sword": 4
-        "mastery.polearm": 3
+        "mastery.polearm": 2
         "mastery.spear": 2
         "mastery.crossbow": 1
         "underdog": 4
@@ -367,13 +378,14 @@
         "underdog": 25
         "pathfinder": 25
         "nimble": 10
+        "hold_out": 10
         "footwork": 25
     }
 
     refugee = {
         "pathfinder": 100
         "recover": 20
-        "lone_wolf": 2
+        "lone_wolf": 7
     }
 
     retired_soldier = {
@@ -384,9 +396,9 @@
         "mastery.hammer": 3
         "mastery.axe": 3
         "mastery.cleaver": 2
-        "mastery.sword": 6
-        "mastery.polearm": 6
-        "mastery.spear": 3
+        "mastery.sword": 5
+        "mastery.polearm": 5
+        "mastery.spear": 4
         "mastery.crossbow": 1
         "shield_expert": 5
     }
@@ -395,15 +407,15 @@
         "mastery.mace": 4
         "mastery.flail": 4
         "mastery.hammer": 4
-        "mastery.axe": 5
-        "mastery.cleaver": 5
+        "mastery.axe": 4
+        "mastery.cleaver": 4
         "mastery.sword": 7
-        "mastery.polearm": 2
-        "mastery.spear": 2
-        "mastery.crossbow": 3
-        "mastery.bow": 5
+        "mastery.polearm": 4
+        "mastery.crossbow": 4
+        "mastery.bow": 4
+        "shield_expert": 3
         "lone_wolf": 5
-        "hold_out": 10
+        "hold_out": 5
         "steel_brow": 10
     }
 
@@ -415,9 +427,8 @@
     }
 
     shepherd = {
-        "pathfinder": 20
         "bullseye": 15
-        "pathfinder": 10
+        "pathfinder": 20
     }
 
     slave = {
@@ -431,6 +442,7 @@
     squire = {
         "student": 15
         "gifted": 7
+        "quick_hands": 1
     }
 
     swordmaster = {
@@ -445,6 +457,7 @@
         "quick_hands": 100
         "underdog": 20
         "bags_and_belts": 20
+        "mastery.dagger": 2
     }
 
     thief = {
@@ -460,6 +473,7 @@
         "recover": 20
         "footwork": 20
         "colossus": 7
+        "relentless": 5
     }
 
     wildman = {
@@ -472,10 +486,11 @@
     }
 
     witchhunter = {
-        "bullseye": 14
+        "bullseye": 20
         "fortified_mind": 10
+        "hold_out": 20
         "mastery.crossbow": 25
-        "lone_wolf": 10
+        "lone_wolf": 15
     }
 }
 ::BgPerks.chances.assassin_southern <- ::BgPerks.chances.assassin;
