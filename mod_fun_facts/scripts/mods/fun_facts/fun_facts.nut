@@ -22,7 +22,6 @@ this.fun_facts <- {
     }
 
     function setName(_name) {
-        this.logInfo("ff: setName to " + _name + " from " + this.m.Name);
         this.m.Name = _name;
     }
 
@@ -140,26 +139,26 @@ this.fun_facts <- {
 
             addHint("ui/icons/kills.png", text);
 
-            local function getTroopType(name) {
-                if (Str.startswith(name, "zombie")) return "zombie";
-                if (Str.startswith(name, "skeleton")) return "skeleton";
-                if (Str.startswith(name, "bandit")) return "bandit";
-                if (Str.startswith(name, "nomad")) return "nomad";
-                if (Str.startswith(name, "barbarian")) return "barbarian";
-                if (Str.startswith(name, "goblin")) return "goblin";
-                if (Str.startswith(name, "orc")) return "orc";
-                if (Str.startswith(name, "ghoul")) return "ghoul";
-                if (Str.startswith(name, "vampire")) return "vampire";
-                if (Str.startswith(name, "mercenary")) return "mercenary";
-                if (name == "wolf" || name == "direwolf") return "wolf";
-                if (name == "hyena" || name == "hyena_high") return "hyena";
-                return name;
-            }
-            local killsByClass = ::MSU.Class.WeightedContainer();
-            foreach (kill in this.m.Stats.Kills) killsByClass.add(getTroopType(kill.ClassName));
-            local killsByClassSorted = killsByClass.toArray(false);
-            killsByClassSorted.sort(@(a, b) b[0] <=> a[0])
-            ::FunFacts.Debug.log("killsByClass", killsByClassSorted);
+            // local function getTroopType(name) {
+            //     if (Str.startswith(name, "zombie")) return "zombie";
+            //     if (Str.startswith(name, "skeleton")) return "skeleton";
+            //     if (Str.startswith(name, "bandit")) return "bandit";
+            //     if (Str.startswith(name, "nomad")) return "nomad";
+            //     if (Str.startswith(name, "barbarian")) return "barbarian";
+            //     if (Str.startswith(name, "goblin")) return "goblin";
+            //     if (Str.startswith(name, "orc")) return "orc";
+            //     if (Str.startswith(name, "ghoul")) return "ghoul";
+            //     if (Str.startswith(name, "vampire")) return "vampire";
+            //     if (Str.startswith(name, "mercenary")) return "mercenary";
+            //     if (name == "wolf" || name == "direwolf") return "wolf";
+            //     if (name == "hyena" || name == "hyena_high") return "hyena";
+            //     return name;
+            // }
+            // local killsByClass = ::MSU.Class.WeightedContainer();
+            // foreach (kill in this.m.Stats.Kills) killsByClass.add(getTroopType(kill.ClassName));
+            // local killsByClassSorted = killsByClass.toArray(false);
+            // killsByClassSorted.sort(@(a, b) b[0] <=> a[0])
+            // ::FunFacts.Debug.log("killsByClass", killsByClassSorted);
         }
 
         if (this.m.Stats.Injuries.len() > 0) {

@@ -78,7 +78,7 @@
 
     local onSerialize = o.onSerialize;
     o.onSerialize = function(_out) {
-        this.logInfo("ff: player.onSerialize version " + ::FunFacts.Version);
+        // this.logInfo("ff: player.onSerialize version " + ::FunFacts.Version);
         this.m.FunFacts.onSerialize(
             ::FunFacts.Mod.Serialization.getSerializationEmulator("FunFacts", this.getFlags()));
         return onSerialize(_out);
@@ -88,7 +88,7 @@
     o.onDeserialize = function (_in) {
         onDeserialize(_in);
         if (::FunFacts.Mod.Serialization.isSavedVersionAtLeast("0.1.1", _in.getMetaData())) {
-            this.logInfo("ff: player.onDeserialize saved version at least 0.1.1");
+            // this.logInfo("ff: player.onDeserialize saved version at least 0.1.1");
             this.m.FunFacts.onDeserialize(
                 ::FunFacts.Mod.Serialization.getDeserializationEmulator("FunFacts", this.getFlags()));
             this.m.FunFacts.setName(this.m.Name);
