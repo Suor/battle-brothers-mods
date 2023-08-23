@@ -6,8 +6,6 @@ DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
 
 SHELL := /bin/bash
 
-# TODO: check for stages changes in zip and sync targets
-
 test:
 	cd $(SUBDIR);squirrel test_mod_standout_enemies.nut
 
