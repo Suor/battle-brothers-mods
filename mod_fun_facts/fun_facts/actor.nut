@@ -1,7 +1,7 @@
 ::mods_hookExactClass("entity/tactical/actor", function (o) {
     local onDeath = o.onDeath;
     o.onDeath = function (_killer, _skill, _tile, _fatalityType) {
-        if ("FunFacts" in _killer.m) _killer.m.FunFacts.onKill(this, _fatalityType);
+        if (_killer != null && "FunFacts" in _killer.m) _killer.m.FunFacts.onKill(this, _fatalityType);
         return onDeath(_killer, _skill, _tile, _fatalityType)
     }
 
