@@ -591,41 +591,76 @@ local AutoReload = true; // should we try to automatically reload if we have unu
 
   ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_ranged", function (o) {
     this.logInfo("ap: hook ai_engage_ranged");
+    local Debug = ::std.Debug.with({prefix = "ap: ", width = 120});
+
+    local function isRelevant(_actor) {
+      return !_actor.isNull() && !_actor.m.IsDying && _actor.m.IsAlive;
+    }
+
+    local function isBad(_actor) {
+      if (_actor == null) return "null";
+      if (_actor.isNull()) return "isNull";
+      if (_actor.m.IsDying) return "dying";
+      if (!_actor.m.IsAlive) return "!alive";
+      return false;
+    }
+
+    local function cleanup(_b) {
+      local function calcBad(bad, key, actors) {
+        foreach (actor in actors) {
+          local reason = isBad(actor);
+          if (reason) {
+            if (!(key in bad)) bad[key] <- {};
+            if (!(reason in bad[key])) bad[key][reason] <- 0;
+            bad[key][reason]++;
+          }
+        }
+      }
+      local bad = {};
+      calcBad(bad, "targets", _b.m.ValidTargets.map(@(t) t.Actor))
+      calcBad(bad, "danger", _b.m.PotentialDanger);
+      if (bad.len() > 0) Debug.log("bad", bad);
+
+      _b.m.ValidTargets = _b.m.ValidTargets.filter(@(_, t) isRelevant(t.Actor));
+      _b.m.PotentialDanger = _b.m.PotentialDanger.filter(@(_, a) isRelevant(a));
+    }
+
+    // local create = o.create;
+    // o.create = function() {
+    //     create();
+    //     this.Const.AI.VerboseMode = true;
+    //     // this.Const.AI.BenchmarkMode = true;
+    // }
 
     // The problem with this is while we go through tiles a target might become invalid,
     // usually after a ranged bro shoots someone and we are evaluating his next shot
     local selectBestTargetTile = o.selectBestTargetTile;
     o.selectBestTargetTile = function (_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded) {
+      this.logInfo("ap: START selectBestTargetTile");
       local res;
-      local failed = false;
       local gen = selectBestTargetTile(_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded);
 
-      // try/catch on the whole thing dumps core, so we need to wrap resume only
       while (true) {
-        try {
-          res = resume gen;
-        } catch (exception) {
-          this.logInfo("ap: caught " + exception + " in selectBestTargetTile");
-          failed = true;
-          break;
-        }
+        cleanup(this);
+        // this.logInfo("ap: resume selectBestTargetTile");
+        res = resume gen;
         // Proxy "results"
-        if (res != null) return res;
+        if (res != null) {
+          this.logInfo("ap: END selectBestTargetTile " + res);
+          return res;
+        }
         yield res;
-      }
-
-      if (failed) {
-        // Remove no longer valid targets and potential dangers,
-        // i.e. ones with actor not having getIdealRange
-        this.m.ValidTargets = this.m.ValidTargets.filter(@(_, t) !t.Actor.isNull());
-        this.m.PotentialDanger = this.m.PotentialDanger.filter(@(_, t) !t.isNull());
-
-        // Retry
-        gen = selectBestTargetTile(_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded);
-        foreach (res in gen) yield res;
-        return true;
       }
     }
 
+    // local getDangerFromActor = o.getDangerFromActor;
+    // o.getDangerFromActor = function( _actor, _target, _entity ) {
+    //   local bad = isBad(_actor);
+    //   if (bad) {
+    //     this.logInfo("ap: getDangerFromActor actor " + bad);
+    //     return 0.0;
+    //   }
+    //   return getDangerFromActor(_actor, _target, _entity);
+    // }
   });
 });
