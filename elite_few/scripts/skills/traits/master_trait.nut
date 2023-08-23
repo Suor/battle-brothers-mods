@@ -64,6 +64,12 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
                 icon = "ui/icons/initiative.png",
                 text = "[color=" + this.Const.UI.Color.PositiveValue + "]+5[/color] Initiative"
             }
+            {
+                id = 11,
+                type = "text",
+                icon = "ui/icons/money.png",
+                text = "[color=" + this.Const.UI.Color.NegativeValue + "]+9[/color] Daily wage"
+            }
         ];
     }
 
