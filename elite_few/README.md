@@ -1,6 +1,6 @@
 # Elite Few - Master Bros
 
-A rewrite of the old [The Elite Few - Master Bros][old-mod], aimed at better compatibility with other mods and newer DLCs.
+A rewrite of the old [The Elite Few - Master Bros][old-mod], aimed at better compatibility with other mods and newer DLCs. Plus some fixes.
 
 
 ## Install
