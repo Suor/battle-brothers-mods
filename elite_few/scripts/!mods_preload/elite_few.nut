@@ -5,7 +5,7 @@
         "mod_hooks(>=19), !TheEliteFewCore, >mod_ultrabros, >mod_weightedTalents",
         function() {
     // Configuration
-    local masterMultiplier = 20;
+    local masterMultiplier = 3;
     local masterGuaranteed = false;
     local masterSlaves = false;
     local adjustDifficulty = true;
@@ -20,7 +20,9 @@
         if(mod.Name == "TheEliteAddonSlaves") { masterSlaves = true; }
         if(mod.Name == "TheEliteAddonEasy") { adjustDifficulty = false;}
     }
-    this.logInfo("ef: Elite Few (Compatible) Configured with multiplier: " + masterMultiplier + " Cheat: " + masterGuaranteed +  " Slaves: " + masterSlaves + " Difficulty Adjustment: " + adjustDifficulty);
+    this.logInfo("ef: Elite Few (Compatible) Configured with multiplier: "
+        + masterMultiplier + " Cheat: " + masterGuaranteed +  " Slaves: " + masterSlaves
+        + " Difficulty Adjustment: " + adjustDifficulty);
 
     local function isRangedBg(_background) {
         local c = _background.onChangeAttributes();
@@ -43,20 +45,16 @@
     }
 
     ::mods_hookNewObject("entity/tactical/player", function (o) {
-        this.logInfo("ef: hook player " + o.getName());
-
         local fillTalentValues = o.fillTalentValues;
         o.fillTalentValues = function() {
-            this.logInfo("ef: fillTalentValues");
             fillTalentValues();
 
             local background = this.getBackground();
             if (!this.getSkills().hasSkill("trait.master")) return;
             if (background != null && background.isUntalented()) return;
-            this.logInfo("ef: fillTalentValues put talents");
 
             local talents = this.m.Talents;
-            ::std.Debug.log("talents before", talents);
+            // ::std.Debug.log("talents before", talents);
             local excluded = background ? background.getExcludedTalents() : [];
 
             // Add a new talent
@@ -75,39 +73,23 @@
                 local roll = rng.next(1, 100);
                 talents[stat] = roll <= 10 ? 1 : roll <= 60 ? 2 : 3;
             }
-            ::std.Debug.log("talents after", talents);
+            // ::std.Debug.log("talents after", talents);
         }
     });
-    
-    ::mods_hookExactClass("skills/backgrounds/character_background", function (o) {
-        local onAdded = o.onAdded;
-        o.onAdded = function () {
-            onAdded();
 
-            if (rollMaster(this)) {
-                local trait = this.new("scripts/skills/traits/master_trait");
-                this.getContainer().add(trait);
-                // ::std.Debug.log("trait", trait)
-                this.logInfo("se: " + this.getName() + " excluded " + this.m.Excluded.len());
-                this.m.Excluded.extend(trait.m.Excluded);
-                this.logInfo("se: " + this.getName() + " excluded " + this.m.Excluded.len() + " after");
-                // this.m.Excluded.extend(masterExcluded);
-            }
-        }
-
+    ::mods_hookExactClass("skills/backgrounds/character_background", function(o) {
         local onUpdate = o.onUpdate;
-        o.onUpdate = function ( _properties ) {
+        o.onUpdate = function(_properties) {
             onUpdate(_properties);
 
-            if (this.m.DailyCost != 0 && this.getContainer().hasSkill("trait.master")
-                                      && !this.getContainer().hasSkill("trait.player")) {
+            // No easy access to DailyCost in traits, so we patch this
+            if (this.m.DailyCost != 0 && !this.getContainer().hasSkill("trait.player")
+                                      && this.getContainer().hasSkill("trait.master")) {
                 _properties.DailyWage += 9;
             }
         }
-    });
 
-    ::mods_hookDescendants("skills/backgrounds/character_background", function (o) {
-        local baseGap = {
+        local lowHighGap = {
             Hitpoints = 10
             Bravery = 10
             Stamina = 10
@@ -118,36 +100,33 @@
             Initiative = 10
         };
 
-        while(!("buildAttributes" in o)) o = o[o.SuperName];
+        // buildAttributes() happens after background is added, so it's convenient to both roll
+        // for master trait and hack buildAttributes() themselves.
         local buildAttributes = o.buildAttributes;
-        o.buildAttributes = function () {
-            if (!this.getContainer().hasSkill("trait.master")) buildAttributes();
+        o.buildAttributes = function() {
+            local master = rollMaster(this);
+            if (!master) return buildAttributes();
 
-            // We are gonna monkey patch this for a singular buildAttributes() call
+            local trait = this.new("scripts/skills/traits/master_trait");
+            this.getContainer().add(trait);
+            // The master trait won't be queried for excluded so we copy those to the background
+            this.m.Excluded.extend(trait.m.Excluded);
+
+            // Patching this globally messes some mods like Background Attribute Ranges.
+            // Will also break the isRangedBg() above.
             local onChangeAttributes = this.onChangeAttributes;
             this.onChangeAttributes = function () {
-                // Make low bound equal high
                 local c = onChangeAttributes();
-                foreach (attr, bonuses in c) bonuses[0] = bonuses[1] + baseGap[attr];
+                // Make low bound equal high
+                foreach (attr, bonuses in c) bonuses[0] = lowHighGap[attr] + bonuses[1];
                 return c;
             }
             buildAttributes()
             this.onChangeAttributes = onChangeAttributes;
         }
-
-        // while(!("onChangeAttributes" in o)) o = o[o.SuperName];
-        // local onChangeAttributes = o.onChangeAttributes;
-        // o.onChangeAttributes = function () {
-        //     local c = onChangeAttributes();
-        //     if (!this.getContainer().hasSkill("trait.master")) return c;
-
-        //     // Make low bound equal high for masters
-        //     foreach (attr, bonuses in c) bonuses[0] = bonuses[1] + baseGap[attr];
-        //     // ::std.Debug.log("ef: onChangeAttributes", c);
-        //     return c;
-        // }
     });
 
+    // Adjust player party strength (affects enemy scaling), to not make our life too easy
     ::mods_hookNewObjectOnce("entity/world/player_party", function (o) {
         local updateStrength = o.updateStrength;
         o.updateStrength = function() {
