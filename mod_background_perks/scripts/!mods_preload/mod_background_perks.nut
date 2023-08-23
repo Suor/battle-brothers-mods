@@ -509,8 +509,6 @@
         baseSetStartValuesEx(_backgrounds);
         local originalPerkPoints = this.m.PerkPoints;
         local background = this.m.Background;
-        this.logInfo("bp: *** Rollling " + this.getName() + " background " + background.getID()
-                + " scale " + scale);
 
         // Look up chances and add common ones
         local background_key = background.getID().slice("background.".len());
@@ -537,6 +535,8 @@
                 report[key] += " SUCCESS";
             }
         }
+        // this.logInfo("bp: *** Rollling " + this.getName() + " background " + background.getID()
+        //         + " scale " + scale);
         // Debug.log("rolls", report);
         // Debug.log("perks", perks);
 
