@@ -93,7 +93,7 @@
             return Math.rand(0, chance + 99) / 100;
           }
           for (local i = 0; i < Const.Attributes.COUNT; i++) {
-            local bonus = i == Const.Attributes.Initiative ? 1 : 0;
+            local bonus = i == Const.Attributes.Initiative ? 0.5 : 0;
             this.m.Attributes[i].insert(0, 1 + extra(m.Talents[i], bonus));
           }
       }
