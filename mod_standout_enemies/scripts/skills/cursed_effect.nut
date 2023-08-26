@@ -95,6 +95,8 @@ this.cursed_effect <- this.inherit("scripts/skills/skill", {
         local actor = this.getContainer().getActor();
         local props = actor.getCurrentProperties();
         this.m.Count = 1;
+        // +1 turn to penalize a bro hitting cursed once,
+        // otherwise turn end will erase it immediately with no effect for a Resilient bro.
         this.m.TurnsLeft = 1 + this.Math.max(1, 3 + props.NegativeStatusEffectDuration);
         this.logInfo("se: cursed_effect count " + this.m.Count + " turns " + this.m.TurnsLeft);
 

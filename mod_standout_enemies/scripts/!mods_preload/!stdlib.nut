@@ -103,7 +103,7 @@ extend(Rand, {
             sofar += weights[i];
             if (roll <= sofar) return choices[i]
         }
-        return choices[choices.len() - 1];  // To be safe
+        return choices.top();  // To be safe
     }
     function insert(arr, item, num = 1) {
         for (local i = 0; i < num; i++) {

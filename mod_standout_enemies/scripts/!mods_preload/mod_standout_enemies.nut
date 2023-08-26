@@ -22,6 +22,7 @@ local Config = se.Config <- {
         "Fallen Hero": "Hero",
         "Barbarian Chosen": "Chosen",
         "Barbarian Reaver": "Reaver",
+        "Barbarian Thrall": "Thrall",
     }
     function cutName(name) {
         if (name in this.ShortNames) return this.ShortNames[name];
@@ -442,17 +443,6 @@ Strategy = se.Strategy <- {
             local num = se.getQuirkedNum(stats, this.Types, maturity, 0.4, 0.75);
             if (num == 0) return null;
 
-            // local scenarios = [
-            //     {weight = 75, quirks = @(n) array(n, Quirk.Sly)}
-            //     {weight = 50, quirks = @(n) array(n, Quirk.Fast)}
-            //     {weight = 100, quirks = @(n) Rand.choices(n, [Quirk.Fast, Quirk.Sly, Quirk.Sly])}
-            // ];
-            // if (maturity > 0.5) {
-            //     scenarios.push(
-            //         {weight = 100, quirks = @(n) Rand.choices(n, [Quirk.Sly, Quirk.Cursed])})
-            // }
-            // local plan = {goblin = se.roll(scenarios).quirks(num)};
-
             local plan = {};
 
             // Sometimes add some masterwork zombies
@@ -670,7 +660,7 @@ Util.extend(se, {
         stats.scale <- 1.0 * gt.World.getTime().Days / scaleDays;
         Debug.log("stats", stats, {funcs = false});
 
-        local plans = [], weights = [], priority = 9000;
+        local plans = [], priority = 9000;
         foreach (strategy in SortedStrategies) {
             if (strategy.MinScale > stats.scale) continue;
 
