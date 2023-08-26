@@ -242,10 +242,10 @@
 
     juggler = {
         "quick_hands": 100
-        "nimble": 15
-        "dodge": 25
+        "mastery.throwing": 15
+        "dodge": 7
+        "nimble": 7
         "anticipation": 5
-        "head_hunter": 5
     }
 
     killer_on_the_run = {
