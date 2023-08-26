@@ -1,3 +1,7 @@
+2.1.0
+- decrease initiative bonus
+- log less stuff
+
 2.0.0
 - rewrite configuration code to use MSU
 
