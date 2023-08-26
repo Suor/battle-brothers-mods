@@ -425,7 +425,7 @@ Strategy = se.Strategy <- {
         }
     },
     BarbarianChosen = {
-        MinScale = 0.6,
+        MinScale = 0.75,
         MaxScale = 1.5,
         Types = ["barbarian_champion"],  // These are called chosen in game
         function getPlan(stats, maturity) {
