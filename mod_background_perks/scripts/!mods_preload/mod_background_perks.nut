@@ -504,7 +504,7 @@
     local baseSetStartValuesEx = o.setStartValuesEx;
     o.setStartValuesEx = function ( _backgrounds ) {
         local scale = 1.0 + 0.5 * Math.maxf(0, Math.minf(1, this.World.getTime().Days / 100.0));
-        if (::mods_getRegisteredMod("mod_stupid_game")) scale *= 2;
+        if (::mods_getRegisteredMod("mod_stupid_game")) scale += 0.5;
 
         baseSetStartValuesEx(_backgrounds);
         local originalPerkPoints = this.m.PerkPoints;
