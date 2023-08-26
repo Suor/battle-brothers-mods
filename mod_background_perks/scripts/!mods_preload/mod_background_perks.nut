@@ -26,8 +26,8 @@
 
     apprentice = {
         "student": 100
-        "gifted": 25
-        "relentless": 5
+        "mastery.hammer": 25
+        "gifted": 15
     }
 
     assassin = {
@@ -62,7 +62,7 @@
     }
 
     beggar = {
-        "underdog": 100,
+        "underdog": 100
         "nine_lives": 10
         "bags_and_belts": 10
     }
@@ -97,6 +97,7 @@
 
     caravan_hand = {
         "bags_and_belts": 100
+        "brawny": 10
         "quick_hands": 10
         "colossus": 3
     }
@@ -130,15 +131,16 @@
         "brawny": 5
         "colossus": 3
         "recover": 10
-        "fast_adaption": 35
+        "fast_adaption": 33
         "pathfinder": 2
     }
 
     deserter = {
         "dodge": 25
         "nine_lives": 25
-        "footwork": 15
         "pathfinder": 10
+        "footwork": 10
+        "lone_wolf": 5
     }
 
     disowned_noble = {
@@ -159,6 +161,7 @@
     farmhand = {
         "colossus": 15
         "bags_and_belts": 5
+        "mastery.polearm": 15
     }
 
     fisherman = {
@@ -169,6 +172,7 @@
 
     flagellant = {
         "mastery.flail": 50
+        "mastery.cleaver": 10
         "indomitable": 5
         "relentless": 5
         "nine_lives": 3
@@ -176,7 +180,7 @@
 
     gambler = {
         "nine_lives": 25
-        "fast_adaption": 50
+        "fast_adaption": 33
         "anticipation": 20
         "relentless": 10
     }
@@ -202,7 +206,8 @@
 
     gravedigger = {
         "brawny": 50
-        "fortified_mind": 3
+        "lone_wolf": 5
+        "fortified_mind": 5
     }
 
     graverobber = {
@@ -219,8 +224,7 @@
     historian = {
         "student": 100
         "gifted": 25
-        "underdog": 10
-        "pathfinder": 15
+        "pathfinder": 10
     }
 
     houndmaster = {
@@ -231,9 +235,9 @@
 
     hunter = {
         "bullseye": 33
-        "mastery.bow": 7
+        "mastery.bow": 12
         "mastery.crossbow": 5
-        "mastery.throwing": 5
+        "mastery.throwing": 7
     }
 
     juggler = {
@@ -245,23 +249,23 @@
     }
 
     killer_on_the_run = {
-        "duelist": 90
-        "adrenaline": 40
-        "relentless": 10
-        "head_hunter": 15
+        "duelist": 50
+        "backstabber": 25
+        "adrenaline": 20
+        "head_hunter": 10
         "killing_frenzy": 2
     }
 
     lumberjack = {
-        "brawny": 15
         "mastery.axe": 50
-        "colossus": 10
+        "brawny": 15
+        "colossus": 15
     }
 
     manhunter = {
         "pathfinder": 20
-        "fearsome": 40
-        "mastery.cleaver": 10
+        "fearsome": 33
+        "mastery.cleaver": 15
         "head_hunter": 5
     }
 
@@ -341,8 +345,8 @@
 
     peddler = {
         "quick_hands": 50
-        "throwing": 10
         "bags_and_belts": 10
+        "mastery.throwing": 10
     }
 
     pimp = {
@@ -375,11 +379,11 @@
     }
 
     ratcatcher = {
-        "underdog": 25
-        "pathfinder": 25
-        "nimble": 10
-        "hold_out": 10
-        "footwork": 25
+        "underdog": 20
+        "pathfinder": 20
+        "hold_out": 20
+        "footwork": 20
+        "lone_wolf": 5
     }
 
     refugee = {
@@ -414,21 +418,22 @@
         "mastery.crossbow": 4
         "mastery.bow": 4
         "shield_expert": 3
-        "lone_wolf": 5
+        "brawny": 5
         "hold_out": 5
         "steel_brow": 10
     }
 
     servant = {
         "steel_brow": 50
-        "gifted": 15
         "bags_and_belts": 10
-        "quick_hands": 5
+        "quick_hands": 10
+        "gifted": 5
     }
 
     shepherd = {
-        "bullseye": 15
         "pathfinder": 20
+        "bullseye": 8
+        "mastery.throwing": 5
     }
 
     slave = {
@@ -440,7 +445,8 @@
     }
 
     squire = {
-        "student": 15
+        "brawny": 33
+        "student": 25
         "gifted": 7
         "quick_hands": 1
     }
@@ -471,9 +477,9 @@
     vagabond = {
         "pathfinder": 50
         "recover": 20
-        "footwork": 20
         "colossus": 7
         "relentless": 5
+        "lone_wolf": 5
     }
 
     wildman = {
