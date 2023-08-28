@@ -1,5 +1,5 @@
 MOD_NAME = elite_few
-TAG_NAME = elite-fiew
+TAG_NAME = elite-few
 SOURCES = scripts gfx
 DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
 
