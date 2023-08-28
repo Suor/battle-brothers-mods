@@ -7,7 +7,7 @@ Makes some bros "masters" with max attribute rolls, an extra talent and no bad t
 - max rolls in all attributes, i.e. Sellsword will always have 67 melee skill and 13 melee defense, etc.
 - an extra talent - 4 instead of 3 (unless other mods change this)
 - 10-50-40 % probabilities for 1-2-3 star(s) in all talents, up from 60-30-10%
-- no bad traits, like drunkard or clumsy
+- no bad traits, like drunkard or clumsy, this indirectly makes good ones more frequent
 - +5 initiative from a special "Master" trait
 - +9 extra daily wage
 
@@ -19,13 +19,13 @@ By default the rate at which a brother is a master is
 
 This means a Hedge Knight and Hunter will have a 1 in 30 chance to be a master, Witchhunter - 1 in 54, and a cripple a 1 in 94. By default indebted cannot be masters.
 
-Each master bros worth is 25-50% higher when calculating party strength, which affects enemy scaling sending larger groups of enemies at you. The exact formula:
+Each master bro's worth is 25-50% higher when calculating party strength, which affects enemy scaling, sending larger groups of enemies at you. The exact formula:
 
 ```python
 min(50, baseWage / 2 + 25)
 ```
 
-Note that only top 12 (14 for militia and manhunters origins) bros by level taken into account when calculating the party strength, so a newly hired low level master bro might not contribute.
+Note that only top 12 top level bros (14 for militia and manhunters origins) are taken into account when calculating the party strength, so a newly hired low level master bro might not contribute.
 
 
 ## Configuration
@@ -44,7 +44,7 @@ Available options:
 
 - excluded Drunkard trait but allow Bloodthirsty for masters
 - added 1 in 30 limit for very high cost backgrounds, multiplier applies on top
-- capped stregth update at 50%
+- capped strength update at 50%
 
 Compatibility:
 
@@ -65,6 +65,6 @@ Math fixes:
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 19 or newer.
 
 
-[NexusMods]: ...
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/665
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [old-mod]: https://www.nexusmods.com/battlebrothers/mods/253
