@@ -8,7 +8,7 @@
     local masterMultiplier = 3;
     local masterGuaranteed = false;
     local masterSlaves = false;
-    local adjustDifficulty = true;
+    local adjustStrength = true;
 
     // Support old submodules for now
     foreach (mod in ::mods_getRegisteredMods()) {
@@ -18,11 +18,11 @@
         else if (mod.Name == "TheEliteAddon20x") { masterMultiplier = 20; }
         if(mod.Name == "TheEliteAddonCheat") { masterGuaranteed = true; }
         if(mod.Name == "TheEliteAddonSlaves") { masterSlaves = true; }
-        if(mod.Name == "TheEliteAddonEasy") { adjustDifficulty = false;}
+        if(mod.Name == "TheEliteAddonEasy") { adjustStrength = false;}
     }
     this.logInfo("ef: Elite Few (Compatible) Configured with multiplier: "
         + masterMultiplier + " Cheat: " + masterGuaranteed +  " Slaves: " + masterSlaves
-        + " Difficulty Adjustment: " + adjustDifficulty);
+        + " Difficulty Adjustment: " + adjustStrength);
 
     local function isRangedBg(_background) {
         local c = _background.onChangeAttributes();
@@ -131,7 +131,7 @@
         local updateStrength = o.updateStrength;
         o.updateStrength = function() {
             updateStrength();
-            if (!adjustDifficulty) return;
+            if (!adjustStrength) return;
 
             local roster = this.World.getPlayerRoster().getAll();
 
