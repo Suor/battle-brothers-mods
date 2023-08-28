@@ -1,6 +1,7 @@
 2.0 (The first rewrite following the original 1.2)
-- exclude Drunkard trait but allow Bloodthirsty for masters
+- excluded Drunkard trait but allow Bloodthirsty for masters
 - added 1 in 30 limit for very high cost backgrounds, multiplier applies on top
+- capped stregth update at 50%
 Compatibility:
 - made compatibile with mods like Ultra Bros and Starting Perks by Background
 - fixed some newer DLC changes overwritten by the original mod
