@@ -5,7 +5,7 @@
         "mod_hooks(>=19), !TheEliteFewCore, >mod_ultrabros, >mod_weightedTalents",
         function() {
     // Configuration
-    local masterMultiplier = 3;
+    local masterMultiplier = 1;
     local masterGuaranteed = false;
     local masterSlaves = false;
     local adjustStrength = true;
