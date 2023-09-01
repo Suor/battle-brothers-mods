@@ -5,7 +5,7 @@
     Version = 2.1
 };
 ::BgPerks.chances <- {
-    ALL = {"gifted": 3}
+    ALL = {"gifted": 4}
 
     adventurous_noble = {
         "steel_brow": 5
@@ -505,19 +505,14 @@
 
 ::mods_registerMod(::BgPerks.ID, ::BgPerks.Version, ::BgPerks.Name);
 ::mods_queue(::BgPerks.ID, "mod_hooks(>=19)", function() {
-
-::mods_hookNewObject("entity/tactical/player", function ( o ) {
-    local baseSetStartValuesEx = o.setStartValuesEx;
-    o.setStartValuesEx = function ( _backgrounds ) {
-        local scale = 1.0 + 0.5 * Math.maxf(0, Math.minf(1, this.World.getTime().Days / 100.0));
+    local function giveFreePerks(_player) {
+        local scale = 1.0 + 0.5 * Math.maxf(0, Math.minf(1, World.getTime().Days / 100.0));
         if (::mods_getRegisteredMod("mod_stupid_game")) scale += 0.5;
 
-        baseSetStartValuesEx(_backgrounds);
-        local originalPerkPoints = this.m.PerkPoints;
-        local background = this.m.Background;
+        local perkPoints = _player.m.PerkPoints, perkPointsSpent = _player.m.PerkPointsSpent;
+        local background_key = _player.m.Background.getID().slice("background.".len());
 
         // Look up chances and add common ones
-        local background_key = background.getID().slice("background.".len());
         local chances = clone ::BgPerks.chances[background_key];
         foreach (key, value in ::BgPerks.chances.ALL) {
             if (!(key in chances)) chances[key] <- 0;
@@ -534,24 +529,45 @@
         // Roll
         local perks = [];
         foreach (key, value in chances) {
-            local r = this.Math.rand(1, 100);
+            local r = Math.rand(1, 100);
             report[key] += " ... " + r;
             if (r <= value) {
                 perks.push(key);
                 report[key] += " SUCCESS";
             }
         }
-        // this.logInfo("bp: *** Rollling " + this.getName() + " background " + background.getID()
+        // this.logInfo("bp: *** Rollling " + this.getName() + " background " + background_key
         //         + " scale " + scale);
         // Debug.log("rolls", report);
         // Debug.log("perks", perks);
 
         // Unlock them
-        foreach (perk in perks) this.unlockPerk("perk." + perk);
+        foreach (perk in perks) _player.unlockPerk("perk." + perk);
 
-        if (this.m.PerkPointsSpent > 0) {this.m.PerkPointsSpent = 0;}
-        this.m.PerkPoints = originalPerkPoints;
-    };
-});
+        _player.m.PerkPointsSpent = perkPointsSpent;
+        _player.m.PerkPoints = perkPoints;
+    }
 
+    local starting = false;
+    ::mods_hookNewObject("entity/tactical/player", function ( o ) {
+        local baseSetStartValuesEx = o.setStartValuesEx;
+        o.setStartValuesEx = function ( _backgrounds ) {
+            baseSetStartValuesEx(_backgrounds);
+            if (!starting) giveFreePerks(this);
+        };
+    });
+
+    // On setting up a new campaign all sort of things are hard coded,  typical is to  call
+    // .setStartValuesEx() and assign LevelUps and call .fillAttributeLevelUpValues() later,
+    // which breaks Gifted
+    ::mods_hookExactClass("states/world_state", function (o) {
+        local startNewCampaign = o.startNewCampaign;
+        o.startNewCampaign = function() {
+            starting = true;
+            startNewCampaign();
+            starting = false;
+            local roster = World.getPlayerRoster().getAll();
+            foreach (bro in roster) giveFreePerks(bro);
+        }
+    });
 });

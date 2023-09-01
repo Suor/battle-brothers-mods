@@ -7,6 +7,7 @@ Changes from the base mod:
 - added backgrounds from new DLCs
 - vary free perks more, chances readjusted
 - scale probability by time, later hires have higher chance to get free perks
+- fixed The Gifted bug
 
 This is more about fun, but also makes some weaker backgrounds more appealing, might need to hire and fire several times to get a bro with desired perks though.
 
