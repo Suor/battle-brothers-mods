@@ -144,7 +144,7 @@
             foreach (bro in roster) {
                 if (bro.getSkills().hasSkill("trait.master")) {
                     local coef = Math.min(50, bro.getBackground().m.DailyCost * 0.5 + 25) / 100.0;
-                    this.m.Strength += bro.getLevel() * coef * 2.0;
+                    this.m.Strength += (bro.getLevel() - 1) * coef * 2.0;
                 }
             }
         }
