@@ -1,3 +1,7 @@
+2.1
+- support Legends
+- fixed a small error in party strength formula
+
 2.0 (The first rewrite following the original 1.2)
 - excluded Drunkard trait but allow Bloodthirsty for masters
 - added 1 in 30 limit for very high cost backgrounds, multiplier applies on top

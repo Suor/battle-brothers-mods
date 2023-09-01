@@ -5,7 +5,7 @@ local masterSlaves = false;
 local adjustStrength = true;
 
 // Replaces the original TheEliteFew and should load after any talent modifying mods
-::mods_registerMod("mod_elite_few", 2.0);
+::mods_registerMod("mod_elite_few", 2.1);
 ::mods_queue("mod_elite_few",
         "mod_hooks(>=19), !TheEliteFewCore, >mod_ultrabros, >mod_weightedTalents, >mod_legends",
         function() {
