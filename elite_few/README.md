@@ -49,6 +49,7 @@ Available options:
 Compatibility:
 
 - made compatibile with mods like Ultra Bros, Weighted Talents, Starting Perks by Background and such. Tries to be compatible with any mods changing bro generation by applying its changes on top.
+- works with Legends (tested 16.3.3 and 17.0.9)
 - fixed some newer DLC changes overwritten by the original mod
 - autodetect ranged origins
 - overall better other mods and future compatibility

@@ -14,7 +14,7 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.asthmatic"
             "trait.bleeder"
             // "trait.bloodthirsty" // Very useful to cut heads
-            "trait.brute" // ??? +15% damage -5 melee skill
+            "trait.brute" // ??? +15% damage to head -5 melee skill
             "trait.clubfooted"
             "trait.clumsy"
             "trait.cocky"
@@ -25,7 +25,6 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.fainthearted"
             "trait.fear_beasts"
             "trait.fear_greenskins"
-            "trait.fear_nobles"
             "trait.fear_undead"
             "trait.fragile"
             "trait.gluttonous"
@@ -37,12 +36,24 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.pessimist"
             "trait.short_sighted"
             "trait.superstitious"
-            // new
-            "trait.drunkard"
-            // "trait.fat"
-            // "trait.impatient"
+            "trait.drunkard" // added in this rewrite
+            // Legends
+            "trait.fear_nobles"
+            "trait.frail"
+            "trait.legend_appetite_donkey"
+            "trait.legend_fear_dark"
+            "trait.predictable"
+            "trait.slack"
         ];
-
+        // TODO: use somehow
+        local dubious = [
+            "trait.fat"
+            "trait.impatient"
+            // Legends
+            "trait.aggressive"
+            "trait.legend_diurnal"
+            "trait.light"
+        ]
     }
 
     function getTooltip()
@@ -78,4 +89,3 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
     }
 
 });
-
