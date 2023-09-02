@@ -36,8 +36,6 @@ local adjustStrength = true;
             local call = {
                 super = @() concat_call(_func, [self], vargv)   // vargv from the func above
                 func = @(...) concat_call(_func, [self], vargv) // lazy bindenv()
-                arg = @(i, _default=null) vargv.len() > i ? vargv[i] : _default
-                args = vargv
             }
             return concat_call(_wrapper, [this call], vargv);
         }
@@ -68,8 +66,7 @@ local adjustStrength = true;
         : @(b) b.isUntalented()
 
     ::mods_hookNewObject("entity/tactical/player", function (o) {
-        o.fillTalentValues = wrap(o.fillTalentValues, function(call, ...) {
-            local _force = call.arg(1, false);
+        o.fillTalentValues = wrap(o.fillTalentValues, function(call, _num=3, _force=false) {
             call.super();
 
             local background = this.getBackground();
@@ -129,9 +126,8 @@ local adjustStrength = true;
 
         // buildAttributes() happens after background is added, so it's convenient to both roll
         // for master trait and hack buildAttributes() themselves.
-        o.buildAttributes = wrap(o.buildAttributes, function (call, ...) {
-            local _tag = call.arg(0);
-            // NOTE: also have second _attrs param in Legends, which also contain ranges.
+        o.buildAttributes = wrap(o.buildAttributes, function (call, _tag=null, _attrs=null) {
+            // NOTE: the Legends _attrs param also contains ranges.
             //       Low and high bounds are always the same there though, so ignoring them is ok.
             local master = rollMaster(this);
             if (!master) return call.super();
