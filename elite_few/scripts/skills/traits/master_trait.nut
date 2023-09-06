@@ -45,15 +45,14 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.predictable"
             "trait.slack"
         ];
-        // TODO: use somehow
-        local dubious = [
+        if (::EliteFew.conf("excludeDubious")) this.m.Excluded.extend([
             "trait.fat"
             "trait.impatient"
             // Legends
             "trait.aggressive"
             "trait.legend_diurnal"
             "trait.light"
-        ]
+        ])
     }
 
     function getTooltip()

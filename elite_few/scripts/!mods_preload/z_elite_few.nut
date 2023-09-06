@@ -1,30 +1,53 @@
-// Configuration
-local masterMultiplier = 1;
-local masterGuaranteed = false;
-local masterSlaves = false;
-local adjustStrength = true;
+::EliteFew <- {
+    ID = "mod_elite_few"
+    Name = "Elite Few - Master Bros"
+    Version = "2.1.0"
+};
 
 // Replaces the original TheEliteFew and should load after any talent modifying mods
-::mods_registerMod("mod_elite_few", 2.1);
-::mods_queue("mod_elite_few",
-        "mod_hooks(>=19), !TheEliteFewCore, >mod_ultrabros, >mod_weightedTalents, >mod_legends",
+::mods_registerMod(::EliteFew.ID, ::EliteFew.Version, ::EliteFew.Name);
+::mods_queue(::EliteFew.ID,
+        "mod_hooks(>=20), !TheEliteFewCore, >mod_ultrabros, >mod_weightedTalents, >mod_legends",
         function() {
 
-    // Support old submodules for now
-    foreach (mod in ::mods_getRegisteredMods()) {
-        if(mod.Name == "TheEliteAddon2x") { masterMultiplier = 2; }
-        else if (mod.Name == "TheEliteAddon5x") { masterMultiplier = 5; }
-        else if (mod.Name == "TheEliteAddon10x") { masterMultiplier = 10; }
-        else if (mod.Name == "TheEliteAddon20x") { masterMultiplier = 20; }
-        if(mod.Name == "TheEliteAddonCheat") { masterGuaranteed = true; }
-        if(mod.Name == "TheEliteAddonSlaves") { masterSlaves = true; }
-        if(mod.Name == "TheEliteAddonEasy") { adjustStrength = false;}
-    }
-    this.logInfo("ef: Elite Few (Compatible) Configured with multiplier: "
-        + masterMultiplier + " Cheat: " + masterGuaranteed +  " Slaves: " + masterSlaves
-        + " Difficulty Adjustment: " + adjustStrength);
+    ::EliteFew.Mod <- ::MSU.Class.Mod(::EliteFew.ID, ::EliteFew.Version, ::EliteFew.Name);
 
-    // A helper to wrap methods with unkown number of arguments, i.e. vanilla/legends distinction
+    local page = ::EliteFew.Mod.ModSettings.addPage("General");
+    local function add(elem) {
+        page.addElement(elem);
+        elem.Data.NewCampaign <- true;
+    }
+    ::EliteFew.conf <- function(name) {
+        return ::EliteFew.Mod.ModSettings.getSetting(name).getValue();
+    }
+
+    add(::MSU.Class.EnumSetting("selectMode", "roll", ["roll" "all" "none"], "Select masters",
+        "Select which bros become masters" +
+        "\n\n[color=#1e468f]<b>roll</b>[/color] - anyone has a small chance from 1 in 100 to 1 in 30, " +
+            "depending on the strength of one's background" +
+        "\n[color=#8f1e1e]<b>all</b>[/color] - all bros are masters, for testing or cheating" +
+        "\n[color=#222222]<b>none</b>[/color] - no new masters"
+    ));
+    add(::MSU.Class.RangeSetting("multiplier", 1, 1, 20, 1, "Chance multiplier",
+        "Make each bro's chances to be a master this times higher. " +
+        "Only applies if the setting to the left is set to \"roll\"." +
+        "\n\n[color=#1e861e]<b>1</b>[/color] is for a normal game," +
+        "\n[color=#1e468f]<b>2-5</b>[/color] is skewing into fun > balance," +
+        "\n[color=#8f1e1e]<b>10-20</b>[/color] is close to cheating, also makes normal bros barely useful."
+    ));
+    // add(::MSU.Class.BooleanSetting("rangedBonus", true, "Higher chance for ranged bros", "..."))
+    add(::MSU.Class.BooleanSetting("allowSlaves", false, "Allow slaves",
+        "Slaves will never be masters unless this is set"));
+
+    add(::MSU.Class.SettingsDivider("div1"));
+    add(::MSU.Class.SettingsTitle("gameplayEffect", "Gameplay effects"))
+    add(::MSU.Class.BooleanSetting("adjustStrength", true, "Adjust party strength",
+        "Increase party strength if you have master bros." +
+        " This affects enemy scaling, sending larger groups of enemies at you"
+    ));
+    add(::MSU.Class.BooleanSetting("excludeDubious", false, "Exclude dubious traits",
+        "I.e. ones that not entirely negative like fat or impatient"));
+
     // A helper to wrap methods with unknown number of arguments, i.e. vanilla/legends distinction
     local function wrap(_func, _wrapper) {
         local function concat_call(func, args, vargs) {
@@ -51,15 +74,17 @@ local adjustStrength = true;
     local function rollMaster(_background) {
         local backgroundID = _background.getID();
 
-        if (!masterSlaves && backgroundID == "background.slave") return false;
-        if (masterGuaranteed) return true;
+        if (::EliteFew.conf("selectMode") == "none") return false;
+        if (backgroundID == "background.slave" && !::EliteFew.conf("allowSlaves")) return false;
+        if (::EliteFew.conf("selectMode") == "all") return true;
 
+        local multiplier = ::EliteFew.conf("multiplier")
         local rangedbg = isRangedBg(_background) ? 20 : 0;
         local chances = Math.max(30, 100 - 2 * _background.m.DailyCost - rangedbg);
         local roll = rng.next(1,  chances);
         this.logInfo("ef: roll for " + backgroundID + " chances=" + chances
-            + " roll=" + roll + (roll <= masterMultiplier ? " MASTER" : ""));
-        return roll <= masterMultiplier;
+            + " roll=" + roll + (roll <= multiplier ? " MASTER" : ""));
+        return roll <= multiplier;
     }
 
     local isBackgroundUntalented = ::mods_getRegisteredMod("mod_legends")
@@ -158,7 +183,7 @@ local adjustStrength = true;
     ::mods_hookNewObjectOnce("entity/world/player_party", function (o) {
         o.updateStrength = wrap(o.updateStrength, function(call, ...) {
             call.super();
-            if (!adjustStrength) return;
+            if (!::EliteFew.conf("adjustStrength")) return;
 
             local roster = this.World.getPlayerRoster().getAll();
 
@@ -170,7 +195,8 @@ local adjustStrength = true;
 
             foreach (bro in roster) {
                 if (bro.getSkills().hasSkill("trait.master")) {
-                    // NOTE: Legends has formulas depending on difficulty, ignore that for now
+                    // NOTE: Legends has formulas depending on difficulty, ignore that for now.
+                    //       They also ignore .getBrothersScaleMax() from above.
                     local coef = Math.min(50, bro.getBackground().m.DailyCost * 0.5 + 25) / 100.0;
                     this.m.Strength += (bro.getLevel() - 1) * coef * 2.0;
                 }

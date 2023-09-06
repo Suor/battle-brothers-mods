@@ -30,14 +30,7 @@ Note that only top 12 top level bros (14 for militia and manhunters origins) are
 
 ## Configuration
 
-One can edit variables at the start of `scripts/!mods_preload/z_elite_few.nut` or modlets from [The original mod][old-mod]. Note that I intend to rewrite this to use MSU settings later and drop these ways to configure.
-
-Available options:
-
-- `masterMultiplier`, defaults to 1. Generate master bros this times more often. 1 is recommended for a normal game, 2-3 if you have some mods making game harder, 2-5 for skewing into fun > balance mode. 10-20 is close to cheating, also make normal bros barely useful.
-- `masterGuaranteed`, defaults to false. Makes all bros masters, for testing or cheating.
-- `masterSlaves`, defaults to false. Allow slaves to be masters.
-- `adjustStrength`, defaults to true. Increase party strength if you have master bros, see above. Turning this off may result into combats too easy and boring. 
+It is possible to configure chance multplier and other stuff via MSU's Mod Options: Esc -> Mod Options -> Elite Few - Master Bros. Consult field tooltips there for more info. 
 
 
 ## Changes from the Original Mod
@@ -50,6 +43,7 @@ Compatibility:
 
 - made compatibile with mods like Ultra Bros, Weighted Talents, Starting Perks by Background and such. Tries to be compatible with any mods changing bro generation by applying its changes on top.
 - works with Legends (tested 16.3.3 and 17.0.9)
+- works with Accessory Companions (AC) mods
 - fixed some newer DLC changes overwritten by the original mod
 - autodetect ranged origins
 - overall better other mods and future compatibility
