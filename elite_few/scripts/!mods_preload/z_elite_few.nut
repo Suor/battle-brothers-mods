@@ -25,6 +25,7 @@ local adjustStrength = true;
         + " Difficulty Adjustment: " + adjustStrength);
 
     // A helper to wrap methods with unkown number of arguments, i.e. vanilla/legends distinction
+    // A helper to wrap methods with unknown number of arguments, i.e. vanilla/legends distinction
     local function wrap(_func, _wrapper) {
         local function concat_call(func, args, vargs) {
             args.extend(vargs);  // Can modify it because we only pass anonymous arrays below
@@ -155,9 +156,8 @@ local adjustStrength = true;
 
     // Adjust player party strength (affects enemy scaling), to not make our life too easy
     ::mods_hookNewObjectOnce("entity/world/player_party", function (o) {
-        local updateStrength = o.updateStrength;
-        o.updateStrength = function() {
-            updateStrength();
+        o.updateStrength = wrap(o.updateStrength, function(call, ...) {
+            call.super();
             if (!adjustStrength) return;
 
             local roster = this.World.getPlayerRoster().getAll();
@@ -175,6 +175,6 @@ local adjustStrength = true;
                     this.m.Strength += (bro.getLevel() - 1) * coef * 2.0;
                 }
             }
-        }
+        })
     });
 });
