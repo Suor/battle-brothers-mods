@@ -1,7 +1,7 @@
 ::EliteFew <- {
     ID = "mod_elite_few"
     Name = "Elite Few - Master Bros"
-    Version = "2.1.0"
+    Version = "2.2.0"
 };
 
 // Replaces the original TheEliteFew and should load after any talent modifying mods
