@@ -68,6 +68,7 @@ Quirk = se.Quirk <- {
             Mod.bravery(e, 1.5);  // More hits need to be brave longer
             e.m.BaseProperties.Initiative -= Math.rand(5, 10); // Somewhat slow
             e.m.Skills.add(this.new("scripts/skills/perks/perk_stalwart"));
+            e.m.Skills.add(this.new("scripts/skills/traits/iron_jaw_trait"));
 
             // A chance to add some armor upgrade, not for skeletons
             local armor = Mod.getArmor(e), cond = armor ? armor.getArmorMax() : 0;
