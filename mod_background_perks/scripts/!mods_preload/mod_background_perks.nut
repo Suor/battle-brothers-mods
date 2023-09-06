@@ -513,7 +513,8 @@
         local background_key = _player.m.Background.getID().slice("background.".len());
 
         // Look up chances and add common ones
-        local chances = clone ::BgPerks.chances[background_key];
+        local chances = background_key in BgPerks.chances
+            ? clone ::BgPerks.chances[background_key] : {};
         foreach (key, value in ::BgPerks.chances.ALL) {
             if (!(key in chances)) chances[key] <- 0;
             chances[key] += value;
