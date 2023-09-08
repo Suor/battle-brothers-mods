@@ -1,10 +1,13 @@
 // Alias things to make it easier for us inside. These are still global and accessible from outside
-::std <- {version = 1.1};
-local Str = ::std.Str <- {},
-      Util = ::std.Util <- {},
-      Rand = ::std.Rand <- {},
-      Debug = ::std.Debug <- {},
-      Hook = ::std.Hook <- {};
+// Ensure only the latest version goes as ::std
+local std = ::std1_2 <- {version = 1.2};
+if (!("std" in getroottable()) || ::std.version < std.version) ::std <- std;
+
+local Str = std.Str <- {},
+      Util = std.Util <- {},
+      Rand = std.Rand <- {},
+      Debug = std.Debug <- {},
+      Hook = std.Hook <- {};
 
 // Since we use forward declarations we can't override, we should extend tables.
 local function extend(dst, src) {
@@ -202,6 +205,6 @@ extend(Debug, {
     }
 })
 
-::std.debug <- function(data) {
-    this.logInfo("<pre>" + Debug.pp(data) + "</pre>")
+std.debug <- function(data, options = {}) {
+    this.logInfo("<pre>" + Debug.pp(data, options) + "</pre>")
 }
