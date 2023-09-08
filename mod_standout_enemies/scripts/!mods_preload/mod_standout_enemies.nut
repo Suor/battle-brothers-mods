@@ -1,4 +1,4 @@
-::mods_registerMod("mod_standout_enemies", 0.82, "Standout Enemies");
+::mods_registerMod("mod_standout_enemies", 1.0, "Standout Enemies");
 
 local gt = this.getroottable();
 
