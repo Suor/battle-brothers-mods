@@ -205,39 +205,3 @@ extend(Debug, {
 ::std.debug <- function(data) {
     this.logInfo("<pre>" + Debug.pp(data) + "</pre>")
 }
-
-
-extend(Hook, {
-    function method(cls, methodName, func) {
-        while (!(methodName in cls)) cls = cls[cls.SuperName];
-
-        local super = cls[methodName];
-        cls[methodName] = function (...) {
-            return func.acall(Util.concat([this, super], vargv));
-        };
-    }
-    function after(cls, methodName, func) {
-        while (!(methodName in cls)) cls = cls[cls.SuperName];
-
-        local super = cls[methodName];
-        cls[methodName] = function (...) {
-            local args = Util.concat([this], vargv);
-            local res = super.acall(args);
-            func.acall(args);
-            return res;
-        };
-    }
-
-    function _find(cls, methodName) {
-        while (!(methodName in cls)) cls = cls[cls.SuperName];
-
-        local super = cls[methodName];
-        local function override(className, func) {
-            cls[methodName] = function (...) {
-                local args = Util.concat([this], vargv);
-                return (::mods_isClass(this, className) ? func : super).acall(args);
-            }
-        }
-        return {super = super, override = override}
-    }
-})
