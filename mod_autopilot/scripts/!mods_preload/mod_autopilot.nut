@@ -3,6 +3,12 @@ local AutoReload = true; // should we try to automatically reload if we have unu
 
 ::mods_registerMod("mod_autopilot", 23, "Autopilot");
 ::mods_queue("mod_autopilot", null, function() {
+  ::mods_hookExactClass("ai/tactical/behaviors/ai_attack_default", function ( o ) {
+    o.m.PossibleSkills.extend([
+      "actives.lunge",
+    ]);
+  });
+
   ::mods_hookBaseClass("entity/tactical/actor", function(o) {
     while(!("onTurnStart" in o)) o = o[o.SuperName];
   
@@ -145,6 +151,7 @@ local AutoReload = true; // should we try to automatically reload if we have unu
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_throw_net"));
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_adrenaline"));
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_pickup_weapon"));
+        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_line_breaker"));
         // Disabled since doesn't consult offhand/backpack at all
         // agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_throw_bomb"));
 

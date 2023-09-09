@@ -9,8 +9,11 @@ My modifications include:
 - use rally the troops
 - pick up a weapon
 - use nets
-- use adrenalin
 - shield wall and split shields less
+- use adrenalin, line breaker, lunge skills
+
+Fixes:
+- way rarer battle crashes after ranged unit killing enemy 
 
 
 ## Install
