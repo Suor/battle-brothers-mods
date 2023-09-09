@@ -2,7 +2,7 @@
 
 Randomly adds some quirks to the most common enemies making fighting them less repetitive and more fun. You will fight Fearless Orcs, Stubborn Wiedergangers, Sly Globlins and more. These are stronger, so game might be harder a bit. Standout enemies, however, yield moderately more XP.
 
-Number of quirked enemies increases with current day and combat difficulty. First ones appear around day 25 and maximum scale is reached at day 160 on Expert. Things randomly fluctuate though.
+Number of quirked enemies increases with current day and combat difficulty. First ones appear around day 25 and maximum scale is reached at day 180. Things randomly fluctuate though.
 
 I won't list possible things you can encounter, exploring should be more fun.
 

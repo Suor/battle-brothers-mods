@@ -12,7 +12,7 @@ local Rand = ::std.Rand, Str = ::std.Str, Util = ::std.Util, Hook = ::std.Hook;
 local Debug = se.Debug <- ::std.Debug.with({prefix = "se: "});
 
 local Config = se.Config <- {
-    ScaleDays = [80, 90, 100]  // scale varies by days and combat difficulty
+    ScaleDays = 100  // scale varies by days
     ShortNames = {
         "Goblin Skirmisher": "Goblin",
         "Goblin Wolfrider": "Wolfrider",
@@ -195,6 +195,8 @@ Quirk = se.Quirk <- {
         function apply(e) {
             e.m.Name = split(e.m.Name, " ")[0] + " " + this.Noun;
 
+            // TODO: make quick_shot ap = 3 and less fatigue instead
+            //       should not move or hit with dagger more
             // More action points and initiative, add stamina and fatigue recovery to compensate
             e.m.BaseProperties.ActionPoints += 3;
             e.m.BaseProperties.Initiative += 30;
@@ -657,8 +659,7 @@ Util.extend(se, {
         this.logInfo("se: getPlan " + party.getName());
 
         local stats = se.partyStats(party);
-        local scaleDays = Config.ScaleDays[gt.World.Assets.getCombatDifficulty()];
-        stats.scale <- 1.0 * gt.World.getTime().Days / scaleDays;
+        stats.scale <- 1.0 * gt.World.getTime().Days / Config.ScaleDays;
         Debug.log("stats", stats, {funcs = false});
 
         local plans = [], priority = 9000;
