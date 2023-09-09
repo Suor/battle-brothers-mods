@@ -22,5 +22,10 @@ WorldObituaryScreen.prototype.addListEntry = function (_data)
 {
 	FunFacts.WorldObituaryScreen_addListEntry.call(this, _data);
 	var result = this.mListScrollContainer.children('.l-row:last');
-	result.bindTooltip({ contentType: 'msu-generic', modId: FunFacts.ID, elementId: "Fallen", FunFacts_Idx: _data.FunFacts_Idx });
+	result.bindTooltip({
+		contentType: 'msu-generic',
+		modId: FunFacts.ID,
+		elementId: "Fallen",
+		FunFacts_Idx: _data.FunFacts_Idx
+	});
 }
