@@ -7,20 +7,21 @@ local mod = ::EventsFix <- {
 ::mods_queue(mod.ID, "mod_hooks(>=20)", function () {
     ::mods_hookExactClass("states/world_state", function (o) {
         local function doUpdates() {
-            if (!this.m.IsGamePaused && !this.m.IsGameAutoPaused) {
-                this.m.Events.update();
-                this.m.Ambitions.update();
+            this.m.Events.update();
+            this.m.Ambitions.update();
 
-                if (this.Time.getRealTimeF() - this.m.LastMusicUpdate > 60.0)
-                {
-                    this.setWorldmapMusic(true);
-                }
+            if (this.Time.getRealTimeF() - this.m.LastMusicUpdate > 60.0)
+            {
+                this.setWorldmapMusic(true);
             }
         }
 
         local onUpdate = o.onUpdate;
         o.onUpdate = function() {
             onUpdate();
+
+            if (this.m.IsGamePaused || this.m.IsGameAutoPaused) return;
+
 
             if (this.m.AutoEnterLocation != null && !this.m.AutoEnterLocation.isNull())
             {
