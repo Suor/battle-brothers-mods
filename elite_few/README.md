@@ -57,7 +57,7 @@ Math fixes:
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 19 or newer.
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
 
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/665
