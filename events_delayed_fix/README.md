@@ -1,8 +1,8 @@
 # Events and Ambitions Delayed Fix
 
-Removes unpredicatably long delays before events and ambitions are selected and fired.
+Removes unpredictably long delays before events and ambitions are selected and fired.
 
-**T.L.D.R.** Install this and install [Swifter], enjoy.
+**TLDR.** Install this and install [Swifter][], enjoy.
 
 
 ## The Issue and the Fix
@@ -19,4 +19,10 @@ This resulted in many complaints over the years about ambitions not resolving or
 2. If you save game and then load it then the process will restart, including a random roll whether to start it at all or wait another 2 game hours. The latter will always succeed given enough time since last event, last check and battle though. 
 
 
+## Install
+
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 19 or newer.
+
 [Swifter]: https://www.nexusmods.com/battlebrothers/mods/542
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/666
+[modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
