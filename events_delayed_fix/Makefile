@@ -1,5 +1,5 @@
-MOD_NAME = events_fix
-TAG_NAME = events-fix
+MOD_NAME = events_delayed_fix
+TAG_NAME = edf
 SOURCES = scripts
 SUBDIR = scripts/\!mods_preload
 DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
@@ -9,7 +9,7 @@ SHELL := /bin/bash
 zip:
 	LAST_TAG=$$(git tag | grep $(TAG_NAME) | tail -1); \
 	MODIFIED=$$( git diff $$LAST_TAG --quiet $(SOURCES) || echo _MODIFIED); \
-	NAME=$$(echo $$LAST_TAG | perl -pE 's/-/_/g'); \
+	NAME=$$(echo $$LAST_TAG | perl -pE 's/^$(TAG_NAME)-/$(MOD_NAME)_/'); \
 	FILENAME=mod_$$([[ "$$NAME" != "" ]] && echo $$NAME || echo $(MOD_NAME))$${MODIFIED}.zip; \
 	rm $${FILENAME}; \
 	zip -r $${FILENAME} $(SOURCES)
