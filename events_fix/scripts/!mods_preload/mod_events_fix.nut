@@ -20,8 +20,11 @@ local mod = ::EventsFix <- {
         o.onUpdate = function() {
             onUpdate();
 
+            // If pause, in a menu or a loading screen then don't bother
             if (this.m.IsGamePaused || this.m.IsGameAutoPaused) return;
-
+            if (this.m.MenuStack.hasBacksteps()) return;
+            if (LoadingScreen != null && (LoadingScreen.isAnimating() || LoadingScreen.isVisible()))
+                return;
 
             if (this.m.AutoEnterLocation != null && !this.m.AutoEnterLocation.isNull())
             {
