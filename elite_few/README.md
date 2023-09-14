@@ -33,19 +33,28 @@ Note that only top 12 top level bros (14 for militia and manhunters origins) are
 It is possible to configure chance multplier and other stuff via MSU's Mod Options: Esc -> Mod Options -> Elite Few - Master Bros. Consult field tooltips there for more info. 
 
 
+## Compatibility
+
+Safe to add midgame, can't remove once you have these masters anywhere including city hiring rosters. Set "Select masters" to "none" in Mod Options instead.
+
+- compatible with mods like Ultra Bros, Weighted Talents, Starting Perks by Background and such
+- should work with any mods changing bro generation by applying its changes on top
+- works with Legends (tested 16.3.3 and 17.0.9)
+- works with Accessory Companions (AC) mods
+
+
 ## Changes from the Original Mod
 
-- excluded Drunkard trait but allow Bloodthirsty for masters
+- added "dubious" traits list, might be excluded via Mod Options
+- moved "drunkard" to duibous traits
+- allow Bloodthirsty for masters
 - added 1 in 30 limit for very high cost backgrounds, multiplier applies on top
 - capped strength update at 50%
 
-Compatibility:
+Compatibily, apart from listed above:
 
-- made compatibile with mods like Ultra Bros, Weighted Talents, Starting Perks by Background and such. Tries to be compatible with any mods changing bro generation by applying its changes on top.
-- works with Legends (tested 16.3.3 and 17.0.9)
-- works with Accessory Companions (AC) mods
-- fixed some newer DLC changes overwritten by the original mod
 - autodetect ranged origins
+- fixed some newer DLC changes overwritten by the original mod
 - overall better other mods and future compatibility
 
 Math fixes:
