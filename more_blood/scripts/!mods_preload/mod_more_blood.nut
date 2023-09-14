@@ -6,11 +6,10 @@ local mod = ::EventsFix <- {
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 ::mods_queue(mod.ID, "mod_hooks(>=20)", function () {
     ::mods_hookExactClass("entity/tactical/actor", function (cls) {
-        cls.m.BloodSaturation *= 2;
-        cls.m.BloodSplatterOffset = this.createVec(-1, -10);
+        // cls.m.BloodSaturation *= 2;
         cls.m.DecapitateBloodAmount *= 2;
         cls.m.DeathBloodAmount *= 2;
-        cls.m.BloodPoolScale *= 2;
+        cls.m.BloodPoolScale *= 1.5;
     })
 
     local bloodEffects = [
@@ -22,7 +21,6 @@ local mod = ::EventsFix <- {
     foreach (i, lol in bloodEffects) {
         foreach (j, effect in lol) {
             foreach (k, d in effect) {
-                // logInfo(i + " " + j + " " + k);
                 d.Quantity *= 2;
                 d.LifeTimeQuantity *= 2;
                 d.SpawnRate *= 2;
@@ -37,7 +35,6 @@ local mod = ::EventsFix <- {
     ]
     foreach (j, effect in skillEffects) {
         foreach (k, d in effect) {
-            // logInfo(j + " " + k);
             d.Quantity *= 2;
             d.LifeTimeQuantity *= 2;
             d.SpawnRate *= 2;
