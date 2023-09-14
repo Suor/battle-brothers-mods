@@ -51,8 +51,6 @@ this.Const.Strings.PerkDescription.DoubleStrike <- "After landing a hit, the nex
 
 this.Const.Strings.PerkDescription.FullForce <- format("Put your full weight into every blow and gain %s minimal melee damage for each %s fatigue caused by things worn and held. Items in the bag do not contribute.", green("+1%"), red(3));
 
-"If you are fighting melee weapons, your minimal damage is multiplied by a percentage equal to 33% of your total fatigue from helmet, body and both arms."
-
 this.Const.Strings.PerkDescription.InspiringPresence <- "A great leader of men inspires his followers to overcome their limits. Allies start every battle at confident morale unless prohibited by character traits.";
 
 this.Const.Strings.PerkDescription.LastStand <- "Gain [color=" + this.Const.UI.Color.PositiveValue + "]+1%[/color] additional Melee and Ranged Defense for every 1% of hitpoints missing.";
@@ -69,7 +67,7 @@ this.Const.Strings.PerkDescription.Sprint <- "Unlocks the \'Sprint\' skill which
 
 this.Const.Strings.PerkDescription.Stalwart <- "Immunity against being knocked back or pulled up close. Applies to skills such as Knock Back, Hook and others that change a character\'s position.";
 
-this.Const.Strings.PerkDescription.Steadfast <- "Getting hit or missed costs half of the usual fatigue.";
+this.Const.Strings.PerkDescription.Steadfast <- format("Getting hit or missed costs %s of the usual fatigue.", green("half"));
 
 this.Const.Strings.PerkDescription.SunderingStrikes <- "Effectiveness vs. Armor is increased by [color=" + this.Const.UI.Color.PositiveValue + "]+20%[/color] for any weapon used.";
 
@@ -117,15 +115,15 @@ addPerk(4, null, {
     IconDisabled = "wotn_perks/double_strike_sw.png"
 })
 
-// NOTE: probably should buff. Either make stronger or don't waste on miss or both.
-addPerk(2, "perk.backstabber", {
-    ID = "perk.vengeance",
-    Script = "scripts/skills/perks/perk_vengeance",
-    Name = this.Const.Strings.PerkName.Vengeance,
-    Tooltip = this.Const.Strings.PerkDescription.Vengeance,
-    Icon = "wotn_perks/vengeance.png",
-    IconDisabled = "wotn_perks/vengeance_sw.png"
-})
+// // NOTE: probably should buff. Either make stronger or don't waste on miss or both.
+// addPerk(2, "perk.backstabber", {
+//     ID = "perk.vengeance",
+//     Script = "scripts/skills/perks/perk_vengeance",
+//     Name = this.Const.Strings.PerkName.Vengeance,
+//     Tooltip = this.Const.Strings.PerkDescription.Vengeance,
+//     Icon = "wotn_perks/vengeance.png",
+//     IconDisabled = "wotn_perks/vengeance_sw.png"
+// })
 
 // Too many fatigue perks ?
 // addPerk(2, "perk.shield_expert", {
@@ -241,16 +239,16 @@ addPerk(5, "perk.berserk", {
 //     }
 // )
 
-// Looks overpowered
-// TODO: balance
-addPerk(6, "perk.killing_frenzy", {
-    ID = "perk.last_stand",
-    Script = "scripts/skills/perks/perk_last_stand",
-    Name = this.Const.Strings.PerkName.LastStand,
-    Tooltip = this.Const.Strings.PerkDescription.LastStand,
-    Icon = "ui/perks/perk_32.png",
-    IconDisabled = "ui/perks/perk_32_sw.png"
-})
+// Looks overpowered, and too much defence perks for nimble bros
+// also kinda dups both Dodge and Nine Lives, the latter in a more boring way
+// addPerk(6, "perk.killing_frenzy", {
+//     ID = "perk.last_stand",
+//     Script = "scripts/skills/perks/perk_last_stand",
+//     Name = this.Const.Strings.PerkName.LastStand,
+//     Tooltip = this.Const.Strings.PerkDescription.LastStand,
+//     Icon = "ui/perks/perk_32.png",
+//     IconDisabled = "ui/perks/perk_32_sw.png"
+// })
 
 // Current behavior is weird an counter-intuitive in numbers,
 // making skill free would be more cool. Maybe overpowered though.
@@ -261,6 +259,19 @@ addPerk(6, "perk.killing_frenzy", {
     Tooltip = this.Const.Strings.PerkDescription.BattleFlow,
     Icon = "wotn_perks/battle_flow.png",
     IconDisabled = "wotn_perks/battle_flow_sw.png"
+})
+
+
+// A faster healing perk, using awesome last_stand icon
+this.Const.Strings.PerkName.FleshOnTheBones <- "Flesh on the Bones";
+this.Const.Strings.PerkDescription.FleshOnTheBones <- format("If the bones is there flesh will grow. Restores hitpoints at %s unless any bones are broken. Old injuries are fine.", green("double rate"));
+addPerk(2, "perk.taunt", {
+    ID = "perk.flesh_on_the_bones",
+    Script = "scripts/skills/perks/perk_flesh_on_the_bones",
+    Name = this.Const.Strings.PerkName.FleshOnTheBones,
+    Tooltip = this.Const.Strings.PerkDescription.FleshOnTheBones,
+    Icon = "ui/perks/perk_32.png",
+    IconDisabled = "ui/perks/perk_32_sw.png"
 })
 
 // A Medium Armor support Stabilized perk,

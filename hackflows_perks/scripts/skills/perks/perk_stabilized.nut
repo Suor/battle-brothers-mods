@@ -39,7 +39,7 @@ this.perk_stabilized <- this.inherit("scripts/skills/skill", {
 		// }
 
 		local bonus = this.getBonus();
-		local totalArmorFatPenalty = this.getTotalArmorFatPenalty();
+		local totalArmorFatPenalty = this.getTotalArmorFat();
 		local tooltip = this.skill.getTooltip();
 
 		if (bonus > 0)
@@ -84,7 +84,7 @@ this.perk_stabilized <- this.inherit("scripts/skills/skill", {
 				text = "This brother\'s armor is too flimsy to benefit from being stabilized! Try equipping some heavier armor."
 			});
 		}
-		else if (totalArmorFatPenalty > this.ArmorIdealMax)
+		else if (totalArmorFatPenalty > this.m.ArmorIdealMax)
 		{
 			tooltip.push({
 				id = 6,
@@ -118,7 +118,7 @@ this.perk_stabilized <- this.inherit("scripts/skills/skill", {
 
 		local armorFat = this.getTotalArmorFat();
 		local badFat = armorFat < this.m.ArmorIdealMin ? this.m.ArmorIdealMin - armorFat :
-		               armorFat > this.ArmorIdealMax ? armorFat - this.ArmorIdealMax : 0;
+		               armorFat > this.m.ArmorIdealMax ? armorFat - this.m.ArmorIdealMax : 0;
 		return Math.maxf(0, this.m.BonusMax - Math.pow(badFat, 2));
 	}
 
