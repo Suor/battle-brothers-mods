@@ -21,6 +21,31 @@ Perks given, their chances, scaling and overall are for discussion and balancing
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 19 or newer.
 
 
+## Starting perks for non-vanilla backgrounds
+
+If you are creating a mod with new backgrounds or even if you want to add this for backgrounds from some other mod you play then it is possible to do so. For this I expose `::BgPerks.chances` table, which might be complemented like this: 
+
+```squirrel
+::mods_queue("mod_extra_bgs", ">mod_background_perks", function () {
+    if (!::mods_getRegisteredMod("mod_background_perks")) return;
+
+    ::BgPerks.chances.skirmisher <- {
+        "mastery.axe": 15
+        "mastery.throwing": 15
+    }
+    ::BgPerks.chances.master_archer <- {
+        "mastery.bow": 100
+        "bulls_eye": 50
+    }
+    
+    // Or these might be put to a dedicated file with
+    ::include("extra_bgs/background_perks");
+});
+```
+
+Note that a key in `::BgPerks.chances` is the background ID with `background.` prefix stripped.
+
+
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/661
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [base-mod]: https://www.nexusmods.com/battlebrothers/mods/70
