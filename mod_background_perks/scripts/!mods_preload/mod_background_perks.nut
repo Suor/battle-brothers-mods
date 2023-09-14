@@ -551,7 +551,7 @@ function BgPerks::giveFreePerks(_player) {
 
 
 ::mods_registerMod(::BgPerks.ID, ::BgPerks.Version, ::BgPerks.Name);
-::mods_queue(::BgPerks.ID, "mod_hooks(>=19)", function() {
+::mods_queue(::BgPerks.ID, "mod_hooks(>=20)", function() {
     local starting = false;
     ::mods_hookNewObject("entity/tactical/player", function ( o ) {
         local baseSetStartValuesEx = o.setStartValuesEx;

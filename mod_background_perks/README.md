@@ -18,7 +18,7 @@ Perks given, their chances, scaling and overall are for discussion and balancing
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 19 or newer.
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
 
 
 ## Starting perks for non-vanilla backgrounds
