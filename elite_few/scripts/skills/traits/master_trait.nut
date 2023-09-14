@@ -36,7 +36,6 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.pessimist"
             "trait.short_sighted"
             "trait.superstitious"
-            "trait.drunkard" // added in this rewrite
             // Legends
             "trait.fear_nobles"
             "trait.frail"
@@ -46,6 +45,7 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.slack"
         ];
         if (::EliteFew.conf("excludeDubious")) this.m.Excluded.extend([
+            "trait.drunkard"
             "trait.fat"
             "trait.impatient"
             // Legends
