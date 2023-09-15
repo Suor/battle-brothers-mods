@@ -5,8 +5,8 @@ this.perk_hackflows_battle_flow <- this.inherit("scripts/skills/skill", {
 	function create()
 	{
 		this.m.ID = "perk.hackflows.battle_flow";
-		this.m.Name = this.Const.Strings.PerkName.BattleFlow;
-		this.m.Description = this.Const.Strings.PerkDescription.BattleFlow;
+		this.m.Name = ::Const.Perks.LookupMap[this.m.ID].Name;
+		this.m.Description = ::Const.Perks.LookupMap[this.m.ID].Description;
 		this.m.Icon = "wotn_perks/battle_flow.png";
 		this.m.Type = this.Const.SkillType.Perk;
 		this.m.Order = this.Const.SkillOrder.Perk;

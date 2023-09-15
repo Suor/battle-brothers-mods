@@ -9,8 +9,8 @@ this.perk_hackflows_stabilized <- this.inherit("scripts/skills/skill", {
 	function create()
 	{
 		this.m.ID = "perk.hackflows.stabilized";
-		this.m.Name = this.Const.Strings.PerkName.Stabilized;
-		this.m.Description = this.Const.Strings.PerkDescription.Stabilized;
+		this.m.Name = ::Const.Perks.LookupMap[this.m.ID].Name;
+		this.m.Description = ::Const.Perks.LookupMap[this.m.ID].Description;
 		this.m.Icon = "icons/stabilized.png";
 		this.m.Type = this.Const.SkillType.Perk | this.Const.SkillType.StatusEffect;
 		this.m.Order = this.Const.SkillOrder.Perk;

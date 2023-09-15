@@ -1,16 +1,3 @@
-this.Const.Strings.PerkName.BattleFlow <- "Battle Flow";
-this.Const.Strings.PerkName.BloodyHarvest <- "Bloody Harvest";
-this.Const.Strings.PerkName.FullForce <- "Full Force";
-this.Const.Strings.PerkName.Steadfast <- "Steadfast";
-
-
-local function green(text) {
-    return ::Const.UI.getColorized(text + "", ::Const.UI.Color.PositiveValue)
-}
-local function red(text) {
-    return ::Const.UI.getColorized(text + "", ::Const.UI.Color.NegativeValue)
-}
-
 local function addPerk(row, afterID, perk) {
     local pos;
     if (afterID == null) {
@@ -25,76 +12,66 @@ local function addPerk(row, afterID, perk) {
     ::Const.Perks.LookupMap[perk.ID] <- perk;
 }
 
-this.Const.Strings.PerkDescription.BattleFlow <- "The first kill each turn does not accumulate fatigue.";
-
-this.Const.Strings.PerkDescription.BloodyHarvest <- "Gain [color=" + this.Const.UI.Color.PositiveValue + "]+10%[/color] chance to hit for all area of effect attacks.";
-
-this.Const.Strings.PerkDescription.FullForce <- format("Put your full weight into every blow and gain %s minimal melee damage for each %s fatigue caused by things worn and held. Items in the bag do not contribute.", green("+1%"), red(3));
-
-this.Const.Strings.PerkDescription.Steadfast <- format("Getting hit or missed costs %s of the usual fatigue.", green("half"));
-
+local function green(text) {
+    return ::Const.UI.getColorized(text + "", ::Const.UI.Color.PositiveValue)
+}
+local function red(text) {
+    return ::Const.UI.getColorized(text + "", ::Const.UI.Color.NegativeValue)
+}
 
 // TODO: rename to tireless, liquid, energetic, enduring, exercise, shadow, flexible ???
 addPerk(4, "perk.lone_wolf", {
-    ID = "perk.hackflows.steadfast",
-    Script = "scripts/skills/perks/perk_hackflows_steadfast",
-    Name = this.Const.Strings.PerkName.Steadfast,
-    Tooltip = this.Const.Strings.PerkDescription.Steadfast,
-    Icon = "wotn_perks/clarity_circle.png",
+    ID = "perk.hackflows.steadfast"
+    Script = "scripts/skills/perks/perk_hackflows_steadfast"
+    Name = "Steadfast"
+    Tooltip = "Getting hit or missed costs " + green("half") + " of the usual fatigue."
+    Icon = "wotn_perks/clarity_circle.png"
     IconDisabled = "wotn_perks/clarity_circle_bw.png"
 })
 addPerk(4, null, {
-    ID = "perk.hackflows.bloody_harvest",
-    Script = "scripts/skills/perks/perk_hackflows_bloody_harvest",
-    Name = this.Const.Strings.PerkName.BloodyHarvest,
-    Tooltip = this.Const.Strings.PerkDescription.BloodyHarvest,
-    Icon = "wotn_perks/double_strike.png", // TODO: better icon
+    ID = "perk.hackflows.bloody_harvest"
+    Script = "scripts/skills/perks/perk_hackflows_bloody_harvest"
+    Name = "Bloody Harvest"
+    Tooltip = "Gain " + green("+10%") + " chance to hit for all area of effect attacks."
+    Icon = "wotn_perks/double_strike.png" // TODO: better icon
     IconDisabled = "wotn_perks/double_strike_sw.png"
 })
 
 addPerk(5, "perk.berserk", {
-    ID = "perk.hackflows.full_force",
-    Script = "scripts/skills/perks/perk_hackflows_full_force",
-    Name = this.Const.Strings.PerkName.FullForce,
-    Tooltip = this.Const.Strings.PerkDescription.FullForce,
-    Icon = "ui/perks/perk_18.png",
+    ID = "perk.hackflows.full_force"
+    Script = "scripts/skills/perks/perk_hackflows_full_force"
+    Name = "Full Force"
+    Tooltip = "Put your full weight into every blow and gain " + green("+1%") + " minimal melee damage for each " + red(3) + " fatigue caused by things worn and held. Items in the bag do not contribute."
+    Icon = "ui/perks/perk_18.png"
     IconDisabled = "ui/perks/perk_18_sw.png"
 })
 
-
 addPerk(6, "perk.killing_frenzy", {
-    ID = "perk.hackflows.battle_flow",
-    Script = "scripts/skills/perks/perk_hackflows_battle_flow",
-    Name = this.Const.Strings.PerkName.BattleFlow,
-    Tooltip = this.Const.Strings.PerkDescription.BattleFlow,
-    Icon = "wotn_perks/battle_flow.png",
+    ID = "perk.hackflows.battle_flow"
+    Script = "scripts/skills/perks/perk_hackflows_battle_flow"
+    Name = "Battle Flow"
+    Tooltip = "The first kill each turn does not accumulate fatigue."
+    Icon = "wotn_perks/battle_flow.png"
     IconDisabled = "wotn_perks/battle_flow_sw.png"
 })
 
-
 // A faster healing perk, using awesome last_stand icon
-this.Const.Strings.PerkName.FleshOnTheBones <- "Flesh on the Bones";
-this.Const.Strings.PerkDescription.FleshOnTheBones <- format("If the bones is there flesh will grow. Restores hitpoints at %s unless any bones are broken. Old injuries are fine.", green("double rate"));
 addPerk(2, "perk.taunt", {
     ID = "perk.hackflows.flesh_on_the_bones",
     Script = "scripts/skills/perks/perk_hackflows_flesh_on_the_bones",
-    Name = this.Const.Strings.PerkName.FleshOnTheBones,
-    Tooltip = this.Const.Strings.PerkDescription.FleshOnTheBones,
+    Name = "Flesh on the Bones"
+    Tooltip = "If the bones is there flesh will grow. Restores hitpoints at " + green("double rate") + " unless any bones are broken. Old injuries are fine."
     Icon = "ui/perks/perk_32.png",
     IconDisabled = "ui/perks/perk_32_sw.png"
 })
 
 // A Medium Armor support Stabilized perk,
 // taken from https://www.nexusmods.com/battlebrothers/mods/525 and rebalanced
-this.Const.Strings.PerkName.Stabilized <- "Stabilized";
-this.Const.Strings.PerkDescription.Stabilized <- "Specialize in medium armor! Hitpoint and armor damage is reduced by " + green("25%") + " when the total penalty to Maximum Fatigue from head and body armor is between " + red(25) + " and " + red(37) + ". Outside this range, the bonus drops rapidly.\n\nCombines multiplicatively with Nimble and Battle Forged.";
-
-// Add stabilized between Nimble and Battle Forged
 addPerk(5, "perk.nimble", {
-    ID = "perk.hackflows.stabilized",
-    Script = "scripts/skills/perks/perk_hackflows_stabilized",
-    Name = this.Const.Strings.PerkName.Stabilized,
-    Tooltip = this.Const.Strings.PerkDescription.Stabilized,
-    Icon = "icons/stabilized.png",
+    ID = "perk.hackflows.stabilized"
+    Script = "scripts/skills/perks/perk_hackflows_stabilized"
+    Name = "Stabilized"
+    Tooltip = "Specialize in medium armor! Hitpoint and armor damage is reduced by " + green("25%") + " when the total penalty to Maximum Fatigue from head and body armor is between " + red(25) + " and " + red(37) + ". Outside this range, the bonus drops rapidly.\n\nCombines multiplicatively with Nimble and Battle Forged."
+    Icon = "icons/stabilized.png"
     IconDisabled = "icons/stabilized_sw.png"
 })

@@ -3,8 +3,8 @@ this.perk_hackflows_full_force <- this.inherit("scripts/skills/skill", {
 	function create()
 	{
 		this.m.ID = "perk.hackflows.full_force";
-		this.m.Name = this.Const.Strings.PerkName.FullForce;
-		this.m.Description = this.Const.Strings.PerkDescription.FullForce;
+		this.m.Name = ::Const.Perks.LookupMap[this.m.ID].Name;
+		this.m.Description = ::Const.Perks.LookupMap[this.m.ID].Description;
 		this.m.Icon = "ui/perks/perk_18.png";
 		this.m.Type = this.Const.SkillType.Perk;
 		this.m.Order = this.Const.SkillOrder.Perk;
@@ -41,7 +41,7 @@ this.perk_hackflows_full_force <- this.inherit("scripts/skills/skill", {
 				_properties.DamageRegularMax = _properties.DamageRegularMin;
 				_properties.DamageRegularMin = _properties.DamageRegularMax - difference;
 			}
-	    }
-    }
+		}
+	}
 
 });
