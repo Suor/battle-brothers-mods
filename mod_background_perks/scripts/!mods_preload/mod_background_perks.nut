@@ -2,6 +2,8 @@
     ID = "mod_background_perks"
     Name = "Background Perks"
     Version = 2.21
+
+    Debug = true // requires stdlib
 }
 
 ::mods_registerMod(::BgPerks.ID, ::BgPerks.Version, ::BgPerks.Name);
@@ -43,11 +45,13 @@ function BgPerks::giveFreePerks(_player) {
         }
     }
 
-    // local Debug = ::std.Debug.with({prefix = "bp: ", width = 120});
-    // this.logInfo("bp: *** Rollling " + _player.getName() + " background " + background_key
-    //         + " scale " + scale);
-    // Debug.log("rolls", report);
-    // Debug.log("perks", perks);
+    if (::BgPerks.Debug) {
+        local Debug = ::std.Debug.with({prefix = "bp: ", width = 120});
+        this.logInfo("bp: *** Rollling " + _player.getName() + " background " + background_key
+                + " scale " + scale);
+        Debug.log("rolls", report);
+        Debug.log("perks", perks);
+    }
 
     // Unlock them
     foreach (perk in perks) _player.unlockPerk("perk." + perk);
