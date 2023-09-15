@@ -48,7 +48,7 @@ local mod = ::HackflowsPerks <- {
                     if (skill.isGarbage()) continue;
 
                     local id = skill.getID();
-                    if (id == "perk.flesh_on_the_bones") fleshOnTheBones = true;
+                    if (id == "perk.hackflows.flesh_on_the_bones") fleshOnTheBones = true;
                     if (boneInjuries.find(id) != null) bonesOk = false;
                 }
                 if (fleshOnTheBones && bonesOk) _h += _h - this.m.Hitpoints;

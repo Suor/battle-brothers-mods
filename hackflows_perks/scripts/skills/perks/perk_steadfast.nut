@@ -1,8 +1,8 @@
-this.perk_steadfast <- this.inherit("scripts/skills/skill", {
+this.perk_hackflows_steadfast <- this.inherit("scripts/skills/skill", {
 	m = {},
 	function create()
 	{
-		this.m.ID = "perk.steadfast";
+		this.m.ID = "perk.hackflows.steadfast";
 		this.m.Name = this.Const.Strings.PerkName.Steadfast;
 		this.m.Description = this.Const.Strings.PerkDescription.Steadfast;
 		this.m.Icon = "wotn_perks/clarity_circle.png";

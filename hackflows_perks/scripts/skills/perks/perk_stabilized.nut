@@ -1,6 +1,6 @@
 local Text = ::HackflowsPerks.Text;
 
-this.perk_stabilized <- this.inherit("scripts/skills/skill", {
+this.perk_hackflows_stabilized <- this.inherit("scripts/skills/skill", {
 	m = {
 		BonusMax = 25
 		ArmorIdealMin = 25
@@ -8,7 +8,7 @@ this.perk_stabilized <- this.inherit("scripts/skills/skill", {
 	}
 	function create()
 	{
-		this.m.ID = "perk.stabilized";
+		this.m.ID = "perk.hackflows.stabilized";
 		this.m.Name = this.Const.Strings.PerkName.Stabilized;
 		this.m.Description = this.Const.Strings.PerkDescription.Stabilized;
 		this.m.Icon = "icons/stabilized.png";

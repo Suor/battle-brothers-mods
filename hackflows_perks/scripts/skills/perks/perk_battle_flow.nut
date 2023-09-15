@@ -1,10 +1,10 @@
-this.perk_battle_flow <- this.inherit("scripts/skills/skill", {
+this.perk_hackflows_battle_flow <- this.inherit("scripts/skills/skill", {
 	m = {
 		IsSpent = false
 	},
 	function create()
 	{
-		this.m.ID = "perk.battle_flow";
+		this.m.ID = "perk.hackflows.battle_flow";
 		this.m.Name = this.Const.Strings.PerkName.BattleFlow;
 		this.m.Description = this.Const.Strings.PerkDescription.BattleFlow;
 		this.m.Icon = "wotn_perks/battle_flow.png";

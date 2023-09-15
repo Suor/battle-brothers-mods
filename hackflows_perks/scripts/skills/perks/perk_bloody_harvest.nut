@@ -1,8 +1,8 @@
-this.perk_bloody_harvest <- this.inherit("scripts/skills/skill", {
+this.perk_hackflows_bloody_harvest <- this.inherit("scripts/skills/skill", {
 	m = {},
 	function create()
 	{
-		this.m.ID = "perk.bloody_harvest";
+		this.m.ID = "perk.hackflows.bloody_harvest";
 		this.m.Name = this.Const.Strings.PerkName.BloodyHarvest;
 		this.m.Description = this.Const.Strings.PerkDescription.BloodyHarvest;
 		this.m.Icon = "wotn_perks/double_strike.png";

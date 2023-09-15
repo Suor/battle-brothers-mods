@@ -1,8 +1,8 @@
-this.perk_full_force <- this.inherit("scripts/skills/skill", {
+this.perk_hackflows_full_force <- this.inherit("scripts/skills/skill", {
 	m = {},
 	function create()
 	{
-		this.m.ID = "perk.full_force";
+		this.m.ID = "perk.hackflows.full_force";
 		this.m.Name = this.Const.Strings.PerkName.FullForce;
 		this.m.Description = this.Const.Strings.PerkDescription.FullForce;
 		this.m.Icon = "ui/perks/perk_18.png";

@@ -1,5 +1,5 @@
 local mod = ::HealRepairFix <- {
-    ID = "heal_repair_fix"
+    ID = "mod_heal_repair_fix"
     Name = "Cool and Blacksmith Fix"
     Version = 0.5
 }
@@ -47,24 +47,24 @@ local mod = ::HealRepairFix <- {
         }
     })
 
-    // Debug stuff
-    ::mods_hookExactClass("entity/tactical/actor", function (cls) {
-        local original = cls.setHitpoints;
-        cls.setHitpoints = function (_h) {
-            local oldValue = this.m.Hitpoints;
-            original(_h);
-            this.logInfo("hx: setHitpoints " + this.getName() + " " + oldValue
-                + " -> " + _h + " really " + this.m.Hitpoints)
-        }
-    })
-    ::mods_hookBaseClass("items/item", function (cls) {
-        while (!("setCondition" in cls)) cls = cls[cls.SuperName];
-        local original = cls.setCondition;
-        cls.setCondition = function( _a ) {
-            local oldValue = this.m.Condition;
-            original(_a);
-            this.logInfo("hx: setCondition " + this.getName() + " " + oldValue
-                 + " -> " + _a + " really " + this.m.Condition);
-        }
-    })
+    // // Debug stuff
+    // ::mods_hookExactClass("entity/tactical/actor", function (cls) {
+    //     local original = cls.setHitpoints;
+    //     cls.setHitpoints = function (_h) {
+    //         local oldValue = this.m.Hitpoints;
+    //         original(_h);
+    //         this.logInfo("hx: setHitpoints " + this.getName() + " " + oldValue
+    //             + " -> " + _h + " really " + this.m.Hitpoints)
+    //     }
+    // })
+    // ::mods_hookBaseClass("items/item", function (cls) {
+    //     while (!("setCondition" in cls)) cls = cls[cls.SuperName];
+    //     local original = cls.setCondition;
+    //     cls.setCondition = function( _a ) {
+    //         local oldValue = this.m.Condition;
+    //         original(_a);
+    //         this.logInfo("hx: setCondition " + this.getName() + " " + oldValue
+    //              + " -> " + _a + " really " + this.m.Condition);
+    //     }
+    // })
 })

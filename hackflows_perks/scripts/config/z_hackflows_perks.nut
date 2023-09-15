@@ -36,16 +36,16 @@ this.Const.Strings.PerkDescription.Steadfast <- format("Getting hit or missed co
 
 // TODO: rename to tireless, liquid, energetic, enduring, exercise, shadow, flexible ???
 addPerk(4, "perk.lone_wolf", {
-    ID = "perk.steadfast",
-    Script = "scripts/skills/perks/perk_steadfast",
+    ID = "perk.hackflows.steadfast",
+    Script = "scripts/skills/perks/perk_hackflows_steadfast",
     Name = this.Const.Strings.PerkName.Steadfast,
     Tooltip = this.Const.Strings.PerkDescription.Steadfast,
     Icon = "wotn_perks/clarity_circle.png",
     IconDisabled = "wotn_perks/clarity_circle_bw.png"
 })
 addPerk(4, null, {
-    ID = "perk.bloody_harvest",
-    Script = "scripts/skills/perks/perk_bloody_harvest",
+    ID = "perk.hackflows.bloody_harvest",
+    Script = "scripts/skills/perks/perk_hackflows_bloody_harvest",
     Name = this.Const.Strings.PerkName.BloodyHarvest,
     Tooltip = this.Const.Strings.PerkDescription.BloodyHarvest,
     Icon = "wotn_perks/double_strike.png", // TODO: better icon
@@ -53,8 +53,8 @@ addPerk(4, null, {
 })
 
 addPerk(5, "perk.berserk", {
-    ID = "perk.full_force",
-    Script = "scripts/skills/perks/perk_full_force",
+    ID = "perk.hackflows.full_force",
+    Script = "scripts/skills/perks/perk_hackflows_full_force",
     Name = this.Const.Strings.PerkName.FullForce,
     Tooltip = this.Const.Strings.PerkDescription.FullForce,
     Icon = "ui/perks/perk_18.png",
@@ -63,8 +63,8 @@ addPerk(5, "perk.berserk", {
 
 
 addPerk(6, "perk.killing_frenzy", {
-    ID = "perk.battle_flow",
-    Script = "scripts/skills/perks/perk_battle_flow",
+    ID = "perk.hackflows.battle_flow",
+    Script = "scripts/skills/perks/perk_hackflows_battle_flow",
     Name = this.Const.Strings.PerkName.BattleFlow,
     Tooltip = this.Const.Strings.PerkDescription.BattleFlow,
     Icon = "wotn_perks/battle_flow.png",
@@ -76,8 +76,8 @@ addPerk(6, "perk.killing_frenzy", {
 this.Const.Strings.PerkName.FleshOnTheBones <- "Flesh on the Bones";
 this.Const.Strings.PerkDescription.FleshOnTheBones <- format("If the bones is there flesh will grow. Restores hitpoints at %s unless any bones are broken. Old injuries are fine.", green("double rate"));
 addPerk(2, "perk.taunt", {
-    ID = "perk.flesh_on_the_bones",
-    Script = "scripts/skills/perks/perk_flesh_on_the_bones",
+    ID = "perk.hackflows.flesh_on_the_bones",
+    Script = "scripts/skills/perks/perk_hackflows_flesh_on_the_bones",
     Name = this.Const.Strings.PerkName.FleshOnTheBones,
     Tooltip = this.Const.Strings.PerkDescription.FleshOnTheBones,
     Icon = "ui/perks/perk_32.png",
@@ -91,8 +91,8 @@ this.Const.Strings.PerkDescription.Stabilized <- "Specialize in medium armor! Hi
 
 // Add stabilized between Nimble and Battle Forged
 addPerk(5, "perk.nimble", {
-    ID = "perk.stabilized",
-    Script = "scripts/skills/perks/perk_stabilized",
+    ID = "perk.hackflows.stabilized",
+    Script = "scripts/skills/perks/perk_hackflows_stabilized",
     Name = this.Const.Strings.PerkName.Stabilized,
     Tooltip = this.Const.Strings.PerkDescription.Stabilized,
     Icon = "icons/stabilized.png",
