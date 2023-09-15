@@ -10,6 +10,7 @@
 ::mods_registerMod(::BgPerks.ID, ::BgPerks.Version, ::BgPerks.Name);
 ::mods_queue(::BgPerks.ID, "mod_hooks(>=20)", function () {
     ::include("background_perks/chances");
+    ::include("background_perks/hackflows_perks");
 })
 
 // Expose this function so that it could be called externally or patched
