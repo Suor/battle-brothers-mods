@@ -16,11 +16,9 @@ local mod = ::HackflowsPerks <- {
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-// TODO: align properly with cook fix
-::mods_queue(mod.ID, ">mod_hackflows", function() {
-    logInfo("load mod_hackflows_perks");
+::mods_queue(mod.ID, ">mod_heal_repair_fix", function() {
+    // Hooks for Flesh on the Bones perk
     local inAssetManagerUpdate = false;
-
     ::mods_hookNewObjectOnce("states/world/asset_manager", function (o) {
         this.logInfo("hp: hook asset_manager");
         local update = o.update;
