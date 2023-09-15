@@ -9,6 +9,7 @@ local function addPerk(row, afterID, perk) {
     ::Const.Perks.Perks[row].insert(pos, perk);
     perk.Row <- row;
     perk.Unlocks <- row;
+    perk.Description <- perk.Tooltip;
     ::Const.Perks.LookupMap[perk.ID] <- perk;
 }
 
@@ -20,10 +21,10 @@ local function red(text) {
 }
 
 // TODO: rename to tireless, liquid, energetic, enduring, exercise, shadow, flexible ???
-addPerk(4, "perk.lone_wolf", {
-    ID = "perk.hackflows.steadfast"
-    Script = "scripts/skills/perks/perk_hackflows_steadfast"
-    Name = "Steadfast"
+addPerk(4, "perk.overwhelm", {
+    ID = "perk.hackflows.balance"
+    Script = "scripts/skills/perks/perk_hackflows_balance"
+    Name = "Balance"
     Tooltip = "Getting hit or missed costs " + green("half") + " of the usual fatigue."
     Icon = "wotn_perks/clarity_circle.png"
     IconDisabled = "wotn_perks/clarity_circle_bw.png"
