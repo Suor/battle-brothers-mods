@@ -1,6 +1,6 @@
 MOD_NAME = background_perks
 TAG_NAME = background-perks
-SOURCES = scripts
+SOURCES = background_perks scripts
 SUBDIR = scripts/\!mods_preload
 DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
 
