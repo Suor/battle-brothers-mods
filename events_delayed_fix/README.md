@@ -21,7 +21,7 @@ This resulted in many complaints over the years about ambitions not resolving or
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 19 or newer.
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
 
 [Swifter]: https://www.nexusmods.com/battlebrothers/mods/542
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/666

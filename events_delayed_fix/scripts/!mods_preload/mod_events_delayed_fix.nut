@@ -5,6 +5,7 @@ local mod = ::EventsFix <- {
 }
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 ::mods_queue(mod.ID, "mod_hooks(>=20)", function () {
+    // ...
     ::mods_hookExactClass("states/world_state", function (o) {
         local function doUpdates() {
             this.m.Events.update();
@@ -43,6 +44,32 @@ local mod = ::EventsFix <- {
                 {
                     doUpdates();
                 }
+            }
+        }
+    })
+
+    // selectEvent() may fail or just drop its work for a number of reasons
+    ::mods_hookNewObjectOnce("events/event_manager", function (o) {
+        local selectEvent = o.selectEvent;
+        o.selectEvent = function() {
+            local gen = selectEvent();
+            while (true) {
+                if (resume gen == true) {
+                    // If we finished but didn't get an event we need to restart quick,
+                    // a retinue slot reminder is not a real event :)
+                    if (!this.m.ActiveEvent || this.m.ActiveEvent.getID() == "event.retinue_slot") {
+                        // Make it 100% chance to fire an event next time we get to roll that
+                        this.m.LastEventTime = -99999;
+                        // I won't override checks for last battle to keep things nice.
+                        // There are two checks for that, one of them goes after we roll
+                        // a chance to fire event and update LastCheckTime. WTF.
+                        // Anyway we don't want to update LastCheckTime in vain and postpone stuff.
+                        this.m.LastCheckTime = this.m.LastBattleTime
+                            + 5.0 - this.World.getTime().SecondsPerHour * 2;
+                    }
+                    return true;
+                }
+                yield false;
             }
         }
     })
