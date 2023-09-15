@@ -35,12 +35,15 @@ local mod = ::HealRepairFix <- {
             if (!inAssetManagerUpdate || _a <= this.m.Condition) return original(_a);
 
             // Add back an old fractional part, which was dropped by .getCondition()
+            _a += this.m.Condition - Math.floor(this.m.Condition);
             // We also add 0.015 to compensate for Blacksmith always repairing 3.99 outside camp
             // and 4.985 in, i.e. 3 or 5 first time and only 4 or 6 starting from second one.
             // NOTE: we save some tiny fraction of armor parts on this, which only compensates
             //       the rounding error of replacing 1/15 with 0.067 for ArmorPartsPerArmor when
             //       no camp no Blacksmith, otherwise it's less.
-            original(_a + this.m.Condition - Math.floor(this.m.Condition) + 0.015);
+            _a += 0.015;
+            // Finally make sure we don't overflow, as it shows "100%" in UI
+            original(Math.minf(this.m.ConditionMax, _a));
         }
     })
 
