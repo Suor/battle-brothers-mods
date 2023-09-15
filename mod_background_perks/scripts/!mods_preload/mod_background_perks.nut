@@ -4,6 +4,7 @@
     Version = 2.21
 
     Debug = true // requires stdlib
+    WarnOnUnlockFailure = true
 }
 
 ::mods_registerMod(::BgPerks.ID, ::BgPerks.Version, ::BgPerks.Name);
@@ -54,7 +55,11 @@ function BgPerks::giveFreePerks(_player) {
     }
 
     // Unlock them
-    foreach (perk in perks) _player.unlockPerk("perk." + perk);
+    foreach (perk in perks) {
+        local ok = _player.unlockPerk("perk." + perk);
+        if (!ok && ::BgPerks.WarnOnUnlockFailure)
+            logWarning("Failed to unlock perk \"" + perk + "\" for " + _player.getName())
+    }
 
     _player.m.PerkPointsSpent = perkPointsSpent;
     _player.m.PerkPoints = perkPoints;
