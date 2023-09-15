@@ -23,7 +23,7 @@ this.perk_battle_flow <- this.inherit("scripts/skills/skill", {
 
 		if (!this.m.IsSpent) {
 			this.m.IsSpent = true;
-			actor.setFatigue(actor.getFatigue() - _skill.getFatgueCost());
+			actor.setFatigue(Math.max(0, actor.getFatigue() - _skill.getFatigueCost()));
 			actor.setDirty(true);
 			this.spawnIcon("battle_flow", this.m.Container.getActor().getTile());
 		}
@@ -33,11 +33,5 @@ this.perk_battle_flow <- this.inherit("scripts/skills/skill", {
 	{
 		this.m.IsSpent = false;
 	}
-	
-	function onCombatStarted()
-	{
-		this.m.IsSpent = false; // Should not be needed
-	}
-
-});
+})
 

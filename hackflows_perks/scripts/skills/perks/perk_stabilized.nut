@@ -1,6 +1,8 @@
+local Text = ::HackflowsPerks.Text;
+
 this.perk_stabilized <- this.inherit("scripts/skills/skill", {
 	m = {
-		BonusMax = 30
+		BonusMax = 25
 		ArmorIdealMin = 25
 		ArmorIdealMax = 37
 	}
@@ -31,13 +33,6 @@ this.perk_stabilized <- this.inherit("scripts/skills/skill", {
 
 	function getTooltip()
 	{
-		local function positive(text) {
-		    return ::Const.UI.getColorized(text + "", ::Const.UI.Color.PositiveValue)
-		}
-		// local function red(text) {
-		//     return ::Const.UI.getColorized(text + "", ::Const.UI.Color.NegativeValue)
-		// }
-
 		local bonus = this.getBonus();
 		local totalArmorFatPenalty = this.getTotalArmorFat();
 		local tooltip = this.skill.getTooltip();
@@ -48,7 +43,7 @@ this.perk_stabilized <- this.inherit("scripts/skills/skill", {
 				id = 6,
 				type = "text",
 				icon = "ui/icons/special.png",
-				text = "Only receive " + positive((100 - bonus) + "%") + " of any attack damage"
+				text = "Only receive " + Text.positive((100 - bonus) + "%") + " of any attack damage"
 			});
 
 			local actor = this.getContainer().getActor();
@@ -65,8 +60,8 @@ this.perk_stabilized <- this.inherit("scripts/skills/skill", {
 
 				local others = nimble && bf ? "Nimble and Battle Forged" :
 					           nimble ? "Nimble" : bf ? "Battle Forged" : null;
-				local hp = positive(Math.round(100 * hpMult) + "%");
-				local armor = positive(Math.round(100 * armorMult) + "%");
+				local hp = Text.positive(Math.round(100 * hpMult) + "%");
+				local armor = Text.positive(Math.round(100 * armorMult) + "%");
 				tooltip.push({
 					id = 7
 					type = "hint"
@@ -133,4 +128,4 @@ this.perk_stabilized <- this.inherit("scripts/skills/skill", {
 		_properties.DamageReceivedArmorMult *= 1.0 - bonus * 0.01;
 		_properties.DamageReceivedRegularMult *= 1.0 - bonus * 0.01;
 	}
-});
+})

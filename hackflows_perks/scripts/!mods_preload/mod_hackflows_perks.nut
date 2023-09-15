@@ -1,6 +1,23 @@
-::mods_registerMod("mod_hackflows_perks", 0.5, "Hackflows's Perks Collection");
+// TODO: rename those perk files, and their ids
+local mod = ::HackflowsPerks <- {
+    ID = "mod_hackflows_perks"
+    Name = "Hackflow's Perks Collection"
+    Version = 0.5
+}
+// Some helpers
+// Q: would I be able to use it in config/z_hackflow_perks ?
+::HackflowsPerks.Text <- {
+    function positive(text) {
+        return ::Const.UI.getColorized(text + "", ::Const.UI.Color.PositiveValue)
+    }
+    function negative(text) {
+        return ::Const.UI.getColorized(text + "", ::Const.UI.Color.NegativeValue)
+    }
+}
+
+::mods_registerMod(mod.ID, mod.Version, mod.Name);
 // TODO: align properly with cook fix
-::mods_queue("mod_hackflows_perks", ">mod_hackflows", function() {
+::mods_queue(mod.ID, ">mod_hackflows", function() {
     logInfo("load mod_hackflows_perks");
     local inAssetManagerUpdate = false;
 

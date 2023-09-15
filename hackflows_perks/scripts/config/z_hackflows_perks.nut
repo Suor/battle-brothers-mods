@@ -86,7 +86,7 @@ this.Const.Strings.PerkDescription.Vengeance <- "After receiving a blow, the nex
 //     }
 // )
 
-// TODO: maybe need to cut in half
+// TODO: rename to tireless, liquid, energetic, enduring, exercise, shadow, flexible ???
 addPerk(4, "perk.lone_wolf", {
     ID = "perk.steadfast",
     Script = "scripts/skills/perks/perk_steadfast",
@@ -277,7 +277,7 @@ addPerk(2, "perk.taunt", {
 // A Medium Armor support Stabilized perk,
 // taken from https://www.nexusmods.com/battlebrothers/mods/525 and rebalanced
 this.Const.Strings.PerkName.Stabilized <- "Stabilized";
-this.Const.Strings.PerkDescription.Stabilized <- "Specialize in medium armor! Hitpoint and armor damage is reduced by [color=" + this.Const.UI.Color.PositiveValue + "]30%[/color] when the total penalty to Maximum Fatigue from head and body armor is between 25 and 37. Outside this range, the bonus drops rapidly.\n\nCombines multiplicatively with Nimble and Battle Forged.";
+this.Const.Strings.PerkDescription.Stabilized <- "Specialize in medium armor! Hitpoint and armor damage is reduced by " + green("25%") + " when the total penalty to Maximum Fatigue from head and body armor is between " + red(25) + " and " + red(37) + ". Outside this range, the bonus drops rapidly.\n\nCombines multiplicatively with Nimble and Battle Forged.";
 
 // Add stabilized between Nimble and Battle Forged
 addPerk(5, "perk.nimble", {
