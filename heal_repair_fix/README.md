@@ -2,7 +2,7 @@
 
 Currently cook **does not** speed up healing and blacksmith only partially works when camping, due to a [rounding bug](https://steamcommunity.com/app/365360/discussions/1/3721692478292060034/). This mod fixes this, now both of them give the advertised <span style="color: #239223">+33%</span> healing and repairing speed bonus.
 
-However, this mod will also fix the rounding for camping itself. It has intended to give <span style="color: #239223">+50%</span> for both healing and repairing, which after rounding gives us double healing both with or without cook, repearing is also bugged in a more convoluted way. All these can be summarized into a couple of tables:
+However, this mod will also fixes the rounding for camping itself. It has intended to give <span style="color: #239223">+50%</span> for both healing and repairing, which after rounding gives us double healing both with or without cook, repairing is bugged in a more convoluted way. All these can be summarized into a couple of tables:
 
 | Healing, hps/hour | Vanilla | Camping, Vanilla | Fixed | Camping, Fixed
 |---|---|---| --- | ---
@@ -21,5 +21,5 @@ I.e. with this fix a guy always gives <span style="color: #239223">+33%</span> a
 
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
 
-[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/...
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/668
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
