@@ -25,7 +25,7 @@
     o.onBeforeCombatResult = function( ... ) {
         vargv.insert(0, this);
         local ret = onBeforeCombatResult.acall(vargv);
-        this.m.FunFacts.onBattle(this);
+        this.m.FunFacts.onCombatEnd(this);
         return ret;
     }
 
@@ -49,7 +49,7 @@
         }
         if (!this.m.IsGuest && !this.Tactical.State.isScenarioMode() && vargv[4] != this.Const.FatalityType.Unconscious && (vargv[2] != null && vargv[1] != null || vargv[4] == this.Const.FatalityType.Devoured || vargv[4] == this.Const.FatalityType.Kraken))
         {
-            this.m.FunFacts.onBattle(this);
+            this.m.FunFacts.onCombatEnd(this);
         }
         return ret;
     }
@@ -58,6 +58,7 @@
     o.onCombatStart = function () {
         this.m.ff_fled <- 0;
         this.m.ff_returned <- 0;
+        this.m.FunFacts.onCombatStart(this);
         return onCombatStart();
     }
 

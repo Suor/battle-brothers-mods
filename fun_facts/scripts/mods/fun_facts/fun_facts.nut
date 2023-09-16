@@ -6,16 +6,16 @@ this.fun_facts <- {
             Kills = []
             Injuries = []
             InjuriesDealt = []
-            // HitsDealt = {}
-            // HitsReceived = {}
             BattlesLog = []
             Battles = 0
-            BattlesSkipped = 0
-            // BattlesInReserve = 0
+            CombatsSkipped = []
             NineLivesUses = 0
             NineLivesSaves = 0
-            // Flee = 0
+
+            // Obsolete
+            BattlesSkipped = 0  // Supserseded by CombatsSkipped array
         }
+        TmpCombatStart = null
         // Ranks = {}
         Name = "<not-set>"
         Version = 2
@@ -31,7 +31,26 @@ this.fun_facts <- {
         return "Id" in lastBattle ? lastBattle.Id : null;
     }
 
-    function onBattle(_player) {
+    function onCombatStart(_player) {
+        this.m.TmpCombatStart = this.getEffectsDesc(_player);
+        ::FunFacts.Debug.log("onCombatStart " + _player.getName(), this.m.TmpCombatStart);
+    }
+
+    function getEffectsDesc(_player) {
+        local interestingIds = [
+            "effects.drunk" "effects.hangover" "effects.exhausted" "effects.afraid"
+        ]
+        local ids = [];
+        local injured = false;
+        foreach (skill in _player.getSkills().m.Skills) {
+            local id = skill.getID();
+            if (interestingIds.find(id) != null) ids.push(id);
+            if (skill.isType(::Const.SkillType.TemporaryInjury)) injured = true;
+        }
+        return {Effects = ids, Injured = injured}
+    }
+
+    function onCombatEnd(_player) {
         this.m.Stats.Battles++;
         local record = {
             Id = ::FunFacts.getBattleId()
@@ -39,14 +58,22 @@ this.fun_facts <- {
             XPGained = _player.m.CombatStats.XPGained
             Fled = _player.m.ff_fled
             Returned = _player.m.ff_returned
-        };
+            Start = this.m.TmpCombatStart
+        }
+        this.m.TmpCombatStart = null;
         ::FunFacts.Debug.log("onBattle ", record);
         this.m.Stats.BattlesLog.push(record);
     }
 
-    function onBattleSkipped() {
+    function onCombatSkipped(_player) {
         this.m.Stats.BattlesSkipped++;
-        ::FunFacts.Debug.log("onBattleSkipped ", this.m.Stats.BattlesSkipped);
+        local record = {Id = ::FunFacts.getBattleId()}
+        local effects = this.getEffectsDesc(_player);
+        foreach (key, value in effects) record[key] <- value;
+        this.m.Stats.CombatsSkipped.push(record);
+        ::FunFacts.Debug.log("onCombatSkipped ", record);
+        ::FunFacts.debug.log("onCombatSkipped tmp", this.m.TmpCombatStart)
+        this.m.TmpCombatStart = null;
     }
 
     function onKill(_target, _fatalityType) {
@@ -194,9 +221,13 @@ this.fun_facts <- {
         }
 
         local fled = 0;
-        foreach (battle in this.m.Stats.BattlesLog) fled += battle.Fled;
+        local fledBattles = 0;
+        foreach (battle in this.m.Stats.BattlesLog) {
+            fled += battle.Fled;
+            fledBattles++;
+        }
         if (fled > 0) {
-            local text = format("Fled %s times", red(fled));
+            local text = format("Fled %s times in %s battles", red(fled), red(fledBattles));
             addHint("ui/icons/tracking_disabled.png", text);
         }
     }
