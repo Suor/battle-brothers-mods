@@ -41,6 +41,8 @@ if ("dofile" in gt) {
 
         return {
             script = script
+            m = {Value = 150}
+            function getName() {return "Fake New Item"}
             function getArmor() {return 39}
             function getArmorMax() {return 80}
             function setArmor(val) {}
@@ -94,6 +96,7 @@ if ("dofile" in gt) {
                                 Value = 350
                                 function setUpgrade(upgrade) {}
                             }
+                            function getName() {return "Fake Item"}
                             function getArmor() {return 39}
                             function getArmorMax() {return 80}
                             function setArmor(val) {}

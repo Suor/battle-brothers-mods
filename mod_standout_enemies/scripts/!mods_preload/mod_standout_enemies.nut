@@ -70,6 +70,8 @@ Quirk = se.Quirk <- {
             e.m.Skills.add(this.new("scripts/skills/perks/perk_stalwart"));
             e.m.Skills.add(this.new("scripts/skills/traits/iron_jaw_trait"));
 
+            // TODO: double blood amount ?
+
             // A chance to add some armor upgrade, not for skeletons
             local armor = Mod.getArmor(e), cond = armor ? armor.getArmorMax() : 0;
             if (cond >= 45 && !e.getFlags().has("skeleton") && Rand.chance(0.4)) {
@@ -253,8 +255,8 @@ Quirk = se.Quirk <- {
 
             if (!e.m.IsResurrected) {
                 // Ensure helmet, these are better than average zombie has
-                local helmets = ["kettle_hat" "padded_kettle_hat" "dented_nasal_helmet" "mail_coif"];
-                Mod.ensureHelmet(e, helmets);
+                local helmets = ["dented_nasal_helmet" "rusty_mail_coif"];
+                Mod.ensureHelmet(e, helmets, 150);
             }
             this.stubborn(e, 0.60, 0.25);
         }
@@ -302,7 +304,13 @@ Quirk = se.Quirk <- {
             Mod.color(e, "injury", "#ff9999", 0.9);
             Mod.color(e, "body", "#ff9999", 0.9);
 
-            Mod.ensureWeapon(e, ["scramasax", "ancient/khopesh", "boar_spear", "hand_axe"], 500);
+            // Ensure helmet and armor, a little bit over nimble often to make these less tough
+            local weapons = ["scramasax" "ancient/khopesh" "boar_spear" "hand_axe" "falchion"];
+            Mod.ensureWeapon(e, weapons, 500);
+            local helmets = ["nasal_helmet_with_rusty_mail" "dented_nasal_helmet" "mail_coif"];
+            Mod.ensureHelmet(e, helmets, 200);
+            local armors = ["mail_hauberk" "worn_mail_shirt" "patched_mail_shirt"];
+            Mod.ensureArmor(e, armors, 400);
 
             // Cleaned up and bald
             e.getSprite("body_blood").Visible = false;
@@ -530,6 +538,7 @@ Strategy = se.Strategy <- {
 
             // Sometimes add some masterwork zombies
             if (maturity > 0.5 && Rand.chance(maturity * 0.5)) {
+                // NOTE: maybe need to rework this calculation
                 local masters = Rand.poly(num / 4, maturity - 0.4);
                 this.logInfo("se: Masterwork zombie " + masters + " maturity " + maturity + " scale " + stats.scale);
                 stats.grow(plan, array(masters, Quirk.Masterwork), [1 0], ["zombie_good" "zombie"]);
@@ -839,19 +848,23 @@ Util.extend(Mod, {
         Mod.ensureWeapon(e, options, 1000000000);
     }
     function ensureWeapon(e, options, value = 0) {
-        local weapon = Mod.getWeapon(e);
-        if (!weapon || weapon.m.Value < value) {
-            if (weapon) e.m.Items.unequip(weapon);
-            weapon = this.new("scripts/items/weapons/" + Rand.choice(options));
-            e.m.Items.equip(weapon);
-        }
+        Mod._ensure(e, gt.Const.ItemSlot.Mainhand, "scripts/items/weapons/", options, value)
     }
     function ensureHelmet(e, options, value = 0) {
-        local helmet = e.m.Items.getItemAtSlot(gt.Const.ItemSlot.Head);
-        if (!helmet || helmet.m.Value < value) {
-            if (helmet) e.m.Items.unequip(helmet);
-            helmet = this.new("scripts/items/helmets/" + Rand.choice(options));
-            e.m.Items.equip(helmet);
+        Mod._ensure(e, gt.Const.ItemSlot.Head, "scripts/items/helmets/", options, value)
+    }
+    function ensureArmor(e, options, value = 0) {
+        Mod._ensure(e, gt.Const.ItemSlot.Body, "scripts/items/armor/", options, value)
+    }
+    function _ensure(e, part, prefix, options, value = 0) {
+        local item = e.m.Items.getItemAtSlot(part);
+        logInfo("_ensure now " + (item ? item.getName() + " value=" + item.m.Value : null)
+            + " expected value=" + value);
+        if (!item || item.m.Value < value) {
+            if (item) e.m.Items.unequip(item);
+            item = this.new(prefix + Rand.choice(options));
+            logInfo("_ensure chosen " + item.getName() + " value=" + item.m.Value);
+            e.m.Items.equip(item);
         }
     }
     function getArmor(e) {
