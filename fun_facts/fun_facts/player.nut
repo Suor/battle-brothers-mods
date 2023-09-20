@@ -56,6 +56,7 @@
 
     local onCombatStart = o.onCombatStart;
     o.onCombatStart = function () {
+        // TODO: move to FunFacts
         this.m.ff_fled <- 0;
         this.m.ff_returned <- 0;
         this.m.FunFacts.onCombatStart(this);
@@ -63,19 +64,21 @@
     }
 
     local checkMorale = o.checkMorale;
-    function checkMorale( _change, _difficulty, _type = this.Const.MoraleCheckType.Default, _showIconBeforeMoraleIcon = "", _noNewLine = false ) {
+    o.checkMorale = function(...) {
         local oldMoraleState = this.m.MoraleState;
-        local res = this.actor.checkMorale(_change, _difficulty, _type, _showIconBeforeMoraleIcon, _noNewLine);
+
+        vargv.insert(0, this);
+        local ret = checkMorale.acall(vargv);
 
         local fleeing = this.Const.MoraleState.Fleeing;
         if (oldMoraleState != fleeing && this.m.MoraleState == fleeing) {
+            // this.m.FunFacts.onFled(this);
             this.m.ff_fled++;
         } else if (oldMoraleState == fleeing && this.m.MoraleState != fleeing) {
             this.m.ff_returned++;
         }
-        return res;
+        return ret;
     }
-
 
     local onSerialize = o.onSerialize;
     o.onSerialize = function(_out) {
@@ -88,6 +91,8 @@
     local onDeserialize = o.onDeserialize;
     o.onDeserialize = function (_in) {
         onDeserialize(_in);
+        // this.m.FunFacts.loadFromFlags(this.getFlags(), _in.getMetaData());
+        //
         if (::FunFacts.Mod.Serialization.isSavedVersionAtLeast("0.1.1", _in.getMetaData())) {
             // this.logInfo("ff: player.onDeserialize saved version at least 0.1.1");
             this.m.FunFacts.onDeserialize(
@@ -97,4 +102,20 @@
             this.logInfo("ff: player.onDeserialize saved version OLD");
         }
     }
+
+    // function loadFromFlags(_flags, _meta) {
+    //     local savedVersion = ::FunFacts.Mod.getSavedVersion(_meta);
+    //     if (savedVersion >= "0.2.0") {
+    //         // ::FunFacts.Mod.fillFromFlags(this.m.Logs, _flags, "FunFacts.Logs");
+    //         // ::FunFacts.Mod.fillFromFlags(this.m.Stats, _flags, "FunFacts.Stats");
+    //         // this.m.Logs = ::FunFacts.Mod.fromFlags(_flags, "Logs");
+    //         // this.m.Stats = ::FunFacts.Mod.fromFlags(_flags, "Stats");
+    //     } else if (savedVersion >= "0.1.1") {
+    //         ::FunFacts.Mod.fillFromFlags(this.m.Stats, _flags, "FunFacts");
+    //         // this.m.Stats = ::FunFacts.Mod.fromFlags(_flags, "Stats");
+
+    //     } else {
+
+    //     }
+    // }
 });

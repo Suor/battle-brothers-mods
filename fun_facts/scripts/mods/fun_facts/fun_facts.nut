@@ -71,8 +71,8 @@ this.fun_facts <- {
         local effects = this.getEffectsDesc(_player);
         foreach (key, value in effects) record[key] <- value;
         this.m.Stats.CombatsSkipped.push(record);
-        ::FunFacts.Debug.log("onCombatSkipped ", record);
-        ::FunFacts.debug.log("onCombatSkipped tmp", this.m.TmpCombatStart)
+        // ::FunFacts.Debug.log("onCombatSkipped ", record);
+        // ::FunFacts.Debug.log("onCombatSkipped tmp", this.m.TmpCombatStart)
         this.m.TmpCombatStart = null;
     }
 
@@ -224,7 +224,7 @@ this.fun_facts <- {
         local fledBattles = 0;
         foreach (battle in this.m.Stats.BattlesLog) {
             fled += battle.Fled;
-            fledBattles++;
+            if (battle.Fled) fledBattles++;
         }
         if (fled > 0) {
             local text = format("Fled %s times in %s battles", red(fled), red(fledBattles));
