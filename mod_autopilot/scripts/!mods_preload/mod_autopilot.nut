@@ -728,6 +728,7 @@ local Verbose = true;
     }
   });
 
+  // Fix crash after ranged actor killing somebody
   ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_ranged", function (o) {
     local function isRelevant(_actor) {
       return !_actor.isNull() && !_actor.m.IsDying && _actor.m.IsAlive;
