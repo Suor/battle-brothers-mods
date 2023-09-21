@@ -1026,8 +1026,9 @@ this.turn_sequence_bar <- this.inherit("scripts/ui/screens/ui_module", {
 				    (!("_isIgnored" in e.m) || !e.m._isIgnored))
 				{
 					e.enableAIControl();
-					//agent.onTurnStarted(); // seems to cause intermittent crashes...
-					initNextTurn();
+					e.getAIAgent().onTurnStarted();
+					// agent.onTurnStarted(); // seems to cause intermittent crashes...
+					//initNextTurn();
 				}
 			}
 		}.bindenv(this), null);
