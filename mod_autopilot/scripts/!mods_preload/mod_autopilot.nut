@@ -185,6 +185,29 @@ local Verbose = true;
       }
   });
 
+  ::mods_hookExactClass("ai/tactical/behavior", function(cls) {
+      local getFatigueScoreMult = cls.getFatigueScoreMult;
+      cls.getFatigueScoreMult = function(_skill) {
+        logInfo("ap: getFatigueScoreMult " + entity.getName() + " " + _skill.getName());
+        local entity = this.getAgent().getActor();
+        if (!("_autopilot" in entity.m)) return getFatigueScoreMult(_skill);
+
+        logInfo("ap: FATIGUE Mult for " + entity.getName() + " " + _skill.getName());
+
+        local apPct = _skill.getActionPointCost() / (entity.getActionPointsMax() * 1.0);
+        local fatigue = this.Math.max(0, _skill.getFatigueCost() - entity.getCurrentProperties().FatigueRecoveryRate * entity.getCurrentProperties().FatigueRecoveryRateMult * apPct);
+        local currentFatigue = entity.getFatigue();
+        local maxFatigue = entity.getFatigueMax();
+        logInfo("ap: apPct=" + apPct + "fatigue=" + fatigue
+           + " of " + currentFatigue + "/" + maxFatigue);
+
+        local mult = getFatigueScoreMult(_skill);
+        logInfo("ap: FATIGUE Mult = " + mult);
+
+        return mult;
+      }
+  });
+
   ::mods_hookBaseClass("entity/tactical/human", function(o) {
     if("getLevelUps" in o) // if it's the player class...
     {
