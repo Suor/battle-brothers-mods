@@ -172,6 +172,19 @@ local Verbose = true;
       }
   });
 
+  ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_melee", function(cls) {
+      while(!("evaluate" in cls)) cls = cls[cls.SuperName];
+
+      local evaluate = cls.evaluate;
+      cls.evaluate = function(_entity) {
+        if (!("_autopilot" in _entity.m)) return evaluate(_entity);
+
+        local done = evaluate(_entity);
+        if (done && this.m.IsWaitingBeforeMove) this.m.Score /= 10;
+        return done;
+      }
+  });
+
   ::mods_hookBaseClass("entity/tactical/human", function(o) {
     if("getLevelUps" in o) // if it's the player class...
     {
@@ -185,12 +198,14 @@ local Verbose = true;
         this.m._autopilot <- true;
         m._oldAgent <- getAIAgent();
         local isRanged = isArmedWithRangedWeapon();
-        if(isRanged) // if armed with a throwing weapon, use the melee AI instead of the ranged AI
-        {
+        local agentType = isRanged ? "military_ranged" : "bandit_melee";
+        // if armed with a throwing weapon, use the melee AI instead of the ranged AI
+        // military is a bit more defensive so use it for throwing bros instead of bandit.
+        if(isRanged) {
           local weapon = m.Items.getItemAtSlot(Const.ItemSlot.Mainhand);
-          if(weapon.isItemType(Const.Items.ItemType.Ammo)) isRanged = false;
+          if (weapon.isItemType(Const.Items.ItemType.Ammo)) agentType = "military_melee";
         }
-        local agent = new("scripts/ai/tactical/agents/military_" + (isRanged ? "ranged" : "melee") + "_agent");
+        local agent = new("scripts/ai/tactical/agents/"+ agentType + "_agent");
 
         // agent.compileKnownAllies optimizes itself to no-op for the player faction, but we need it to work
         agent.compileKnownAllies = function()
@@ -214,6 +229,20 @@ local Verbose = true;
           }
         }
 
+        // Make backrow more active
+        if (!isRanged && this.getIdealRange() == 2) {
+          agent.m.Properties.EngageFlankingMult = 5.0;  // Like wolfrider :)
+          // // Note sure about these
+          // agent.m.Properties.OverallFormationMult = 0.0;
+          // agent.m.Properties.OverallDefensivenessMult = 0.0;
+          //
+          // agent.m.Properties.IgnoreTargetValueOnEngage = true;  // do not wait
+          // agent.m.Properties.PreferCarefulEngage = false;  // do not hide at all
+          // // Global shit
+          //    EngageCoverWithReachWeaponMult (global shit)
+          //    Const.AI.Behavior.EngageDistancePenaltyMult = 0.0;
+        }
+
         // Military agents don't have this
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_disengage"));
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_throw_net"));
@@ -223,22 +252,33 @@ local Verbose = true;
         // Disabled since doesn't consult offhand/backpack at all
         // agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_throw_bomb"));
 
+        // military doesn't have it, but bandit does
+        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_deathblow"));
+
         // TODO: use adrenaline less
         //       fix the link to original mod in README
 
         // Until we properly use standard bearer
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_rally"));
 
-        // Use shield wall and split sheld less
+        // Use shield wall and split shield less
         agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Shieldwall] = 0.75;
         agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.SplitShield] = 0.75;
         agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.KnockBack] = 0.75;
+
+        // Don't need for bandits
+        // agent.m.Properties.OverallDefensivenessMult = 1.0;
+        // agent.m.Properties.OverallFormationMult = 1.0;
+
+        // Look at this for bros having scare stuff
+        // TargetPriorityMoraleMult = 0.0,
+        // TargetPriorityBraveryMult = 0.0,
 
         // Should not be needed as long as we set IsControlledByPlayer to true
         agent.removeBehavior(Const.AI.Behavior.ID.Retreat); // retreat is always chosen for players if available, so remove it
         agent.m.Properties.TargetPriorityHittingAlliesMult *= 0.2; // reduce the chance of friendly fire
 
-        // Affects .isPlayerCnotrolled(), which affects many behaviors and logging
+        // Affects .isPlayerControlled(), which affects many behaviors and logging
         // this.m.IsControlledByPlayer = false;
 
         agent.setActor(this);
