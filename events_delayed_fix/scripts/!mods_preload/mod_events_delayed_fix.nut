@@ -48,7 +48,14 @@ local mod = ::EventsFix <- {
         }
     })
 
-    // selectEvent() may fail or just drop its work for a number of reasons
+    // selectEvent() may fail or just drop its work for a number of reasons:
+    //  - enemies nearby
+    //  - battle occured
+    //  - special event interfering, i.e. a reminder to look at retinue
+    //  - crysis news: start, progress, end
+    // All of these still require selectEvent() to finish, i.e. calculate scores for all events,
+    // then they are rolled with an error - sum of scores should be updated to exclude events that
+    // won't pass because of any of the above, but it's not so roll might simply miss everything.
     ::mods_hookNewObjectOnce("events/event_manager", function (o) {
         local selectEvent = o.selectEvent;
         o.selectEvent = function() {

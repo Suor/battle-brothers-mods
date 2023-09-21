@@ -18,6 +18,19 @@ This resulted in many complaints over the years about ambitions not resolving or
 1. If you are running on a global map at x2 or higher speed more in-game time will pass by the moment a event is triggered. The aforemention **Swifter** mod is the only way to compensate this as far as I know.
 2. If you save game and then load it then the process will restart, including a random roll whether to start it at all or wait another 2 game hours. The latter will always succeed given enough time since last event, last check and battle though. 
 
+**NOTE 3.** Several things may also fail the event scoring and selection mechanism:
+
+- enemies nearby
+- battle occured
+- special event interfering, i.e. a reminder to look at retinue
+- crysis news: start, progress, end
+
+All of these still require the whole scoring to finish, i.e. calculate scores for all events,
+then they are rolled with an error - sum of scores should be updated to exclude events that
+won't pass because of any of the above, but it's not so roll might simply miss everything, in which case one would get "no event???" message in the log and the process will start again, same as save/load.
+
+This fix will make things recover faster, still keeping some decent after battle delay. 
+
 
 ## Install
 
