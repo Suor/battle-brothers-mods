@@ -12,8 +12,15 @@ My modifications include:
 - shield wall and split shields less
 - use adrenalin, line breaker, lunge skills
 
+Additions:
+
+- a way to debug ai for bros, not only for enemies
+
 Fixes:
+
 - way rarer battle crashes after ranged unit killing enemy 
+- second row guys more aggressive
+- immediately act after switching to auto, no skipping turn anymore
 
 
 ## Install
