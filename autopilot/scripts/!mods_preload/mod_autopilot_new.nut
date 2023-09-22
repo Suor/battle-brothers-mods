@@ -1,9 +1,17 @@
-local AutoFreeWake = true; // should we try to automatically break ourselves and allies out of nets and webs if we have unused APs?
-local AutoReload = true; // should we try to automatically reload if we have unused APs?
-local Verbose = true;
+local mod = ::Autopilot <- {
+  ID = "mod_autopilot_new"
+  Name = "Autopilot New"
+  Version = 2.0
+  // Settings
+  FreeWake = true // auto break free out of nets and webs and wake allies when unused AP left
+  Reload = true   // auto reload when unused AP left
+  Verbose = false // show ai debugging for auto bros
+}
 
 ::mods_registerMod("mod_autopilot_new", 2.0, "Autopilot New");
 ::mods_queue("mod_autopilot_new", null, function() {
+  ::include("autopilot/verbose");
+
   ::mods_hookExactClass("ai/tactical/behaviors/ai_attack_default", function ( o ) {
     o.m.PossibleSkills.extend([
       "actives.lunge",
@@ -64,17 +72,17 @@ local Verbose = true;
           return s != null && s.use(t);
         }
 
-        if(AutoFreeWake || AutoReload)
+        if(::Autopilot.FreeWake || ::Autopilot.Reload)
         {
           // see if we can help ourselves first
-          if(AutoFreeWake) tryUseSkill("actives.break_free", tile);
-          if(AutoReload)
+          if(::Autopilot.FreeWake) tryUseSkill("actives.break_free", tile);
+          if(::Autopilot.Reload)
           {
             foreach(s in ["actives.reload_bolt", "actives.reload_handgonne"]) tryUseSkill(s, tile);
           }
 
           // then try to help adjacent allies
-          if(AutoFreeWake)
+          if(::Autopilot.FreeWake)
           {
             foreach(s in ["actives.wake_ally", "actives.break_ally_free"])
             {
@@ -104,72 +112,6 @@ local Verbose = true;
       onTurnEnd();
       clearAutoSkills();
     }
-  });
-
-  // Allow verbose mode for our guys
-  ::mods_hookBaseClass("ai/tactical/agent", function(cls) {
-      while(!("pickBehavior" in cls)) cls = cls[cls.SuperName];
-
-      local evaluate = cls.evaluate;
-      cls.evaluate = function (_entity) {
-        local oldVerbose = Const.AI.VerboseMode;
-        Const.AI.VerboseMode = Verbose && ("_autopilot" in _entity.m);
-        local ret = evaluate(_entity);
-        Const.AI.VerboseMode = oldVerbose;
-        return ret;
-      }
-      local execute = cls.execute;
-      cls.execute = function (_entity) {
-        local oldVerbose = Const.AI.VerboseMode;
-        Const.AI.VerboseMode = Verbose && ("_autopilot" in _entity.m);
-        local ret = execute(_entity);
-        Const.AI.VerboseMode = oldVerbose;
-        return ret;
-      }
-
-      local function wrap_n_call(func) {
-        local actor = this.m.Actor;
-        if (Verbose && ("_autopilot" in actor.m)) {
-          local oldVerbose = Const.AI.VerboseMode;
-          Const.AI.VerboseMode = true;
-          actor.m.IsControlledByPlayer = false;
-          local ret = func();
-          Const.AI.VerboseMode = oldVerbose;
-          actor.m.IsControlledByPlayer = true;
-          return ret;
-        } else {
-          return func();
-        }
-      }
-
-      local pickBehavior = cls.pickBehavior;
-      cls.pickBehavior = function() {
-        return wrap_n_call(pickBehavior);
-      }
-      local onTurnStarted = cls.onTurnStarted;
-      cls.onTurnStarted = function() {
-        return wrap_n_call(onTurnStarted);
-      }
-      local onTurnResumed = cls.onTurnResumed;
-      cls.onTurnResumed = function() {
-        return wrap_n_call(onTurnResumed);
-      }
-  });
-  ::mods_hookExactClass("ai/tactical/behaviors/ai_idle", function(cls) {
-      local onExecute = cls.onExecute;
-      cls.onExecute = function(_entity) {
-        if (Verbose && ("_autopilot" in _entity.m)) {
-          local oldVerbose = Const.AI.VerboseMode;
-          Const.AI.VerboseMode = true;
-          _entity.m.IsControlledByPlayer = false;
-          local ret = onExecute(_entity);
-          _entity.m.IsControlledByPlayer = true;
-          Const.AI.VerboseMode = oldVerbose;
-          return ret;
-        } else {
-          return onExecute(_entity);
-        }
-      }
   });
 
   ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_melee", function(cls) {
