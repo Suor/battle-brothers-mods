@@ -8,16 +8,11 @@ local mod = ::Autopilot <- {
   Verbose = true // show ai debugging for auto bros
 }
 
-::mods_registerMod("mod_autopilot_new", 2.0, "Autopilot New");
-::mods_queue("mod_autopilot_new", null, function() {
-  ::include("autopilot/verbose");
+::mods_registerMod(mod.ID, mod.Version, mod.Name);
+::mods_queue(mod.ID, null, function() {
+  ::include("autopilot/better_behavior");
   ::include("autopilot/fixes");
-
-  ::mods_hookExactClass("ai/tactical/behaviors/ai_attack_default", function ( o ) {
-    o.m.PossibleSkills.extend([
-      "actives.lunge",
-    ]);
-  });
+  ::include("autopilot/verbose");
 
   ::mods_hookBaseClass("entity/tactical/actor", function(o) {
     while(!("onTurnStart" in o)) o = o[o.SuperName];
@@ -113,19 +108,6 @@ local mod = ::Autopilot <- {
       onTurnEnd();
       clearAutoSkills();
     }
-  });
-
-  ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_melee", function(cls) {
-      while(!("evaluate" in cls)) cls = cls[cls.SuperName];
-
-      local evaluate = cls.evaluate;
-      cls.evaluate = function(_entity) {
-        if (!("_autopilot" in _entity.m)) return evaluate(_entity);
-
-        local done = evaluate(_entity);
-        if (done && this.m.IsWaitingBeforeMove) this.m.Score /= 10;
-        return done;
-      }
   });
 
   ::mods_hookBaseClass("entity/tactical/human", function(o) {
