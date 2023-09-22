@@ -1,65 +1,36 @@
-// Allow verbose mode for our guys, normally there is an extra guard
-::mods_hookBaseClass("ai/tactical/agent", function(cls) {
-    while(!("pickBehavior" in cls)) cls = cls[cls.SuperName];
+// Allow verbose mode for our guys
+local function wrap(_func, _switchControlled = false) {
+    return function (_entity = null) {
+        local hasArg = !!_entity;
+        local actor = _entity || this.m.Actor;
+        if (::Autoplot.Verbose && ("_autopilot" in actor.m)) {
+            // Switch to verbose mode and flip the IsControlledByPlayer flag
+            // so that things won't be supressed
+            local oldVerbose = Const.AI.VerboseMode;
+            Const.AI.VerboseMode = true;
+            if (_switchControlled) actor.m.IsControlledByPlayer = false;
 
-    local evaluate = cls.evaluate;
-    cls.evaluate = function (_entity) {
-      local oldVerbose = Const.AI.VerboseMode;
-      Const.AI.VerboseMode = ::Autoplot.Verbose && ("_autopilot" in _entity.m);
-      local ret = evaluate(_entity);
-      Const.AI.VerboseMode = oldVerbose;
-      return ret;
+            local ret = hasArg ? _func(_entity) : _func();
+            // Switch things back
+            if (_switchControlled) actor.m.IsControlledByPlayer = true;
+            Const.AI.VerboseMode = oldVerbose;
+            return ret;
+        } else {
+            return hasArg ? _func(_entity) : _func();
+        }
     }
-    local execute = cls.execute;
-    cls.execute = function (_entity) {
-      local oldVerbose = Const.AI.VerboseMode;
-      Const.AI.VerboseMode = ::Autoplot.Verbose && ("_autopilot" in _entity.m);
-      local ret = execute(_entity);
-      Const.AI.VerboseMode = oldVerbose;
-      return ret;
-    }
+}
 
-    local function wrap_n_call(func) {
-      local actor = this.m.Actor;
-      if (::Autoplot.Verbose && ("_autopilot" in actor.m)) {
-        local oldVerbose = Const.AI.VerboseMode;
-        Const.AI.VerboseMode = true;
-        actor.m.IsControlledByPlayer = false;
-        local ret = func();
-        Const.AI.VerboseMode = oldVerbose;
-        actor.m.IsControlledByPlayer = true;
-        return ret;
-      } else {
-        return func();
-      }
-    }
+::mods_hookBaseClass("ai/tactical/agent", function (agent) {
+    while (agent.ClassName != "agent") agent = agent[agent.SuperName];
 
-    local pickBehavior = cls.pickBehavior;
-    cls.pickBehavior = function() {
-      return wrap_n_call(pickBehavior);
-    }
-    local onTurnStarted = cls.onTurnStarted;
-    cls.onTurnStarted = function() {
-      return wrap_n_call(onTurnStarted);
-    }
-    local onTurnResumed = cls.onTurnResumed;
-    cls.onTurnResumed = function() {
-      return wrap_n_call(onTurnResumed);
-    }
+    agent.evaluate = wrap(agent.evaluate);
+    agent.execute = wrap(agent.execute);
+    agent.pickBehavior = wrap(agent.pickBehavior, true);
+    agent.onTurnStarted = wrap(agent.onTurnStarted, true);
+    agent.onTurnResumed = wrap(agent.onTurnResumed, true);
 });
-::mods_hookExactClass("ai/tactical/behaviors/ai_idle", function(cls) {
-    local onExecute = cls.onExecute;
-    cls.onExecute = function(_entity) {
-      if (::Autopilot.Verbose && ("_autopilot" in _entity.m)) {
-        local oldVerbose = Const.AI.VerboseMode;
-        Const.AI.VerboseMode = true;
-        _entity.m.IsControlledByPlayer = false;
-        local ret = onExecute(_entity);
-        _entity.m.IsControlledByPlayer = true;
-        Const.AI.VerboseMode = oldVerbose;
-        return ret;
-      } else {
-        return onExecute(_entity);
-      }
-    }
+// Need to do this separately because it is executed outside of those above sometimes
+::mods_hookExactClass("ai/tactical/behaviors/ai_idle", function (ai_idle) {
+    ai_idle.onExecute = wrap(ai_idle.onExecute, true);
 });
