@@ -5,12 +5,13 @@ local mod = ::Autopilot <- {
   // Settings
   FreeWake = true // auto break free out of nets and webs and wake allies when unused AP left
   Reload = true   // auto reload when unused AP left
-  Verbose = false // show ai debugging for auto bros
+  Verbose = true // show ai debugging for auto bros
 }
 
 ::mods_registerMod("mod_autopilot_new", 2.0, "Autopilot New");
 ::mods_queue("mod_autopilot_new", null, function() {
   ::include("autopilot/verbose");
+  ::include("autopilot/fixes");
 
   ::mods_hookExactClass("ai/tactical/behaviors/ai_attack_default", function ( o ) {
     o.m.PossibleSkills.extend([
@@ -124,29 +125,6 @@ local mod = ::Autopilot <- {
         local done = evaluate(_entity);
         if (done && this.m.IsWaitingBeforeMove) this.m.Score /= 10;
         return done;
-      }
-  });
-
-  ::mods_hookExactClass("ai/tactical/behavior", function(cls) {
-      local getFatigueScoreMult = cls.getFatigueScoreMult;
-      cls.getFatigueScoreMult = function(_skill) {
-        logInfo("ap: getFatigueScoreMult " + entity.getName() + " " + _skill.getName());
-        local entity = this.getAgent().getActor();
-        if (!("_autopilot" in entity.m)) return getFatigueScoreMult(_skill);
-
-        logInfo("ap: FATIGUE Mult for " + entity.getName() + " " + _skill.getName());
-
-        local apPct = _skill.getActionPointCost() / (entity.getActionPointsMax() * 1.0);
-        local fatigue = this.Math.max(0, _skill.getFatigueCost() - entity.getCurrentProperties().FatigueRecoveryRate * entity.getCurrentProperties().FatigueRecoveryRateMult * apPct);
-        local currentFatigue = entity.getFatigue();
-        local maxFatigue = entity.getFatigueMax();
-        logInfo("ap: apPct=" + apPct + "fatigue=" + fatigue
-           + " of " + currentFatigue + "/" + maxFatigue);
-
-        local mult = getFatigueScoreMult(_skill);
-        logInfo("ap: FATIGUE Mult = " + mult);
-
-        return mult;
       }
   });
 
@@ -666,34 +644,6 @@ local mod = ::Autopilot <- {
         }
 
         return this.Const.AI.Behavior.Score.BreakFree;
-      }
-    }
-  });
-
-  // Fix crash after ranged actor killing somebody
-  ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_ranged", function (o) {
-    local function isRelevant(_actor) {
-      return !_actor.isNull() && !_actor.m.IsDying && _actor.m.IsAlive;
-    }
-
-    local function cleanup(_b) {
-      _b.m.ValidTargets = _b.m.ValidTargets.filter(@(_, t) isRelevant(t.Actor));
-      _b.m.PotentialDanger = _b.m.PotentialDanger.filter(@(_, a) isRelevant(a));
-    }
-
-    // The problem with this is while we go through tiles a target might become invalid,
-    // usually after a ranged bro shoots someone and we are evaluating his next shot
-    local selectBestTargetTile = o.selectBestTargetTile;
-    o.selectBestTargetTile = function (_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded) {
-      local res;
-      local gen = selectBestTargetTile(_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded);
-
-      while (true) {
-        cleanup(this);
-        res = resume gen;
-        // Proxy "results"
-        if (res != null) return res;
-        yield res;
       }
     }
   });
