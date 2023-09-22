@@ -1,9 +1,3 @@
-local Array = {
-    function max(arr) {
-
-    }
-}
-
 ::FunFacts <- {
     ID = "mod_fun_facts"
     Name = "Fun Facts"
