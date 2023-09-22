@@ -2,8 +2,8 @@ local AutoFreeWake = true; // should we try to automatically break ourselves and
 local AutoReload = true; // should we try to automatically reload if we have unused APs?
 local Verbose = true;
 
-::mods_registerMod("mod_autopilot", 23, "Autopilot");
-::mods_queue("mod_autopilot", null, function() {
+::mods_registerMod("mod_autopilot_new", 2.0, "Autopilot New");
+::mods_queue("mod_autopilot_new", null, function() {
   ::mods_hookExactClass("ai/tactical/behaviors/ai_attack_default", function ( o ) {
     o.m.PossibleSkills.extend([
       "actives.lunge",

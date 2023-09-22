@@ -1,5 +1,5 @@
-MOD_NAME = autopilot
-TAG_NAME = autopilot
+MOD_NAME = autopilot_new
+TAG_NAME = autopilot-new
 SOURCES = gfx scripts ui
 DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
 
