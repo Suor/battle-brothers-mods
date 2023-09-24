@@ -20,7 +20,6 @@ local function red(text) {
     return ::Const.UI.getColorized(text + "", ::Const.UI.Color.NegativeValue)
 }
 
-// TODO: rename to tireless, liquid, energetic, enduring, exercise, shadow, flexible ???
 addPerk(4, "perk.overwhelm", {
     ID = "perk.hackflows.balance"
     Script = "scripts/skills/perks/perk_hackflows_balance"
@@ -29,6 +28,7 @@ addPerk(4, "perk.overwhelm", {
     Icon = "wotn_perks/clarity_circle.png"
     IconDisabled = "wotn_perks/clarity_circle_bw.png"
 })
+
 addPerk(4, null, {
     ID = "perk.hackflows.bloody_harvest"
     Script = "scripts/skills/perks/perk_hackflows_bloody_harvest"

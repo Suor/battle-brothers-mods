@@ -1,18 +1,8 @@
-// TODO: rename those perk files, and their ids
+// TODO: rename gfx files
 local mod = ::HackflowsPerks <- {
     ID = "mod_hackflows_perks"
     Name = "Hackflow's Perks Collection"
     Version = 0.5
-}
-// Some helpers
-// Q: would I be able to use it in config/z_hackflow_perks ?
-::HackflowsPerks.Text <- {
-    function positive(text) {
-        return ::Const.UI.getColorized(text + "", ::Const.UI.Color.PositiveValue)
-    }
-    function negative(text) {
-        return ::Const.UI.getColorized(text + "", ::Const.UI.Color.NegativeValue)
-    }
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);

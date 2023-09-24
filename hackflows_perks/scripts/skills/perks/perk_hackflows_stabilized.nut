@@ -1,4 +1,10 @@
-local Text = ::HackflowsPerks.Text;
+local Text = {
+    function colored(value, color) {
+        return ::Const.UI.getColorized(value + "", color)
+    }
+    function positive(value) {return this.colored(value, ::Const.UI.Color.PositiveValue)}
+    function negative(value) {return this.colored(value, ::Const.UI.Color.NegativeValue)}
+}
 
 this.perk_hackflows_stabilized <- this.inherit("scripts/skills/skill", {
 	m = {
