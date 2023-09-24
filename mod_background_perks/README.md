@@ -1,4 +1,4 @@
-# Background Perks Mod
+# Starting Perks by Background
 
 This mod gives brothers a chance to begin with certain perks in the perk tree unlocked by default depending on the background they belong to. Based on [Starting Perks by Background][base-mod].
 

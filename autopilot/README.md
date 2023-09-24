@@ -1,4 +1,4 @@
-# Autopilot Mod
+# Autopilot New
 
 *This is authored by AdamMil01 and modified by me. Original version is available [here](original)*
 
