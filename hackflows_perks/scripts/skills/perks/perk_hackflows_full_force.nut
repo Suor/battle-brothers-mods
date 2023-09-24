@@ -13,9 +13,10 @@ this.perk_hackflows_full_force <- this.inherit("scripts/skills/skill", {
 		this.m.IsHidden = false;
 	}
 
-	function onUpdate( _properties )
+	function onAfterUpdate( _properties )
 	{
-		local items = this.getContainer().getActor().getItems();
+		local actor = this.getContainer().getActor();
+		local items = actor.getItems();
 
 		local fat = 0;
 		local bodyParts = [
@@ -29,17 +30,16 @@ this.perk_hackflows_full_force <- this.inherit("scripts/skills/skill", {
 			if (item) fat += item.getStaminaModifier();
 		}
 
-		if (this.getContainer().getActor().isArmedWithMeleeWeapon())
-		{
+		local mainhand = items.getItemAtSlot(this.Const.ItemSlot.Mainhand);
+		local unarmed = (mainhand == null || this.getContainer().hasSkill("effects.disarmed"))
+		if (unarmed || actor.isArmedWithMeleeWeapon()) {
 			local bonus = this.Math.abs(fat) / 3;
 			_properties.DamageRegularMin *= 1.0 + 0.01 * this.Math.floor(bonus);
-			local mindamage = _properties.DamageRegularMin;
-			local maxdamage = _properties.DamageRegularMax;
-			if (maxdamage < mindamage)
-			{
-				local difference = _properties.DamageRegularMin - _properties.DamageRegularMax;
-				_properties.DamageRegularMax = _properties.DamageRegularMin;
-				_properties.DamageRegularMin = _properties.DamageRegularMax - difference;
+			local damageMin = _properties.DamageRegularMin;
+			local damageMax = _properties.DamageRegularMax;
+			if (damageMax < damageMin) {
+				_properties.DamageRegularMax = damageMin;
+				_properties.DamageRegularMin = damageMax;
 			}
 		}
 	}
