@@ -38,23 +38,49 @@ local mod = ::HackflowsPerks <- {
         "injury.fractured_skull"
         "injury.smashed_hand"
     ]
+    local function fleshOnBonesActive(_player) {
+        local fleshOnTheBones = false;
+        local bonesOk = true;
+        foreach (skill in _player.m.Skills.m.Skills) { // -> skills_container -> actual array
+            if (skill.isGarbage()) continue;
+
+            local id = skill.getID();
+            if (id == "perk.hackflows.flesh_on_the_bones") fleshOnTheBones = true;
+            if (boneInjuries.find(id) != null) bonesOk = false;
+        }
+        return fleshOnTheBones && bonesOk;
+    }
+
     ::mods_hookExactClass("entity/tactical/actor", function (cls) {
         local setHitpoints = cls.setHitpoints;
         cls.setHitpoints = function (_h) {
-            if (inAssetManagerUpdate && _h > this.m.Hitpoints) {
-                local fleshOnTheBones = false;
-                local bonesOk = true;
-                foreach (skill in this.m.Skills.m.Skills) { // -> skills_container -> actual array
-                    if (skill.isGarbage()) continue;
-
-                    local id = skill.getID();
-                    if (id == "perk.hackflows.flesh_on_the_bones") fleshOnTheBones = true;
-                    if (boneInjuries.find(id) != null) bonesOk = false;
-                }
-                if (fleshOnTheBones && bonesOk) _h += _h - this.m.Hitpoints;
+            if (inAssetManagerUpdate && _h > this.m.Hitpoints && fleshOnBonesActive(this)) {
+                _h += _h - this.m.Hitpoints;
             }
-
             setHitpoints(_h);
+        }
+    })
+
+    ::mods_hookExactClass("entity/tactical/player", function (cls) {
+        local getRosterTooltip = cls.getRosterTooltip;
+        cls.getRosterTooltip = function () {
+            local tooltip = getRosterTooltip();
+            if (this.getHitpoints() >= this.getHitpointsMax()) return tooltip;
+            if (!fleshOnBonesActive(this)) return tooltip;
+
+            foreach (line in tooltip) {
+                if (!std.Str.startswith(line.text, "Light Wounds")) continue;
+
+                local rate = ::Const.World.Assets.HitpointsPerHour * 2; // This perk double
+                if (("State" in ::World) && ::World.State != null)
+                    rate *= ::World.Assets.m.HitpointsPerHourMult;
+
+                local toHeal = this.getHitpointsMax() - this.getHitpoints();
+                local days = Math.ceil(toHeal * 1.0 / rate / 24);
+                line.text = format("Light Wounds (%i day%s)", days, days > 1 ? "s" : "");
+                // line.text = Text.render("Light Wounds ({0} day{0|plural})", days);
+            }
+            return tooltip;
         }
     })
 })
