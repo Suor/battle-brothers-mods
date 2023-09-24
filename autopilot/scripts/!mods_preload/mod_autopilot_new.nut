@@ -14,6 +14,23 @@ local mod = ::Autopilot <- {
   ::include("autopilot/fixes");
   ::include("autopilot/verbose");
 
+  // some line
+
+  // Add our behavior
+  local function addBehavior(_id, _name, _order, _score) {
+    logInfo("addBehavior " + _id + _name + _order + _score);
+    if (_id in ::Const.AI.Behavior.ID) throw "Aleady have behavior with ID = " + _id;
+
+    ::Const.AI.Behavior.ID[_id] <- ::Const.AI.Behavior.ID.COUNT;
+    ::Const.AI.Behavior.ID.COUNT += 1;
+
+    ::Const.AI.Behavior.Name.push(_name);
+    ::Const.AI.Behavior.Order[_id] <- _order;
+    ::Const.AI.Behavior.Score[_id] <- _score;
+  }
+  addBehavior("AP_UnbagNet", "UnbagNet", 35, 100);
+
+  // The Meat
   ::mods_hookBaseClass("entity/tactical/actor", function(o) {
     while(!("onTurnStart" in o)) o = o[o.SuperName];
   
@@ -167,6 +184,9 @@ local mod = ::Autopilot <- {
           //    EngageCoverWithReachWeaponMult (global shit)
           //    Const.AI.Behavior.EngageDistancePenaltyMult = 0.0;
         }
+
+        // Our behaviors
+        agent.addBehavior(this.new("scripts/ai/autopilot_unbag_net"));
 
         // Military agents don't have this
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_disengage"));
