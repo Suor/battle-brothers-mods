@@ -572,7 +572,6 @@ Strategy = se.Strategy <- {
             local num = Rand.poly(maturity > 0.5 ? 2 : 1, prob);
             if (num == 0) return null;
 
-            // TODO: other quirks and more necromancers
             return {necromancer = array(num, Quirk.SkilledNecro)}
         }
     },
