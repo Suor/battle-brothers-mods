@@ -180,9 +180,6 @@ local mod = ::Autopilot <- {
         // military doesn't have it, but bandit does
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_deathblow"));
 
-        // TODO: use adrenaline less
-        //       fix the link to original mod in README
-
         // Until we properly use standard bearer
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_rally"));
 
