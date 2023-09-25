@@ -25,8 +25,8 @@ addPerk(4, "perk.overwhelm", {
     Script = "scripts/skills/perks/perk_hackflows_balance"
     Name = "Balance"
     Tooltip = "Getting hit or missed costs " + green("half") + " of the usual fatigue."
-    Icon = "wotn_perks/clarity_circle.png"
-    IconDisabled = "wotn_perks/clarity_circle_bw.png"
+    Icon = "hackflows_perks/balance.png"
+    IconDisabled = "hackflows_perks/balance_sw.png"
 })
 
 addPerk(4, null, {
@@ -34,8 +34,8 @@ addPerk(4, null, {
     Script = "scripts/skills/perks/perk_hackflows_bloody_harvest"
     Name = "Bloody Harvest"
     Tooltip = "Gain " + green("+10%") + " chance to hit for all area of effect attacks."
-    Icon = "wotn_perks/double_strike.png" // TODO: better icon
-    IconDisabled = "wotn_perks/double_strike_sw.png"
+    Icon = "hackflows_perks/bloody_harvest.png" // TODO: better icon
+    IconDisabled = "hackflows_perks/bloody_harvest_sw.png"
 })
 
 addPerk(5, "perk.berserk", {
@@ -52,8 +52,8 @@ addPerk(6, "perk.killing_frenzy", {
     Script = "scripts/skills/perks/perk_hackflows_battle_flow"
     Name = "Battle Flow"
     Tooltip = "The first kill each turn does not accumulate fatigue."
-    Icon = "wotn_perks/battle_flow.png"
-    IconDisabled = "wotn_perks/battle_flow_sw.png"
+    Icon = "hackflows_perks/battle_flow.png"
+    IconDisabled = "hackflows_perks/battle_flow_sw.png"
 })
 
 // A faster healing perk, using awesome last_stand icon
@@ -73,6 +73,6 @@ addPerk(5, "perk.nimble", {
     Script = "scripts/skills/perks/perk_hackflows_stabilized"
     Name = "Stabilized"
     Tooltip = "Specialize in medium armor! Hitpoint and armor damage is reduced by " + green("25%") + " when the total penalty to Maximum Fatigue from head and body armor is between " + red(25) + " and " + red(37) + ". Outside this range, the bonus drops rapidly.\n\nCombines multiplicatively with Nimble and Battle Forged."
-    Icon = "icons/stabilized.png"
-    IconDisabled = "icons/stabilized_sw.png"
+    Icon = "hackflows_perks/stabilized.png"
+    IconDisabled = "hackflows_perks/stabilized_sw.png"
 })
