@@ -1,3 +1,10 @@
+2.3
+- support Hackflow's Perks
+- warn about perks not found
+- put debug prints under a flag
+- expose giveFreePerks() function
+- improved docs: motivation and extension
+
 2.21
 - stop breaking on unknown backgrounds
 
