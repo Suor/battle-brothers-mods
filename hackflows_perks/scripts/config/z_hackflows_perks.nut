@@ -38,11 +38,15 @@ addPerk(4, null, {
     IconDisabled = "hackflows_perks/bloody_harvest_sw.png"
 })
 
+// This one is mostly the same as Full Force in True Balance mod, but works on hand to hand too
+// Also, has a nicer description
 addPerk(5, "perk.berserk", {
     ID = "perk.hackflows.full_force"
     Script = "scripts/skills/perks/perk_hackflows_full_force"
     Name = "Full Force"
-    Tooltip = "Put your full weight into every blow and gain " + green("+1%") + " minimal melee damage for each " + red(3) + " fatigue caused by things worn and held. Items in the bag do not contribute."
+    Tooltip = "Put your full weight into every blow and gain " + green("+1%")
+        + " minimal melee damage for each " + red(3)
+        + " fatigue caused by things worn and held. Items in the bag do not contribute."
     Icon = "ui/perks/perk_18.png"
     IconDisabled = "ui/perks/perk_18_sw.png"
 })
@@ -61,18 +65,24 @@ addPerk(2, "perk.taunt", {
     ID = "perk.hackflows.flesh_on_the_bones",
     Script = "scripts/skills/perks/perk_hackflows_flesh_on_the_bones",
     Name = "Flesh on the Bones"
-    Tooltip = "If the bones are there the flesh will grow. Restores hitpoints at " + green("double rate") + " unless any bones are broken. Old injuries are fine."
+    Tooltip = "If the bones are there the flesh will grow. Restores hitpoints at "
+        + green("double rate") + " unless any bones are broken. Old injuries are fine."
     Icon = "ui/perks/perk_32.png",
     IconDisabled = "ui/perks/perk_32_sw.png"
 })
 
 // A Medium Armor support Stabilized perk,
 // taken from https://www.nexusmods.com/battlebrothers/mods/525 and rebalanced
+// and reworked a lot
 addPerk(5, "perk.nimble", {
     ID = "perk.hackflows.stabilized"
     Script = "scripts/skills/perks/perk_hackflows_stabilized"
     Name = "Stabilized"
-    Tooltip = "Specialize in medium armor! Hitpoint and armor damage is reduced by " + green("25%") + " when the total penalty to Maximum Fatigue from head and body armor is between " + red(25) + " and " + red(37) + ". Outside this range, the bonus drops rapidly.\n\nCombines multiplicatively with Nimble and Battle Forged."
+    Tooltip = "Specialize in medium armor! Hitpoint and armor damage is reduced by "
+        + green("25%") + " when the total penalty to Maximum Fatigue from head and body armor"
+        + " is between " + red(25) + " and " + red(37)
+        + ". Outside this range the bonus drops rapidly.\n\n"
+        + "Combines multiplicatively with Nimble and Battle Forged."
     Icon = "hackflows_perks/stabilized.png"
     IconDisabled = "hackflows_perks/stabilized_sw.png"
 })
