@@ -1,8 +1,7 @@
-// TODO: rename gfx files
 local mod = ::HackflowsPerks <- {
     ID = "mod_hackflows_perks"
-    Name = "Hackflow's Perks Collection"
-    Version = 0.5
+    Name = "Hackflow's Perks"
+    Version = 1.0
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
