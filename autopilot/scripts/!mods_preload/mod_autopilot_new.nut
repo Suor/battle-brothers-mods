@@ -14,22 +14,6 @@ local mod = ::Autopilot <- {
   ::include("autopilot/fixes");
   ::include("autopilot/verbose");
 
-  // some line
-
-  // Add our behavior
-  local function addBehavior(_id, _name, _order, _score) {
-    logInfo("addBehavior " + _id + _name + _order + _score);
-    if (_id in ::Const.AI.Behavior.ID) throw "Aleady have behavior with ID = " + _id;
-
-    ::Const.AI.Behavior.ID[_id] <- ::Const.AI.Behavior.ID.COUNT;
-    ::Const.AI.Behavior.ID.COUNT += 1;
-
-    ::Const.AI.Behavior.Name.push(_name);
-    ::Const.AI.Behavior.Order[_id] <- _order;
-    ::Const.AI.Behavior.Score[_id] <- _score;
-  }
-  addBehavior("AP_UnbagNet", "UnbagNet", 35, 100);
-
   // The Meat
   ::mods_hookBaseClass("entity/tactical/actor", function(o) {
     while(!("onTurnStart" in o)) o = o[o.SuperName];
@@ -140,12 +124,16 @@ local mod = ::Autopilot <- {
         this.m._autopilot <- true;
         m._oldAgent <- getAIAgent();
         local isRanged = isArmedWithRangedWeapon();
+        local isThrowing = false;
         local agentType = isRanged ? "military_ranged" : "bandit_melee";
         // if armed with a throwing weapon, use the melee AI instead of the ranged AI
         // military is a bit more defensive so use it for throwing bros instead of bandit.
         if(isRanged) {
           local weapon = m.Items.getItemAtSlot(Const.ItemSlot.Mainhand);
-          if (weapon.isItemType(Const.Items.ItemType.Ammo)) agentType = "military_melee";
+          if (weapon.isItemType(Const.Items.ItemType.Ammo)) {
+            isThrowing = true;
+            agentType = "military_melee";
+          }
         }
         local agent = new("scripts/ai/tactical/agents/"+ agentType + "_agent");
 
@@ -173,6 +161,7 @@ local mod = ::Autopilot <- {
 
         // Make backrow more active
         if (!isRanged && this.getIdealRange() == 2) {
+          agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 2.0;
           agent.m.Properties.EngageFlankingMult = 5.0;  // Like wolfrider :)
           // // Note sure about these
           // agent.m.Properties.OverallFormationMult = 0.0;
@@ -184,9 +173,33 @@ local mod = ::Autopilot <- {
           //    EngageCoverWithReachWeaponMult (global shit)
           //    Const.AI.Behavior.EngageDistancePenaltyMult = 0.0;
         }
+        if (isThrowing) {
+          // local ai_engage_ranged = this.new("scripts/ai/tactical/behaviors/ai_engage_ranged");
+          // ai_engage_ranged.m.PossibleSkills = [
+          //   "actives.throw_javelin"
+          //   "actives.throw_axe"
+          //   "actives.throw_balls"
+          //   "actives.throw_spear"
+          // ]
+          // agent.addBehavior(ai_engage_ranged);
+          // Prefer attacking over engaging, i.e. wandering around
+          // TODO: only discourage engaging when able to attack immediately
+          // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.AttackDefault] = 2.0;
+          // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.EngageRanged] = 0.05;
+          // TODO: make this dependent on skills
+          agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.EngageMelee] = 0.5;
+          agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.SwitchToMelee] = 0.25;
+          agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 2.0;
+          // Otherwise is afraid of "shooting over shoulder"
+          agent.m.Properties.TargetPriorityHittingAlliesMult = 1.0;
+        }
+        if (isRanged) {
+          agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 5.0;
+        }
 
         // Our behaviors
         agent.addBehavior(this.new("scripts/ai/autopilot_unbag_net"));
+        agent.addBehavior(this.new("scripts/ai/autopilot_unbag_shield"));
 
         // Military agents don't have this
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_disengage"));
@@ -203,14 +216,14 @@ local mod = ::Autopilot <- {
         // Until we properly use standard bearer
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_rally"));
 
-        // Use shield wall and split shield less
-        agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Shieldwall] = 0.75;
-        agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.SplitShield] = 0.75;
-        agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.KnockBack] = 0.75;
+        // Should not be needed with modified fatigue discourage for these
+        // // Use shield wall and split shield less
+        // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Shieldwall] = 0.75;
+        // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.SplitShield] = 0.75;
+        // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.KnockBack] = 0.75;
 
-        // Don't need for bandits
-        // agent.m.Properties.OverallDefensivenessMult = 1.0;
-        // agent.m.Properties.OverallFormationMult = 1.0;
+        // Does not work
+        agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.BreakFree] = 2.5;
 
         // Look at this for bros having scare stuff
         // TargetPriorityMoraleMult = 0.0,
@@ -218,11 +231,14 @@ local mod = ::Autopilot <- {
 
         // Should not be needed as long as we set IsControlledByPlayer to true
         agent.removeBehavior(Const.AI.Behavior.ID.Retreat); // retreat is always chosen for players if available, so remove it
-        agent.m.Properties.TargetPriorityHittingAlliesMult *= 0.2; // reduce the chance of friendly fire
+
+        // reduce the chance of friendly fire, affects ranged in a weird manner
+        // agent.m.Properties.TargetPriorityHittingAlliesMult *= 0.2;
 
         // Affects .isPlayerControlled(), which affects many behaviors and logging
         // this.m.IsControlledByPlayer = false;
 
+        agent.finalizeBehaviors();
         agent.setActor(this);
         setAIAgent(agent);
       }
