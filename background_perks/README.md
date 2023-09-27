@@ -8,7 +8,7 @@ Changes from the base mod:
 - vary free perks more, chances readjusted
 - scale probability by time, later hires have higher chance to get free perks
 - added a way to extend this, see below
-- integrates with [Hackflow's Perks][hackperks] mod, i.e. gives a chance to receive perks from there
+- integrates with [Hackflow's Perks][hackperks] mod if both are installed, i.e. gives a chance to receive perks from there
 - fixed The Gifted bug
 
 This is more about fun, but also makes some weaker backgrounds more appealing, might need to hire and fire several times to get a bro with desired perks though.
