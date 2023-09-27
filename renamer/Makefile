@@ -1,6 +1,6 @@
 MOD_NAME = renamer
 TAG_NAME = renamer
-SOURCES = scripts gfx
+SOURCES = scripts
 DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
 
 SHELL := /bin/bash
