@@ -548,7 +548,7 @@ Strategy = se.Strategy <- {
             // Once in a while they are all stubborn, which makes for a long battle.
             // More common though we demonstrate variety.
             local quirks;
-            switch (Rand.weighted([16, 21, 21, 42], ["stubborn", "big", "fast", "mixed"])) {
+            switch (Rand.weighted([16, 33, 18, 33], ["stubborn", "big", "fast", "mixed"])) {
                 case "stubborn":
                     quirks = array(num, Quirk.Stubborn); break;
                 case "big":
