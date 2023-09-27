@@ -193,25 +193,45 @@ Quirk = se.Quirk <- {
     },
     Quickshot = {
         Noun = "Quickshot",
-        XPMult = 1.2,
+        XPMult = 1.3,
         function apply(e) {
             e.m.Name = split(e.m.Name, " ")[0] + " " + this.Noun;
 
-            // TODO: make quick_shot ap = 3 and less fatigue instead
-            //       should not move or hit with dagger more
-            // More action points and initiative, add stamina and fatigue recovery to compensate
-            e.m.BaseProperties.ActionPoints += 3;
+            // Do 3 quick shots, never aimed one
+            local function patchSkill(_skill) {
+                // .b is an MSU thing, otherwise their skill.softReset() overwrites changes
+                if (_skill.getID() == "actives.quick_shot") {
+                    _skill.m.ActionPointCost = 3;
+                    if ("b" in _skill) _skill.b.ActionPointCost = 3;
+                }
+                if (_skill.getID() == "actives.aimed_shot") {
+                    _skill.m.IsUsable = false;
+                    if ("b" in _skill) _skill.b.IsUsable = false;
+                }
+            }
+
+            foreach (skill in e.m.Skills.m.Skills) patchSkill(skill);
+
+            // Patch if readded, i.e. bow is unequiped and then equiped again
+            local skillsAdd = e.m.Skills.add;
+            e.m.Skills.add = function (_skill, _order = 0) {
+                patchSkill(_skill);
+                skillsAdd(_skill, _order);
+            }
+
+            // Can't wait, or looses overwhelm
+            e.isAbleToWait = function () {return false}
+
+            // Add initiative for overwhelm for work properly
+            // Do not add stamina/fatigue recovery so that this rain of arrows will stop eventually
             e.m.BaseProperties.Initiative += 30;
-            e.m.BaseProperties.Stamina += 25;
-            e.m.BaseProperties.FatigueRecoveryRate += 5;
 
             // Bad shooter doesn't even try to shoot head
             Mod.offense(e, -10);
             e.m.BaseProperties.RangedDefense += 15;
             e.m.BaseProperties.HitChance = [95, 5];  // Down from 75/25
 
-            // Can't make an aimed shot, overwhelms instead
-            e.m.Skills.removeByID("actives.aimed_shot")
+            // Overwhelm and all sorts of "quick" perks
             e.m.Skills.add(this.new("scripts/skills/perks/perk_overwhelm"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_dodge"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_pathfinder"));

@@ -41,7 +41,8 @@ if ("dofile" in gt) {
 
         return {
             script = script
-            m = {Value = 150}
+            m = {ID = split(script, "/").top(), Value = 150}
+            function getID() {return this.m.ID}
             function getName() {return "Fake New Item"}
             function getArmor() {return 39}
             function getArmorMax() {return 80}
@@ -108,9 +109,22 @@ if ("dofile" in gt) {
                     function unequip(item) {}
                 }
                 Skills = {
-                    function add(skill) {}
+                    m = {Skills = []}
+                    function add(_skill, _order = 0) {}
                     function removeByID (id) {}
                     function update() {}
+                    function getAllSkillsOfType(type) {
+                        return [
+                            makeSkill("actives.raise_undead", {ActionPointCost = 3, FatigueCost = 10})
+                            makeSkill("actives.knock", {ActionPointCost = 4, FatigueCost = 15})
+                        ]
+                    }
+                    function getSkillByID(_id) {
+                        if (_id == "effects.berserker_rage") {
+                            return {addRage = @(r) r}
+                        }
+                        return null;
+                    }
                 }
                 AIAgent = {
                     function addBehavior (behavior) {}
@@ -131,26 +145,14 @@ if ("dofile" in gt) {
                 }
             }
             function getSkills() {
-                return {
-                    function getAllSkillsOfType(type) {
-                        return [
-                            makeSkill("actives.raise_undead", {ActionPointCost = 3, FatigueCost = 10})
-                            makeSkill("actives.knock", {ActionPointCost = 4, FatigueCost = 15})
-                        ]
-                    }
-                    function getSkillByID(_id) {
-                        if (_id == "effects.berserker_rage") {
-                            return {addRage = @(r) r}
-                        }
-                        return null;
-                    }
-                }
+                return this.m.Skills
             }
             function getFlags() {
                 return {
                     function has(tag) {return false}
                 }
             }
+            function isAbleToWait() {return true}
         };
     }
 
@@ -172,6 +174,7 @@ if ("dofile" in gt) {
         return {
             m = ::std.Util.merge({ID = id}, props)
             b = clone props
+            function getID() {return this.m.ID}
         }
     }
 
