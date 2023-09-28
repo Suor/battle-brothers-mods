@@ -20,7 +20,7 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.cocky"
             "trait.craven"
             "trait.dastard"
-            "trait.disloyal" // Actually positive :), but sounds bad
+            "trait.disloyal"
             "trait.dumb"
             "trait.fainthearted"
             "trait.fear_beasts"
