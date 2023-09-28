@@ -67,7 +67,6 @@ local mod = ::HackflowsPerks <- {
                 local toHeal = this.getHitpointsMax() - this.getHitpoints();
                 local days = Math.ceil(toHeal * 1.0 / rate / 24);
                 line.text = format("Light Wounds (%i day%s)", days, days > 1 ? "s" : "");
-                // line.text = Text.render("Light Wounds ({0} day{0|plural})", days);
             }
             return tooltip;
         }
