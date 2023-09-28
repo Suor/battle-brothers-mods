@@ -192,6 +192,8 @@ local mod = ::Autopilot <- {
           agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 2.0;
           // Otherwise is afraid of "shooting over shoulder"
           agent.m.Properties.TargetPriorityHittingAlliesMult = 1.0;
+          // This guys are supposed to hit and injure
+          agent.removeBehavior(Const.AI.Behavior.ID.Protect);
         }
         if (isRanged) {
           agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 5.0;
