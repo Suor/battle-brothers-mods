@@ -34,20 +34,21 @@ addBehavior("AP_UnbagShield", "UnbagShield", 36, 400);
 ::mods_hookBaseClass("ai/tactical/behavior", function(cls) {
     while (!("getFatigueScoreMult" in cls)) cls = cls[cls.SuperName];
 
-    // ai_adrenaline: "actives.adrenaline"
-    // shieldwall: "actives.shieldwall", "actives.grow_shield"
-    // ai_defend_rotation: "actives.rotation" "actives.barbarian_fury"
-    // ai_defend_knock_back:
-    //     "actives.knock_back", "actives.repel", "actives.hook", "actives.serpent_hook"
+    // Skills used:
+    // ai_adrenaline:         "actives.adrenaline"
     // ai_attack_splitshield: "actives.split_shield"
-    // ai_rally: "actives.rally_the_troops"
-    // ai_disengage: "actives.footwork"
+    // ai_defend_knock_back:  "actives.knock_back", "actives.repel", "actives.hook",
+    //                        "actives.serpent_hook"
+    // ai_defend_rotation:    "actives.rotation" "actives.barbarian_fury"
+    // ai_defend_shieldwall:  "actives.shieldwall", "actives.grow_shield"
+    // ai_disengage:          "actives.footwork"
+    // ai_rally:              "actives.rally_the_troops"
     local altWeights = {
         ai_adrenaline = 0.5
         ai_attack_splitshield = 0.7
-        ai_defend_shieldwall = 0.8
-        ai_defend_rotation = 0.7
         ai_defend_knock_back = 0.8
+        ai_defend_rotation = 0.7
+        ai_defend_shieldwall = 0.8
         ai_disengage = 0.3
         ai_rally = 0
     }
