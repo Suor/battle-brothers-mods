@@ -49,7 +49,7 @@ addBehavior("AP_UnbagShield", "UnbagShield", 36, 400);
         ai_defend_rotation = 0.7
         ai_defend_knock_back = 0.8
         ai_disengage = 0.3
-        ai_rally = 0.2
+        ai_rally = 0
     }
 
     local getFatigueScoreMult = cls.getFatigueScoreMult;
