@@ -1,18 +1,25 @@
 # Autopilot New
 
-*This is authored by AdamMil01 and modified by me. Original version is available [here](original)*
+*This is authored by AdamMil01 and significatly modified by me. Original is available [here](original)*
 
 This mod adds some automation and quality-of-life improvements to battles: fast item switching, auto-passing, auto-shieldwalling (and other skills), ignoring bros, and AI control. See fuller description on Nexus Mods page above.
 
-My modifications include:
+My modifications to auto bros behavior include:
 
-- use rally the troops
+- use rally the troops, adrenalin, line breaker, lunge, deathblow skills
 - pick up a weapon
 - use nets
-- shield wall and split shields less
-- use adrenalin, line breaker, lunge skills
+- equip a net or a shield from bag
+- mind spent fatigue more when thinking of using shield wall, split shield, adrenaline, rotation, knock back and disengage
+- specific improvements to 2-tile bros:
+    - more active overall, move and attack more, wait less
+    - do not hide behind throwing bros
+- specific improvements to throwing bros:
+    - lock into melee less
+    - do not be afraid of throwing over the shoulder of an ally
+    - do not move next to an ally to protect him, i.e. like a melee bro
 
-Additions:
+Other additions:
 
 - a way to debug ai for bros, not only for enemies
 
