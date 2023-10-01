@@ -5,7 +5,7 @@ local mod = ::Autopilot <- {
   // Settings
   FreeWake = true // auto break free out of nets and webs and wake allies when unused AP left
   Reload = true   // auto reload when unused AP left
-  Verbose = true // show ai debugging for auto bros
+  Verbose = false // show ai debugging for auto bros
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
