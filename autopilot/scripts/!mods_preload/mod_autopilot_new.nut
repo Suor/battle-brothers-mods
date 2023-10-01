@@ -174,6 +174,8 @@ local mod = ::Autopilot <- {
           //    Const.AI.Behavior.EngageDistancePenaltyMult = 0.0;
         }
         if (isThrowing) {
+          // Second row guys should not hide behind these
+          agent.m.Properties.IsRangedUnit = true;
           // local ai_engage_ranged = this.new("scripts/ai/tactical/behaviors/ai_engage_ranged");
           // ai_engage_ranged.m.PossibleSkills = [
           //   "actives.throw_javelin"
