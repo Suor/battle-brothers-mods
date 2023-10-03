@@ -3,12 +3,16 @@ TAG_NAME = brogen
 SOURCES = brogen scripts
 SUBDIR = scripts/\!mods_preload
 DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
-STDLIB = ../../bbm/stdlib/!!stdlib.nut
+STDLIB_DIR = ../../bbm/stdlib
 
 SHELL := /bin/bash
 
 test:
-	squirrel test.nut
+	cp -r $(STDLIB_DIR)/scripts .; \
+	cp -r $(STDLIB_DIR)/stdlib .; \
+	squirrel test.nut; \
+	rm -rf stdlib; \
+	rm scripts/!mods_preload/!stdlib.nut
 
 meld-std:
 	meld scripts/\!mods_preload/\!stdlib_brogen.nut ../../bbm/stdlib/\!\!stdlib.nut
@@ -19,15 +23,11 @@ zip:
 	NAME=$$(echo $$LAST_TAG | perl -pE 's/-/_/g'); \
 	FILENAME=mod_$$([[ "$$NAME" != "" ]] && echo $$NAME || echo $(MOD_NAME))$${MODIFIED}.zip; \
 	rm $${FILENAME}; \
-	cp $(STDLIB) "scripts/!!stdlib_brogen.nut"; \
-	zip -r $${FILENAME} $(SOURCES); \
-	rm "scripts/!!stdlib_brogen.nut";
+	zip -r $${FILENAME} $(SOURCES);
 
 install:
 	FILENAME=mod_$(MOD_NAME)_TMP.zip; \
 	rm $${FILENAME}; \
-	cp $(STDLIB) "scripts/!!stdlib_brogen.nut"; \
 	zip -r $${FILENAME} $(SOURCES); \
 	cp $${FILENAME} $(DATA_DIR)$${FILENAME}; \
-	rm "scripts/!!stdlib_brogen.nut"; \
 	rm $${FILENAME}
