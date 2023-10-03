@@ -19,6 +19,7 @@ A collection of mods to make Battle Brothers more fun and comfy. Written by me o
 [More Blood](more_blood) | Makes it more Tarantino style. A compatible variant of older [More Blood][more-blood-old] mod.
 
 <!-- [Brogen](brogen) | An alternative to Ultra Bros -->
+<!-- [Useful Things](useful) | Some things made more useful: nets, hand to hand, ... -->
 
 
 ## Installation
@@ -36,6 +37,11 @@ The easiest way is to go to [NexusMods][nexus-mods] and download a zip release f
 ## Feedback
 
 Any suggestions, bug reports, other feedback are welcome. The best place for it is this Github, i.e. just create an issue. Or you can post or create a bug on [NexusMods][nexus-mods] on a specific mod page.
+
+
+## Using This Code
+
+My code here is [BSD licensed](LICENSE), which basically means you may use it for any purposes, including bundling it or its parts as part of your stuff, either public or private. Don't need to explicitly ask for permission. However, if you do distribute such your work then you should say you are using this in your docs/README/description/whatever.
 
 
 [nexus-mods]: https://www.nexusmods.com/battlebrothers/users/97435548?tab=user+files
