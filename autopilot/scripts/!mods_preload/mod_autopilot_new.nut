@@ -136,8 +136,7 @@ local mod = ::Autopilot <- {
         local agent = new("scripts/ai/tactical/agents/" + mode.agent + "_agent");
 
         // agent.compileKnownAllies optimizes itself to no-op for the player faction, but we need it to work
-        agent.compileKnownAllies = function()
-        {
+        agent.compileKnownAllies = function() {
           local instances = this.Tactical.Entities.getAllInstances();
           this.m.KnownAllies = [];
           foreach( i, faction in instances )
@@ -161,32 +160,9 @@ local mod = ::Autopilot <- {
         if (!mode.ranged && this.getIdealRange() == 2) {
           agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 2.0;
           agent.m.Properties.EngageFlankingMult = 5.0;  // Like wolfrider :)
-          // // Note sure about these
-          // agent.m.Properties.OverallFormationMult = 0.0;
-          // agent.m.Properties.OverallDefensivenessMult = 0.0;
-          //
-          // agent.m.Properties.IgnoreTargetValueOnEngage = true;  // do not wait
-          // agent.m.Properties.PreferCarefulEngage = false;  // do not hide at all
-          // // Global shit
-          //    EngageCoverWithReachWeaponMult (global shit)
-          //    Const.AI.Behavior.EngageDistancePenaltyMult = 0.0;
         }
         if (mode.throwing) {
-          // Second row guys should not hide behind these
-          agent.m.Properties.IsRangedUnit = true;
-          // local ai_engage_ranged = this.new("scripts/ai/tactical/behaviors/ai_engage_ranged");
-          // ai_engage_ranged.m.PossibleSkills = [
-          //   "actives.throw_javelin"
-          //   "actives.throw_axe"
-          //   "actives.throw_balls"
-          //   "actives.throw_spear"
-          // ]
-          // agent.addBehavior(ai_engage_ranged);
           // Prefer attacking over engaging, i.e. wandering around
-          // TODO: only discourage engaging when able to attack immediately
-          // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.AttackDefault] = 2.0;
-          // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.EngageRanged] = 0.05;
-          // TODO: make this dependent on skills
           agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.EngageMelee] = 0.5;
           agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.SwitchToMelee] = 0.25;
           agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 2.0;
@@ -217,12 +193,6 @@ local mod = ::Autopilot <- {
 
         // Until we properly use standard bearer
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_rally"));
-
-        // Should not be needed with modified fatigue discourage for these
-        // // Use shield wall and split shield less
-        // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Shieldwall] = 0.75;
-        // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.SplitShield] = 0.75;
-        // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.KnockBack] = 0.75;
 
         // Does not work
         agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.BreakFree] = 2.5;
