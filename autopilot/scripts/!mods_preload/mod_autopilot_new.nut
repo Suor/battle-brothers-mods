@@ -121,21 +121,19 @@ local mod = ::Autopilot <- {
   
       o.enableAIControl <- function()
       {
-        this.m._autopilot <- true;
         m._oldAgent <- getAIAgent();
-        local isRanged = isArmedWithRangedWeapon();
-        local isThrowing = false;
-        local agentType = isRanged ? "military_ranged" : "bandit_melee";
+        local mode = m._autopilot <- {ranged = false, throwing = false};
+        mode.ranged <- isArmedWithRangedWeapon();
+
+        // Check if throwing
+        local weapon = m.Items.getItemAtSlot(::Const.ItemSlot.Mainhand);
+        mode.throwing <- mode.ranged && weapon.isItemType(Const.Items.ItemType.Ammo);
+
         // if armed with a throwing weapon, use the melee AI instead of the ranged AI
         // military is a bit more defensive so use it for throwing bros instead of bandit.
-        if(isRanged) {
-          local weapon = m.Items.getItemAtSlot(Const.ItemSlot.Mainhand);
-          if (weapon.isItemType(Const.Items.ItemType.Ammo)) {
-            isThrowing = true;
-            agentType = "military_melee";
-          }
-        }
-        local agent = new("scripts/ai/tactical/agents/"+ agentType + "_agent");
+        mode.agent <- !mode.ranged ? "bandit_melee" :
+                      mode.throwing ? "military_melee" : "military_ranged";
+        local agent = new("scripts/ai/tactical/agents/" + mode.agent + "_agent");
 
         // agent.compileKnownAllies optimizes itself to no-op for the player faction, but we need it to work
         agent.compileKnownAllies = function()
@@ -160,7 +158,7 @@ local mod = ::Autopilot <- {
         }
 
         // Make backrow more active
-        if (!isRanged && this.getIdealRange() == 2) {
+        if (!mode.ranged && this.getIdealRange() == 2) {
           agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 2.0;
           agent.m.Properties.EngageFlankingMult = 5.0;  // Like wolfrider :)
           // // Note sure about these
@@ -173,7 +171,7 @@ local mod = ::Autopilot <- {
           //    EngageCoverWithReachWeaponMult (global shit)
           //    Const.AI.Behavior.EngageDistancePenaltyMult = 0.0;
         }
-        if (isThrowing) {
+        if (mode.throwing) {
           // Second row guys should not hide behind these
           agent.m.Properties.IsRangedUnit = true;
           // local ai_engage_ranged = this.new("scripts/ai/tactical/behaviors/ai_engage_ranged");
@@ -197,7 +195,7 @@ local mod = ::Autopilot <- {
           // This guys are supposed to hit and injure
           agent.removeBehavior(Const.AI.Behavior.ID.Protect);
         }
-        if (isRanged) {
+        if (mode.ranged) {
           agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 5.0;
         }
 

@@ -32,7 +32,7 @@ addBehavior("AP_UnbagShield", "UnbagShield", 36, 400);
 
 // Adjust fatigue score mult
 ::mods_hookBaseClass("ai/tactical/behavior", function(cls) {
-    while (!("getFatigueScoreMult" in cls)) cls = cls[cls.SuperName];
+    cls = cls.behavior;
 
     // Skills used:
     // ai_adrenaline:         "actives.adrenaline"
@@ -75,4 +75,38 @@ addBehavior("AP_UnbagShield", "UnbagShield", 36, 400);
         // logInfo("ap: FATIGUE Mult = " + mult + " alt = " + alt + " mixed = " + mixed);
         return mixed;
     }
+
+    // Otherwise any ranged with bad vision, i.e. at night becomes melee,
+    // and 2-tile bros start to hide behind :)
+    local isRangedUnit = cls.isRangedUnit;
+    cls.isRangedUnit = function (_entity) {
+        if ("_autopilot" in _entity.m) return _entity.m._autopilot.ranged;
+        return isRangedUnit(_entity);
+    }
 })
+
+
+// ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_melee", function (cls) {
+//     // local won't work
+//     function debughook(event, file, line, func) {
+//         if (event == 'l' && func == "onEvaluate") {
+//             ::logInfo("LINE line [" + line + "] func [" + func + "] file ["+ file + "]");
+//         }
+//     }
+
+//     local onEvaluate = cls.onEvaluate;
+//     cls.onEvaluate = function( _entity ) {
+//         local ret;
+//         local gen = onEvaluate(_entity);
+//         logInfo("DEBUG ON");
+
+//         while (true) {
+//             ::setdebughook(debughook);
+//             ret = resume gen;
+//             ::setdebughook(null);
+//             // Proxy "results"
+//             if (ret != null) return ret;
+//             yield ret;
+//         }
+//     }
+// });
