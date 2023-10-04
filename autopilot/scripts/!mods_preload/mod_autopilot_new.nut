@@ -164,6 +164,7 @@ local mod = ::Autopilot <- {
         if (mode.throwing) {
           // Prefer attacking over engaging, i.e. wandering around
           agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.EngageMelee] = 0.5;
+          // TODO: separate throwing only from hybrids
           agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.SwitchToMelee] = 0.25;
           agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 2.0;
           // Otherwise is afraid of "shooting over shoulder"
