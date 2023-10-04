@@ -1,6 +1,6 @@
 # Autopilot New
 
-*This is authored by AdamMil01 and significatly modified by me. Original is available [here](original)*
+*This is authored by AdamMil01 and significatly modified by me. Original is available [here][original]*
 
 This mod adds some automation and quality-of-life improvements to battles: fast item switching, auto-passing, auto-shieldwalling (and other skills), ignoring bros, and AI control. See fuller description on Nexus Mods page above.
 
@@ -26,13 +26,20 @@ Other additions:
 Fixes:
 
 - way rarer battle crashes after ranged unit killing enemy 
-- second row guys more aggressive
 - immediately act after switching to auto, no skipping turn anymore
+- compatibility with Swifter
+
+
+## Compatibility
+
+Is always safe to add or remove. Compatible with Swifter.
 
 
 ## Install
 
-Download, zip the dirs and put it into `data` dir.
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
 
 
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/675
+[modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [original]: https://www.nexusmods.com/battlebrothers/mods/62

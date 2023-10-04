@@ -4,7 +4,7 @@ A collection of mods to make Battle Brothers more fun and comfy. Written by me o
 
 | Name | Description |
 ---|---
-[Autopilot New](autopilot) *(Beta)* | Makes bros use more skills smarter and fixes some crashes. Compatible with Swifter. My version of [Adam's Autopilot][autopilot-old]. 
+[Autopilot New](autopilot) | Makes bros use more skills smarter and fixes some crashes. Compatible with Swifter. My version of [Adam's Autopilot][autopilot-old].
 [Better Beast Loot](mod_beast_loot) | Better loot from beasts, makes them worth fighting.
 [Bro Renamer](renamer) | Autochange each bro title to his profession + roman number.
 [Cheap Meat](mod_cheap_meat) | Cheaper bros and tryots.
