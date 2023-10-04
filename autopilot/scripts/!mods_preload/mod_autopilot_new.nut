@@ -194,7 +194,7 @@ local mod = ::Autopilot <- {
         // Until we properly use standard bearer
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_rally"));
 
-        // Does not work
+        // Only works because we overwrite break_free.onEvaluate() below
         agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.BreakFree] = 2.5;
 
         // Look at this for bros having scare stuff
@@ -630,7 +630,7 @@ local mod = ::Autopilot <- {
           return this.Const.AI.Behavior.Score.Zero;
         }
 
-        return this.Const.AI.Behavior.Score.BreakFree;
+        return this.Const.AI.Behavior.Score.BreakFree * score;
       }
     }
   });
