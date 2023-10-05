@@ -1,34 +1,35 @@
-::BroGen <- {
-    ID = "mod_brogen"
-    Name = "BroGen"
-    Version = 0.1
+local mod = ::BroStudio <- {
+    ID = "mod_bro_studio"
+    Name = "Bro Studio"
+    Version = "0.1.0"
+    Data = {}
     // Flags
-    Debug = true
+    Debug = ::std.Debug.with({prefix = "studio: "})
 }
-::mods_registerMod(::BroGen.ID, ::BroGen.Version, ::BroGen.Name);
-
-::include("brogen/traits");
-// ::mods_queue(::BroGen.ID, "mod_hooks(>=20)", function () {
-//     ::include("brogen/hackflows_perks");
-// })
-
 // Expose this function so that it could be called externally or patched
-function BroGen::setupPlayer(_player) {}
+mod.setupPlayer <- function (_player) {}
 
+::mods_registerMod(mod.ID, mod.Version, mod.Name);
+::mods_queue(mod.ID, "stdlib, mod_hooks(>=20), mod_msu(>=1.2.6)", function() {
+    mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
+    mod.conf <- function (name) {
+        return mod.Mod.ModSettings.getSetting(name).getValue();
+    }
 
-::mods_queue(::BroGen.ID, "mod_hooks(>=20)", function() {
+    ::include("brogen/traits");
+
     local starting = false;
     ::mods_hookExactClass("entity/tactical/player", function (cls) {
         local baseSetStartValuesEx = cls.setStartValuesEx;
         cls.setStartValuesEx = function ( _backgrounds ) {
             baseSetStartValuesEx(_backgrounds);
-            if (!starting) ::BroGen.setupPlayer(this);
+            if (!starting) mod.setupPlayer(this);
         };
 
         local onHired = cls.onHired;
         cls.onHired = function() {
-          onHired();
-          ::BroGen.addTraits(this);
+            onHired();
+            mod.addTraits(this);
         }
     });
 
@@ -44,8 +45,8 @@ function BroGen::setupPlayer(_player) {}
             starting = false;
             local roster = World.getPlayerRoster().getAll();
             foreach (bro in roster) {
-                ::BroGen.setupPlayer(bro);
-                ::BroGen.addTraits(bro);
+                mod.setupPlayer(bro);
+                mod.addTraits(bro);
             }
         }
     });
