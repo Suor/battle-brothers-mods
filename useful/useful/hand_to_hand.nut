@@ -61,7 +61,7 @@ local Text = ::std.Text;
             if (level != null) {
                 local bonus = level < 6 ? (level - 1) * 2 - 10 : level - 6;
                 _properties.MeleeSkill += bonus;
-                _properties.FatigueDealtPerHitMult += 0.2 * Math.max(0, Math.min(10, level - 6));
+                _properties.FatigueDealtPerHitMult += 0.2 * Math.max(0, Math.min(10, level - 2));
             } else {
                 _properties.MeleeSkill -= 10;
             }
