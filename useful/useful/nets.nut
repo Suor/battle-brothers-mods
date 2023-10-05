@@ -82,7 +82,7 @@ local function hookNet(cls) {
 })
 
 // Nets do not prevent double grip anymore, they just hang on a shoulder, common :)
-::mods_hookExactClass("skills/special/double_grip", function(cls) {
+::mods_hookExactClass("skills/special/double_grip", function (cls) {
     cls.canDoubleGrip = function() {
         local items = this.getContainer().getActor().getItems();
         local main = items.getItemAtSlot(this.Const.ItemSlot.Mainhand);
@@ -90,5 +90,13 @@ local function hookNet(cls) {
         return main != null && main.isDoubleGrippable()
             && (off == null || off.getID() == "tool.throwing_net" 
                             || off.getID() == "tool.reinforced_throwing_net")
+    }
+})
+
+// Nachezers can't swallow through net
+::mods_hookExactClass("skills/actives/swallow_whole_skill", function (cls) {
+    local isUsable = cls.isUsable;
+    cls.isUsable = function () {
+        return isUsable() && !this.getContainer().hasSkill("effects.net");
     }
 })
