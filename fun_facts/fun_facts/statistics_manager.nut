@@ -1,3 +1,5 @@
+local Debug = ::std.Debug, Util = std.Util;
+
 ::mods_hookNewObjectOnce("statistics/statistics_manager", function (o) {
     local addFallen = o.addFallen;
     // _fallen
@@ -12,21 +14,30 @@
 
     local onSerialize = o.onSerialize;
     o.onSerialize = function( _out ) {
-        local ffIndexes = []
-        for (local i = 0; i < this.m.Fallen.len(); ++i) {
-            if ("FunFacts" in this.m.Fallen[i]) {
-                ffIndexes.push(i);
-                this.m.Fallen[i].FunFacts.onSerialize(
-                    ::FunFacts.Mod.Serialization.getSerializationEmulator("StatsFor" + i, this.m.Flags));
-            }
-        }
-        ::FunFacts.Mod.Serialization.flagSerialize("FallenWithStats", ffIndexes, this.m.Flags);
+        local packedFacts = this.m.Fallen.map(@(f) f.FunFacts.pack());
+        local dp = Util.pack(packedFacts);
+        logInfo("SAVE DOUBLE PACKED " + dp.len());
+        this.m.Flags.set("FallenFunFacts", dp)
         onSerialize(_out);
     }
 
     local onDeserialize = o.onDeserialize;
     o.onDeserialize = function( _in ) {
         onDeserialize(_in);
+
+        local doublePacked = this.m.Flags.get("FallenFunFacts");
+        if (doublePacked) {
+            local packedFacts = Util.unpack(doublePacked);
+            foreach (i, pf in packedFacts) {
+                local fallen = this.m.Fallen[i];
+                fallen.FunFacts <- ::new("scripts/mods/fun_facts/fun_facts");
+                fallen.FunFacts.unpack(pf);
+                fallen.FunFacts.setName(fallen.Name);
+            }
+            return
+        }
+
+        // Load in an old bad way
         if (::FunFacts.Mod.Serialization.isSavedVersionAtLeast("0.1.0", _in.getMetaData())) {
             local ffIndexes = ::FunFacts.Mod.Serialization.flagDeserialize("FallenWithStats", [], null, this.m.Flags);
 

@@ -1,7 +1,7 @@
 ::FunFacts <- {
     ID = "mod_fun_facts"
     Name = "Fun Facts"
-    Version = "0.1.3"
+    Version = "0.2.0"
     // ActiveUser = null,
     // ActiveTarget = null,
     // MinHitChance = 5,
@@ -47,7 +47,7 @@
 }
 
 ::mods_registerMod(::FunFacts.ID, ::FunFacts.Version, ::FunFacts.Name);
-::mods_queue(::FunFacts.ID, "mod_msu(>=1.2.0)", function() {
+::mods_queue(::FunFacts.ID, "stdlib(>=1.51), mod_msu(>=1.2.0)", function() {
     ::FunFacts.Mod <- ::MSU.Class.Mod(::FunFacts.ID, ::FunFacts.Version, ::FunFacts.Name);
 
     ::FunFacts.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHub, "https://github.com/Suor/battle-brothers-mods");

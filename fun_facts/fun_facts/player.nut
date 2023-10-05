@@ -82,17 +82,21 @@
 
     local onSerialize = o.onSerialize;
     o.onSerialize = function(_out) {
-        // this.logInfo("ff: player.onSerialize version " + ::FunFacts.Version);
-        this.m.FunFacts.onSerialize(
-            ::FunFacts.Mod.Serialization.getSerializationEmulator("FunFacts", this.getFlags()));
+        this.getFlags().set("FunFacts", this.m.FunFacts.pack());
         return onSerialize(_out);
     }
 
     local onDeserialize = o.onDeserialize;
     o.onDeserialize = function (_in) {
         onDeserialize(_in);
-        // this.m.FunFacts.loadFromFlags(this.getFlags(), _in.getMetaData());
-        //
+
+        local packed = this.getFlags().get("FunFacts");
+        if (packed) {
+            this.m.FunFacts.unpack(packed);
+            this.m.FunFacts.setName(this.m.Name);
+            return
+        }
+
         if (::FunFacts.Mod.Serialization.isSavedVersionAtLeast("0.1.1", _in.getMetaData())) {
             // this.logInfo("ff: player.onDeserialize saved version at least 0.1.1");
             this.m.FunFacts.onDeserialize(
@@ -102,20 +106,4 @@
             this.logInfo("ff: player.onDeserialize saved version OLD");
         }
     }
-
-    // function loadFromFlags(_flags, _meta) {
-    //     local savedVersion = ::FunFacts.Mod.getSavedVersion(_meta);
-    //     if (savedVersion >= "0.2.0") {
-    //         // ::FunFacts.Mod.fillFromFlags(this.m.Logs, _flags, "FunFacts.Logs");
-    //         // ::FunFacts.Mod.fillFromFlags(this.m.Stats, _flags, "FunFacts.Stats");
-    //         // this.m.Logs = ::FunFacts.Mod.fromFlags(_flags, "Logs");
-    //         // this.m.Stats = ::FunFacts.Mod.fromFlags(_flags, "Stats");
-    //     } else if (savedVersion >= "0.1.1") {
-    //         ::FunFacts.Mod.fillFromFlags(this.m.Stats, _flags, "FunFacts");
-    //         // this.m.Stats = ::FunFacts.Mod.fromFlags(_flags, "Stats");
-
-    //     } else {
-
-    //     }
-    // }
 });

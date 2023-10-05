@@ -1,4 +1,4 @@
-local Str = ::std.Str;
+local Str = ::std.Str, Util = ::std.Util;
 
 this.fun_facts <- {
     m = {
@@ -240,6 +240,15 @@ this.fun_facts <- {
     //     }
     // }
 
+    function pack() {
+        return Util.pack(this.m.Stats);
+    }
+    function unpack(packed) {
+        local state = Util.unpack(packed);
+        Util.extend(this.m.Stats, state);
+    }
+
+    // Old shit
     function onSerialize( _out ) {
         ::MSU.Utils.serialize(this.m.Stats, _out);
     }
@@ -247,5 +256,4 @@ this.fun_facts <- {
     function onDeserialize( _in ) {
         ::MSU.Utils.deserializeInto(this.m.Stats, _in);
     }
-
 }
