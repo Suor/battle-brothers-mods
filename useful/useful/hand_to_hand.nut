@@ -13,17 +13,13 @@ local Text = ::std.Text;
         this.onAnySkillUsed(this, null, props);
 
         local bonus = props.MeleeSkill;
-        // local color = bonus > 0 ? Const.UI.Color.PositiveValue: Const.UI.Color.NegativeValue;
+        local colored = bonus > 0 ? Text.positive : Text.negative;
         if (bonus != 0) {
             ret.push({
                 id = 6
                 type = "text"
                 icon = "ui/icons/hitchance.png"
-                text = Text._render("Has {0|sign|percent|color} chance to hit", props.MeleeSkill)
-                // text = "Has " + Text.color(Text.sign(bonus)) + " chance to hit"
-                // text = "Has " + Text(props.MeleeSkill).sign().color() + " chance to hit"
-                // text = "Has [color=" + color + "]" + (bonus > 0 ? "+" : "") + bonus
-                //      + "%[/color] chance to hit"
+                text = "Has " + colored((bonus > 0 ? "+" : "") + bonus + "%") + " chance to hit"
             })
         }
         if (props.FatigueDealtPerHitMult > 0) {
