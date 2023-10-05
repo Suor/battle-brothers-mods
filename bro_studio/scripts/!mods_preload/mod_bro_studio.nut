@@ -16,7 +16,7 @@ mod.setupPlayer <- function (_player) {}
         return mod.Mod.ModSettings.getSetting(name).getValue();
     }
 
-    ::include("brogen/traits");
+    ::include("bro_studio/traits");
 
     local starting = false;
     ::mods_hookExactClass("entity/tactical/player", function (cls) {

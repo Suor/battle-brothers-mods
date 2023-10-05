@@ -25,11 +25,11 @@
     }
 }
 ::include <- function (script) {
-    return dofile(script + ".nut")
+    return dofile(script + ".nut", true)
 }
 ::new <- function (script) {
     return {}
-    return dofile(script + ".nut")
+    return dofile(script + ".nut", true)
     // if (script == "scripts/skills/cursed_skill" || script == "scripts/skills/cursed_effect") {
     //     dofile("../../" + script + ".nut");
     // }
@@ -326,7 +326,7 @@ World <- {
 createColor <- function (color) {return color}
 
 // Mod hooks mock
-::mods_registerMod <- function (x, y, x) {}
+::mods_registerMod <- function (x, y, z = null) {}
 ::mods_getRegisteredMod <- function (name) {return false}
 ::mods_queue <- function (x, y, func) {
     func()
@@ -337,6 +337,8 @@ createColor <- function (color) {return color}
 ::mods_hookExactClass <- function (x, func) {
     func({
         startNewCampaign = @() null
+        setStartValuesEx = @() null
+        onHired = @() null
     })
 }
 ::mods_hookChildren <- function (x, func) {
@@ -355,4 +357,51 @@ createColor <- function (color) {return color}
 }
 ::mods_addHook <- function(name, func) {
     func("some/parent", "some/parent/child", {})
+}
+
+
+// Mock MSU
+local function makePage(name) {
+    local settings = this;
+    local page = {
+        elements = []
+        function addElement(elem) {
+            this.elements.push(elem);
+            settings.inputs[elem.Name] <- elem;
+        }
+    }
+    this.pages.push(page);
+    return page;
+}
+local function makeInput(cls, name, args) {
+    return {
+        Class = cls, Name = name, Value = args[0],
+        Args = args, Data = {}, Description = ""
+        function setDescription(text) {this.Description = text}
+        function lock(reason) {}
+        function getValue() {
+            return this.Value
+        }
+    }
+}
+::MSU <- {};
+::MSU.Class <- {
+    function Mod(id, version, name) {
+        return {
+            ModSettings = {
+                pages = []
+                inputs = {}
+                addPage = makePage
+                function getSetting(name) {
+                    return this.inputs[name];
+                }
+            }
+        }
+    }
+    function RangeSetting(name, ...) {return makeInput("RangeSetting", name, vargv)}
+    function BooleanSetting(name, ...) {return makeInput("BooleanSetting", name, vargv)}
+    function EnumSetting(name, ...) {return makeInput("EnumSetting", name, vargv)}
+    function StringSetting(name, ...) {return makeInput("StringSetting", name, vargv)}
+    function SettingsDivider(name, ...) {return makeInput("SettingsDivider", name, vargv)}
+    function SettingsSpacer(name, ...) {return makeInput("SettingsSpacer", name, vargv)}
 }
