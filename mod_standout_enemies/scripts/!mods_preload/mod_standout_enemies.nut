@@ -47,8 +47,8 @@ Quirk = se.Quirk <- {
             e.m.BaseProperties.FatigueRecoveryRate += 5;
 
             // Give adrenaline
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_adrenalin"));
-            e.m.AIAgent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_adrenaline"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_adrenalin"));
+            e.m.AIAgent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_adrenaline"));
 
             // Being fast helps hit and not being hit, reduce damage to compensate
             Mod.offense(e, 5, 0.9);
@@ -67,8 +67,8 @@ Quirk = se.Quirk <- {
             Mod.defense(e, -5, 1.8);
             Mod.bravery(e, 1.5);  // More hits need to be brave longer
             e.m.BaseProperties.Initiative -= Math.rand(5, 10); // Somewhat slow
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_stalwart"));
-            e.m.Skills.add(this.new("scripts/skills/traits/iron_jaw_trait"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_stalwart"));
+            e.m.Skills.add(::new("scripts/skills/traits/iron_jaw_trait"));
 
             // TODO: double blood amount ?
 
@@ -106,7 +106,7 @@ Quirk = se.Quirk <- {
         function apply(e) {
             Mod.offense(e, 5);  // Not really impressive when he misses all the time
             e.m.BaseProperties.MeleeDefense += 5;  // Don't protect from ranged
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_underdog"))  // Tends to stay last
+            e.m.Skills.add(::new("scripts/skills/perks/perk_underdog"))  // Tends to stay last
 
             // Some little bonus to show yourself properly in battle
             e.m.BaseProperties.Bravery += 20;
@@ -114,7 +114,7 @@ Quirk = se.Quirk <- {
             // Get rage effect or add it
             local rage = e.getSkills().getSkillByID("effects.berserker_rage");
             if (!rage) {
-                rage = this.new("scripts/skills/effects/berserker_rage_effect");
+                rage = ::new("scripts/skills/effects/berserker_rage_effect");
                 e.m.Skills.add(rage);
 
                 // Adapt actor to work with berserker rage
@@ -182,10 +182,10 @@ Quirk = se.Quirk <- {
             e.m.BaseProperties.IsAffectedByNight = false;
             e.m.BaseProperties.HitChance = [50, 50];  // Up from 75/25
 
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_head_hunter"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_fast_adaption"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_pathfinder"));
-            e.m.Skills.add(this.new("scripts/skills/actives/footwork"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_head_hunter"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_fast_adaption"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_pathfinder"));
+            e.m.Skills.add(::new("scripts/skills/actives/footwork"));
             e.getAIAgent().addBehavior(::new("scripts/ai/tactical/behaviors/ai_disengage"));
 
             // TODO: nomads/bandits
@@ -230,12 +230,12 @@ Quirk = se.Quirk <- {
             e.m.BaseProperties.HitChance = [95, 5];  // Down from 75/25
 
             // Overwhelm and all sorts of "quick" perks
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_overwhelm"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_relentless"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_dodge"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_pathfinder"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_quick_hands"));
-            e.m.Skills.add(this.new("scripts/skills/actives/footwork"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_overwhelm"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_relentless"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_dodge"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_pathfinder"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_quick_hands"));
+            e.m.Skills.add(::new("scripts/skills/actives/footwork"));
             e.getAIAgent().addBehavior(::new("scripts/ai/tactical/behaviors/ai_disengage"));
 
             // TODO: nomads/bandits
@@ -264,11 +264,11 @@ Quirk = se.Quirk <- {
 
             // Harder to kill with a ranged weapon and uses overwhelm to defend himself in melee
             e.m.BaseProperties.RangedDefense += 15;
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_overwhelm"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_overwhelm"));
 
-            e.m.Skills.add(this.new("scripts/skills/racial/goblin_ambusher_racial"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_dodge"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_nine_lives"));
+            e.m.Skills.add(::new("scripts/skills/racial/goblin_ambusher_racial"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_dodge"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_nine_lives"));
         }
     },
     Stubborn = {
@@ -276,7 +276,7 @@ Quirk = se.Quirk <- {
         XPMult = 1.25,
         function apply(e) {
             Mod.defense(e, 0, 1.2);
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_nine_lives"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_nine_lives"));
 
             if (!e.m.IsResurrected) {
                 // Ensure helmet, these are better than average zombie has
@@ -315,11 +315,11 @@ Quirk = se.Quirk <- {
             Mod.defense(e, 15, 1.5);
 
             // Half-vampire :)
-            e.m.Skills.add(this.new("scripts/skills/racial/vampire_racial"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_nine_lives"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_nimble"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_steel_brow"));
-            e.m.Skills.add(this.new("scripts/skills/perks/perk_anticipation"));
+            e.m.Skills.add(::new("scripts/skills/racial/vampire_racial"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_nine_lives"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_nimble"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_steel_brow"));
+            e.m.Skills.add(::new("scripts/skills/perks/perk_anticipation"));
 
             // Resurrects like a stubborn one
             Quirk.Stubborn.stubborn(e, 0.75, 0.35);
@@ -378,7 +378,7 @@ Quirk = se.Quirk <- {
             // Give bravery and defense to make him stay for longer
             Mod.bravery(e, 1.7);
             e.m.BaseProperties.MeleeDefense += 15;
-            e.m.Skills.add(new("scripts/skills/cursed_skill"));
+            e.m.Skills.add(::new("scripts/skills/cursed_skill"));
         }
     },
 }
@@ -889,7 +889,7 @@ Util.extend(Mod, {
             + " expected value=" + value);
         if (!item || item.m.Value < value) {
             if (item) e.m.Items.unequip(item);
-            item = this.new(prefix + Rand.choice(options));
+            item = ::new(prefix + Rand.choice(options));
             logInfo("_ensure chosen " + item.getName() + " value=" + item.m.Value);
             e.m.Items.equip(item);
         }
@@ -901,7 +901,7 @@ Util.extend(Mod, {
         local armor = Mod.getArmor(e);
         if (!armor || armor.getUpgrade()) return;
 
-        local upgrade = this.new("scripts/items/armor_upgrades/" + Rand.choice(options));
+        local upgrade = ::new("scripts/items/armor_upgrades/" + Rand.choice(options));
         armor.setUpgrade(upgrade);
     }
 
