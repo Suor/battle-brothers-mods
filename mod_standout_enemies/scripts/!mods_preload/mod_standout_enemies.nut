@@ -51,7 +51,7 @@ Quirk = se.Quirk <- {
             e.m.AIAgent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_adrenaline"));
 
             // Being fast helps hit and not being hit, reduce damage to compensate
-            Mod.offense(e, 10, 0.85);
+            Mod.offense(e, 5, 0.9);
             Mod.defense(e, 5, 0.8);
             Mod.bravery(e, 1.3);
 
@@ -412,7 +412,6 @@ Strategy = se.Strategy <- {
         function getPlan(stats, maturity) {
             local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.2, 0.4);
             local cursed = num / (Math.rand(1, 4) + (num >= 6 ? 1 : 0));
-            this.logInfo("cursed " + cursed);
             num -= cursed;
 
             local plan = {};
@@ -572,7 +571,7 @@ Strategy = se.Strategy <- {
             // Once in a while they are all stubborn, which makes for a long battle.
             // More common though we demonstrate variety.
             local quirks;
-            switch (Rand.weighted([16, 33, 18, 33], ["stubborn", "big", "fast", "mixed"])) {
+            switch (Rand.weighted([16, 24, 21, 39], ["stubborn", "big", "fast", "mixed"])) {
                 case "stubborn":
                     quirks = array(num, Quirk.Stubborn); break;
                 case "big":
