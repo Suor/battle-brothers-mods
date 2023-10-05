@@ -186,6 +186,7 @@ Quirk = se.Quirk <- {
             e.m.Skills.add(this.new("scripts/skills/perks/perk_fast_adaption"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_pathfinder"));
             e.m.Skills.add(this.new("scripts/skills/actives/footwork"));
+            e.getAIAgent().addBehavior(::new("scripts/ai/tactical/behaviors/ai_disengage"));
 
             // TODO: nomads/bandits
             Mod.ensureHelmet(e, ["full_leather_cap", "rusty_mail_coif"], 70);
@@ -219,9 +220,6 @@ Quirk = se.Quirk <- {
                 skillsAdd(_skill, _order);
             }
 
-            // Can't wait, or looses overwhelm
-            e.isAbleToWait = function () {return false}
-
             // Add initiative for overwhelm for work properly
             // Do not add stamina/fatigue recovery so that this rain of arrows will stop eventually
             e.m.BaseProperties.Initiative += 30;
@@ -233,10 +231,12 @@ Quirk = se.Quirk <- {
 
             // Overwhelm and all sorts of "quick" perks
             e.m.Skills.add(this.new("scripts/skills/perks/perk_overwhelm"));
+            e.m.Skills.add(this.new("scripts/skills/perks/perk_relentless"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_dodge"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_pathfinder"));
             e.m.Skills.add(this.new("scripts/skills/perks/perk_quick_hands"));
             e.m.Skills.add(this.new("scripts/skills/actives/footwork"));
+            e.getAIAgent().addBehavior(::new("scripts/ai/tactical/behaviors/ai_disengage"));
 
             // TODO: nomads/bandits
             Mod.ensureHelmet(e, ["open_leather_cap", "full_leather_cap"], 60);
@@ -246,6 +246,11 @@ Quirk = se.Quirk <- {
             if (!weapon || weapon.m.ID.find("crossbow") != null) {
                 local bow = Mod.isSouthern(e) ? "oriental/composite_bow" : "hunting_bow";
                 Mod.setWeapon(e, [bow]);
+            }
+            local ammo = e.m.Items.getItemAtSlot(::Const.ItemSlot.Ammo);
+            if (ammo.m.AmmoType != ::Const.Items.AmmoType.Arrows) {
+                e.m.Items.unequip(ammo);
+                e.m.Items.equip(::new("scripts/items/ammo/quiver_of_arrows"));
             }
         }
     },
