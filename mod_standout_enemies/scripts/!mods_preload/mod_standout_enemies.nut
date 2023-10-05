@@ -948,16 +948,6 @@ Util.extend(Mod, {
 ::mods_queue("mod_standout_enemies", "mod_hooks(>=19)", function() {
     this.logInfo("se: loading");
 
-    // ::mods_hookBaseClass("ai/tactical/agent", function(o) {
-    //     while(!("create" in o)) o = o[o.SuperName];
-
-    //     local create = o.create;
-    //     o.create = function() {
-    //         create();
-    //         this.Const.AI.VerboseMode = true;
-    //     }
-    // });
-
     ::mods_hookClass("entity/tactical/tactical_entity_manager", function(cls) {
         local setupEntity = cls.setupEntity;
         cls.setupEntity = function(e, t) {
