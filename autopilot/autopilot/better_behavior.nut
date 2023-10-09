@@ -66,14 +66,6 @@ addBehavior("AP_UnbagShield", "UnbagShield", 36, 400);
         // logInfo("ap: FATIGUE Mult = " + mult + " alt = " + alt + " mixed = " + mixed);
         return mixed;
     }
-
-    // Otherwise any ranged with bad vision, i.e. at night becomes melee,
-    // and 2-tile bros start to hide behind :)
-    local isRangedUnit = cls.isRangedUnit;
-    cls.isRangedUnit = function (_entity) {
-        if ("_autopilot" in _entity.m) return _entity.m._autopilot.ranged;
-        return isRangedUnit(_entity);
-    }
 })
 
 

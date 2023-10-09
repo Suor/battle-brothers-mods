@@ -24,4 +24,17 @@
             yield ret;
         }
     }
-});
+})
+
+// For player actors whether somebody is ranged or not is decided by his vision,
+// so a throwing guy in a big hat at night night suddenly become melee for AI.
+// This makes 2-tile bros start to hide behind :)
+::mods_hookBaseClass("ai/tactical/behavior", function(cls) {
+    cls = cls.behavior;
+
+    local isRangedUnit = cls.isRangedUnit;
+    cls.isRangedUnit = function (_entity) {
+        if ("_autopilot" in _entity.m) return _entity.m._autopilot.ranged;
+        return isRangedUnit(_entity);
+    }
+})
