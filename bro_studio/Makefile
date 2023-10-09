@@ -1,6 +1,6 @@
-MOD_NAME = brogen
-TAG_NAME = brogen
-SOURCES = brogen scripts
+MOD_NAME = bro_studio
+TAG_NAME = studio
+SOURCES = bro_studio scripts
 SUBDIR = scripts/\!mods_preload
 DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
 STDLIB_DIR = ../../bbm/stdlib
@@ -20,7 +20,7 @@ meld-std:
 zip:
 	LAST_TAG=$$(git tag | grep $(TAG_NAME) | tail -1); \
 	MODIFIED=$$( git diff $$LAST_TAG --quiet $(SOURCES) || echo _MODIFIED); \
-	NAME=$$(echo $$LAST_TAG | perl -pE 's/-/_/g'); \
+	NAME=$$(echo $$LAST_TAG | perl -pE 's/^$(TAG_NAME)-/$(MOD_NAME)_/'); \
 	FILENAME=mod_$$([[ "$$NAME" != "" ]] && echo $$NAME || echo $(MOD_NAME))$${MODIFIED}.zip; \
 	rm $${FILENAME}; \
 	zip -r $${FILENAME} $(SOURCES);

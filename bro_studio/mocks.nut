@@ -60,6 +60,10 @@ Math <- {
     pow = pow
 }
 
+    // function positive(value) {return Text.colored(value, ::Const.UI.Color.PositiveValue)}
+    // function negative(value) {return Text.colored(value, ::Const.UI.Color.NegativeValue)}
+    // function damage(value) {return Text.colored(value, ::Const.UI.Color.DamageValue)}
+
 // Game stuff
 logInfo <- function(s) {
     print(s + "\n")
@@ -75,6 +79,17 @@ Const <- {
     CharacterVeteranBackgrounds = []
     Strings = {}
 }
+
+::Const.UI <- {
+    Color = {
+        PositiveValue = "green"
+        NegativeValue = "red"
+    }
+    function getColorized(str, color) {
+        return "[color=" + color + "]" + str + "[/color]";
+    }
+}
+
 Const.CharacterTraits <- [
     [
         "trait.eagle_eyes",
@@ -338,6 +353,7 @@ createColor <- function (color) {return color}
     func({
         startNewCampaign = @() null
         setStartValuesEx = @() null
+        fillTalentValues = @() null
         onHired = @() null
     })
 }
@@ -359,6 +375,51 @@ createColor <- function (color) {return color}
     func("some/parent", "some/parent/child", {})
 }
 
+::rng_new <- function(seed = 0)
+{
+  if(seed == 0) seed = (Time.getRealTimeF() * 1000000000).tointeger();
+  return {
+    x = seed, y = 234567891, z = 345678912, w = 456789123, c = 0,
+    nextInt = function()
+    {
+      x += 1411392427;
+
+      y = y ^ (y<<5);
+      y = y ^ (y>>>7);
+      y = y ^ (y<<22);
+
+      local t = z + w + c;
+      z  = w;
+      c  = t >>> 31; // c = (signed)t < 0 ? 1 : 0
+      w  = t & 0x7FFFFFFF;
+
+      return (x + y + w) & 0x7FFFFFFF;
+    },
+    nextFloat = function()
+    {
+      return nextInt() / 2147483648.0;
+    },
+    next = function(a, b = null)
+    {
+      if(b == null)
+      {
+        if(a <= 0) throw "a must be > 0";
+        return nextInt() % a + 1;
+      }
+      else
+      {
+        if(a > b) throw "a must be <= than b";
+        return nextInt() % (b-a+1) + a;
+      }
+    }
+    reset = function (seed) {
+        x = seed, y = 234567891, z = 345678912, w = 456789123, c = 0;
+    }
+  }
+}
+
+::rng <- ::rng_new(1);
+
 
 // Mock MSU
 local function makePage(name) {
@@ -375,7 +436,7 @@ local function makePage(name) {
 }
 local function makeInput(cls, name, args) {
     return {
-        Class = cls, Name = name, Value = args[0],
+        Class = cls, Name = name, Value = args.len() > 0 ? args[0] : null,
         Args = args, Data = {}, Description = ""
         function setDescription(text) {this.Description = text}
         function lock(reason) {}
@@ -402,6 +463,7 @@ local function makeInput(cls, name, args) {
     function BooleanSetting(name, ...) {return makeInput("BooleanSetting", name, vargv)}
     function EnumSetting(name, ...) {return makeInput("EnumSetting", name, vargv)}
     function StringSetting(name, ...) {return makeInput("StringSetting", name, vargv)}
+    function SettingsTitle(name, ...) {return makeInput("SettingsTitle", name, vargv)}
     function SettingsDivider(name, ...) {return makeInput("SettingsDivider", name, vargv)}
     function SettingsSpacer(name, ...) {return makeInput("SettingsSpacer", name, vargv)}
 }

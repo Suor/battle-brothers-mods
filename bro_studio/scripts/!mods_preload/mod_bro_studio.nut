@@ -2,6 +2,7 @@ local mod = ::BroStudio <- {
     ID = "mod_bro_studio"
     Name = "Bro Studio"
     Version = "0.1.0"
+    Conf = {}
     Data = {}
     // Flags
     Debug = ::std.Debug.with({prefix = "studio: "})
@@ -10,12 +11,15 @@ local mod = ::BroStudio <- {
 mod.setupPlayer <- function (_player) {}
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "stdlib, mod_hooks(>=20), mod_msu(>=1.2.6)", function() {
+// ::mods_queue(mod.ID, "stdlib, mod_hooks(>=20), mod_msu(>=1.2.6), !mod_vap, !mod_ultrabros",
+::mods_queue(mod.ID, "stdlib, mod_hooks(>=20), mod_msu(>=1.2.6)",
+        function() {
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
     mod.conf <- function (name) {
         return mod.Mod.ModSettings.getSetting(name).getValue();
     }
 
+    // ::include("bro_studio/attrs");
     ::include("bro_studio/traits");
 
     local starting = false;

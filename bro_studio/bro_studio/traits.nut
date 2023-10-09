@@ -1,6 +1,7 @@
-local mod = ::BroGen, Rand = ::std.Rand;
+local mod = ::BroStudio, Rand = ::std.Rand.using(::rng);
 
-// Expose data and some behaviors for other mods to modify or use
+// Expose data and some behaviors for other mods to modify or use,
+// also helps with testing :)
 mod.Data.BadTraitIds <- [
     "trait.ailing"
     "trait.asthmatic"
@@ -81,9 +82,11 @@ mod.addTraits <- function (_player, _opt = null) {
         _player.getSkills().add(::new(trait[1]));
 
         added++;
-        // In stupid mode each so so trait must be compensated with a good one
-        if (_opt.stupid) mod.traitType(trait[0]) == "GOOD" ?  good++ : notGood++;
-        if (added >= _opt.num && (!_opt.stupid || good - notGood >= _opt.num)) break;
+        // In stupid mode each so-so trait must be compensated with a good one
+        if (_opt.stupid) {
+            mod.traitType(trait[0]) == "GOOD" ? good++ : notGood++;
+        }
+        if (added >= _opt.num && (!_opt.stupid || good >= notGood && good >= _opt.num)) break;
     }
 }
 
@@ -98,7 +101,7 @@ local function add(elem) {
 
 add(::MSU.Class.RangeSetting("traitsNum", 0, 0, 5, 1, "Number",
     "Will add this number of random traits after a bro is hired"));
-add(::MSU.Class.SettingsSpacer("PerksSpacer", "35rem", "8rem"));
+add(::MSU.Class.SettingsSpacer("traitsSpacer", "35rem", "8rem"));
 
 add(::MSU.Class.BooleanSetting("traitsGood", true, "Add good traits",
     "Allow adding good traits"));
@@ -106,5 +109,5 @@ add(::MSU.Class.BooleanSetting("traitsBad", true, "Add bad traits",
     "Allow adding bad traits"));
 add(::MSU.Class.BooleanSetting("traitsSoso", true, "Add so-so traits",
     "Allow adding traits having both significant upsides and downsides"));
-add(::MSU.Class.BooleanSetting("traitsStupid", false, "Stupid Mode",
-    "Compensate each so-so or bad trait added with a good one"));
+add(::MSU.Class.BooleanSetting("traitsStupid", false, "Stupid Mode"));
+    // "Compensate each so-so or bad trait added with a good one"));
