@@ -38,3 +38,32 @@
         return isRangedUnit(_entity);
     }
 })
+
+// ai_attack_knockout.getBestTarget() tries to call .getExpectedDamage` on attack of oppotunity of
+// the _entity, if there is none combat hangs up
+::mods_hookExactClass("ai/tactical/behaviors/ai_attack_knock_out", function (cls) {
+    local getBestTarget = cls.getBestTarget;
+    cls.getBestTarget = function (_entity, _skill, _targets) {
+        local skills = _entity.getSkills();
+        local attackSkill = skills.getAttackOfOpportunity();
+        if (attackSkill != null) return getBestTarget(_entity, _skill, _targets);
+
+        local function mock_getAttackOfOpportunity() {
+            return {
+                function getActionPointCost() {return 4}
+                function getExpectedDamage(target) {
+                    return {ArmorDamage = 0, DirectDamage = 0, HitpointDamage = 0, TotalDamage = 0}
+                }
+            }
+        }
+        local mock = {
+            function getSkills() {
+                return {
+                    getAttackOfOpportunity = mock_getAttackOfOpportunity
+                }.setdelegate(skills)
+            }
+        }.setdelegate(_entity.get());
+
+        return getBestTarget(mock, _skill, _targets);
+    }
+})
