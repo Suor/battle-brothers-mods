@@ -50,7 +50,9 @@ addBehavior("AP_UnbagShield", "UnbagShield", 36, 400);
         if (!("_autopilot" in entity.m)) return getFatigueScoreMult(_skill);
 
         local mult = getFatigueScoreMult(_skill);
-        if (!(this.ClassName in altWeights)) return mult;
+        if (this.ClassName == "ai_disengage"
+                && "_autopilot" in entity.m && entity.m._autopilot.ranged) return mult;
+        if (!(this.ClassName in altWeights) || altWeights[this.ClassName] == 0) return mult;
 
         // Calculate alternative mult for some skills
         local apPct = _skill.getActionPointCost() / (entity.getActionPointsMax() * 1.0);
