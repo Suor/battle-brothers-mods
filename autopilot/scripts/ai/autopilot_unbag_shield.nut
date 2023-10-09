@@ -28,9 +28,8 @@ this.autopilot_unbag_shield <- this.inherit("scripts/ai/tactical/behavior", {
             return ::Const.AI.Behavior.Score.Zero;
         }
 
-        local hasQuickHands = _entity.getSkills().hasSkill("perk.quick_hands");
-
-        if (!hasQuickHands && _entity.getActionPoints() < ::Const.Tactical.Settings.SwitchItemAPCost) {
+        // NOTE: quick hands don't work on shields
+        if (_entity.getActionPoints() < ::Const.Tactical.Settings.SwitchItemAPCost) {
             return ::Const.AI.Behavior.Score.Zero;
         }
 
