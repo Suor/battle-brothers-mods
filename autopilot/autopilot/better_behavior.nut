@@ -27,7 +27,10 @@ addBehavior("AP_UnbagShield", "UnbagShield", 36, 400);
 });
 
 ::mods_hookExactClass("ai/tactical/behaviors/ai_attack_default", function (cls) {
-    cls.m.PossibleSkills.extend(["actives.lunge"]);
+    cls.m.PossibleSkills.extend([
+        "actives.lunge"
+        "actives.gae_buidhe_thrust" // CleverFool's mod
+    ]);
 });
 
 // Adjust fatigue score mult
