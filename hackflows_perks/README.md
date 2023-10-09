@@ -24,11 +24,12 @@ Safe to add and remove midgame. However, if you remove it when having bros with 
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] and [stdlib][].
 
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/673
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
+[stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
 
 [More Perks]: https://www.nexusmods.com/battlebrothers/mods/44
 [True Balance]: https://www.nexusmods.com/battlebrothers/mods/333

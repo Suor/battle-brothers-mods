@@ -12,4 +12,11 @@ this.perk_hackflows_flesh_on_the_bones <- this.inherit("scripts/skills/skill", {
 		this.m.IsStacking = false;
 		this.m.IsHidden = false;
 	}
+
+	function onUpdate( _properties )
+	{
+		if (::HackflowsPerks.fleshOnBonesActive(this.getContainer().getActor())) {
+			_properties.IsAffectedByFreshInjuries = false;
+		}
+	}
 })
