@@ -23,17 +23,17 @@
 
     add(::MSU.Class.EnumSetting("selectMode", "roll", ["roll" "all" "none"], "Select masters",
         "Select which bros become masters" +
-        "\n\n[color=#1e468f]<b>roll</b>[/color] - anyone has a small chance from 1 in 100 to 1 in 30, " +
+        "\n\n[color=#1e468f]roll[/color] - anyone has a small chance from 1 in 100 to 1 in 30, " +
             "depending on the strength of one's background" +
-        "\n[color=#8f1e1e]<b>all</b>[/color] - all bros are masters, for testing or cheating" +
-        "\n[color=#222222]<b>none</b>[/color] - no new masters"
+        "\n[color=#8f1e1e]all[/color] - all bros are masters, for testing or cheating" +
+        "\n[color=#222222]none[/color] - no new masters"
     ));
     add(::MSU.Class.RangeSetting("multiplier", 1, 1, 20, 1, "Chance multiplier",
         "Make each bro's chances to be a master this times higher. " +
         "Only applies if the setting to the left is set to \"roll\"." +
-        "\n\n[color=#1e861e]<b>1</b>[/color] is for a normal game," +
-        "\n[color=#1e468f]<b>2-5</b>[/color] is skewing into fun > balance," +
-        "\n[color=#8f1e1e]<b>10-20</b>[/color] is close to cheating, also makes normal bros barely useful."
+        "\n\n[color=#1e861e]1[/color] is for a normal game," +
+        "\n[color=#1e468f]2-5[/color] is skewing into fun > balance," +
+        "\n[color=#8f1e1e]10-20[/color] is close to cheating, also makes normal bros barely useful."
     ));
     // add(::MSU.Class.BooleanSetting("rangedBonus", true, "Higher chance for ranged bros", "..."))
     add(::MSU.Class.BooleanSetting("allowSlaves", false, "Allow slaves",
