@@ -1,5 +1,5 @@
 // Fix crash after ranged actor killing somebody
-::mods_hookExactClass("ai/tactical/behaviors/ai_engage_ranged", function (o) {
+::mods_hookExactClass("ai/tactical/behaviors/ai_engage_ranged", function (cls) {
     local function isRelevant(_actor) {
         return !_actor.isNull() && !_actor.m.IsDying && _actor.m.IsAlive;
     }
@@ -11,8 +11,8 @@
 
     // The problem with this is while we go through tiles a target might become invalid,
     // usually after a ranged bro shoots someone and we are evaluating his next shot
-    local selectBestTargetTile = o.selectBestTargetTile;
-    o.selectBestTargetTile = function (_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded) {
+    local selectBestTargetTile = cls.selectBestTargetTile;
+    cls.selectBestTargetTile = function (_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded) {
         local ret;
         local gen = selectBestTargetTile(_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded);
 
