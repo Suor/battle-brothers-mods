@@ -48,6 +48,9 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.drunkard"
             "trait.fat"
             "trait.impatient"
+            "trait.huge"
+            "trait.tiny"
+            "trait.paranoid"
             // Legends
             "trait.aggressive"
             "trait.legend_diurnal"
