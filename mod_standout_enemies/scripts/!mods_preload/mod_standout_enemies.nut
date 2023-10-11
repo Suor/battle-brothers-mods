@@ -949,7 +949,7 @@ Util.extend(Mod, {
 })
 
 
-::mods_queue("mod_standout_enemies", "mod_hooks(>=19)", function() {
+::mods_queue("mod_standout_enemies", "stdlib, mod_hooks(>=20)", function() {
     this.logInfo("se: loading");
 
     ::mods_hookClass("entity/tactical/tactical_entity_manager", function(cls) {

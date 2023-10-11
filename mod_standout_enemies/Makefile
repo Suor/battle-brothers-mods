@@ -3,11 +3,17 @@ TAG_NAME = standout-enemies
 SOURCES = scripts
 SUBDIR = scripts/\!mods_preload
 DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
+STDLIB_DIR = ../../bbm/stdlib
 
 SHELL := /bin/bash
 
 test:
-	cd $(SUBDIR);squirrel test_mod_standout_enemies.nut
+	cp -r $(STDLIB_DIR)/scripts .; \
+	cp -r $(STDLIB_DIR)/stdlib .; \
+	squirrel test.nut; \
+	cd $(SUBDIR);squirrel test_mod_standout_enemies.nut; cd ../..; \
+	rm -rf stdlib; \
+	rm scripts/!mods_preload/!stdlib.nut
 
 zip:
 	LAST_TAG=$$(git tag | grep $(TAG_NAME) | tail -1); \

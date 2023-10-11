@@ -3,6 +3,9 @@ local gt = getroottable();
 
 if ("dofile" in gt) {
     // Provide this stubs to enable simple testing
+    ::include <- function (script) {
+        return dofile("../../" + script + ".nut", true)
+    }
     logInfo <- function(s) {
         print(s + "\n")
     }
@@ -194,7 +197,7 @@ if ("dofile" in gt) {
     }
 
     // Load mod script to check for syntax at least
-    dofile("!stdlib.nut", true);
+    dofile("../../scripts/!mods_preload/!stdlib.nut", true);
     dofile("mod_standout_enemies.nut", true);
 
     function setupParty(party) {
