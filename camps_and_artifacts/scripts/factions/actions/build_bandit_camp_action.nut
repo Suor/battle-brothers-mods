@@ -10,8 +10,8 @@ this.build_bandit_camp_action <- this.inherit("scripts/factions/faction_action",
 	function onUpdate( _faction )
 	{
 		local settlements = _faction.getSettlements();
-		logInfo("build_bandit_camp_action.onUpdate settlements "
-			+ settlements.len() + " score " + this.m.Score + " " + _faction.getName());
+		// logInfo("build_bandit_camp_action.onUpdate settlements "
+		// 	+ settlements.len() + " score " + this.m.Score + " " + _faction.getName());
 
 		if (this.World.FactionManager.isCivilWar() && this.World.FactionManager.getGreaterEvilStrength() >= 20.0)
 		{
@@ -42,8 +42,8 @@ this.build_bandit_camp_action <- this.inherit("scripts/factions/faction_action",
 	function onExecute( _faction )
 	{
 		local settlements = _faction.getSettlements();
-		logInfo("build_bandit_camp_action.onExecute settlements " + settlements.len()
-			 + " " + _faction.getName());
+		// logInfo("build_bandit_camp_action.onExecute settlements " + settlements.len()
+		// 	 + " " + _faction.getName());
 		local camp;
 		local r = this.Math.rand(1, 4);
 		local maxY = this.Const.DLC.Wildmen ? 0.75 : 1.0;

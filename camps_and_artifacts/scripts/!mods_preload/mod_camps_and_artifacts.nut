@@ -12,8 +12,8 @@ local mod = ::CampsAndArtifacts <- {
         cls.onUpdate = function ( _faction ) {
             local allSettlements = _faction.m.Settlements;
             local realSettlements = _faction.m.Settlements.filter(@(_, s) ::isKindOf(s, "settlement"));
-            logInfo("Faction " + _faction.getName() + " settlements " + _faction.m.Settlements.len()
-                    + " real " + realSettlements.len());
+            // logInfo("Faction " + _faction.getName() + " settlements " + _faction.m.Settlements.len()
+            //         + " real " + realSettlements.len());
             if (realSettlements.len() > 0) {
                 _faction.m.Settlements = realSettlements;
                 onUpdate(_faction)

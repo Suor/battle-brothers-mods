@@ -47,8 +47,8 @@ this.build_citystate_camp_action <- this.inherit("scripts/factions/faction_actio
 	function onExecute( _faction )
 	{
 		local settlements = _faction.getSettlements();
-		logInfo("build_citystate_camp_action.onExecute settlements " + settlements.len()
-			+ " " + _faction.getName());
+		// logInfo("build_citystate_camp_action.onExecute settlements " + settlements.len()
+		// 	+ " " + _faction.getName());
 		local camp;
 		local r = this.Math.rand(1, 3);
 		local minY = 0.0;
@@ -89,8 +89,8 @@ this.build_citystate_camp_action <- this.inherit("scripts/factions/faction_actio
 			camp.setBanner(banner);
 			_faction.addSettlement(camp, false);
 		}
-		logInfo("END build_citystate_camp_action.onExecute settlements " + settlements.len()
-			+ " " + _faction.getName());
+		// logInfo("END build_citystate_camp_action.onExecute settlements " + settlements.len()
+		// 	+ " " + _faction.getName());
 	}
 
 });

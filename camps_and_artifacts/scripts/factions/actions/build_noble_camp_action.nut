@@ -10,8 +10,8 @@ this.build_noble_camp_action <- this.inherit("scripts/factions/faction_action", 
 	function onUpdate( _faction )
 	{
 		local settlements = _faction.getSettlements();
-		logInfo("build_noble_camp_action.onUpdate settlements " + settlements.len()
-		 + " score " + this.m.Score + " " + _faction.getName());
+		// logInfo("build_noble_camp_action.onUpdate settlements " + settlements.len()
+		//  + " score " + this.m.Score + " " + _faction.getName());
 
 		if (this.World.FactionManager.isCivilWar() && this.World.FactionManager.getGreaterEvilStrength() >= 20.0)
 		{
