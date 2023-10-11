@@ -11,7 +11,8 @@ if ("dofile" in gt) {
     }
     Const <- {
         SkillType = {Active = 1}
-        ItemSlot = {Mainhand = 0, Body = 2, Head = 3}
+        ItemSlot = {Mainhand = 0, Body = 2, Head = 3, Ammo = 4}
+        Items = {AmmoType = {Arrows = 1}}
     }
     local Days = 110;
     World <- {
@@ -91,6 +92,8 @@ if ("dofile" in gt) {
                     IsAffectedByNight = true
                     HitChance = [25 75]
                     DamageReceivedTotalMult = 1.0
+                    MovementAPCostMult = 1.0
+                    MovementFatigueCostMult = 1.0
                 }
                 Items = {
                     function getItemAtSlot(s) {
@@ -98,7 +101,7 @@ if ("dofile" in gt) {
                             m = {
                                 ID = "weapon.crossbow"
                                 Value = 350
-                                function setUpgrade(upgrade) {}
+                                AmmoType = ::Const.Items.AmmoType.Arrows
                             }
                             function getName() {return "Fake Item"}
                             function getArmor() {return 39}
@@ -156,6 +159,11 @@ if ("dofile" in gt) {
                 }
             }
             function isAbleToWait() {return true}
+            function getAIAgent() {
+                return {
+                    function addBehavior(_b) {}
+                }
+            }
         };
     }
 

@@ -221,13 +221,18 @@ Quirk = se.Quirk <- {
             }
 
             // Add initiative for overwhelm for work properly
-            // Do not add stamina/fatigue recovery so that this rain of arrows will stop eventually
-            e.m.BaseProperties.Initiative += 30;
+            // Do not add fatigue recovery so that this rain of arrows will stop eventually
+            e.m.BaseProperties.Initiative += 40;
+            e.m.BaseProperties.Stamina += 25;
 
             // Bad shooter doesn't even try to shoot head
             Mod.offense(e, -10);
             e.m.BaseProperties.RangedDefense += 15;
             e.m.BaseProperties.HitChance = [95, 5];  // Down from 75/25
+
+            // Move around fast and easy
+            e.m.BaseProperties.MovementAPCostMult = 0.5
+            e.m.BaseProperties.MovementFatigueCostMult = 0.5
 
             // Overwhelm and all sorts of "quick" perks
             e.m.Skills.add(::new("scripts/skills/perks/perk_overwhelm"));
@@ -236,6 +241,7 @@ Quirk = se.Quirk <- {
             e.m.Skills.add(::new("scripts/skills/perks/perk_pathfinder"));
             e.m.Skills.add(::new("scripts/skills/perks/perk_quick_hands"));
             e.m.Skills.add(::new("scripts/skills/actives/footwork"));
+            e.m.Skills.add(::new("scripts/skills/traits/athletic_trait"));
             e.getAIAgent().addBehavior(::new("scripts/ai/tactical/behaviors/ai_disengage"));
 
             // TODO: nomads/bandits
@@ -248,7 +254,7 @@ Quirk = se.Quirk <- {
                 Mod.setWeapon(e, [bow]);
             }
             local ammo = e.m.Items.getItemAtSlot(::Const.ItemSlot.Ammo);
-            if (ammo.m.AmmoType != ::Const.Items.AmmoType.Arrows) {
+            if (ammo && ammo.m.AmmoType != ::Const.Items.AmmoType.Arrows) {
                 e.m.Items.unequip(ammo);
                 e.m.Items.equip(::new("scripts/items/ammo/quiver_of_arrows"));
             }
