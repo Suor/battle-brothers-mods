@@ -182,7 +182,7 @@ if ("dofile" in gt) {
     }
 
     // Mod hooks fake
-    ::mods_registerMod <- function (x, y, x) {}
+    ::mods_registerMod <- function (x, y, z=null) {}
     ::mods_queue <- function (x, y, func) {
         func()
     }
@@ -190,10 +190,10 @@ if ("dofile" in gt) {
         func(TacticalEntityManager);
     }
     ::mods_hookBaseClass <- function (x, func) {
-        func({})
+        func({onDeath = null, actor = {onResurrected = null}})
     }
-    ::mods_hookDescendants <- function (x, func) {
-        func({SuperName = "actor", actor = {onDeath = 1, onResurrected = 1}})
+    ::mods_hookExactClass <- function (x, func) {
+        func({spawnGoblin = null})
     }
 
     // Load mod script to check for syntax at least

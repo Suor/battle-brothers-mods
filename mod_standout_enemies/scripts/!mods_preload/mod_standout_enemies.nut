@@ -967,35 +967,32 @@ Util.extend(Mod, {
 
     ::mods_hookBaseClass("entity/tactical/actor", function(cls) {
         // Save quirk to corpse and reapply on resurrection
-        local onDeath = "onDeath" in cls ? cls.onDeath : null;
+        local onDeath = "onDeath" in cls ? cls.onDeath : cls.actor.onDeath;
         cls.onDeath <- function (_killer, _skill, _tile, _fatalityType) {
-            if (onDeath) onDeath(_killer, _skill, _tile, _fatalityType);
+            onDeath(_killer, _skill, _tile, _fatalityType);
             if (_tile && "se_Quirk" in this.m) {
+                logInfo("Died " + this.getName() + " quirk = " + this.m.se_Quirk.pp);
                 local corpse = _tile.Properties.get("Corpse");
                 corpse.se_Quirk <- this.m.se_Quirk;
             }
         }
 
-        local onResurrected = "onResurrected" in cls ? cls.onResurrected : null;
+        local onResurrected = "onResurrected" in cls ? cls.onResurrected : cls.actor.onResurrected;
         cls.onResurrected <- function (_info) {
-            if (onResurrected) onResurrected(_info);
+            onResurrected(_info);
             if ("se_Quirk" in _info) se.applyQuirk(this, _info.se_Quirk);
         }
     })
 
-    // Since actor hook doesn't reach descendant of descendants
-    // and hooking goblin_wolfrider yields random shit, we do it this way
-    ::mods_hookBaseClass("entity/tactical/goblin", function(cls) {
-        // Make demounted goblin inherit a quirk
-        if ("spawnGoblin" in cls) {
-            local spawnGoblin = cls.spawnGoblin;
-            cls.spawnGoblin <- function (_info) {
-                spawnGoblin(_info);
-                if ("se_Quirk" in this.m) {
-                    local goblin = _info.Tile.getEntity();
-                    se.applyQuirk(goblin, this.m.se_Quirk);
-                }
+    // Make a demounted goblin inherit a quirk
+    ::mods_hookExactClass("entity/tactical/enemies/goblin_wolfrider", function(cls) {
+        local spawnGoblin = cls.spawnGoblin;
+        cls.spawnGoblin = function (_info) {
+            spawnGoblin(_info);
+            if ("se_Quirk" in this.m) {
+                local goblin = _info.Tile.getEntity();
+                se.applyQuirk(goblin, this.m.se_Quirk);
             }
         }
     })
-});
+})
