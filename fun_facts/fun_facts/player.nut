@@ -83,6 +83,8 @@
     local onSerialize = o.onSerialize;
     o.onSerialize = function(_out) {
         this.getFlags().set("FunFacts", this.m.FunFacts.pack());
+        // Q: do I need a helper to break it into parts?
+        // Tags.pack(this.getFlags(), "FunFacts", this.m.FunFacts);
         return onSerialize(_out);
     }
 

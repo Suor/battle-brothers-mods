@@ -14,10 +14,11 @@ local Debug = ::std.Debug, Util = std.Util;
 
     local onSerialize = o.onSerialize;
     o.onSerialize = function( _out ) {
-        local packedFacts = this.m.Fallen.map(@(f) f.FunFacts.pack());
-        local dp = Util.pack(packedFacts);
-        logInfo("SAVE DOUBLE PACKED " + dp.len());
-        this.m.Flags.set("FallenFunFacts", dp)
+        foreach (i, fallen in this.m.Fallen) {
+            local ffp = "FunFacts" in fallen ? fallen.FunFacts.pack() : null;
+            logInfo("ff: PACK FallenFunFacts." + i + " " + (ffp ? ffp.len() : "null"));
+            this.m.Flags.set("FallenFunFacts." + i, ffp);
+        }
         onSerialize(_out);
     }
 
@@ -25,15 +26,29 @@ local Debug = ::std.Debug, Util = std.Util;
     o.onDeserialize = function( _in ) {
         onDeserialize(_in);
 
+        foreach (i, fallen in this.m.Fallen) {
+            local ffp = this.m.Flags.get("FallenFunFacts." + i);
+            // logInfo("ff: UNPACK FallenFunFacts." + i + " " + (ffp ? ffp.len() : "null"));
+            if (!ffp) continue;
+            fallen.FunFacts <- ::new("scripts/mods/fun_facts/fun_facts");
+            fallen.FunFacts.unpack(ffp);
+            fallen.FunFacts.setName(fallen.Name);
+        }
+
+        logInfo("ff: statistics_manager.onDeserialize (after)")
         local doublePacked = this.m.Flags.get("FallenFunFacts");
         if (doublePacked) {
+            logInfo("doublePacked " + doublePacked.len());
             local packedFacts = Util.unpack(doublePacked);
+            logInfo("packedFacts.len() " + packedFacts.len());
+            std.Debug.log("packedFacts", packedFacts.map(@(s) s.len()));
             foreach (i, pf in packedFacts) {
                 local fallen = this.m.Fallen[i];
                 fallen.FunFacts <- ::new("scripts/mods/fun_facts/fun_facts");
                 fallen.FunFacts.unpack(pf);
                 fallen.FunFacts.setName(fallen.Name);
             }
+            this.m.Flags.remove("FallenFunFacts");
             return
         }
 

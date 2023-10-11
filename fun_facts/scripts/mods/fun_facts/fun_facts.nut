@@ -241,7 +241,9 @@ this.fun_facts <- {
     // }
 
     function pack() {
-        return Util.pack(this.m.Stats);
+        local ret = Util.pack(this.m.Stats);
+        logInfo("Pack " + this.m.Name + " " + ret.len());
+        return ret;
     }
     function unpack(packed) {
         local state = Util.unpack(packed);
