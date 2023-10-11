@@ -18,11 +18,6 @@ this.cursed_effect <- this.inherit("scripts/skills/skill", {
     }
 
     function getName() {
-        // local name = this.m.Count >= 4 ? this.m.Count + "x curse"
-        //            : this.m.Count == 3 ? "Tripple cursed"
-        //            : this.m.Count == 2 ? "Double cursed"
-        //            : "Cursed";
-        // return name + (this.m.TurnsLeft > 1 ? " (" + this.m.TurnsLeft + " turns)" : " (1 turn)");
         return this.m.Name + (this.m.Count > 1 ? " (x" + this.m.Count + ")" : "");
     }
 
@@ -85,36 +80,30 @@ this.cursed_effect <- this.inherit("scripts/skills/skill", {
     }
 
     function onAdded() {
-        this.logInfo("se: cursed_effect onAdded");
         if (this.checkResist()) {
             this.removeSelf();
             return;
         }
-        this.logInfo("se: cursed_effect onAdded success");
 
         local actor = this.getContainer().getActor();
         local props = actor.getCurrentProperties();
         this.m.Count = 1;
-        // +1 turn to penalize a bro hitting cursed once,
+        // +1 turn to penalize a resillient bro hitting cursed once,
         // otherwise turn end will erase it immediately with no effect for a Resilient bro.
         this.m.TurnsLeft = 1 + this.Math.max(1, 3 + props.NegativeStatusEffectDuration);
-        this.logInfo("se: cursed_effect count " + this.m.Count + " turns " + this.m.TurnsLeft);
 
         this.showEffect();
         this.updateAppearance(this.m.Count);
     }
 
     function onRefresh() {
-        this.logInfo("se: cursed_effect onRefresh");
         if (this.checkResist()) return;
-        this.logInfo("se: cursed_effect onRefresh success");
 
         local props = this.getContainer().getActor().getCurrentProperties();
 
         ++this.m.Count;
         local turns = this.Math.max(1, 3 + props.NegativeStatusEffectDuration);
         this.m.TurnsLeft = this.m.TurnsLeft < turns ? turns : this.m.TurnsLeft + 1;
-        this.logInfo("se: cursed_effect count " + this.m.Count + " turns " + this.m.TurnsLeft);
         this.showEffect();
     }
 
@@ -135,11 +124,8 @@ this.cursed_effect <- this.inherit("scripts/skills/skill", {
     }
 
     function onTurnEnd() {
-        // this.logInfo("se: onTurnEnd count " + this.m.Count + " turns " + this.m.TurnsLeft);
         if (this.m.Count > 1) --this.m.Count;  // Can't loose the last one
         if (--this.m.TurnsLeft <= 0) this.removeSelf();
-        // if (this.m.TurnsLeft < this.m.Count) this.m.Count = this.m.TurnsLeft;
-        this.logInfo("se: onTurnEnd after count " + this.m.Count + " turns " + this.m.TurnsLeft);
     }
 
     // Cosmetic stuff
