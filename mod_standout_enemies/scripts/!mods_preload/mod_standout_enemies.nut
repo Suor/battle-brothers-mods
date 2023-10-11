@@ -809,7 +809,8 @@ Util.extend(se, {
         // also used to transfer to surviving goblin of goblin wolfrider
         e.m.se_Quirk <- quirk;
 
-        if ("Prefix" in quirk) e.m.Name = quirk.Prefix + " " + Config.cutName(e.m.Name);
+        if ("Prefix" in quirk && !e.m.Name.find(quirk.Prefix))
+            e.m.Name = quirk.Prefix + " " + Config.cutName(e.m.Name);
         e.m.XP *= quirk.XPMult;
         if ("ResurrectionValue" in e.m) e.m.ResurrectionValue *= quirk.XPMult; // More valuable
 
