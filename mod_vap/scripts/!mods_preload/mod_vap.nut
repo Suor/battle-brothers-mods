@@ -137,10 +137,10 @@
   ::mods_hookBaseClass("scenarios/world/starting_scenario", function(cls) {
     // this.logInfo("vap: hook starting_scenario");
 
-    local onSpawnAssets = "onSpawnAssets" in cls ? cls.onSpawnAssets : null;
-    cls.onSpawnAssets <- function()
-    {
-      if (onSpawnAssets) onSpawnAssets();
+    local onSpawnAssets = "onSpawnAssets" in cls
+        ? cls.onSpawnAssets : cls.starting_scenario.onSpawnAssets;
+    cls.onSpawnAssets <- function () {
+      onSpawnAssets();
       local roster = World.getPlayerRoster().getAll();
       foreach (bro in roster) bro.addExtraPerks(1);
     }
