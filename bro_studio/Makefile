@@ -1,6 +1,6 @@
 MOD_NAME = bro_studio
-TAG_NAME = studio
-SOURCES = bro_studio scripts
+TAG_NAME = bro-studio
+SOURCES = bro_studio scripts ui
 SUBDIR = scripts/\!mods_preload
 DATA_DIR = ~/.local/share/Steam/steamapps/common/Battle\ Brothers/data/
 STDLIB_DIR = ../../bbm/stdlib

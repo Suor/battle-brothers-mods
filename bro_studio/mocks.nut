@@ -52,6 +52,7 @@ Math <- {
     maxf = @(a, b) a >= b ? a : b
     min = @(a, b) (a <= b ? a : b).tointeger()
     max = @(a, b) (a >= b ? a : b).tointeger()
+    round = @(x) floor(x + 0.5)
     function rand(min, max) {
         min = floor(min);
         max = floor(max);
@@ -59,6 +60,7 @@ Math <- {
     }
     pow = pow
 }
+::WeakTableRef <- class {}
 
     // function positive(value) {return Text.colored(value, ::Const.UI.Color.PositiveValue)}
     // function negative(value) {return Text.colored(value, ::Const.UI.Color.NegativeValue)}
@@ -78,6 +80,20 @@ Const <- {
     CharacterPiracyBackgrounds = []
     CharacterVeteranBackgrounds = []
     Strings = {}
+    Attributes = {
+        Hitpoints = 0,
+        Bravery = 1,
+        Fatigue = 2,
+        Initiative = 3,
+        MeleeSkill = 4,
+        RangedSkill = 5,
+        MeleeDefense = 6,
+        RangedDefense = 7,
+        COUNT = 8
+    }
+    XP = {
+        MaxLevelWithPerkpoints = 11
+    }
 }
 
 ::Const.UI <- {
@@ -355,13 +371,19 @@ createColor <- function (color) {return color}
         setStartValuesEx = @() null
         fillTalentValues = @() null
         onHired = @() null
+        updateLevel = @() null
+        getAttributeLevelUpValues = @() null
     })
 }
 ::mods_hookChildren <- function (x, func) {
     func({})
 }
 ::mods_hookBaseClass <- function (x, func) {
-    func({})
+    func({
+        starting_scenario = {
+            function onSpawnAssets() {}
+        }
+    })
 }
 ::mods_hookDescendants <- function (x, func) {
     func({})
@@ -374,6 +396,7 @@ createColor <- function (color) {return color}
 ::mods_addHook <- function(name, func) {
     func("some/parent", "some/parent/child", {})
 }
+::mods_registerJS <- function (name) {}
 
 ::rng_new <- function(seed = 0)
 {
@@ -414,6 +437,8 @@ createColor <- function (color) {return color}
     }
     reset = function (seed) {
         x = seed, y = 234567891, z = 345678912, w = 456789123, c = 0;
+        local n = next(128);
+        for (local i = 0; i < n; i++) nextInt();
     }
   }
 }
@@ -434,16 +459,19 @@ local function makePage(name) {
     this.pages.push(page);
     return page;
 }
-local function makeInput(cls, name, args) {
-    return {
-        Class = cls, Name = name, Value = args.len() > 0 ? args[0] : null,
-        Args = args, Data = {}, Description = ""
-        function setDescription(text) {this.Description = text}
-        function lock(reason) {}
-        function getValue() {
-            return this.Value
-        }
+::Mocks <- {};
+::Mocks.Input <- class {
+    Name = null
+    Value = null
+    Description = ""
+    Data = {}
+    constructor (_id, ...) {
+        this.Name = _id;
+        this.Value = vargv.len() > 0 ? vargv[0] : null;
     }
+    function setDescription(text) {this.Description = text}
+    function lock(reason) {}
+    function getValue() {return this.Value}
 }
 ::MSU <- {};
 ::MSU.Class <- {
@@ -459,11 +487,11 @@ local function makeInput(cls, name, args) {
             }
         }
     }
-    function RangeSetting(name, ...) {return makeInput("RangeSetting", name, vargv)}
-    function BooleanSetting(name, ...) {return makeInput("BooleanSetting", name, vargv)}
-    function EnumSetting(name, ...) {return makeInput("EnumSetting", name, vargv)}
-    function StringSetting(name, ...) {return makeInput("StringSetting", name, vargv)}
-    function SettingsTitle(name, ...) {return makeInput("SettingsTitle", name, vargv)}
-    function SettingsDivider(name, ...) {return makeInput("SettingsDivider", name, vargv)}
-    function SettingsSpacer(name, ...) {return makeInput("SettingsSpacer", name, vargv)}
+    RangeSetting = class extends ::Mocks.Input { Type = "Range" }
+    BooleanSetting = class extends ::Mocks.Input { Type = "Boolean" }
+    EnumSetting = class extends ::Mocks.Input { Type = "Enum" }
+    StringSetting = class extends ::Mocks.Input { Type = "String" }
+    SettingsTitle = class extends ::Mocks.Input { Type = "Title" }
+    SettingsDivider = class extends ::Mocks.Input { Type = "Divider" }
+    SettingsSpacer = class extends ::Mocks.Input { Type = "Spacer" }
 }

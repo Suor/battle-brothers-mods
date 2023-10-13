@@ -1,4 +1,4 @@
-# BroGen (Bro Generation Customizer)
+# Bro Studio
 
 Allows to cutomize all sort of things during bro generation and level up:
 - talents
@@ -9,10 +9,25 @@ Allows to cutomize all sort of things during bro generation and level up:
 Both for new bros and veterans.
 
 
+## Compatibility
+
+- works with Legends
+- will probably work with most other mods
+- won't work with [Ultra Bros][ultra-bros] - those are broken in too many ways
+- won't work with [Veterans Attrs and Perks][veteran-ap] - provides the same functionality anyway
+
+Is safe to add or remove mid-game.
+
+
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][], [stdlib][] and [MSU][].
 
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/...
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
+[stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
+[msu]: https://www.nexusmods.com/battlebrothers/mods/479
+
+[ultra-bros]: https://www.nexusmods.com/battlebrothers/mods/11
+[veteran-ap]: https://www.nexusmods.com/battlebrothers/mods/648

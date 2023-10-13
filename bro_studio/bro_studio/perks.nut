@@ -1,67 +1,67 @@
-::mods_registerMod(::VAP.ID, ::VAP.Version, ::VAP.Name);
-::mods_queue(::VAP.ID, "mod_hooks(>=17), mod_msu(>=1.2.6)", function() {
-    ::VAP.Mod <- ::MSU.Class.Mod(::VAP.ID, ::VAP.Version, ::VAP.Name);
+local mod = ::BroStudio;
 
-    // pages
-    local page = ::VAP.Mod.ModSettings.addPage("General");
+// Settings, Perks page
+local page = mod.addPage("Perks");
 
-    // helpers
-    local function add(elem) {
-        page.addElement(elem);
-        elem.Data.NewCampaign <- true;
-        return elem;
+page.add(::MSU.Class.RangeSetting("perksEach", 1, 0, 5, 1, "Perks given each level",
+    "On levels from to 2 to Veteran Level, i.e. 10 times by default."));
+page.add(::BroStudio.SliderSetting("perksNth", "off", ["off" 5 4 3 2], "Add a perk each N-th level",
+    "Starting from but not including level 1 and not after the Veteran Level"));
+
+// Veterans
+page.add(::MSU.Class.SettingsDivider("perksDiv"));
+page.add(::MSU.Class.SettingsTitle("perksVeteranTitle", "Veterans"));
+
+page.add(::MSU.Class.RangeSetting("perksVeteran", 11, 1, 21, 1, "Veteran Level for Perks"));
+page.add(::MSU.Class.SettingsSpacer("perksVeteranSpacer", "35rem", "8rem"));
+
+page.add(::BroStudio.SliderSetting("perksVeteranNth", "off", ["off", 10, 5, 4, 3, 2, 1],
+    "Add a perk each N-th veteran level",
+    "Starting from but not including the Veteran Level"));
+page.add(::MSU.Class.StringSetting("perksPreset", "",
+    "Give a perk on these levels", "Level numbers separated by space or comma"));
+
+// Conf "interpreter"
+local function safeToInteger(n) {
+    try {
+        return n.tointeger();
+    } catch (err) {
+        this.logWarning("studio: ERROR failed to convert to number: " + n);
+        return 0;
     }
-    local function safeToInteger(n) {
-        try {
-            return n.tointeger();
-        } catch (err) {
-            this.logWarning("vap: ERROR failed to convert to number: " + n);
-            return 0;
-        }
+}
+mod.extraPerks <- function(level) {
+    local perks = 0;
+    local veteranLevel = mod.conf("perksVeteran");
+
+    if (level == 1) {
+        // pass
+    } else if (level <= veteranLevel) {
+        perks += mod.conf("perksEach") - 1;
+        local nth = mod.conf("perksNth");
+        if (nth != "off" && (level - 1) % nth == 0) perks++;
+    } else {
+        local nth = mod.conf("perksVeteranNth");
+        if (nth != "off" && (level - veteranLevel) % nth == 0) perks++;
     }
 
-    local talentDiv = add(::MSU.Class.RangeSetting("TalentDiv", 3, 2, 5, 1, "Talent Divisor"));
-    talentDiv.setDescription("Non-veterans get 0.5 per level per star on average. "
-                           + "Veterans will get this times less.");
-    ::VAP.getTalentValue <- function () {
-        return 0.5 / talentDiv.getValue();
+    local preset = mod.conf("perksPreset");
+    if (preset) {
+        local levels = split(preset, ", ").filter(@(_, v) v != "").map(safeToInteger);
+        if (levels.find(level) != null) perks++;
     }
 
-    add(::MSU.Class.SettingsDivider("Div1"));
+    return perks;
+}
 
-    // perks
-    local perksMode = add(::MSU.Class.EnumSetting(
-        "PerksMode", "preset", ["none" "preset" "every nth"], "Perks Mode"));
-    add(::MSU.Class.SettingsSpacer("PerksSpacer", "35rem", "8rem"));
-    local perksPreset = add(::MSU.Class.StringSetting("PerksPreset", "13, 16, 20, 25, 31",
-        "Give a perk on these levels", "Level numbers separated by space or comma"));
-    local perksNth = add(::MSU.Class.RangeSetting("PerksNth", 2, 1, 10, 1, "Every Nth Level",
-        "Starting from but not including 11"));
+// The meat
+mod.addExtraPerks <- function (_player, level) {
+    if (level >= _player.m.Level) return;
 
-    if (::mods_getRegisteredMod("mod_ultrabros")) {
-        foreach(setting in [perksMode, perksPreset, perksNth])
-            setting.lock("This is overtaken by Ultra Bros");
+    this.logInfo("studio: Leveling up " + _player.getName()
+                 + " from " + level + " to " + _player.m.Level);
+    // give extra perk points for certain levels
+    for (; ++level <= _player.m.Level;) {
+        _player.m.PerkPoints += extraPerks(level);
     }
-
-    ::VAP.getGivePerk <- function () {
-        local mode = perksMode.getValue();
-        if (mode == "none") {
-            this.logInfo("vap: perks " + mode);
-            return @(l) false;
-        }
-        if (mode == "preset") {
-            local preset = perksPreset.getValue();
-            this.logInfo("vap: perks " + mode + " " + preset);
-            local levels_ = split(preset, ", ");
-            local levels = levels_.map(safeToInteger);
-            return @(l) levels.find(l) != null;
-        }
-        if (mode == "every nth") {
-            local n = safeToInteger(perksNth.getValue());
-            this.logInfo("vap: perks " + mode + " " + n);
-            local afterLevel = 11;
-            return @(l) l > afterLevel && (l - afterLevel) % n == 0;
-        }
-        this.logWarning("vap: ERROR unknown perk mode: " + mode);
-        return @(l) false;
-    }
+}
