@@ -4,7 +4,7 @@ My curated collection of perks inspired by [More Perks][], [True Balance][] and 
 
 So here we have:
 
-**Flesh on the Bones:** If the bones are there the flesh will grow. Restores hitpoints at *double rate* and doesn't feel any new injuries until combat ends. Both will only work as long as no bones are broken. Permanent injuries are fine
+**Flesh on the Bones:** If the bones are there the flesh will grow. Restores hitpoints at *double rate* and doesn't feel any new injuries until combat ends. Both will only work as long as no bones are broken. Permanent injuries are fine.
 
 **Bloody Harvest:** Gain *+10%* chance to hit for all area of effect attacks.
 

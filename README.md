@@ -7,6 +7,7 @@ A collection of mods to make Battle Brothers more fun and comfy. Written by me o
 [Autopilot New](autopilot) | Makes bros use more skills smarter and fixes some crashes. Compatible with Swifter. My version of [Adam's Autopilot][autopilot-old].
 [Better Beast Loot](mod_beast_loot) | Better loot from beasts, makes them worth fighting.
 [Bro Renamer](renamer) | Autochange each bro title to his profession + roman number.
+**[Bro Studio](bro_studio)** | Customize bro level ups: talents, perk points, traits, attribute gain.
 [Cheap Meat](mod_cheap_meat) | Cheaper bros and tryots.
 [Cook and Blacksmith Fix](heal_repair_fix) | Fixes Cook and Blacksmith speeding up healing and repairing.
 **[Elite Few - Master Bros](elite_few)** | A rewrite of the old [The Elite Few - Master Bros][elite-few-old], aimed at better compatibility with other mods and newer DLCs. Plus some fixes.

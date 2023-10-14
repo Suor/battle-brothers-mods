@@ -1,6 +1,6 @@
 # Bro Studio
 
-Allows to cutomize all sort of things during bro generation and level up:
+Allows to customize all sort of things during bro generation and level up:
 - talents
 - perk points
 - traits
