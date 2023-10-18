@@ -52,29 +52,16 @@ def hookify(file, force=False, verbose=False, stdout=False):
         return
 
     defs = parse(file)
-    # pprint(defs[""], depth=6);
-    print("".join(unparse(cls_path, defs))); return
     vanilla_defs = parse(vanilla_file)
-    # print(defs[""]["body"] == vanilla_defs[""]["body"])
-    # pprint(vanilla_defs[""], depth=4);
-    # return
-
     diff = calc_diff(vanilla_defs, defs)
-    # pprint(defs[""], depth=3)
-    # pprint(vanilla_defs[""], depth=3)
-    # import ipdb; ipdb.set_trace()
-    # pprint(diff, depth=5); return
-    print("".join(unparse(cls_path, diff))); return
-    # import ipdb; ipdb.set_trace()
-    # return
 
     if stdout:
-        print("".join(tabs_to_spaces(hook_lines(cls_path, diff))))
+        print("".join(tabs_to_spaces(unparse(cls_path, diff))))
         return
 
     # Write to hooks file
     hooks_file.parent.mkdir(parents=True, exist_ok=True)
-    hooks_file.write_text("".join(tabs_to_spaces(hook_lines(cls_path, diff))))
+    hooks_file.write_text("".join(tabs_to_spaces(unparse(cls_path, diff))))
     print("UPDATED" if exists else "DONE")
 
 
@@ -113,69 +100,105 @@ def calc_diff(from_defs, to_defs):
         from_subs = {s.name: s for s in from_body if isinstance(s, Scope)}
         to_subs = {s.name: s for s in to_body if isinstance(s, Scope)}
 
-        def _add(x):
-            nonlocal same, same_code
-            if isinstance(x, Scope):
-                diff = _calc_diff(from_subs.get(x.name), x)
-                if diff:
-                    same = False
-                    if isinstance(diff, list):
-                        yield from diff
-                    else:
-                        yield diff
-            else:
-                if not is_line_junk(x):
-                    same = same_code = False
-                yield x
+        # def _add(x):
+        #     nonlocal same, same_code
+        #     if isinstance(x, Scope):
+        #         diff = _calc_diff(from_subs.get(x.name), x)
+        #         if diff:
+        #             same = False
+        #             if isinstance(diff, list):
+        #                 yield from diff
+        #             else:
+        #                 yield diff
+        #     else:
+        #         if not is_line_junk(x):
+        #             same = same_code = False
+        #         yield x
 
-        def _delete(x):
+        # def _delete(x):
+        #     nonlocal same, same_code
+        #     if isinstance(x, Scope):
+        #         if x.name not in to_subs:
+        #             same = False
+        #             yield x.copy(op="delete")
+        #     else:
+        #         if not is_line_junk(x):
+        #             same = same_code = False
+        #         prefix = re_find(r"^([ \t]*)", x)# or "\t\t"
+        #         deleted = ' ' + x.removeprefix(prefix)
+        #         yield prefix + '//' + ('\n' if deleted.isspace() else deleted)
+
+        # def _same(x):
+        #     if not isinstance(x, Scope):
+        #         yield x
+
+        def _scope(op, xs, _=False):
             nonlocal same
-            if isinstance(x, Scope):
-                if x.name not in to_subs:
-                    same = False
-                    yield x.copy(op="delete")
-            else:
-                if not is_line_junk(x):
-                    same = same_code = False
-                prefix = re_find(r"^([ \t]*)", x)# or "\t\t"
-                deleted = ' ' + x.removeprefix(prefix)
-                yield prefix + '//' + ('\n' if deleted.isspace() else deleted)
+            for x in xs:
+                if op == "+":
+                    diff = _calc_diff(from_subs.get(x.name), x)
+                    if diff:
+                        same = False
+                        if isinstance(diff, list):
+                            yield from diff
+                        else:
+                            yield diff
 
-        def _same(x):
-            if not isinstance(x, Scope):
-                yield x
+                elif op == "-":
+                    if x.name not in to_subs:
+                        same = False
+                        yield x.copy(op="delete")
 
-        # def _dump(tag):
-        #     pass
+        def _lines(op, xs, new_code_block=False):
+            nonlocal same
+            if op in {"+", "-"} and not all(is_line_junk(line) for line in xs):
+                same = False
+
+            non_empty = next((line for line in xs if line != "\n"), "")
+            prefix = re_find(r"^([ \t]*)", non_empty)
+            if new_code_block:
+                yield prefix + "// START NEW CODE\n"
+
+            for line in xs:
+                if op in {" ", "+"}:
+                    yield line
+                elif op == "-":
+                    deleted = ' ' + line.removeprefix(prefix)
+                    yield prefix + '//' + ('\n' if deleted.isspace() else deleted)
+
+            if new_code_block:
+                yield prefix + "// END NEW CODE\n"
 
         # isjunk = lambda s: isinstance(s, str) and (not s or s.isspace())
         cruncher = SequenceMatcher(None, from_body, to_body, autojunk=False)
         for tag, alo, ahi, blo, bhi in cruncher.get_opcodes():
-            if tag == 'replace':
-                body_diff.extend(cat(_delete(x) for x in from_body[alo:ahi]))
-                body_diff.extend(cat(_add(x) for x in to_body[blo:bhi]))
-            elif tag == 'delete':
-                body_diff.extend(cat(_delete(x) for x in from_body[alo:ahi]))
-            elif tag == 'insert':
-                body_diff.extend(cat(_add(x) for x in to_body[blo:bhi]))
-                # for is_scope, group in groupby(to_body[blo:bhi], isa(Scope)):
-                #     if is_scope:
-                #         body_diff.extend(cat(_add(x) for x in group))
-                #     else:
-                #         body_diff.extend(_dump("+", list(group)))
-            elif tag == 'equal':
-                body_diff.extend(cat(_same(x) for x in to_body[blo:bhi]))
-            else:
-                raise ValueError('unknown tag %r' % (tag,))
+            if tag != 'equal':
+                for is_scope, group in groupby(from_body[alo:ahi], isa(Scope)):
+                    process = _scope if is_scope else _lines
+                    body_diff.extend(process("-", list(group)))
+
+            for is_scope, group in groupby(to_body[blo:bhi], isa(Scope)):
+                process = _scope if is_scope else _lines
+                op = " " if tag == "equal" else "+"
+                new_code_block = op == "+" and not bhi - blo == ahi - alo == 1
+                body_diff.extend(process(op, list(group), new_code_block))
+
+            # if tag == 'replace':
+            #     body_diff.extend(cat(_delete(x) for x in from_body[alo:ahi]))
+            #     body_diff.extend(cat(_add(x) for x in to_body[blo:bhi]))
+            # elif tag == 'delete':
+            #     body_diff.extend(cat(_delete(x) for x in from_body[alo:ahi]))
+            # elif tag == 'insert':
+            #     body_diff.extend(cat(_add(x) for x in to_body[blo:bhi]))
+            # elif tag == 'equal':
+            #     body_diff.extend(cat(_same(x) for x in to_body[blo:bhi]))
+            # else:
+            #     raise ValueError('unknown tag %r' % (tag,))
 
         return same, same_code, body_diff
 
     return {"": _calc_diff(from_defs[""], to_defs[""])}
 
-
-def tabs_to_spaces(lines, num=4):
-    for line in lines:
-        yield line.replace("\t", " " * num)
 
 def unparse(cls_path, defs):
     def _block(scope):
@@ -194,7 +217,8 @@ def unparse(cls_path, defs):
 
         elif scope.op in {"=", "<-"}:
             if scope.kind == "value":
-                yield f"{scope.name} {scope.op} {scope.value};\n"
+                old = f" // {scope.old}" if scope.get("old") is not None else ""
+                yield f"{scope.name} {scope.op} {scope.value};{old}\n"
             elif scope.kind == "func":
                 yield "\n"
                 yield f"{scope.name} {scope.op} function ({scope.params}) {{\n";
@@ -251,7 +275,7 @@ def parse(filename):
         elif not is_line_junk(line):
             raise ValueError(f"Unexpected '{line.rstrip()}' in scope {stack.top.name} at line {i}")
 
-    lines = readlines(filesname) if isinstance(filename, str) else filename
+    lines = readlines(filename) if isinstance(filename, str) else filename
     stack = ScopeStack()
     stack.push("root", "code", "")
     # print("-" * 80)
@@ -361,6 +385,13 @@ class Scope(dict):
 
     def __hash__(self):
         return hash(self.name)
+
+
+# Helpers
+
+def tabs_to_spaces(lines, num=4):
+    for line in lines:
+        yield line.replace("\t", " " * num)
 
 
 # Diff stuff

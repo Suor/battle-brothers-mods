@@ -79,8 +79,7 @@ def test_diff_inherit():
                 this.m.Loot = this.new("scripts/items/stash_container");
                 this.m.Loot.setResizable(true);
             }
-            function newFunc ( _a, _b )
-            {
+            function newFunc (_a, _b) {
                 return _a + _b;
             }
             function getTypeID()
@@ -93,7 +92,7 @@ def test_diff_inherit():
     assert diff(base_code, code) == dedent("""\
         ::mods_hookExactClass("path/to/location", function(cls) {
             delete cls.m.Banner;
-            cls.m.Type = 2;
+            cls.m.Type = 2; // 0
             cls.m.Description <- "<not-set>";
 
             local create = cls.create;
@@ -105,7 +104,7 @@ def test_diff_inherit():
                 this.m.Loot.setResizable(true);
             }
 
-            cls.newFunc <- function ( _a, _b ) {
+            cls.newFunc <- function (_a, _b) {
                 return _a + _b;
             }
             delete cls.isLocation;
@@ -131,7 +130,7 @@ def test_diff_table():
     assert diff(base_code, code) == dedent("""\
         delete gt.Props.Name;
         gt.Props.SpawnList <- null;
-        gt.Props.Flag = true;
+        gt.Props.Flag = true; // false
     """)
 
 def test_nested_table():
@@ -149,7 +148,7 @@ def test_nested_table():
             }
         }
     """
-    assert diff(base_code, code) == "gt.Const.Props.Num = 25;\n"
+    assert diff(base_code, code) == "gt.Const.Props.Num = 25; // 12\n"
 
 def test_new_table():
     base_code = ""
@@ -200,16 +199,20 @@ def test_diff_code():
         a = 1;
         b = 2;
         c = 3;
+        // START NEW CODE
         c1 = 3.2;
         c2 = 3.7;
+        // END NEW CODE
         d = 4;
 
         if (a > b) {
             // if (...) {
-                // d = c + 1;
+            //     d = c + 1;
             // }
-        //
+            //
+            // START NEW CODE
             print("EXPLAIN");
+            // END NEW CODE
             print(a - b);
         }
     """)
@@ -234,5 +237,5 @@ def _hookify(filename, base_lines, lines):
     base_defs = parse(base_lines)
     # pprint(base_defs[""]); return
     diff = calc_diff(base_defs, defs)
-    pprint(diff[""])
+    # pprint(diff[""])
     return "".join(unparse(filename, diff));
