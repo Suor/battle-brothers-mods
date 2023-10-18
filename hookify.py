@@ -3,8 +3,9 @@ from pathlib import Path
 import re
 import sys
 from difflib import Differ, SequenceMatcher
+from itertools import groupby
 from pprint import pprint, pformat
-from funcy import re_find, post_processing, cat
+from funcy import re_find, post_processing, cat, isa
 
 SCRIPTS = "/home/suor/_downloads/Battle Brothers mods/bbtmp2/scripts-base/";
 
@@ -52,7 +53,7 @@ def hookify(file, force=False, verbose=False, stdout=False):
 
     defs = parse(file)
     # pprint(defs[""], depth=6);
-    print("".join(unparse(defs))); return
+    print("".join(unparse(cls_path, defs))); return
     vanilla_defs = parse(vanilla_file)
     # print(defs[""]["body"] == vanilla_defs[""]["body"])
     # pprint(vanilla_defs[""], depth=4);
@@ -63,7 +64,7 @@ def hookify(file, force=False, verbose=False, stdout=False):
     # pprint(vanilla_defs[""], depth=3)
     # import ipdb; ipdb.set_trace()
     # pprint(diff, depth=5); return
-    print("".join(unparse(diff))); return
+    print("".join(unparse(cls_path, diff))); return
     # import ipdb; ipdb.set_trace()
     # return
 
@@ -80,24 +81,31 @@ def hookify(file, force=False, verbose=False, stdout=False):
 def calc_diff(from_defs, to_defs):
     def _calc_diff(from_scope, to_scope):
         if from_scope is None:
-            return to_scope.copy(new=True, full=True)
-        elif "value" in to_scope:
-            return to_scope.copy(new=False, old=from_scope.get("value", None), full=True)
-        # elif from_scope.op == to_scope.op == "inherit":
+            return to_scope.copy(op="<-")
+
+        # Should never compare scopes with different names and should only have certain ops in diff
+        assert to_scope.name == from_scope.name
+        assert to_scope.op not in {"hook", "monkey", "delete"}
+        assert from_scope.op not in {"hook", "monkey", "delete"}
+
+        if to_scope.kind != from_scope.kind:
+            return to_scope.copy(op="=")
+        elif to_scope.kind == "value":
+            return to_scope.copy(op="=", old=from_scope.value)
 
         same, same_code, body_diff = _compare_bodies(from_scope.body, to_scope.body)
         if same:
             return None
-
-        if from_scope.op == to_scope.op == "table":
-            # pprint(body_diff)
+        elif to_scope.op == "inherit":
+            return to_scope.copy(op="hook", body=body_diff, same_code=same_code)
+        elif to_scope.kind == "{":
+            # pprint(body_diff, depth=2)
             return body_diff
-            # return [s.copy(prefix="") for s in body_diff]
+        elif to_scope.kind == "func":
+            op = "<-" if from_scope is None else "="
+            return to_scope.copy(op=op, kind="monkey", body=body_diff, same_code=same_code)
 
-        op = to_scope.op
-        if op == from_scope.op == "inherit":
-            op = "hook"
-        return to_scope.copy(op=op, new=False, body=body_diff, same_code=same_code)
+        return to_scope.copy(body=body_diff, same_code=same_code)
 
     def _compare_bodies(from_body, to_body):
         same = same_code = True
@@ -125,17 +133,20 @@ def calc_diff(from_defs, to_defs):
             if isinstance(x, Scope):
                 if x.name not in to_subs:
                     same = False
-                    yield x.copy(delete=True)
+                    yield x.copy(op="delete")
             else:
                 if not is_line_junk(x):
                     same = same_code = False
                 prefix = re_find(r"^([ \t]*)", x)# or "\t\t"
-                # import ipdb; ipdb.set_trace()
-                yield prefix + '// ' + x.removeprefix(prefix)
+                deleted = ' ' + x.removeprefix(prefix)
+                yield prefix + '//' + ('\n' if deleted.isspace() else deleted)
 
         def _same(x):
             if not isinstance(x, Scope):
                 yield x
+
+        # def _dump(tag):
+        #     pass
 
         # isjunk = lambda s: isinstance(s, str) and (not s or s.isspace())
         cruncher = SequenceMatcher(None, from_body, to_body, autojunk=False)
@@ -147,6 +158,11 @@ def calc_diff(from_defs, to_defs):
                 body_diff.extend(cat(_delete(x) for x in from_body[alo:ahi]))
             elif tag == 'insert':
                 body_diff.extend(cat(_add(x) for x in to_body[blo:bhi]))
+                # for is_scope, group in groupby(to_body[blo:bhi], isa(Scope)):
+                #     if is_scope:
+                #         body_diff.extend(cat(_add(x) for x in group))
+                #     else:
+                #         body_diff.extend(_dump("+", list(group)))
             elif tag == 'equal':
                 body_diff.extend(cat(_same(x) for x in to_body[blo:bhi]))
             else:
@@ -157,68 +173,65 @@ def calc_diff(from_defs, to_defs):
     return {"": _calc_diff(from_defs[""], to_defs[""])}
 
 
-# def calc_diff(from_defs, to_defs):
-#     diff = {}
-#     for name, to_block in to_defs.items():
-#         from_block = from_defs.get(name)
-#         if from_block is None:
-#             diff[name] = to_block.copy(new=True, same=False)
-#         else:
-#             # TODO: what if these are different types ???
-#             if to_block.items() == from_block.items():
-#                 diff[name] = to_block.copy(new=False, same=True)
-#                 continue
-#             isjunk = lambda s: isinstance(s, str) and (not s or s.isspace())
-#             # import ipdb; ipdb.set_trace()
-#             # from_strs = [s for s in from_block["body"] if isinstance(s, str)]
-#             # to_strs = [s for s in to_block["body"] if isinstance(s, str)]
-#             # same, body_diff = CommentedChanges(isjunk).diff(from_strs, to_strs)
-#             same, body_diff = CommentedChanges(isjunk).diff(from_block.body, to_block.body)
-#             diff[name] = to_block.copy(new=False, same=same, body=body_diff)
-
-#     for name, to_block in from_defs.items():
-#         if name not in to_defs:
-#             diff[name] = Scope(name=name, delete=True, same=False)
-
-#     return diff
-
-
 def tabs_to_spaces(lines, num=4):
     for line in lines:
         yield line.replace("\t", " " * num)
 
-def unparse(defs):
+def unparse(cls_path, defs):
     def _block(scope):
         if scope is None:
             return
         # yield pformat(scope, depth=2) + "\n"
-        name = scope["name"]
-        if name == "":
-            yield from _body(scope["body"])
-        elif name == "inherit":
+
+        if scope.op == "root":
+            yield from _body(scope.body)
+        elif scope.op == "inherit":
             yield scope.start
             yield from _close(scope)
-        elif scope.get("delete"):
-            yield f"{scope.prefix}delete {name};\n"
-        elif scope.get("typ") == "table":
-            yield f"{scope.prefix}{name} = {{\n"
+        elif scope.op == "hook":
+            yield '::mods_hookExactClass("%s", function(cls) {\n' % cls_path.removesuffix(".nut")
             yield from _close(scope)
-        elif "params" in scope:
-            yield f"{scope.prefix}function {name}({scope.params}) {{\n"
-            yield from _close(scope)
-        elif scope.get("body"):
-            yield f"{scope.prefix}{name} = {scope.open}\n"
-            yield from _close(scope)
-        elif "value" in scope:
-            lh = name if scope.get("full") else scope.prefix + name.split(".")[-1]
-            new = scope.get("new")
-            yield f"{lh} {'<-' if new else '='} {scope.value}\n"
+
+        elif scope.op in {"=", "<-"}:
+            if scope.kind == "value":
+                yield f"{scope.name} {scope.op} {scope.value};\n"
+            elif scope.kind == "func":
+                yield "\n"
+                yield f"{scope.name} {scope.op} function ({scope.params}) {{\n";
+                yield from _body(scope["body"])
+                yield f"{scope.close}\n"
+            elif scope.kind == "monkey":
+                key = scope.name.split(".")[-1]
+                yield "\n"
+                if scope.op == "=":
+                    yield f"local {key} = {scope.name};\n"
+                yield f"{scope.name} {scope.op} function ({scope.params}) {{\n";
+                yield from _body(scope["body"])
+                yield f"{scope.close}\n"
+            else:
+                yield f"{scope.name} {scope.op} {scope.kind}\n"
+                yield from _close(scope)
+
+        elif scope.op == "delete":
+            yield f"delete {scope.name};\n"
+
+        elif scope.op == "key":
+            key = scope.name.split(".")[-1]
+            if scope.kind == "value":
+                yield f"{key} = {scope.value}\n"
+            elif scope.kind == "func":
+                yield f"function {key}({scope.params}) {{\n";
+                yield from _body(scope["body"])
+                yield f"{scope.close}\n"
+            else:
+                yield f"{key} = {scope.kind}\n"
+                yield from _close(scope)
         else:
-            yield f"{scope.prefix}{name} ...\n"
+            raise ValueError("Don't know how to unparse %s" % pformat(scope, depth=1))
 
     def _close(scope):
-        yield from _body(scope["body"])
-        yield f"{scope.prefix}{scope.close}\n"
+        yield from ("    " + line if line != "\n" else line for line in _body(scope["body"]))
+        yield f"{scope.close}\n"
 
     def _body(body):
         for line in body:
@@ -236,64 +249,72 @@ def parse(filename):
             stack.pop()
         # NOTE: we loose comments by simply skipping "junk"
         elif not is_line_junk(line):
-            raise ValueError(f"{line} in scope {stack.top.name} at line {i}")
+            raise ValueError(f"Unexpected '{line.rstrip()}' in scope {stack.top.name} at line {i}")
 
     lines = readlines(filesname) if isinstance(filename, str) else filename
     stack = ScopeStack()
-    stack.push("code", "")
+    stack.push("root", "code", "")
+    # print("-" * 80)
     for i, line in enumerate(lines, start=1):
-        if stack.top.op == "code":
+        if stack.top.kind == "code":
+            # print(line)
             if m := re_find(r"^this.\w+ <- this\.inherit\(", line):
-                # stack.top.body.append(line)
-                stack.push("inherit", "inherit", start=line)
+                # TODO: merge inherit and table
+                stack.push("inherit", "{", "cls", start=line, close="})")
             elif m := re_find(r"^(gt\.[\w\.]+) (=|<-) ([{[])\s*$", line):
-                name, _, bracket = m
-                op = "table" if bracket == "{" else "array"
-                stack.push(op, name)
+                name, op, kind = m
+                # op = "set" if _op == "=" else "new"
+                # kind = "table" if bracket == "{" else "array"
+                stack.push(op, kind, name)
             else:
                 stack.top.body.append(line)
-        elif stack.top.op == "inherit":
-            if m := re_find(r"^(\s+)function (\w+)\(([^)]*)\)", line):
-                prefix, name, params = m
-                stack.push("func", name, params=params, prefix=prefix)
-            elif prefix := re_find(r"^(\s+)m = {", line):
-                stack.push("table", "m", prefix=prefix)
-            else:
-                _close_or_unexpected()
-        elif stack.top.op == "table":
+        # elif stack.top.op == "inherit":
+        #     if m := re_find(r"^(\s+)function (\w+)\(([^)]*)\)", line):
+        #         prefix, name, params = m
+        #         stack.push("=", "func", name, params=params, prefix=prefix)
+        #     elif prefix := re_find(r"^(\s+)m = {", line):
+        #         stack.push("=", "{", "cls.m", prefix=prefix)
+        #     else:
+        #         _close_or_unexpected()
+        elif stack.top.kind == "{":
             if m := re_find(r"^(\s+)(\w+) = ([{[])\n$", line):
-                prefix, key, bracket = m
-                op = "table" if bracket == "{" else "array"
+                prefix, key, kind = m
                 name = stack.top["name"] + "." + key
-                stack.push(op, name, prefix=prefix)
+                stack.push("key", kind, name, prefix=prefix)
             elif m := re_find(r"^(\s+)(\w+) = ([^{[]+?),?\n$", line):
                 prefix, key, value = m
                 name = stack.top.name + "." + key
-                stack.blocks[name] = Scope(op="value", name=name, prefix=prefix, value=value)
-                stack.top.body.append(stack.blocks[name])
+                stack.push("key", "value", name, prefix=prefix, value=value)
+                stack.pop()
+            elif m := re_find(r"^(\s+)function (\w+)\s*\(([^)]*)\)", line):
+                prefix, key, params = m
+                name = stack.top.name + "." + key
+                stack.push("key", "func", name, params=params, prefix=prefix)
             else:
                 _close_or_unexpected()
-        elif stack.top.op == "array":
-            if m := re_find(r"^(\s+)([{[])\n$", line):
-                prefix, bracket = m
-                op = "table" if bracket == "{" else "array"
-                idx = stack.top.len
-                stack.top.len = idx + 1
-                name = stack.top["name"] + "." + str(idx)
-                stack.push(op, name, prefix=prefix, idx=idx)
-            elif line.startswith(stack.top.prefix + stack.top.close):
+        elif stack.top.kind == "[":
+            # TODO: handle array in table better
+            # if m := re_find(r"^(\s+)([{[])\n$", line):
+            #     prefix, bracket = m
+            #     op = "table" if bracket == "{" else "array"
+            #     idx = stack.top.len
+            #     stack.top.len = idx + 1
+            #     name = stack.top["name"] + "." + str(idx)
+            #     stack.push(op, name, prefix=prefix, idx=idx)
+            # el
+            if line.startswith(stack.top.prefix + stack.top.close):
                 stack.pop()
             else:
-                stack.top.body.append(line)
+                stack.top.body.append(line.removeprefix(stack.top.prefix))
             # else:
             #     _close() or _collect()
         else:
-            if stack.top.op == "func" and line.startswith(stack.top.prefix + "{"):
+            if stack.top.kind == "func" and line.startswith(stack.top.prefix + "{"):
                 continue  # do not put this to function body
-            elif line.startswith(stack.top.prefix + stack.top.close):
+            elif "close" in stack.top and line.startswith(stack.top.prefix + stack.top.close):
                 stack.pop()
             else:
-                stack.top.body.append(line)
+                stack.top.body.append(line.removeprefix(stack.top.prefix))
     return stack.blocks
 
 
@@ -308,8 +329,8 @@ class ScopeStack:
         self.stack = []
         self.top = None
 
-    def push(self, op, name, **kwargs):
-        scope = self.blocks[name] = Scope(op=op, name=name, **kwargs)
+    def push(self, op, kind, name, **kwargs):
+        scope = self.blocks[name] = Scope(op=op, kind=kind, name=name, **kwargs)
         self.stack.append(scope)
         if self.top is not None:
             self.top.body.append(scope)
@@ -321,33 +342,25 @@ class ScopeStack:
 
 
 class Scope(dict):
+    CLOSES = {"{": "}", "[": "]", "func": "}", "inherit": "})"}
+
     def __init__(self, *args, **kwargs):
         self.update(prefix="", body=[])
         dict.__init__(self, *args, **kwargs)
 
+        if "close" not in self and self.kind in self.CLOSES:
+            self["close"] = self.CLOSES[self.kind]
+
     def copy(self, **kwargs):
         return Scope(self, **kwargs)
 
-    @property
-    def open(self):
-        return {"table": "{", "array": "[", "func": "{"}[self.op]
-
-    @property
-    def close(self):
-        if self.name == "inherit":
-            return "})"
-        return {"table": "}", "array": "]", "func": "}"}[self.op]
-
     def __getattr__(self, name):
         if name not in self:
-            raise AttributeError(f"No '{name}' in scope {self}")
+            raise AttributeError(f"No '{name}' in scope {pformat(self, depth=1)}")
         return self[name]
 
     def __hash__(self):
         return hash(self.name)
-
-    # def __eq__(self, other):
-    #     return self.name == other.name
 
 
 # Diff stuff
