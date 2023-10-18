@@ -35,7 +35,7 @@ local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve 
         local min = mod.conf("talentsMin");
         local max = mod.conf("talentsMax");
         local chance = mod.conf("talentsChance");
-        return min + Rand.poly(max - min, chance);
+        return min + Rand.poly(max - min, chance / 100.0);
     }
 
     ::mods_hookExactClass("entity/tactical/player", function (cls) {
