@@ -221,21 +221,16 @@ def test_diff_code():
 # Helpers
 
 def roundtrip(code):
-    defs = parse(_code_to_lines(code))
+    defs = parse(dedent(code))
     # pprint(defs[""])
-    return "".join(unparse("path/to/location.nut", defs))
+    return unparse("path/to/location.nut", defs)
 
 def diff(base_code, code):
-    return _hookify("path/to/location.nut", _code_to_lines(base_code), _code_to_lines(code))
+    return _hookify("path/to/location.nut", base_code, code)
 
-def _code_to_lines(code):
-    return dedent(code).splitlines(keepends=True)
-
-def _hookify(filename, base_lines, lines):
-    defs = parse(lines)
-    # pprint(defs[""]); return
-    base_defs = parse(base_lines)
-    # pprint(base_defs[""]); return
+def _hookify(filename, base_code, code):
+    defs = parse(dedent(code))
+    base_defs = parse(dedent(base_code))
     diff = calc_diff(base_defs, defs)
     # pprint(diff[""])
-    return "".join(unparse(filename, diff));
+    return unparse(filename, diff);

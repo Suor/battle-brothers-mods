@@ -1,72 +1,120 @@
 #!/usr/bin/env python3
+"""\
+Usage:
+    python hookify.py <mod-file> [<to-file>] [options]
+    python hookify.py <mod-dir> [options]
+
+Rewrites old-style "copy and edit" mod files to hooks.
+
+Arguments:
+    <mod-file>  The path to a mod file to convert
+    <to-file>   File to write hooks code to, defaults to <mod-name>/path/to/class.nut,
+                use - to print to stdout instead
+    <mod-dir>   Process all *.nut files in a dir
+
+Options:
+    -t          Use tabs instead of spaces
+    -v          Verbose output
+    -h, --help  Show this help
+"""
+import os
 from pathlib import Path
-import re
 import sys
 from difflib import Differ, SequenceMatcher
 from itertools import groupby
 from pprint import pprint, pformat
-from funcy import re_find, post_processing, cat, isa
 
 SCRIPTS = "/home/suor/_downloads/Battle Brothers mods/bbtmp2/scripts-base/";
 
+
 def main():
-    filename = sys.argv[1]
-    options = {
-        "force": "-f" in sys.argv,
-        "verbose": "-v" in sys.argv,
-        "stdout": "-" in sys.argv,
-    }
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print(__doc__)
+        return
+
+    opt_to_kwarg = {"f": "force", "t": "tabs"}
+
+    # Parse options
+    if lopts := [x for x in sys.argv[1:] if x.startswith("--")]:
+        exit('Unknown option "%s"' % lopts[0])
+    opts = lcat(x[1:] for x in sys.argv[1:] if x.startswith("-") and x != "-")
+    if unknown := set(opts) - set(opt_to_kwarg) - {"h"}:
+        exit('Unknown option "-%s"' % unknown.pop())
+    kwargs = {full: o in opts for o, full in opt_to_kwarg.items()}
+
+    # Parse args
+    args = [x for x in sys.argv[1:] if x == "-" or not x.startswith("-")]
+    if len(args) < 1:
+        exit("Please specify file or dir")
+    elif len(args) > 2:
+        exit("Too many arguments")
+
+    filename = args[0]
+    outfile = args[1] if len(args) >= 2 else None
 
     path = Path(filename)
     if path.is_dir():
+        if outfile is not None:
+            exit("Can't specify output file for a dir")
         for subfile in path.glob("**/*.nut"):
-            hookify(str(subfile), **options)
+            hookify(str(subfile), **kwargs)
     elif path.is_file():
-        hookify(filename, **options)
+        hookify(filename, outfile, **kwargs)
     else:
-        print("File not found: " + filename, file=sys.stderr)
+        print(red("File not found: " + filename), file=sys.stderr)
         sys.exit(1)
 
+def exit(message):
+    print(red(message), file=sys.stderr)
+    print(__doc__, file=sys.stderr)
+    sys.exit(1)
 
-def hookify(file, force=False, verbose=False, stdout=False):
-    mod_dir, _, cls_path = file.rpartition("scripts/")
+
+def hookify(file, outfile=None, *, force=False, tabs=False):
+    info = (lambda s, **kw: None) if outfile == "-" else lambda s, **kw: print(s, **kw)
+
+    mod_dir, scripts, cls_path = os.path.abspath(file).rpartition("scripts/")
+    if not scripts:
+        info(red('No "scripts/" within path, won\'t be able to find corresponding vanilla nut'))
+        return
     vanilla_file = SCRIPTS + cls_path
 
-    # TODO: handle this better
-    if verbose:
-        print(cls_path + "... ", end="")
-
+    info(cls_path + "... ", end="")
     if not Path(vanilla_file).exists():
-        if verbose:
-            print("SKIPPED, no vanilla")
+        info("SKIPPED, no vanilla")
         return
 
-    if not verbose and not stdout:
-        print(cls_path + "... ", end="")
+    if outfile == "-":
+        print(_hookify(file, vanilla_file, cls_path, tabs=tabs))
+    else:
+        if outfile is None:
+            mod_name = Path(mod_dir).name
+            hooks_file = Path(mod_dir, mod_name, cls_path)  # mod_name is doubled intentionally
+        else:
+            hooks_file = Path(outfile)
 
-    mod_name = Path(mod_dir).name
-    hooks_file = Path(mod_dir, mod_name, cls_path)
-    exists = hooks_file.exists()
-    if not stdout and exists and not force:
-        print("SKIPPED, file exists")
-        return
+        exists = hooks_file.exists()
+        if exists and not force:
+            info("SKIPPED, file exists")
+            return
 
-    defs = parse(file)
-    vanilla_defs = parse(vanilla_file)
+        hook_code = _hookify(file, vanilla_file, cls_path, tabs=tabs)
+
+        # Write to hooks file
+        hooks_file.parent.mkdir(parents=True, exist_ok=True)
+        hooks_file.write_text(hook_code)
+        info("UPDATED" if exists else "DONE")
+
+
+def _hookify(file, vanilla_file, cls_path, tabs=False):
+    defs = parse_file(file)
+    vanilla_defs = parse_file(vanilla_file)
     diff = calc_diff(vanilla_defs, defs)
-
-    if stdout:
-        print("".join(tabs_to_spaces(unparse(cls_path, diff))))
-        return
-
-    # Write to hooks file
-    hooks_file.parent.mkdir(parents=True, exist_ok=True)
-    hooks_file.write_text("".join(tabs_to_spaces(unparse(cls_path, diff))))
-    print("UPDATED" if exists else "DONE")
+    return unparse(cls_path, diff, tabs=tabs)
 
 
 def calc_diff(from_defs, to_defs):
-    def _calc_diff(from_scope, to_scope):
+    def _subtract(from_scope, to_scope):
         if from_scope is None:
             return to_scope.copy(op="<-")
 
@@ -80,63 +128,30 @@ def calc_diff(from_defs, to_defs):
         elif to_scope.kind == "value":
             return to_scope.copy(op="=", old=from_scope.value)
 
-        same, same_code, body_diff = _compare_bodies(from_scope.body, to_scope.body)
+        same, body_diff = _compare_bodies(from_scope.body, to_scope.body)
         if same:
             return None
-        elif to_scope.op == "inherit":
-            return to_scope.copy(op="hook", body=body_diff, same_code=same_code)
+        elif to_scope.op == "inherit":  # inherit - inherit == hook
+            return to_scope.copy(op="hook", body=body_diff)
         elif to_scope.kind == "{":
-            # pprint(body_diff, depth=2)
             return body_diff
-        elif to_scope.kind == "func":
+        elif to_scope.kind == "func":   # func - func == monkey
             op = "<-" if from_scope is None else "="
-            return to_scope.copy(op=op, kind="monkey", body=body_diff, same_code=same_code)
-
-        return to_scope.copy(body=body_diff, same_code=same_code)
+            return to_scope.copy(op=op, kind="monkey", body=body_diff)
+        else:
+            return to_scope.copy(body=body_diff)
 
     def _compare_bodies(from_body, to_body):
-        same = same_code = True
+        same = True
         body_diff = []
         from_subs = {s.name: s for s in from_body if isinstance(s, Scope)}
         to_subs = {s.name: s for s in to_body if isinstance(s, Scope)}
-
-        # def _add(x):
-        #     nonlocal same, same_code
-        #     if isinstance(x, Scope):
-        #         diff = _calc_diff(from_subs.get(x.name), x)
-        #         if diff:
-        #             same = False
-        #             if isinstance(diff, list):
-        #                 yield from diff
-        #             else:
-        #                 yield diff
-        #     else:
-        #         if not is_line_junk(x):
-        #             same = same_code = False
-        #         yield x
-
-        # def _delete(x):
-        #     nonlocal same, same_code
-        #     if isinstance(x, Scope):
-        #         if x.name not in to_subs:
-        #             same = False
-        #             yield x.copy(op="delete")
-        #     else:
-        #         if not is_line_junk(x):
-        #             same = same_code = False
-        #         prefix = re_find(r"^([ \t]*)", x)# or "\t\t"
-        #         deleted = ' ' + x.removeprefix(prefix)
-        #         yield prefix + '//' + ('\n' if deleted.isspace() else deleted)
-
-        # def _same(x):
-        #     if not isinstance(x, Scope):
-        #         yield x
 
         def _scope(op, xs, _=False):
             nonlocal same
             for x in xs:
                 if op == "+":
-                    diff = _calc_diff(from_subs.get(x.name), x)
+                    diff = _subtract(from_subs.get(x.name), x)
                     if diff:
                         same = False
                         if isinstance(diff, list):
@@ -154,8 +169,8 @@ def calc_diff(from_defs, to_defs):
             if op in {"+", "-"} and not all(is_line_junk(line) for line in xs):
                 same = False
 
-            non_empty = next((line for line in xs if line != "\n"), "")
-            prefix = re_find(r"^([ \t]*)", non_empty)
+            prefixes = (re_find(r"^([ \t]*)", line) for line in xs if line != "\n")
+            prefix = min(prefixes, default="", key=len)
             if new_code_block:
                 yield prefix + "// START NEW CODE\n"
 
@@ -183,24 +198,12 @@ def calc_diff(from_defs, to_defs):
                 new_code_block = op == "+" and not bhi - blo == ahi - alo == 1
                 body_diff.extend(process(op, list(group), new_code_block))
 
-            # if tag == 'replace':
-            #     body_diff.extend(cat(_delete(x) for x in from_body[alo:ahi]))
-            #     body_diff.extend(cat(_add(x) for x in to_body[blo:bhi]))
-            # elif tag == 'delete':
-            #     body_diff.extend(cat(_delete(x) for x in from_body[alo:ahi]))
-            # elif tag == 'insert':
-            #     body_diff.extend(cat(_add(x) for x in to_body[blo:bhi]))
-            # elif tag == 'equal':
-            #     body_diff.extend(cat(_same(x) for x in to_body[blo:bhi]))
-            # else:
-            #     raise ValueError('unknown tag %r' % (tag,))
+        return same, body_diff
 
-        return same, same_code, body_diff
-
-    return {"": _calc_diff(from_defs[""], to_defs[""])}
+    return {"": _subtract(from_defs[""], to_defs[""])}
 
 
-def unparse(cls_path, defs):
+def unparse(cls_path, defs, tabs=False):
     def _block(scope):
         if scope is None:
             return
@@ -254,7 +257,7 @@ def unparse(cls_path, defs):
             raise ValueError("Don't know how to unparse %s" % pformat(scope, depth=1))
 
     def _close(scope):
-        yield from ("    " + line if line != "\n" else line for line in _body(scope["body"]))
+        yield from (indent + line if line != "\n" else line for line in _body(scope["body"]))
         yield f"{scope.close}\n"
 
     def _body(body):
@@ -264,10 +267,16 @@ def unparse(cls_path, defs):
             else:
                 yield from _block(line)
 
-    yield from _block(defs[""])
+    indent = "\t" if tabs else "    "
+    code = _block(defs[""])
+    return "".join(code if tabs else tabs_to_spaces(code))
 
 
-def parse(filename):
+def parse_file(filename):
+    with open(filename) as fd:
+        return parse(fd.read())
+
+def parse(code):
     def _close_or_unexpected():
         if line.startswith(stack.top.prefix + stack.top.close):
             stack.pop()
@@ -275,31 +284,18 @@ def parse(filename):
         elif not is_line_junk(line):
             raise ValueError(f"Unexpected '{line.rstrip()}' in scope {stack.top.name} at line {i}")
 
-    lines = readlines(filename) if isinstance(filename, str) else filename
+    lines = code.splitlines(keepends=True)
     stack = ScopeStack()
     stack.push("root", "code", "")
-    # print("-" * 80)
     for i, line in enumerate(lines, start=1):
         if stack.top.kind == "code":
-            # print(line)
             if m := re_find(r"^this.\w+ <- this\.inherit\(", line):
-                # TODO: merge inherit and table
                 stack.push("inherit", "{", "cls", start=line, close="})")
             elif m := re_find(r"^(gt\.[\w\.]+) (=|<-) ([{[])\s*$", line):
                 name, op, kind = m
-                # op = "set" if _op == "=" else "new"
-                # kind = "table" if bracket == "{" else "array"
                 stack.push(op, kind, name)
             else:
                 stack.top.body.append(line)
-        # elif stack.top.op == "inherit":
-        #     if m := re_find(r"^(\s+)function (\w+)\(([^)]*)\)", line):
-        #         prefix, name, params = m
-        #         stack.push("=", "func", name, params=params, prefix=prefix)
-        #     elif prefix := re_find(r"^(\s+)m = {", line):
-        #         stack.push("=", "{", "cls.m", prefix=prefix)
-        #     else:
-        #         _close_or_unexpected()
         elif stack.top.kind == "{":
             if m := re_find(r"^(\s+)(\w+) = ([{[])\n$", line):
                 prefix, key, kind = m
@@ -340,11 +336,6 @@ def parse(filename):
             else:
                 stack.top.body.append(line.removeprefix(stack.top.prefix))
     return stack.blocks
-
-
-def readlines(filename):
-    with open(filename) as fd:
-        return fd.readlines()
 
 
 class ScopeStack:
@@ -389,63 +380,55 @@ class Scope(dict):
 
 # Helpers
 
+from itertools import chain
+from operator import methodcaller
+import re
+
+
+def is_line_junk(line, pat=re.compile(r"^\s*(?:$|//)")):
+    return pat.search(line) is not None
+
 def tabs_to_spaces(lines, num=4):
     for line in lines:
         yield line.replace("\t", " " * num)
 
+def isa(typ):
+    return lambda x: isinstance(x, typ)
 
-# Diff stuff
+def lcat(seqs):
+    return list(chain.from_iterable(seqs))
 
-def is_line_junk(line, pat=re.compile(r"^\s*(?:$|//)")):
-    return isinstance(line, str) and pat.search(line) is not None
+def re_find(regex, s, flags=0):
+    """Matches regex against the given string,
+       returns the match in the simplest possible form."""
+    regex, _getter = _inspect_regex(regex, flags)
+    getter = lambda m: _getter(m) if m else None
+    return getter(regex.search(s))
 
+def _inspect_regex(regex, flags):
+    if not isinstance(regex, re.Pattern):
+        regex = re.compile(regex, flags)
+    return regex, _make_getter(regex)
 
-# TODO: don't use Differ
-class CommentedChanges(Differ):
-    def diff(self, a, b):
-        self._same = True
-        changes = list(self.compare(a, b))
-        return self._same, changes
+def _make_getter(regex):
+    if regex.groups == 0:
+        return methodcaller('group')
+    elif regex.groups == 1 and regex.groupindex == {}:
+        return methodcaller('group', 1)
+    elif regex.groupindex == {}:
+        return methodcaller('groups')
+    elif regex.groups == len(regex.groupindex):
+        return methodcaller('groupdict')
+    else:
+        return lambda m: m
 
-    def compare(self, a, b):
-        # Overwrite this to pass autojunk=False
-        cruncher = SequenceMatcher(self.linejunk, a, b, autojunk=False)
-        for tag, alo, ahi, blo, bhi in cruncher.get_opcodes():
-            # print(tag, alo, ahi, blo, bhi)
-            # import ipdb; ipdb.set_trace()
-            if tag == 'replace':
-                yield from self._dump('-', a, alo, ahi, True)
-                yield from self._dump('+', b, blo, bhi, True)
-            elif tag == 'delete':
-                yield from self._dump('-', a, alo, ahi)
-            elif tag == 'insert':
-                yield from self._dump('+', b, blo, bhi)
-            elif tag == 'equal':
-                yield from self._dump(' ', a, alo, ahi)
-            else:
-                raise ValueError('unknown tag %r' % (tag,))
-
-    def _dump(self, tag, x, lo, hi, in_replace=False):
-        non_empty = next((line for line in x[lo:hi] if isinstance(line, str) and line != "\n"), "")
-        prefix = re_find(r"^([ \t]*)", non_empty)# or "\t\t"
-        if tag == "+" and (not in_replace or hi - lo > 1):
-            yield prefix + "// START NEW CODE\n"
-        # elif tag == "-":
-        #     yield prefix + "// DELETED %s\n" % ("BLOCK" if hi - lo > 1 else "LINE")
-        for i in range(lo, hi):
-            if tag == " ":
-                yield x[i]
-            elif tag == "+":
-                if not is_line_junk(x[i]):
-                    self._same = False
-                yield x[i]
-            elif tag == "-":
-                if not is_line_junk(x[i]):
-                    self._same = False
-                if not isinstance(x[i], Scope):
-                    yield prefix + '// ' + x[i].removeprefix(prefix)
-        if tag == "+" and (not in_replace or hi - lo > 1):
-            yield prefix + "// END NEW CODE\n"
+# Coloring works on all systems but Windows
+if os.name == 'nt':
+    def red(text):
+        return text
+else:
+    def red(text):
+        return "\033[31m" + text + "\033[0m"
 
 
 if __name__ == "__main__":
