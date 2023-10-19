@@ -13,6 +13,7 @@ Arguments:
     <mod-dir>   Process all *.nut files in a dir
 
 Options:
+    -f          Overwrite existing files
     -t          Use tabs instead of spaces
     -v          Verbose output
     -h, --help  Show this help
@@ -32,7 +33,7 @@ def main():
         print(__doc__)
         return
 
-    opt_to_kwarg = {"f": "force", "t": "tabs"}
+    opt_to_kwarg = {"f": "force", "t": "tabs", "v": "verbose"}
 
     # Parse options
     if lopts := [x for x in sys.argv[1:] if x.startswith("--")]:
@@ -56,8 +57,13 @@ def main():
     if path.is_dir():
         if outfile is not None:
             exit("Can't specify output file for a dir")
+
+        count = 0
         for subfile in path.glob("**/*.nut"):
-            hookify(str(subfile), **kwargs)
+            if "/scripts/" in subfile.resolve().as_posix():
+                count += hookify(subfile, **kwargs)
+        print(f"Processed {count} file(s) (use -v for verbose output)")
+
     elif path.is_file():
         hookify(filename, outfile, **kwargs)
     else:
@@ -70,19 +76,21 @@ def exit(message):
     sys.exit(1)
 
 
-def hookify(file, outfile=None, *, force=False, tabs=False):
+def hookify(file, outfile=None, *, force=False, tabs=False, verbose=False):
     info = (lambda s, **kw: None) if outfile == "-" else lambda s, **kw: print(s, **kw)
 
-    mod_dir, scripts, cls_path = os.path.abspath(file).rpartition("scripts/")
+    mod_dir, scripts, cls_path = Path(file).resolve().as_posix().rpartition("/scripts/")
     if not scripts:
-        info(red('No "scripts/" within path, won\'t be able to find corresponding vanilla nut'))
-        return
-    vanilla_file = SCRIPTS + cls_path
+        info(red('No "/scripts/" within path, won\'t be able to find a corresponding vanilla nut'))
+        return 0
+
+    vanilla_file = os.path.join(SCRIPTS, cls_path)
+    if not Path(vanilla_file).exists():
+        if verbose:
+            info(cls_path + "... " + yellow("SKIPPED, no vanilla"))
+        return 0
 
     info(cls_path + "... ", end="")
-    if not Path(vanilla_file).exists():
-        info("SKIPPED, no vanilla")
-        return
 
     if outfile == "-":
         print(_hookify(file, vanilla_file, cls_path, tabs=tabs))
@@ -95,15 +103,17 @@ def hookify(file, outfile=None, *, force=False, tabs=False):
 
         exists = hooks_file.exists()
         if exists and not force:
-            info("SKIPPED, file exists")
-            return
+            info(yellow("SKIPPED, file exists"))
+            return 0
 
         hook_code = _hookify(file, vanilla_file, cls_path, tabs=tabs)
 
         # Write to hooks file
         hooks_file.parent.mkdir(parents=True, exist_ok=True)
         hooks_file.write_text(hook_code)
-        info("UPDATED" if exists else "DONE")
+        info(green("UPDATED" if exists else "DONE"))
+
+    return 1
 
 
 def _hookify(file, vanilla_file, cls_path, tabs=False):
@@ -282,7 +292,8 @@ def parse(code):
             stack.pop()
         # NOTE: we loose comments by simply skipping "junk"
         elif not is_line_junk(line):
-            raise ValueError(f"Unexpected '{line.rstrip()}' in scope {stack.top.name} at line {i}")
+            raise ValueError(
+                f"Unexpected '{line.rstrip()}' in scope {pformat(stack.top, depth=1)} at line {i}")
 
     lines = code.splitlines(keepends=True)
     stack = ScopeStack()
@@ -424,11 +435,11 @@ def _make_getter(regex):
 
 # Coloring works on all systems but Windows
 if os.name == 'nt':
-    def red(text):
-        return text
+    red = green = yellow = lambda text: text
 else:
-    def red(text):
-        return "\033[31m" + text + "\033[0m"
+    red = lambda text: "\033[31m" + text + "\033[0m"
+    green = lambda text: "\033[32m" + text + "\033[0m"
+    yellow = lambda text: "\033[33m" + text + "\033[0m"
 
 
 if __name__ == "__main__":
