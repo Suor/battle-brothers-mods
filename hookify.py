@@ -308,11 +308,13 @@ def parse(code):
             else:
                 stack.top.body.append(line)
         elif stack.top.kind == "{":
-            if m := re_find(r"^(\s+)(\w+) = ([{[])\n$", line):
+            if m := re_find(r"^(\s+)(\w+) = (\{\}?|\[),?\n$", line):
                 prefix, key, kind = m
                 name = stack.top["name"] + "." + key
-                stack.push("key", kind, name, prefix=prefix)
-            elif m := re_find(r"^(\s+)(\w+) = ([^{[]+?),?\n$", line):
+                stack.push("key", kind[0], name, prefix=prefix)
+                if len(kind) > 1:
+                    stack.pop()  # empty table
+            elif m := re_find(r"^(\s+)(\w+) = ([^{[]+?|\[\]),?\n$", line):
                 prefix, key, value = m
                 name = stack.top.name + "." + key
                 stack.push("key", "value", name, prefix=prefix, value=value)
