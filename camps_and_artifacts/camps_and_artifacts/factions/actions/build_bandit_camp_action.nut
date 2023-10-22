@@ -1,6 +1,7 @@
 ::mods_hookExactClass("factions/actions/build_bandit_camp_action", function(cls) {
+
     local onExecute = cls.onExecute;
-    cls.onExecute = function ( _faction ) {
+    cls.onExecute = function (_faction) {
         // START NEW CODE
         local settlements = _faction.getSettlements();
         // logInfo("build_bandit_camp_action.onExecute settlements " + settlements.len()
@@ -9,7 +10,9 @@
         local camp;
         // local r = this.Math.rand(1, 3);
         // local minY = this.Const.DLC.Desert ? 0.2 : 0.0;
+        // START NEW CODE
         local r = this.Math.rand(1, 4);
+        // END NEW CODE
         local maxY = this.Const.DLC.Wildmen ? 0.75 : 1.0;
 
         if (r == 1)
@@ -74,5 +77,5 @@
             _faction.addSettlement(camp, false);
         }
     }
+})
 
-}

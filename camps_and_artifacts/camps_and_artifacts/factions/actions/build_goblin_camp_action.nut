@@ -1,6 +1,7 @@
 ::mods_hookExactClass("factions/actions/build_goblin_camp_action", function(cls) {
+
     local onExecute = cls.onExecute;
-    cls.onExecute = function ( _faction ) {
+    cls.onExecute = function (_faction) {
         local camp;
         local r;
         // local minY = this.Const.DLC.Desert ? 0.2 : 0.0;
@@ -218,5 +219,5 @@
             _faction.addSettlement(camp, false);
         }
     }
+})
 
-}

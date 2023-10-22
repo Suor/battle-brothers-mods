@@ -5,11 +5,11 @@ local mod = ::Autopilot <- {
   // Settings
   FreeWake = true // auto break free out of nets and webs and wake allies when unused AP left
   Reload = true   // auto reload when unused AP left
-  Verbose = false // show ai debugging for auto bros
+  Verbose = true // show ai debugging for auto bros
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, null, function() {
+::mods_queue(mod.ID, "mod_hooks(>=20), !mod_autopilot", function() {
   ::include("autopilot/better_behavior");
   ::include("autopilot/fixes");
   ::include("autopilot/verbose");
@@ -165,8 +165,8 @@ local mod = ::Autopilot <- {
           // Prefer attacking over engaging, i.e. wandering around
           agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.EngageMelee] = 0.5;
           // TODO: separate throwing only from hybrids
-          agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.SwitchToMelee] = 0.25;
-          agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 2.0;
+          // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.SwitchToMelee] = 0.5;
+          // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 2.0;
           // Otherwise is afraid of "shooting over shoulder"
           agent.m.Properties.TargetPriorityHittingAlliesMult = 1.0;
           // This guys are supposed to hit and injure

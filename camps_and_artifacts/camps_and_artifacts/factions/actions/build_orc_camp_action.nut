@@ -1,6 +1,7 @@
 ::mods_hookExactClass("factions/actions/build_orc_camp_action", function(cls) {
+
     local onUpdate = cls.onUpdate;
-    cls.onUpdate = function ( _faction ) {
+    cls.onUpdate = function (_faction) {
         local settlements = _faction.getSettlements();
 
         if (this.World.FactionManager.isGreenskinInvasion() && this.World.FactionManager.getGreaterEvilStrength() >= 20.0)
@@ -20,7 +21,7 @@
     }
 
     local onExecute = cls.onExecute;
-    cls.onExecute = function ( _faction ) {
+    cls.onExecute = function (_faction) {
         local camp;
         local r;
         // local minY = this.Const.DLC.Desert ? 0.15 : 0.0;
@@ -40,7 +41,7 @@
             // r = this.Math.rand(1, 5);
             r = this.Math.rand(1, 6);
         }
-// 
+    //
         if (r == 0 || r == 1)
         {
             local tile;
@@ -170,11 +171,11 @@
                 ], 10, 1000, 30);
                 // END NEW CODE
             }
-            // 
+            //
             // if (tile != null && _faction.getSettlements().len() == 0)
             // {
             //     local goblins = this.World.FactionManager.getFactionOfType(this.Const.FactionType.Goblins).getSettlements();
-            // 
+            //
             //     foreach( s in goblins )
             //     {
             //         if (s.getTile().getDistanceTo(tile) <= 25)
@@ -224,5 +225,5 @@
             _faction.addSettlement(camp, false);
         }
     }
+})
 
-}

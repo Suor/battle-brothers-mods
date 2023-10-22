@@ -1,6 +1,7 @@
 ::mods_hookExactClass("factions/actions/build_barbarian_camp_action", function(cls) {
+
     local onExecute = cls.onExecute;
-    cls.onExecute = function ( _faction ) {
+    cls.onExecute = function (_faction) {
         local camp;
         // local r = this.Math.rand(1, 3);
         local r = this.Math.rand(1, 4);
@@ -60,5 +61,5 @@
             _faction.addSettlement(camp, false);
         }
     }
+})
 
-}
