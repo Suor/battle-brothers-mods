@@ -37,13 +37,16 @@ mod.extraPerks <- function(level) {
     if (level == 1) {
         // pass
     } else if (level <= veteranLevel) {
-        perks += mod.conf("perksEach") - 1;
+        perks += mod.conf("perksEach");
         local nth = mod.conf("perksNth");
         if (nth != "off" && (level - 1) % nth == 0) perks++;
     } else {
         local nth = mod.conf("perksVeteranNth");
         if (nth != "off" && (level - veteranLevel) % nth == 0) perks++;
     }
+
+    // These are added by the game itself
+    if (level > 1 && level <= ::Const.XP.MaxLevelWithPerkpoints) perks--;
 
     local preset = mod.conf("perksPreset");
     if (preset) {
