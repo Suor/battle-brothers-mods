@@ -107,7 +107,11 @@ def hookify(file, outfile=None, *, force=False, tabs=False, verbose=False):
             info(yellow("SKIPPED, file exists"))
             return 0
 
-        hook_code = _hookify(file, vanilla_file, cls_path, tabs=tabs)
+        try:
+            hook_code = _hookify(file, vanilla_file, cls_path, tabs=tabs)
+        except ParseError as e:
+            info(red("Failed to parse: %s" % e))
+            return 0
 
         # Write to hooks file
         hooks_file.parent.mkdir(parents=True, exist_ok=True)
@@ -374,7 +378,7 @@ def parse(code):
             stack.pop()
         # NOTE: we loose comments by simply skipping "junk"
         elif not is_line_junk(line):
-            raise ValueError(
+            raise ParseError(
                 f"Unexpected '{line.rstrip()}' in scope {pformat(stack.top, depth=1)} at line {i}")
 
     lines = code.splitlines(keepends=True)
@@ -429,7 +433,12 @@ def parse(code):
                 stack.pop()
             else:
                 stack.top.body.append(line.removeprefix(stack.top.prefix))
+    if stack.top.op != "root":
+        raise ParseError(f"never closed {stack.top.name}")
     return stack.blocks
+
+class ParseError(Exception):
+    pass
 
 
 class ScopeStack:
