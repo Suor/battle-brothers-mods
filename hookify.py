@@ -62,7 +62,8 @@ def main():
         for subfile in path.glob("**/*.nut"):
             if "/scripts/" in subfile.resolve().as_posix():
                 count += hookify(subfile, **kwargs)
-        print(f"Processed {count} file(s) (use -v for verbose output)")
+        verbose_hint = "" if kwargs["verbose"] else " (use -v for verbose output)"
+        print(f"Processed {count} file(s)" + verbose_hint)
 
     elif path.is_file():
         hookify(filename, outfile, **kwargs)
@@ -159,7 +160,7 @@ def calc_diff(from_defs, to_defs):
             return to_scope.copy(op="=", old=from_scope.value)
 
         same, body_diff = _compare_bodies(from_scope.body, to_scope.body)
-        if same:
+        if same and to_scope.op != "elem":
             return None
         elif to_scope.op == "inherit":  # inherit - inherit == hook
             return to_scope.copy(op="hook", body=body_diff)
@@ -169,7 +170,8 @@ def calc_diff(from_defs, to_defs):
             return to_scope.copy(op="=", kind="monkey", body=body_diff)
         else:
             # TODO: recode how we subtract tables
-            op = "=" if to_scope.kind in {"{", "["} and to_scope.op == "key" else to_scope.op
+            op = "=" if to_scope.kind in {"{", "["} and to_scope.op in {"key", "<-"} \
+                else to_scope.op
             return to_scope.copy(op=op, body=body_diff)
 
     def _compare_bodies(from_body, to_body):
@@ -191,7 +193,7 @@ def calc_diff(from_defs, to_defs):
                 if isinstance(old, Scope) and old.kind == x.kind:
                     xset = {hash(e) for e in x.body}
                     oset = {hash(e) for e in old.body}
-                    if len(xset & oset) >= 0.51 * len(oset):
+                    if len(xset ^ oset) * 2 < len(xset) + len(oset):
                         return old
 
         def _scope(op, xs, tag, _=False):
@@ -284,13 +286,13 @@ def calc_diff(from_defs, to_defs):
 
 
 def unparse(cls_path, defs, tabs=False):
-    def _block(scope):
+    def _block(scope, tail=()):
         if scope is None:
             return
         # yield pformat(scope, depth=2) + "\n"
 
         if scope.op == "root":
-            yield from _body(scope.body)
+            yield from _body(scope)
         elif scope.op == "inherit":
             yield scope.start
             yield from _close(scope)
@@ -299,7 +301,7 @@ def unparse(cls_path, defs, tabs=False):
             yield from _close(scope)
 
         elif scope.op == "changes":
-            yield from _body(scope.body)
+            yield from _body(scope)
 
         elif scope.op in {"=", "<-"}:
             if scope.kind == "value":
@@ -308,7 +310,7 @@ def unparse(cls_path, defs, tabs=False):
             elif scope.kind == "func":
                 yield "\n"
                 yield f"{scope.name} {scope.op} function ({scope.params}) {{\n";
-                yield from _body(scope["body"])
+                yield from _body(scope)
                 yield f"{scope.close}\n"
             elif scope.kind == "monkey":
                 key = scope.name.split(".")[-1]
@@ -316,7 +318,7 @@ def unparse(cls_path, defs, tabs=False):
                 if scope.op == "=":
                     yield f"local {key} = {scope.name};\n"
                 yield f"{scope.name} {scope.op} function ({scope.params.strip()}) {{\n";
-                yield from _body(scope["body"])
+                yield from _body(scope)
                 yield f"{scope.close}\n"
             else:
                 yield f"{scope.name} {scope.op} {scope.kind}\n"
@@ -326,17 +328,24 @@ def unparse(cls_path, defs, tabs=False):
             yield f"delete {scope.name};\n"
 
         elif scope.op == "elem":
+            scope_next = first(s for s in tail if not isinstance(s, str) or not is_line_junk(s))
+            opt_comma = (scope_next is None
+                or (isinstance(scope_next, str) and re.search(r"^\s*[\w{\"'@/]", scope_next))
+                or (isinstance(scope_next, Scope) and scope_next.kind in {"{", "ref"})
+            )
+            comma = "" if opt_comma else ","
             if scope.kind == "value":
                 # Q: do we ever have this old?
                 old = f" // {scope.old}" if scope.get("old") is not None else ""
-                yield f"{scope.value},{old}\n"
+                yield f"{scope.value}{comma}{old}\n"
             elif scope.kind == "ref":
                 parent = scope.name.rstrip("[]")  #rsplit(".", 1)[0]
                 ref = f"{parent}[{scope.idx}]"
-                yield f"{ref},\n"
+                yield f"{ref}{comma}\n"
             else:
                 yield f"{scope.kind}\n"
-                yield from _close(scope)
+                yield from ("\t" + line if line != "\n" else line for line in _body(scope))
+                yield f"{scope.close}{comma}\n"
 
         elif scope.op == "key":
             key = scope.name.split(".")[-1]
@@ -344,7 +353,7 @@ def unparse(cls_path, defs, tabs=False):
                 yield f"{key} = {scope.value}\n"
             elif scope.kind == "func":
                 yield f"function {key}({scope.params}) {{\n";
-                yield from _body(scope["body"])
+                yield from _body(scope)
                 yield f"{scope.close}\n"
             else:
                 yield f"{key} = {scope.kind}\n"
@@ -354,15 +363,15 @@ def unparse(cls_path, defs, tabs=False):
             raise ValueError("Don't know how to unparse %s" % pformat(scope, depth=1))
 
     def _close(scope):
-        yield from ("\t" + line if line != "\n" else line for line in _body(scope["body"]))
+        yield from ("\t" + line if line != "\n" else line for line in _body(scope))
         yield f"{scope.close}\n"
 
-    def _body(body):
-        for line in body:
-            if isinstance(line, str):
-                yield line
+    def _body(scope):
+        for i, sub in enumerate(scope.body):
+            if isinstance(sub, str):
+                yield sub
             else:
-                yield from _block(line)
+                yield from _block(sub, scope.body[i+1:])  # TODO: make it more efficient
 
     code = _block(defs[""])
     return "".join(code if tabs else tabs_to_spaces(code))
@@ -427,10 +436,14 @@ def parse(code):
                 stack.top.len = idx + 1
                 name = stack.top["name"] + "[]" #+ "." + str(idx)
                 stack.push("elem", kind, name, prefix=prefix, idx=idx, len=0)
+            elif _close():
+                pass
             else:
+                if not is_line_junk(line):
+                    stack.top.len += 1  # This is fragile, need proper parser!
                 # TODO: make it better
                 indent = '\t' if line.startswith('\t') else '    '
-                _close() or _collect(stack.top.prefix + indent)
+                _collect(stack.top.prefix + indent)
         elif stack.top.kind == "func":
             if stack.top.level == 0:
                 if is_line_junk(line):
@@ -527,6 +540,11 @@ def isa(typ):
 
 def lcat(seqs):
     return list(chain.from_iterable(seqs))
+
+def first(seq):
+    """Returns the first item in the sequence.
+       Returns None if the sequence is empty."""
+    return next(iter(seq), None)
 
 def re_find(regex, s, flags=0):
     """Matches regex against the given string,

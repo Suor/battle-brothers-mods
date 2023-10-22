@@ -39,6 +39,36 @@ def test_parse_table_bad_indent():
     fixed = re.sub(r'\n\s+([}\]])', r'\n    \1', fixed)
     assert roundtrip(code) == fixed
 
+def test_aoa():
+    # NOTE: should not loose comma between elements
+    code = """\
+        gt.Skills = [
+            "start",
+            [
+                "dash"
+                5
+            ],
+            // comment
+            [
+                "slash"
+                17
+            ]
+        ]
+    """
+    assert roundtrip(code) == dedent(code)
+
+def test_parse_nested_curly():
+    code = dedent("""\
+        gt.Data = {
+            function some() {
+                if (cond) {
+                    do something;
+                }
+            }
+        }
+    """)
+    assert roundtrip(code) == dedent(code)
+
 def test_parse_inherit():
     code = """\
         this.location <- this.inherit("scripts/entity/world/world_entity", {
@@ -55,18 +85,6 @@ def test_parse_inherit():
         })
     """
     assert roundtrip(code) == dedent(code).replace(",\n", "\n").replace(")\n    {", ") {")
-
-def test_parse_nested_curly():
-    code = dedent("""\
-        gt.Data = {
-            function some() {
-                if (cond) {
-                    do something;
-                }
-            }
-        }
-    """)
-    assert roundtrip(code) == dedent(code)
 
 
 def test_diff_inherit():
@@ -247,11 +265,11 @@ def test_aot():
     """
     assert diff(base_code, code) == dedent("""\
         gt.Skills = [
-            gt.Skills[0],
+            gt.Skills[0]
             {
                 name = "special"
             }
-            gt.Skills[1],
+            gt.Skills[1]
         ]
     """)
 
@@ -286,7 +304,7 @@ def test_aot_complex():
     """
     assert diff(base_code, code) == dedent("""\
         gt.Skills = [
-            gt.Skills[0],
+            gt.Skills[0]
             {
                 name = "slash"
                 type = 13
@@ -326,17 +344,20 @@ def test_aot_swap():
             {
                 name = "active"
             },
-            "value",
+            "value"
         ]
     """
+    # TODO: understand here that "value" and "value", are the same
     assert diff(base_code, code) == dedent("""\
         gt.Skills = [
-            gt.Skills[2],
+            gt.Skills[2]
             // junk
-            gt.Skills[1],
-            gt.Skills[0],
-            "value",
-            // USED TO BE element 3
+            gt.Skills[1]
+            // "value",
+            gt.Skills[0]
+            // START NEW CODE
+            "value"
+            // END NEW CODE
         ]
     """)
 
@@ -362,7 +383,6 @@ def test_toaoa():
         gt.Trait <- {
             None = 0,
             Actions = [
-                [],
                 [
                     "patrol_action",
                     "raze_attached_location_action",
@@ -377,7 +397,7 @@ def test_toaoa():
     """
     assert diff(base_code, code) == dedent("""\
         gt.Trait.Actions = [
-            [],
+            // [],
             [
                 "patrol_action",
                 "raze_attached_location_action",
@@ -386,7 +406,71 @@ def test_toaoa():
                 // END NEW CODE
                 "destroy_orc_camp_action"
             ]
-            gt.Trait.Actions[1],
+            gt.Trait.Actions[2]
+        ]
+    """)
+
+def test_toaoa2():
+    # NOTE: the array with "extra-element" catches similar and same, but have junk case
+    base_code = """\
+        gt.Const.Perks.BeastClassTree.Tree <- [
+            [],
+            [
+                gt.Const.Perks.PerkDefs.LegendNetRepair
+            ],
+            [
+                gt.Const.Perks.PerkDefs.LegendNetCasting,
+                "extra-element"
+            ],
+            [
+                gt.Const.Perks.PerkDefs.LegendMasteryNets
+            ],
+            [
+                gt.Const.Perks.PerkDefs.LegendEscapeArtist
+            ],
+            [],
+            []
+        ];
+    """
+    code = """\
+        gt.Const.Perks.BeastClassTree.Tree <- [
+            [
+                gt.Const.Perks.PerkDefs.LegendNetRepair
+            ],
+            [
+            ],
+            [
+            ],
+            [
+                // gt.Const.Perks.PerkDefs.LegendMasteryNets
+                gt.Const.Perks.PerkDefs.LegendNetCasting,
+                "extra-element"
+            ],
+            [
+            ],
+            [],
+            []
+        ]
+    """
+    assert diff(base_code, code) == dedent("""\
+        gt.Const.Perks.BeastClassTree.Tree = [
+            // [],
+            gt.Const.Perks.BeastClassTree.Tree[1],
+            [
+            ],
+            [
+            ],
+            [
+                // START NEW CODE
+                // gt.Const.Perks.PerkDefs.LegendMasteryNets
+                // END NEW CODE
+                gt.Const.Perks.PerkDefs.LegendNetCasting,
+                "extra-element"
+            ],
+            [
+            ],
+            [],
+            []
         ]
     """)
 
@@ -464,5 +548,5 @@ def _hookify(filename, base_code, code):
     # pprint(defs[""])
     base_defs = parse(dedent(base_code))
     diff = calc_diff(base_defs, defs)
-    # pprint(diff[""])
+    pprint(diff[""])
     return unparse(filename, diff);
