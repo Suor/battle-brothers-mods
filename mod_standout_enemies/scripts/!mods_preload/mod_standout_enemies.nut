@@ -509,7 +509,7 @@ Strategy = se.Strategy <- {
     },
     Orc = {
         MinScale = 0.6,
-        MaxScale = 1.8,
+        MaxScale = 1.6,
         AnyTypes = ["orc_warrior", "orc_berserker", "orc_warlord"],
         function getPlan(stats, maturity) {
             local num = se.getQuirkedNum(stats, this.AnyTypes, maturity, 0.5, 1);
