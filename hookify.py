@@ -81,7 +81,8 @@ def hookify(file, outfile=None, *, force=False, tabs=False, verbose=False):
 
     mod_dir, scripts, cls_path = Path(file).resolve().as_posix().rpartition("/scripts/")
     if not scripts:
-        info(red('No "/scripts/" within path, won\'t be able to find a corresponding vanilla nut'))
+        msg = red('No "/scripts/" within path, won\'t be able to find a corresponding vanilla nut')
+        print(msg, file=sys.stderr)
         return 0
 
     vanilla_file = os.path.join(SCRIPTS, cls_path)
@@ -124,7 +125,7 @@ def _hookify(file, vanilla_file, cls_path, tabs=False):
 
 
 def calc_diff(from_defs, to_defs):
-    def _subtract(from_scope, to_scope):
+    def _diff_scopes(from_scope, to_scope):
         if from_scope is None:
             return to_scope.copy(op="<-")
 
@@ -134,8 +135,9 @@ def calc_diff(from_defs, to_defs):
         assert from_scope.op not in {"hook", "monkey", "delete"}
 
         if to_scope.kind != from_scope.kind:
-            return to_scope.copy(op="=")
+            return to_scope.copy(op="=")# if to_scope.op == "<-" else to_scope
         elif to_scope.kind == "value":
+            # op = "=" if to_scope.op == "<-" else to_scope.op
             return to_scope.copy(op="=", old=from_scope.value)
 
         same, body_diff = _compare_bodies(from_scope.body, to_scope.body)
@@ -144,37 +146,71 @@ def calc_diff(from_defs, to_defs):
         elif to_scope.op == "inherit":  # inherit - inherit == hook
             return to_scope.copy(op="hook", body=body_diff)
         elif to_scope.kind == "{":
-            return body_diff
+            return Scope(op="changes", kind=to_scope.kind, body=body_diff)
         elif to_scope.kind == "func":   # func - func == monkey
-            op = "<-" if from_scope is None else "="
-            return to_scope.copy(op=op, kind="monkey", body=body_diff)
+            return to_scope.copy(op="=", kind="monkey", body=body_diff)
         else:
-            return to_scope.copy(body=body_diff)
+            # TODO: recode how we subtract tables
+            op = "=" if to_scope.kind in {"{", "["} and to_scope.op == "key" else to_scope.op
+            return to_scope.copy(op=op, body=body_diff)
 
     def _compare_bodies(from_body, to_body):
         same = True
         body_diff = []
         from_subs = {s.name: s for s in from_body if isinstance(s, Scope)}
         to_subs = {s.name: s for s in to_body if isinstance(s, Scope)}
+        from_elems = {e: e for e in from_body if isinstance(e, Scope) and e.op == "elem"}
+        to_elems = {e for e in to_body if isinstance(e, Scope) and e.op == "elem"}
 
-        def _scope(op, xs, _=False):
+        def _find_similar(x, old_elems):
+            assert x.op == "elem"
+
+            # NOTE: may also consider functions and tables
+            if x.kind not in "[":
+                return
+
+            for old in old_elems:
+                if isinstance(old, Scope) and old.kind == x.kind:
+                    xset = {hash(e) for e in x.body}
+                    oset = {hash(e) for e in old.body}
+                    if len(xset & oset) >= 0.51 * len(oset):
+                        return old
+
+        def _scope(op, xs, tag, _=False):
             nonlocal same
             for x in xs:
-                if op == "+":
-                    diff = _subtract(from_subs.get(x.name), x)
+                if x.op == "elem":
+                    yield from _elem(op, x, tag)
+                elif op == "+":
+                    assert x.op in {"key", "=", "<-", "inherit"}, pformat(x)
+                    diff = _diff_scopes(from_subs.get(x.name), x)
                     if diff:
                         same = False
-                        if isinstance(diff, list):
-                            yield from diff
-                        else:
-                            yield diff
-
+                        yield diff
                 elif op == "-":
                     if x.name not in to_subs:
                         same = False
                         yield x.copy(op="delete")
 
-        def _lines(op, xs, new_code_block=False):
+        def _elem(op, x, tag):
+            nonlocal same
+            if op == "+":
+                same = False
+                if old := from_elems.get(x):
+                    yield old.copy(kind="ref")
+                elif similar := _find_similar(x, from_body):
+                    yield _diff_scopes(similar, x)
+                else:
+                    yield x  # A completely new element
+            elif op == "-":
+                same = False
+                if tag != "replace":
+                    if x not in to_elems:
+                        yield f"// USED TO BE element {x.idx}\n"
+            elif op == " ":
+                yield x.copy(kind="ref")
+
+        def _lines(op, xs, tag, new_code_block=False):
             nonlocal same
             if op in {"+", "-"} and not all(is_line_junk(line) for line in xs):
                 same = False
@@ -194,23 +230,39 @@ def calc_diff(from_defs, to_defs):
             if new_code_block:
                 yield prefix + "// END NEW CODE\n"
 
-        # isjunk = lambda s: isinstance(s, str) and (not s or s.isspace())
-        cruncher = SequenceMatcher(None, from_body, to_body, autojunk=False)
-        for tag, alo, ahi, blo, bhi in cruncher.get_opcodes():
-            if tag != 'equal':
-                for is_scope, group in groupby(from_body[alo:ahi], isa(Scope)):
-                    process = _scope if is_scope else _lines
-                    body_diff.extend(process("-", list(group)))
-
-            for is_scope, group in groupby(to_body[blo:bhi], isa(Scope)):
+        def _process_op(tag, a, alo, ahi, b, blo, bhi):
+            # if a[alo].op == "elem":
+                # import ipdb; ipdb.set_trace()
+            # if tag != 'equal':
+            for is_scope, group in groupby(a[alo:ahi], isa(Scope)):
                 process = _scope if is_scope else _lines
-                op = " " if tag == "equal" else "+"
-                new_code_block = op == "+" and not bhi - blo == ahi - alo == 1
-                body_diff.extend(process(op, list(group), new_code_block))
+                op = " " if tag == "equal" else "-"
+                body_diff.extend(process(op, list(group), tag))
+
+            if tag != 'equal':
+                for is_scope, group in groupby(b[blo:bhi], isa(Scope)):
+                    process = _scope if is_scope else _lines
+                    op = " " if tag == "equal" else "+"
+                    new_code_block = op == "+" and not bhi - blo == ahi - alo == 1
+                    body_diff.extend(process(op, list(group), tag, new_code_block))
+
+        isjunk = lambda s: isinstance(s, str) and (not s or s.isspace())
+        cruncher = SequenceMatcher(isjunk, from_body, to_body, autojunk=False)
+        for tag, alo, ahi, blo, bhi in cruncher.get_opcodes():
+            if tag == 'replace':
+                # Using junk arg above allows to find replacement better but then it might contain
+                # same junk lines as part of replace, i.e. replace empty line with another one.
+                a = from_body[alo:ahi]
+                b = to_body[blo:bhi]
+                subcruncher = SequenceMatcher(None, a, b, autojunk=False)
+                for tag, alo, ahi, blo, bhi in subcruncher.get_opcodes():
+                    _process_op(tag, a, alo, ahi, b, blo, bhi)
+            else:
+                _process_op(tag, from_body, alo, ahi, to_body, blo, bhi)
 
         return same, body_diff
 
-    return {"": _subtract(from_defs[""], to_defs[""])}
+    return {"": _diff_scopes(from_defs[""], to_defs[""])}
 
 
 def unparse(cls_path, defs, tabs=False):
@@ -228,6 +280,9 @@ def unparse(cls_path, defs, tabs=False):
             yield '::mods_hookExactClass("%s", function(cls) {\n' % cls_path.removesuffix(".nut")
             yield from _close(scope)
 
+        elif scope.op == "changes":
+            yield from _body(scope.body)
+
         elif scope.op in {"=", "<-"}:
             if scope.kind == "value":
                 old = f" // {scope.old}" if scope.get("old") is not None else ""
@@ -242,7 +297,7 @@ def unparse(cls_path, defs, tabs=False):
                 yield "\n"
                 if scope.op == "=":
                     yield f"local {key} = {scope.name};\n"
-                yield f"{scope.name} {scope.op} function ({scope.params}) {{\n";
+                yield f"{scope.name} {scope.op} function ({scope.params.strip()}) {{\n";
                 yield from _body(scope["body"])
                 yield f"{scope.close}\n"
             else:
@@ -251,6 +306,19 @@ def unparse(cls_path, defs, tabs=False):
 
         elif scope.op == "delete":
             yield f"delete {scope.name};\n"
+
+        elif scope.op == "elem":
+            if scope.kind == "value":
+                # Q: do we ever have this old?
+                old = f" // {scope.old}" if scope.get("old") is not None else ""
+                yield f"{scope.value},{old}\n"
+            elif scope.kind == "ref":
+                parent = scope.name.rstrip("[]")  #rsplit(".", 1)[0]
+                ref = f"{parent}[{scope.idx}]"
+                yield f"{ref},\n"
+            else:
+                yield f"{scope.kind}\n"
+                yield from _close(scope)
 
         elif scope.op == "key":
             key = scope.name.split(".")[-1]
@@ -263,11 +331,12 @@ def unparse(cls_path, defs, tabs=False):
             else:
                 yield f"{key} = {scope.kind}\n"
                 yield from _close(scope)
+
         else:
             raise ValueError("Don't know how to unparse %s" % pformat(scope, depth=1))
 
     def _close(scope):
-        yield from (indent + line if line != "\n" else line for line in _body(scope["body"]))
+        yield from ("\t" + line if line != "\n" else line for line in _body(scope["body"]))
         yield f"{scope.close}\n"
 
     def _body(body):
@@ -277,7 +346,6 @@ def unparse(cls_path, defs, tabs=False):
             else:
                 yield from _block(line)
 
-    indent = "\t" if tabs else "    "
     code = _block(defs[""])
     return "".join(code if tabs else tabs_to_spaces(code))
 
@@ -304,17 +372,17 @@ def parse(code):
                 stack.push("inherit", "{", "cls", start=line, close="})")
             elif m := re_find(r"^(gt\.[\w\.]+) (=|<-) ([{[])\s*$", line):
                 name, op, kind = m
-                stack.push(op, kind, name)
+                stack.push(op, kind, name, len=0)
             else:
                 stack.top.body.append(line)
         elif stack.top.kind == "{":
-            if m := re_find(r"^(\s+)(\w+) = (\{\}?|\[),?\n$", line):
+            if m := re_find(r"^(\s+)(\w+) ?= ?(\{\}?|\[\]?),?\n$", line):
                 prefix, key, kind = m
                 name = stack.top["name"] + "." + key
-                stack.push("key", kind[0], name, prefix=prefix)
+                stack.push("key", kind[0], name, prefix=prefix, len=0)
                 if len(kind) > 1:
-                    stack.pop()  # empty table
-            elif m := re_find(r"^(\s+)(\w+) = ([^{[]+?|\[\]),?\n$", line):
+                    stack.pop()  # empty table or array
+            elif m := re_find(r"^(\s+)(\w+) ?= ?([^{[]+?),?\n$", line):
                 prefix, key, value = m
                 name = stack.top.name + "." + key
                 stack.push("key", "value", name, prefix=prefix, value=value)
@@ -326,19 +394,18 @@ def parse(code):
             else:
                 _close_or_unexpected()
         elif stack.top.kind == "[":
-            # TODO: handle array in table better
-            # if m := re_find(r"^(\s+)([{[])\n$", line):
-            #     prefix, bracket = m
-            #     op = "table" if bracket == "{" else "array"
-            #     idx = stack.top.len
-            #     stack.top.len = idx + 1
-            #     name = stack.top["name"] + "." + str(idx)
-            #     stack.push(op, name, prefix=prefix, idx=idx)
-            # el
-            if line.startswith(stack.top.prefix + stack.top.close):
+            if m := re_find(r"^(\s+)(\{|\[)\n", line):
+                prefix, kind = m
+                idx = stack.top.len
+                stack.top.len = idx + 1
+                name = stack.top["name"] + "[]" #+ "." + str(idx)
+                stack.push("elem", kind, name, prefix=prefix, idx=idx)
+            elif line.startswith(stack.top.prefix + stack.top.close):
                 stack.pop()
             else:
-                stack.top.body.append(line.removeprefix(stack.top.prefix))
+                # TODO: make it better
+                indent = '\t' if line.startswith('\t') else '    '
+                stack.top.body.append(line.removeprefix(stack.top.prefix + indent))
             # else:
             #     _close() or _collect()
         else:
@@ -388,8 +455,15 @@ class Scope(dict):
         return self[name]
 
     def __hash__(self):
-        return hash(self.name)
+        return hash((self.kind, self.get("value")) + tuple(self.body))
 
+    def __eq__(self, other):
+        if not isinstance(other, Scope):
+            return False
+        elif self.op == other.op == "elem":
+            return self.kind == other.kind and self.body == other.body
+        else:
+            return dict.__eq__(self, other)
 
 # Helpers
 

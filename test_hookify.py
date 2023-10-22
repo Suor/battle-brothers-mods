@@ -133,7 +133,7 @@ def test_diff_table():
         gt.Props.Flag = true; // false
     """)
 
-def test_nested_table():
+def test_tot():
     base_code = """\
         gt.Const = {
             Props = {
@@ -145,19 +145,216 @@ def test_nested_table():
         gt.Const = {
             Props = {
                 Num = 25
+                Type = "goblin"
             }
         }
     """
-    assert diff(base_code, code) == "gt.Const.Props.Num = 25; // 12\n"
+    assert diff(base_code, code) == dedent("""\
+        gt.Const.Props.Num = 25; // 12
+        gt.Const.Props.Type <- "goblin";
+    """)
 
 def test_new_table():
     base_code = ""
     code = """\
-        gt.Const <- {
-            Num = 25
-        }
     """
     assert diff(base_code, code) == dedent(code)
+
+
+def test_array_simple():
+    base_code = """\
+        gt.Skills = [
+            "dash",
+            "slash",
+            "throw_net"
+        ];
+    """
+    code = """\
+        gt.Skills = [
+            "slash",
+            "special",
+            "throw_net"
+        ]
+    """
+    assert diff(base_code, code) == dedent("""\
+        gt.Skills = [
+            // "dash",
+            "slash",
+            // START NEW CODE
+            "special",
+            // END NEW CODE
+            "throw_net"
+        ]
+    """)
+
+def test_aot():
+    base_code = """\
+        gt.Skills = [
+            {
+                name = "dash"
+            },
+            {
+                name = "slash"
+            }
+        ];
+    """
+    code = """\
+        gt.Skills = [
+            {
+                name = "dash"
+            },
+            {
+                name = "special"
+            },
+            {
+                name = "slash"
+            }
+        ]
+    """
+    assert diff(base_code, code) == dedent("""\
+        gt.Skills = [
+            gt.Skills[0],
+            {
+                name = "special"
+            }
+            gt.Skills[1],
+        ]
+    """)
+
+def test_aot_complex():
+    base_code = """\
+        gt.Skills = [
+            {
+                name = "dash",
+                type = 12,
+                num = 1
+            },
+            {
+                name = "slash",
+                type = 13,
+                num = 2
+            }
+        ];
+    """
+    code = """\
+        gt.Skills = [
+            {
+                name = "dash"
+                type = 12,
+                num = 1
+            },
+            {
+                name = "slash"
+                type = 13,
+                num = 3
+            },
+        ]
+    """
+    assert diff(base_code, code) == dedent("""\
+        gt.Skills = [
+            gt.Skills[0],
+            {
+                name = "slash"
+                type = 13
+                num = 3
+            }
+        ]
+    """)
+
+def test_aot_swap():
+    base_code = """\
+        gt.Skills = [
+            {
+                name = "active"
+            },
+            // junk
+            {
+                name = "dash"
+            },
+            {
+                name = "slash"
+            },
+            "value",
+            {
+                name = "deleted"
+            }
+        ];
+    """
+    code = """\
+        gt.Skills = [
+            {
+                name = "slash"
+            },
+            // junk
+            {
+                name = "dash"
+            },
+            {
+                name = "active"
+            },
+            "value",
+        ]
+    """
+    assert diff(base_code, code) == dedent("""\
+        gt.Skills = [
+            gt.Skills[2],
+            // junk
+            gt.Skills[1],
+            gt.Skills[0],
+            "value",
+            // USED TO BE element 3
+        ]
+    """)
+
+
+def test_toaoa():
+    base_code = """\
+        gt.Trait <- {
+            None = 0,
+            Actions = [
+                [],
+                [
+                    "patrol_action",
+                    "raze_attached_location_action",
+                    "destroy_orc_camp_action"
+                ],
+                [
+                    "build_camp_action"
+                ]
+            ]
+        }
+    """
+    code = """\
+        gt.Trait <- {
+            None = 0,
+            Actions = [
+                [],
+                [
+                    "patrol_action",
+                    "raze_attached_location_action",
+                    "new_action"
+                    "destroy_orc_camp_action"
+                ],
+                [
+                    "build_camp_action"
+                ]
+            ]
+        }
+    """
+    assert diff(base_code, code) == dedent("""\
+        gt.Trait.Actions = [
+            [],
+            [
+                "patrol_action",
+                "raze_attached_location_action",
+                // START NEW CODE
+                "new_action"
+                // END NEW CODE
+                "destroy_orc_camp_action"
+            ]
+            gt.Trait.Actions[1],
+        ]
+    """)
 
 
 def test_diff_code():
@@ -230,6 +427,7 @@ def diff(base_code, code):
 
 def _hookify(filename, base_code, code):
     defs = parse(dedent(code))
+    # pprint(defs[""])
     base_defs = parse(dedent(base_code))
     diff = calc_diff(base_defs, defs)
     # pprint(diff[""])
