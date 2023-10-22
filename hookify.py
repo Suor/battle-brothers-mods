@@ -373,11 +373,19 @@ def parse_file(filename):
         return parse(fd.read())
 
 def parse(code):
-    def _close_or_unexpected():
-        if line.startswith(stack.top.prefix + stack.top.close):
+    def _close():
+        if "close" in stack.top and re.search(fr"^\s*{re.escape(stack.top.close)}[,;]?\s*$", line):
             stack.pop()
+            return True
+
+    def _collect(prefix=None):
+        if prefix is None:
+            prefix = stack.top.prefix
+        stack.top.body.append(line.removeprefix(prefix))
+
+    def _unexpected():
         # NOTE: we loose comments by simply skipping "junk"
-        elif not is_line_junk(line):
+        if not is_line_junk(line):
             raise ParseError(
                 f"Unexpected '{line.rstrip()}' in scope {pformat(stack.top, depth=1)} at line {i}")
 
@@ -392,7 +400,7 @@ def parse(code):
                 name, op, kind = m
                 stack.push(op, kind, name, len=0)
             else:
-                stack.top.body.append(line)
+                _collect("")
         elif stack.top.kind == "{":
             if m := re_find(r"^(\s+)(\w+) ?= ?(\{\}?|\[\]?),?\n$", line):
                 prefix, key, kind = m
@@ -405,34 +413,46 @@ def parse(code):
                 name = stack.top.name + "." + key
                 stack.push("key", "value", name, prefix=prefix, value=value)
                 stack.pop()
-            elif m := re_find(r"^(\s+)function (\w+)\s*\(([^)]*)\)", line):
-                prefix, key, params = m
+            elif m := re_find(r"^(\s+)function (\w+)\s*\(([^)]*)\)\s*(\{?)\s*$", line):
+                prefix, key, params, curly = m
                 name = stack.top.name + "." + key
-                stack.push("key", "func", name, params=params, prefix=prefix)
+                stack.push("key", "func", name, params=params, level=int(bool(curly)), prefix=prefix)
+
             else:
-                _close_or_unexpected()
+                _close() or _unexpected()
         elif stack.top.kind == "[":
             if m := re_find(r"^(\s+)(\{|\[)\n", line):
                 prefix, kind = m
                 idx = stack.top.len
                 stack.top.len = idx + 1
                 name = stack.top["name"] + "[]" #+ "." + str(idx)
-                stack.push("elem", kind, name, prefix=prefix, idx=idx)
-            elif line.startswith(stack.top.prefix + stack.top.close):
-                stack.pop()
+                stack.push("elem", kind, name, prefix=prefix, idx=idx, len=0)
             else:
                 # TODO: make it better
                 indent = '\t' if line.startswith('\t') else '    '
-                stack.top.body.append(line.removeprefix(stack.top.prefix + indent))
-            # else:
-            #     _close() or _collect()
-        else:
-            if stack.top.kind == "func" and line.startswith(stack.top.prefix + "{"):
-                continue  # do not put this to function body
-            elif "close" in stack.top and line.startswith(stack.top.prefix + stack.top.close):
-                stack.pop()
+                _close() or _collect(stack.top.prefix + indent)
+        elif stack.top.kind == "func":
+            if stack.top.level == 0:
+                if is_line_junk(line):
+                    continue  # loosing junk in between ) and { in func decl
+                elif re_find(r"^\s*\{\s*$", line):
+                    stack.top.level = 1
+                else:
+                    raise ParseError(f"Expected '{{' at line {i}, got {line} instead")
+            elif stack.top.level == 1 and _close():
+                pass
             else:
-                stack.top.body.append(line.removeprefix(stack.top.prefix))
+                parts = re.findall(r"[{}]", line)
+                for c in parts:
+                    stack.top.level += 1 if c == "{" else -1
+                if stack.top.level < 0:
+                    raise ParseError(f"Unexpected '}}' at line {i}")
+                elif stack.top.level == 0:
+                    stack.pop()
+                else:
+                    _collect()
+        else:
+            _close() or _collect()
     if stack.top.op != "root":
         raise ParseError(f"never closed {stack.top.name}")
     return stack.blocks

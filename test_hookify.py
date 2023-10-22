@@ -1,4 +1,5 @@
 from pprint import pprint
+import re
 from textwrap import dedent
 from hookify import parse, unparse, calc_diff
 
@@ -17,6 +18,27 @@ def test_parse_table():
     """)
     assert roundtrip(code) == code.replace(",", "").replace(")\n    {", ") {")
 
+def test_parse_table_bad_indent():
+    code = dedent("""\
+        gt.Props = {
+            Sub = {
+                X = 1
+               }
+            Arr = [
+             ]
+            function test(_param) {
+                return _param > 100;
+            }
+            function test2(_param)
+          {
+                return _param > 100;
+         }
+        }
+    """)
+    fixed = re.sub(r'\)\s*\{', ') {', code)
+    fixed = re.sub(r'\n\s+([}\]])', r'\n    \1', fixed)
+    assert roundtrip(code) == fixed
+
 def test_parse_inherit():
     code = """\
         this.location <- this.inherit("scripts/entity/world/world_entity", {
@@ -33,6 +55,18 @@ def test_parse_inherit():
         })
     """
     assert roundtrip(code) == dedent(code).replace(",\n", "\n").replace(")\n    {", ") {")
+
+def test_parse_nested_curly():
+    code = dedent("""\
+        gt.Data = {
+            function some() {
+                if (cond) {
+                    do something;
+                }
+            }
+        }
+    """)
+    assert roundtrip(code) == dedent(code)
 
 
 def test_diff_inherit():
