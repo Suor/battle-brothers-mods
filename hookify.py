@@ -126,13 +126,27 @@ def _hookify(file, vanilla_file, cls_path, tabs=False):
 
 def calc_diff(from_defs, to_defs):
     def _diff_scopes(from_scope, to_scope):
+        # We have on input:
+        #     ops:  root inherit = <- elem key
+        #     kind: value { [ func code
+        # Op math:
+        #     <- - <- = =
+        #     inherit - inherit = hook
+        #     (stays the same otherwise)
+        # Kind math:
+        #     value - value = value
+        #     { - { = edit ops?
+        #     [ - [ = [            (with annotated changes and refs to exact same elements)
+        #     func - func = monkey (with annotated code)
+        #     code - code = code   (annotated with // and START/END NEW CODE)
         if from_scope is None:
             return to_scope.copy(op="<-")
 
         # Should never compare scopes with different names and should only have certain ops in diff
-        assert to_scope.name == from_scope.name
-        assert to_scope.op not in {"hook", "monkey", "delete"}
-        assert from_scope.op not in {"hook", "monkey", "delete"}
+        assert from_scope.name == to_scope.name
+        assert from_scope.op == to_scope.op
+        assert from_scope.op in {"root", "inherit", "=", "<-", "elem", "key"}
+        assert to_scope.op in {"root", "inherit", "=", "<-", "elem", "key"}
 
         if to_scope.kind != from_scope.kind:
             return to_scope.copy(op="=")# if to_scope.op == "<-" else to_scope
