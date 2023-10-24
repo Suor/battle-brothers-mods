@@ -45,8 +45,8 @@ Safe to add midgame, can't remove once you have these masters anywhere including
 
 ## Changes from the Original Mod
 
+- new icon, not using Old trait icon anymore
 - added "dubious" traits list, might be excluded via Mod Options
-- moved "drunkard" to duibous traits
 - allow Bloodthirsty for masters
 - added 1 in 30 limit for very high cost backgrounds, multiplier applies on top
 - capped strength update at 50%

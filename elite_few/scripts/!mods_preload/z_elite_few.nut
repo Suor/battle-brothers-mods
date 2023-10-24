@@ -1,13 +1,14 @@
 ::EliteFew <- {
     ID = "mod_elite_few"
     Name = "Elite Few - Master Bros"
-    Version = "2.2.0"
+    Version = "2.3.0"
 };
 
 // Replaces the original TheEliteFew and should load after any talent modifying mods
 ::mods_registerMod(::EliteFew.ID, ::EliteFew.Version, ::EliteFew.Name);
 ::mods_queue(::EliteFew.ID,
-        "mod_hooks(>=20), !TheEliteFewCore, >mod_ultrabros, >mod_weightedTalents, >mod_legends",
+        "mod_hooks(>=20), !TheEliteFewCore,"
+            + " >mod_ultrabros, >mod_bro_studio, >mod_weightedTalents, >mod_legends",
         function() {
 
     ::EliteFew.Mod <- ::MSU.Class.Mod(::EliteFew.ID, ::EliteFew.Version, ::EliteFew.Name);

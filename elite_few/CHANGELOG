@@ -1,3 +1,8 @@
+2.3.0
+- new icon
+- added drunkasrd, huge, tiny and paranoid to dubious traits
+- removed <b> junk from tooltips
+
 2.2.0
 - use MSU for configuration
 - fixed compatibility with Accessory Companions (AC)
