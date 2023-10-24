@@ -21,3 +21,4 @@ install: check-compile
 
 check-compile:
 	@find . -name \*.nut -print0 | xargs -0 -n1 squirrel -c && echo "Syntax OK"
+	rm out.cnut
