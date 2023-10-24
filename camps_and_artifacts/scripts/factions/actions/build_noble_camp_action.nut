@@ -9,76 +9,28 @@ this.build_noble_camp_action <- this.inherit("scripts/factions/faction_action", 
 
 	function onUpdate( _faction )
 	{
-		local settlements = _faction.getSettlements();
-		// logInfo("build_noble_camp_action.onUpdate settlements " + settlements.len()
-		//  + " score " + this.m.Score + " " + _faction.getName());
-
-		if (this.World.FactionManager.isCivilWar() && this.World.FactionManager.getGreaterEvilStrength() >= 20.0)
-		{
-			if (settlements.len() > (this.Const.DLC.Wildmen ? 8 : 10))
-			{
-				return;
-			}
-		}
-		else if (this.World.FactionManager.isGreaterEvil())
-		{
-			if (settlements.len() > (this.Const.DLC.Wildmen ? 8 : 10))
-			{
-				return;
-			}
-		}
-		else if (settlements.len() > (this.Const.DLC.Wildmen ? 10 : 12))
-		{
-			return;
-		}
-
+		local num = _faction.ca_getCamps().len();
+		if (num >= 12) return;
 		this.m.Score = 2;
-	}
-
-	function onClear()
-	{
-	}
-
-	function setFaction( _faction )
-	{
-		this.m.Faction = this.WeakTableRef(_faction);		
 	}
 
 	function onExecute( _faction )
 	{
-		local settlements = _faction.getSettlements();
-		logInfo("build_noble_camp_action.onExecute settlements " + settlements.len()
-			+ " " + _faction.getName());
+        logInfo("build_nomad_camp_action")
 		local camp;
 		local r = this.Math.rand(1, 3);
-		local minY = 0.0;
+		local minY = this.Const.DLC.Desert ? 0.2 : 0.0;
 		local maxY = 1.0;
 
-		if (r == 1)
-		{
-			local tile = this.getTileToSpawnLocation(100, [], 1, 9, 9, 2, 1, null, minY, maxY);
-			if (tile != null)
-			{
-				camp = this.World.spawnLocation("scripts/entity/world/locations/noble_tower_location", tile.Coords);
-			}
-		}
-		else if (r == 2)
-		{
-			local tile = this.getTileToSpawnLocation(100, [], 1, 9, 9, 2, 1, null, minY, maxY);
-
-			if (tile != null)
-			{
-				camp = this.World.spawnLocation("scripts/entity/world/locations/noble_barracks_location", tile.Coords);
-			}
-		}
-		else if (r == 3)
-		{
-			local tile = this.getTileToSpawnLocation(100, [], 1, 9, 9, 2, 1, null, minY, maxY);
-
-			if (tile != null)
-			{
-				camp = this.World.spawnLocation("scripts/entity/world/locations/noble_stronghold_location", tile.Coords);
-			}
+		local scripts = [
+			"scripts/entity/world/locations/noble_tower_location"
+			"scripts/entity/world/locations/noble_barracks_location"
+			"scripts/entity/world/locations/noble_stronghold_location"
+		]
+		local script = scripts[Math.rand(0, scripts.len() - 1)]
+		local tile = this.getTileToSpawnLocation(100, [], 1, 9, 9, 2, 2, null, minY, maxY);
+		if (tile != null) {
+			camp = this.World.spawnLocation(script, tile.Coords);
 		}
 
 		if (camp != null)
@@ -87,9 +39,8 @@ this.build_noble_camp_action <- this.inherit("scripts/factions/faction_action", 
 			camp.onSpawned();
 			camp.setFaction( _faction.m.ID )
 			camp.setBanner(banner);
-			_faction.addSettlement(camp, false);
+			_faction.ca_addCamp(camp);
+        	logInfo("build_nomad_camp_action DONE")
 		}
 	}
-
-});
-
+})
