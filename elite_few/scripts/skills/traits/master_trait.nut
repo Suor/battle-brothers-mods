@@ -5,7 +5,7 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
         this.character_trait.create();
         this.m.ID = "trait.master";
         this.m.Name = "Master";
-        this.m.Icon = "ui/traits/trait_icon_masterbro.png";
+        this.m.Icon = "ui/traits/trait_icon_masterbro_new.png";
         this.m.Description = "This person is one of a kind, skilled in virtually everything.";
         this.m.Order = this.Const.SkillOrder.Trait - 1;
         this.m.Titles = [];
