@@ -1,3 +1,14 @@
+1.1
+- Quickshots will no longer be "agile" in melee
+- slightly heavier armored Masterwork, makes less nimble
+- dropped varying scale depending on combat difficulty
+- fixed double quirk name when turning into Weideganger
+- fixed Quickshots not shooting sometimes
+- fixed other Quickshot and Headshot stuff
+- fixed necromancer when MSU is not around
+- some balance changes for zombies, orcs and quickshots
+- requires external stdlib now
+
 1.0
 - quirked skeletons
 - added Cursed quirk
