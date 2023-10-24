@@ -16,12 +16,15 @@ this.citystate_tower_location <- this.inherit("scripts/entity/world/location", {
 		this.m.IsSpawningDefenders = true;
 		this.m.IsAttackable = true;
 		this.setDefenderSpawnList(this.Const.World.Spawn.Southern);
-		//this.setDefenderSpawnList(this.Const.World.Spawn.BanditDefenders);
 		this.m.NamedShieldsList = this.Const.Items.NamedSouthernShields;
 		this.m.Resources = 170;
 		this.m.IsShowingDefenders = true;
 		this.m.IsShowingBanner = true;
 	}
+
+	// Makes this attackable
+	function isParty() {return true;}
+	function getController() {return null;}
 
 	function onSpawned()
 	{
@@ -34,66 +37,6 @@ this.citystate_tower_location <- this.inherit("scripts/entity/world/location", {
 		this.location.onSpawned();
 	}
 
-	function updateSituations()
-	{
-		return false
-	}
-
-	function hasSituation( _id )
-	{
-		return false
-	}
-
-	function isMilitary()
-	{
-		return false;
-	}
-
-	function getAttachedLocations()
-	{
-		return [];
-	}
-
-	function getSituations()
-	{
-		return [];
-	}
-
-	function addSituations()
-	{
-		return null;
-	}
-
-	function isIsolatedFromRoads()
-	{
-		return true;
-	}
-
-	function isConnectedToByRoads( _s )
-	{
-		return false;
-	}
-
-	function isIsolated()
-	{
-		return false;
-	}
-	
-	function isCoastal()
-	{
-		return false;
-	}
-
-	function getSize()
-	{
-		return 0
-	}
-
-	function getActiveAttachedLocations()
-	{
-		return []
-	}
-
 	function onInit()
 	{
 		this.location.onInit();
@@ -103,57 +46,40 @@ this.citystate_tower_location <- this.inherit("scripts/entity/world/location", {
 		body.setBrush("world_southern_watchtower");
 		local lighting = this.addSprite("lighting");
 		lighting.setBrush("world_southern_watchtower_lights");
-		this.registerThinker();
 	}
 
-	function onFinish()
-	{
-		this.location.onFinish();
-		this.unregisterThinker();
-	}
+	// function onUpdate()
+	// {
+	// 	local lighting = this.getSprite("lighting");
 
-	function isParty()
-	{
-		return true;
-	}
+	// 	if (lighting.IsFadingDone)
+	// 	{
+	// 		if (lighting.Alpha == 0 && this.World.getTime().TimeOfDay >= 4 && this.World.getTime().TimeOfDay <= 7)
+	// 		{
+	// 			lighting.Color = this.createColor("ffffff00");
 
-	function getController()
-	{
-		return null;
-	}
-
-	function onUpdate()
-	{
-		local lighting = this.getSprite("lighting");
-
-		if (lighting.IsFadingDone)
-		{
-			if (lighting.Alpha == 0 && this.World.getTime().TimeOfDay >= 4 && this.World.getTime().TimeOfDay <= 7)
-			{
-				lighting.Color = this.createColor("ffffff00");
-
-				if (this.World.getCamera().isInsideScreen(this.getPos(), 0))
-				{
-					lighting.fadeIn(5000);
-				}
-				else
-				{
-					lighting.Alpha = 255;
-				}
-			}
-			else if (lighting.Alpha != 0 && this.World.getTime().TimeOfDay >= 0 && this.World.getTime().TimeOfDay <= 3)
-			{
-				if (this.World.getCamera().isInsideScreen(this.getPos(), 0))
-				{
-					lighting.fadeOut(4000);
-				}
-				else
-				{
-					lighting.Alpha = 0;
-				}
-			}
-		}
-	}
+	// 			if (this.World.getCamera().isInsideScreen(this.getPos(), 0))
+	// 			{
+	// 				lighting.fadeIn(5000);
+	// 			}
+	// 			else
+	// 			{
+	// 				lighting.Alpha = 255;
+	// 			}
+	// 		}
+	// 		else if (lighting.Alpha != 0 && this.World.getTime().TimeOfDay >= 0 && this.World.getTime().TimeOfDay <= 3)
+	// 		{
+	// 			if (this.World.getCamera().isInsideScreen(this.getPos(), 0))
+	// 			{
+	// 				lighting.fadeOut(4000);
+	// 			}
+	// 			else
+	// 			{
+	// 				lighting.Alpha = 0;
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	function onDropLootForPlayer( _lootTable )
 	{
@@ -214,16 +140,5 @@ this.citystate_tower_location <- this.inherit("scripts/entity/world/location", {
 			this.dropTreasure(1, treasure, _lootTable);
 		}
 	}
-
-	function onSerialize( _out )
-	{
-		this.location.onSerialize(_out);
-	}
-
-	function onDeserialize( _in )
-	{
-		this.location.onDeserialize(_in);
-	}
-
-});
+})
 

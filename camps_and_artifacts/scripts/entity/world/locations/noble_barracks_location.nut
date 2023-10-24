@@ -17,7 +17,6 @@ this.noble_barracks_location <- this.inherit("scripts/entity/world/location", {
 		this.m.IsSpawningDefenders = true;
 		this.m.IsAttackable = true;
 		this.setDefenderSpawnList(this.Const.World.Spawn.NobleBoss);
-		//this.setDefenderSpawnList(this.Const.World.Spawn.BanditDefenders);
 		this.m.NamedShieldsList = this.Const.Items.NamedBanditShields;
 		this.m.Resources = 300;
 		this.m.IsShowingDefenders = true;
@@ -35,56 +34,6 @@ this.noble_barracks_location <- this.inherit("scripts/entity/world/location", {
 		this.location.onSpawned();
 	}
 
-	function updateSituations()
-	{
-		return false
-	}
-
-	function hasSituation( _id )
-	{
-		return false
-	}
-
-	function addSituations()
-	{
-		return null;
-	}
-
-	function isMilitary()
-	{
-		return false;
-	}
-
-	function isIsolatedFromRoads()
-	{
-		return true;
-	}
-
-	function isConnectedToByRoads( _s )
-	{
-		return false;
-	}
-
-	function isIsolated()
-	{
-		return false;
-	}
-	
-	function isCoastal()
-	{
-		return false;
-	}
-
-	function getSize()
-	{
-		return 0
-	}
-
-	function getActiveAttachedLocations()
-	{
-		return []
-	}
-
 	function onInit()
 	{
 		this.location.onInit();
@@ -94,57 +43,51 @@ this.noble_barracks_location <- this.inherit("scripts/entity/world/location", {
 		body.setBrush("world_fortified_outpost_01");
 		local lighting = this.addSprite("lighting");
 		lighting.setBrush("world_fortified_outpost_01_light");
-		this.registerThinker();
+		// this.registerThinker();
 	}
 
-	function onFinish()
-	{
-		this.location.onFinish();
-		this.unregisterThinker();
-	}
+	// function onFinish()
+	// {
+	// 	this.location.onFinish();
+	// 	this.unregisterThinker();
+	// }
 
-	function isParty()
-	{
-		return true;
-	}
+	// Makes this attackable
+	function isParty() {return true;}
+	function getController() {return null;}
 
-	function getController()
-	{
-		return null;
-	}
+	// function onUpdate()
+	// {
+	// 	local lighting = this.getSprite("lighting");
 
-	function onUpdate()
-	{
-		local lighting = this.getSprite("lighting");
+	// 	if (lighting.IsFadingDone)
+	// 	{
+	// 		if (lighting.Alpha == 0 && this.World.getTime().TimeOfDay >= 4 && this.World.getTime().TimeOfDay <= 7)
+	// 		{
+	// 			lighting.Color = this.createColor("ffffff00");
 
-		if (lighting.IsFadingDone)
-		{
-			if (lighting.Alpha == 0 && this.World.getTime().TimeOfDay >= 4 && this.World.getTime().TimeOfDay <= 7)
-			{
-				lighting.Color = this.createColor("ffffff00");
-
-				if (this.World.getCamera().isInsideScreen(this.getPos(), 0))
-				{
-					lighting.fadeIn(5000);
-				}
-				else
-				{
-					lighting.Alpha = 255;
-				}
-			}
-			else if (lighting.Alpha != 0 && this.World.getTime().TimeOfDay >= 0 && this.World.getTime().TimeOfDay <= 3)
-			{
-				if (this.World.getCamera().isInsideScreen(this.getPos(), 0))
-				{
-					lighting.fadeOut(4000);
-				}
-				else
-				{
-					lighting.Alpha = 0;
-				}
-			}
-		}
-	}
+	// 			if (this.World.getCamera().isInsideScreen(this.getPos(), 0))
+	// 			{
+	// 				lighting.fadeIn(5000);
+	// 			}
+	// 			else
+	// 			{
+	// 				lighting.Alpha = 255;
+	// 			}
+	// 		}
+	// 		else if (lighting.Alpha != 0 && this.World.getTime().TimeOfDay >= 0 && this.World.getTime().TimeOfDay <= 3)
+	// 		{
+	// 			if (this.World.getCamera().isInsideScreen(this.getPos(), 0))
+	// 			{
+	// 				lighting.fadeOut(4000);
+	// 			}
+	// 			else
+	// 			{
+	// 				lighting.Alpha = 0;
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	function onDropLootForPlayer( _lootTable )
 	{
@@ -192,16 +135,4 @@ this.noble_barracks_location <- this.inherit("scripts/entity/world/location", {
 		], _lootTable);
 		this.dropTreasure(this.Math.rand(1, 2), treasure, _lootTable);
 	}
-
-	function onSerialize( _out )
-	{
-		this.location.onSerialize(_out);
-	}
-
-	function onDeserialize( _in )
-	{
-		this.location.onDeserialize(_in);
-	}
-
-});
-
+})

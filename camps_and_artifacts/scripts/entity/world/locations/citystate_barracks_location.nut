@@ -17,12 +17,15 @@ this.citystate_barracks_location <- this.inherit("scripts/entity/world/location"
 		this.m.IsSpawningDefenders = true;
 		this.m.IsAttackable = true;
 		this.setDefenderSpawnList(this.Const.World.Spawn.SouthernBoss);
-		//this.setDefenderSpawnList(this.Const.World.Spawn.BanditDefenders);
 		this.m.NamedShieldsList = this.Const.Items.NamedSouthernShields;
 		this.m.Resources = 300;
 		this.m.IsShowingDefenders = true;
 		this.m.IsShowingBanner = true;
 	}
+
+	// Makes this attackable
+	function isParty() {return true;}
+	function getController() {return null;}
 
 	function onSpawned()
 	{
@@ -35,67 +38,6 @@ this.citystate_barracks_location <- this.inherit("scripts/entity/world/location"
 		this.location.onSpawned();
 	}
 
-
-	function updateSituations()
-	{
-		return false
-	}
-
-	function hasSituation( _id )
-	{
-		return false
-	}
-
-	function isMilitary()
-	{
-		return false;
-	}
-
-	function getSituations()
-	{
-		return [];
-	}
-
-	function addSituations()
-	{
-		return null;
-	}
-
-	function getAttachedLocations()
-	{
-		return [];
-	}
-
-	function isIsolatedFromRoads()
-	{
-		return true;
-	}
-
-	function isConnectedToByRoads( _s )
-	{
-		return false;
-	}
-
-	function isIsolated()
-	{
-		return false;
-	}
-	
-	function isCoastal()
-	{
-		return false;
-	}
-
-	function getSize()
-	{
-		return 0
-	}
-
-	function getActiveAttachedLocations()
-	{
-		return []
-	}
-
 	function onInit()
 	{
 		this.location.onInit();
@@ -103,21 +45,6 @@ this.citystate_barracks_location <- this.inherit("scripts/entity/world/location"
 		this.setSpriteOffset("banner", this.createVec(-8, 55));
 		local body = this.addSprite("body");
 		body.setBrush("world_southern_militia");
-	}
-
-	function onFinish()
-	{
-		this.location.onFinish();
-	}
-
-	function isParty()
-	{
-		return true;
-	}
-
-	function getController()
-	{
-		return null;
 	}
 
 	function onDropLootForPlayer( _lootTable )
@@ -166,16 +93,4 @@ this.citystate_barracks_location <- this.inherit("scripts/entity/world/location"
 		], _lootTable);
 		this.dropTreasure(this.Math.rand(1, 2), treasure, _lootTable);
 	}
-
-	function onSerialize( _out )
-	{
-		this.location.onSerialize(_out);
-	}
-
-	function onDeserialize( _in )
-	{
-		this.location.onDeserialize(_in);
-	}
-
 });
-

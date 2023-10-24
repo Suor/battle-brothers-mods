@@ -1,31 +1,4 @@
-local gt = this.getroottable();
-
-if (!("Strings" in gt.Const))
-{
-    gt.Const.Strings <- {};
-}
-
-gt.Const.Strings.TwoHandedMaceNames = [
-    "Skullwarper",
-    "Crusher",
-    "Stomper",
-    "Cudgel",
-    "Bludgeon",
-    "Pillar",
-    // "Whacker",
-    "Wacker",
-    "Warmace",
-    "Giant\'s Mace",
-    "Stonefist",
-    "Pummel",
-    "Earthshaker"
-]
-this.Const.Strings.SwordlanceNames.extend(this.Const.Strings.WarscytheNames);
-
-// START NEW CODE
-
-// END NEW CODE
-gt.Const.Strings.ArtifactAxeNames <- [
+::Const.Strings.ArtifactAxeNames <- [
     "Skullrender",
     "Guttler",
     "Ogre Bane",
@@ -37,14 +10,14 @@ gt.Const.Strings.ArtifactAxeNames <- [
     "Headsman",
     "Bravura"
 ]
-gt.Const.Strings.ArtifactWhipNames <- [
+::Const.Strings.ArtifactWhipNames <- [
     "The Golden Lasso",
     "Discipline",
     "Lion Tamer",
     "Qilinbian",
     "Scourge"
 ]
-gt.Const.Strings.ArtifactPolearmNames <- [
+::Const.Strings.ArtifactPolearmNames <- [
     "The Whirlwind",
     "Bec de Corbin",
     "Glaive-Guisarme",
@@ -57,7 +30,7 @@ gt.Const.Strings.ArtifactPolearmNames <- [
     "Rhongomyniad",
     "Vel"
 ]
-gt.Const.Strings.ArtifactSwordNames <- [
+::Const.Strings.ArtifactSwordNames <- [
     "Excalibur",
     "Joyeuse",
     "Greyswandir",
@@ -94,7 +67,7 @@ gt.Const.Strings.ArtifactSwordNames <- [
     "Hauteclaire",
     "Harpe"
 ]
-gt.Const.Strings.ArtifactCrossbowNames <- [
+::Const.Strings.ArtifactCrossbowNames <- [
     "Hellrack",
     "Buriza-Do Kyanon",
     "Demon Machine",
@@ -103,7 +76,7 @@ gt.Const.Strings.ArtifactCrossbowNames <- [
     "Imati",
     "Illap"
 ]
-gt.Const.Strings.ArtifactDaggerNames <- [
+::Const.Strings.ArtifactDaggerNames <- [
     "Athame",
     "Carnwennan",
     "Parazonium",
@@ -113,21 +86,21 @@ gt.Const.Strings.ArtifactDaggerNames <- [
     "Tiriosh",
     "Kingslayer"
 ]
-gt.Const.Strings.ArtifactFlailNames <- [
+::Const.Strings.ArtifactFlailNames <- [
     "Holy Water Sprinkler",
     "Stormlash",
     "Scourge",
     "Golden Flence",
     "Cranium Basher"
 ]
-gt.Const.Strings.ArtifactThrownNames <- [
+::Const.Strings.ArtifactThrownNames <- [
     "Thunderbolt",
     "Tathlum",
     "Sagitta",
     "Kenkonken",
     "Vajra"
 ]
-gt.Const.Strings.ArtifactMaceNames <- [
+::Const.Strings.ArtifactMaceNames <- [
     "Echoing Fury",
     "Asclepius",
     "Gada",
@@ -136,7 +109,7 @@ gt.Const.Strings.ArtifactMaceNames <- [
     "The Silver Hand",
     "Shillelagh"
 ]
-gt.Const.Strings.ArtifactOrcNames <- [
+::Const.Strings.ArtifactOrcNames <- [
     "Mancarver",
     "Slash",
     "Skitch",
@@ -147,7 +120,7 @@ gt.Const.Strings.ArtifactOrcNames <- [
     "Crunch",
     "Smish"
 ]
-gt.Const.Strings.ArtifactSpearNames <- [
+::Const.Strings.ArtifactSpearNames <- [
     "Aram",
     "Gungnir",
     "Longinus",
@@ -157,7 +130,7 @@ gt.Const.Strings.ArtifactSpearNames <- [
     "Gae Assail",
     "Nihongo"
 ]
-gt.Const.Strings.ArtifactHammerNames <- [
+::Const.Strings.ArtifactHammerNames <- [
     "Mjollnir",
     "Ukonvasara",
     "Steeldriver",
@@ -168,7 +141,7 @@ gt.Const.Strings.ArtifactHammerNames <- [
     "Stormherald",
     "Storm's End"
 ]
-gt.Const.Strings.ArtifactBowNames <- [
+::Const.Strings.ArtifactBowNames <- [
     "Eurytos",
     "Artemis",
     "Houyi",
@@ -178,7 +151,7 @@ gt.Const.Strings.ArtifactBowNames <- [
     "Yoichinoyumi",
     "Loxley"
 ]
-gt.Const.Strings.ArtifactShieldNames <- [
+::Const.Strings.ArtifactShieldNames <- [
     "Aegis",
     "Hoplon",
     "Ancile",
@@ -188,7 +161,7 @@ gt.Const.Strings.ArtifactShieldNames <- [
     "Bulwark",
     "Ward"
 ]
-gt.Const.Strings.ArtifactOrcShieldNames <- [
+::Const.Strings.ArtifactOrcShieldNames <- [
     "Clang",
     "Pillar",
     "No",

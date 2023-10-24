@@ -4,7 +4,7 @@ foreach (_, value in ::Const.Items.ItemType) {
     if (value > maxValue) maxValue = value;
 }
 local artifactType = maxValue * 2;
-::Const.Items.ItemType.Artifact = artifactType;
+::Const.Items.ItemType.Artifact <- artifactType;
 ::Const.Items.ItemFilter.All = ::Const.Items.ItemFilter.All | artifactType;
 
 // List of artifact classes
