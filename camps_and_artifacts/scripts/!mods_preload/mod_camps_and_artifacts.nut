@@ -33,6 +33,7 @@ foreach (file in ::IO.enumerateFiles("camps_and_artifacts/config")) ::include(fi
     ::mods_hookExactClass("entity/world/location", function(cls) {
         local onSpawned = cls.onSpawned;
         cls.onSpawned = function () {
+            logWarning("Spawned " + this.ClassName + " resources " + this.m.Resources);
             local nearestSettlement = 9000;
             local myTile = this.getTile();
             foreach (s in this.World.EntityManager.getSettlements()) {
@@ -40,9 +41,11 @@ foreach (file in ::IO.enumerateFiles("camps_and_artifacts/config")) ::include(fi
                 if (d < nearestSettlement) nearestSettlement = d;
             }
 
-            if (!this.isLocationType(this.Const.World.LocationType.Unique)) {
-                local scale = ((this.m.Resources + nearestSettlement * 4) / 5.0 - 37.0);
+            local scale = ((this.m.Resources + nearestSettlement * 4) / 5.0 - 37.0);
+            if (scale > 0 && !this.isLocationType(this.Const.World.LocationType.Unique)) {
                 local artifact_chance = scale * scale / 2;
+                logWarning("camps: artifact chance " + (artifact_chance/100.0) + " scale " + scale
+                     + " nearestSettlement " + nearestSettlement + " resources " + this.m.Resources);
                 if (::Math.rand(1, 10000) <= artifact_chance) {
                     local artifacts = ::Const.Items.Artifacts;
                     local artifact = artifacts[::Math.rand(0, artifacts.len() - 1)];
