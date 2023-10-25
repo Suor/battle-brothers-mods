@@ -22,9 +22,9 @@ this.artifact_two_handed_flail <- this.inherit("scripts/items/weapons/artifact/a
 		this.m.Condition = 80.0;
 		this.m.ConditionMax = 80.0;
 		this.m.StaminaModifier = -16;
-		this.m.RegularDamage = 40;
-		this.m.RegularDamageMax = 80;
-		this.m.ArmorDamageMult = 1.1;
+		this.m.RegularDamage = 45;     // upped this to match vanilla
+		this.m.RegularDamageMax = 90;  // upped this to match vanilla
+		this.m.ArmorDamageMult = 1.15; // upped this to match vanilla
 		this.m.DirectDamageMult = 0.3;
 		this.m.ChanceToHitHead = 15;
 		this.randomizeValues();
