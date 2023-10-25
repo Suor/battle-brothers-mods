@@ -9,6 +9,7 @@ local mod = ::Useful <- {
 local extraDep = ::mods_getRegisteredMod("tnf_refillableNet") ? ", !tnf_refillableNet" : "";
 
 ::mods_queue(mod.ID, "stdlib" + extraDep, function() {
+    ::include("useful/flails");
     ::include("useful/hand_to_hand");
     ::include("useful/nets");
 });
