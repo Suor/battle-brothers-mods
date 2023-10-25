@@ -73,8 +73,8 @@ local function hookNet(cls) {
     }
 
     local onUse = cls.onUse;
-    cls.onUse = function( _user, _targetTile ) {
-        local net = _user.getItems().getItemAtSlot(::Const.ItemSlot.Offhand);
+    cls.onUse = function (_user, _targetTile) {
+        local net = this.m.Item;
         net.consumeAmmo();
         onUse(_user, _targetTile);
         _user.getItems().equip(net); // Put it back
