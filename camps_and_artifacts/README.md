@@ -1,0 +1,41 @@
+# Camps and Artifacts (Fixed)
+
+Adds higher difficulty camps and a higher tier of super-named items (titled 'artifacts') which help extend the lategame. A rework of a very fun [Expanded Camps and Artifacts][camps-old] by ProFoolie.
+
+Changes from the base mod:
+
+- add special camps on top not instead of, i.e. there will be more lairs total
+- add some space between noble and city state camps
+- less city state camps, so it's not really crowded
+- updated 2h flail base attributes to match vanilla rebalance (was upped somewhat)
+- update artifact warbow and greatsword base attributes if [Sato's Balance Mod][sato_balance_mod] is present
+
+Fixes:
+
+- stop messing with lair generation, some things were broken, i.e. vampire coven won't ever show up with original mod
+- undead scourge was really broken by this and maybe
+- stop messing with spawnlists
+- stop messing up item sort order
+- no longer interfere with contracts and city situations (there were errors in log)
+- fixed spawning artefacts in weak locations (a square negative error, lol)
+- do not overwrite huge files both config and bb classes, this overwrites changes from vanilla/DLC updates and brings many small issues
+
+
+## Compatibility
+
+Safe to add midgame, can't remove. Is also savegame compatible with the old camps mod, i.e. if you have a campaign played with that you can replace it with this, the artifacts with updated attributes won't be regenerated though.
+
+Should be highly compatible with other mods. May be even with Legends, but did not test it.
+
+
+## Install
+
+Download from here zip all dirs and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
+<!-- Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer. -->
+
+
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/...
+[modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
+
+[camps-old]: https://www.nexusmods.com/battlebrothers/mods/195
+[sato_balance_mod]: https://github.com/jcsato/sato_balance_mod
