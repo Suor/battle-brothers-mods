@@ -26,6 +26,7 @@ this.artifact_warbow <- this.inherit("scripts/items/weapons/artifact/artifact_we
 		this.m.RegularDamage = 50;
 		this.m.RegularDamageMax = 70;
 		this.m.ArmorDamageMult = 0.6;
+		if (::mods_getRegisteredMod("sato_balance_mod")) this.m.ArmorDamageMult += 0.05;
 		this.m.DirectDamageMult = 0.35;
 		this.randomizeValues();
 	}

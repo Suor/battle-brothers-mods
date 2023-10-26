@@ -66,7 +66,7 @@ this.artifact_weapon <- this.inherit("scripts/items/weapons/weapon", {
 			_i.m.DirectDamageAdd = _i.m.DirectDamageAdd + this.Math.rand(16, 30) * 0.01;
 		});
 
-		if (this.m.StaminaModifier <= -10)
+		if (this.m.StaminaModifier <= -20)
 		{
 			available.push(function ( _i )
 			{
