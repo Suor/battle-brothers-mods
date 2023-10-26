@@ -45,9 +45,44 @@ Any suggestions, bug reports, other feedback are welcome. The best place for it 
 My code here is [BSD licensed](LICENSE), which basically means you may use it for any purposes, including bundling it or its parts as part of your stuff, either public or private. Don't need to explicitly ask for permission. However, if you do distribute such your work then you should say you are using this in your docs/README/description/whatever.
 
 
+## Hookify
+
+Is a python script to convert old-style "copy and edit" mod files to hooks.
+
+```
+Usage:
+    python hookify.py <mod-file> [<to-file>] [options]
+    python hookify.py <mod-dir> [options]
+
+Arguments:
+    <mod-file>  The path to a mod file to convert
+    <to-file>   File to write hooks code to, defaults to <mod-name>/path/to/class.nut,
+                use - to print to stdout instead
+    <mod-dir>   Process all *.nut files in a dir
+
+Options:
+    -f          Overwrite existing files
+    -t          Use tabs instead of spaces
+    -v          Verbose output
+    -h, --help  Show this help
+```
+
+The intended workflow is:
+
+1. Set the SCRIPTS var at the top of your file to point to a base scripts dir, this is either vanilla decompiled scripts or legends ones - if you base your mod on that.
+2. Run `python hookify.py your_module_dir/`.
+3. *(Optional).* Open new hook files and edit them so that to not really overwrite the whole function bodies, remove `// START/END NEW CODE` if it's only new code now. Also, may see that some edits are bogus, i.e. unintended or obsolete, drop those - this is very common if your mod file is based on older version of the base file.
+4. `::include()` new hook files from your `!mods_preload/mod_your_thing.nut`, note that while config files might be included from the root the hook files should be included from within `::mods_queue()`.
+5. Remove the files that were hookified. Here you should be cautious because the files that do not have base equivalent should not be removed - hookify will skip those with `SKIPPED, no vanilla` message.
+
+Steps 2-5 might be done on per file or per subdir basis to make it easier.
+
+
 [nexus-mods]: https://www.nexusmods.com/battlebrothers/users/97435548?tab=user+files
+[zip]: https://github.com/Suor/battle-brothers-mods/archive/refs/heads/master.zip
+
 [autopilot-old]: https://www.nexusmods.com/battlebrothers/mods/62
+[camps-old]: https://www.nexusmods.com/battlebrothers/mods/195
 [elite-few-old]: https://www.nexusmods.com/battlebrothers/mods/253
 [background-perks-old]: https://www.nexusmods.com/battlebrothers/mods/70
 [more-blood-old]: https://www.nexusmods.com/battlebrothers/mods/28
-[zip]: https://github.com/Suor/battle-brothers-mods/archive/refs/heads/master.zip
