@@ -1,6 +1,6 @@
 # Camps and Artifacts (Fixed)
 
-Adds higher difficulty camps and a higher tier of super-named items (titled 'artifacts') which help extend the lategame. A rework of a very fun [Expanded Camps and Artifacts][camps-old] by ProFoolie.
+Adds higher difficulty camps and a higher tier of super-named "artifact" items, which help extend the lategame. A rework of a very fun [Expanded Camps and Artifacts][camps-old] by ProFoolie.
 
 Changes from the base mod:
 
@@ -18,7 +18,7 @@ Fixes:
 - stop messing up item sort order
 - no longer interfere with contracts and city situations (there were errors in log)
 - fixed spawning artefacts in weak locations (a square negative error, lol)
-- do not overwrite huge files both config and bb classes, this overwrites changes from vanilla/DLC updates and brings many small issues
+- do not overwrite huge files both config and bb classes, this used to overwrite changes from vanilla/DLC updates and brought many small issues
 
 
 ## Compatibility
@@ -30,11 +30,10 @@ Should be highly compatible with other mods. May be even with Legends, but did n
 
 ## Install
 
-Download from here zip all dirs and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
-<!-- Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer. -->
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
 
 
-[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/...
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/678
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 
 [camps-old]: https://www.nexusmods.com/battlebrothers/mods/195
