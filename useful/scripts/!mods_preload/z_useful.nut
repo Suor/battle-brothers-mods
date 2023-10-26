@@ -1,7 +1,7 @@
 local mod = ::Useful <- {
     ID = "mod_useful"
     Name = "Useful Things"
-    Version = 0.1
+    Version = 0.2
 }
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 
