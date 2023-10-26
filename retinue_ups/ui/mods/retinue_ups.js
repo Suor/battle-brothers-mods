@@ -20,6 +20,9 @@ WorldCampfireScreenMainDialogModule.prototype.createSlot = function (_data, _i, 
                 if (data.Result == ErrorCode.NotEnoughMoney) {
                     self.mAssets.mMoneyAsset.shakeLeftRight();
                 }
+                else if (data.Result == 999) {
+                    return; // either no follower, no promotion or already promoted
+                }
                 else if (data.Result != 0) {
                     console.error("Failed to promote. Error: " + data.Result);
                 }

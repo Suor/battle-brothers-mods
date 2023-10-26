@@ -48,8 +48,9 @@ local function positive(value) {
         obj.ru_onSlotCtrlClicked <- function (_i) {
             local follower = ::World.Retinue.m.Slots[_i];
             ::logInfo("Promote " + _i + " " + follower.getID());
-            if (follower == null || !follower.ru_hasPromotion()) {
-                return {Result = 999} // Unknown error
+            if (follower == null
+                    || !follower.ru_hasPromotion() || ::World.Retinue.ru_isPromoted(follower)) {
+                return {Result = 999} // Do nothing
             }
 
             local currentMoney = ::World.Assets.getMoney();
