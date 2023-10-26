@@ -12,7 +12,7 @@ zip: check-compile
 	zip --filesync -r "$${FILENAME}" $(SOURCES);
 
 clean:
-	rm *_MODIFIED.zip;
+	@rm -f *_MODIFIED.zip;
 
 install: check-compile
 	@set -e;
@@ -20,5 +20,6 @@ install: check-compile
 	zip --filesync -r "$${FILENAME}" $(SOURCES);
 
 check-compile:
-	@find . -name \*.nut -print0 | xargs -0 -n1 squirrel -c && echo "Syntax OK"
+	@set -e
+	find . -name \*.nut -print0 | xargs -0 -n1 squirrel -c && echo "Syntax OK"
 	rm out.cnut
