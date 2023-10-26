@@ -35,12 +35,10 @@ hookWeapon("items/weapons/items/weapons/greenskins/orc_flail_2h",
 
 // Add extra chance to stun if master in flails
 local function hookFlailSkill(cls, add) {
-    local onAdded = "onAdded" in cls ? cls.onAdded : cls.skill.onAdded
-    cls.onAdded <- function () {
-        onAdded();
-        if (this.getContainer().getActor().getCurrentProperties().IsSpecializedInFlails) {
-            this.m.StunChance += add;
-        }
+    local onAfterUpdate = cls.onAfterUpdate;
+    cls.onAfterUpdate = function (_properties) {
+        if (!("u_BaseStunChance" in this.m)) this.m.u_BaseStunChance <- this.m.StunChance;
+        this.m.StunChance = this.m.u_BaseStunChance + (_properties.IsSpecializedInFlails ? add : 0);
     }
 }
 
