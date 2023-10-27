@@ -17,7 +17,7 @@ Fixes:
 - stop messing with spawnlists
 - stop messing up item sort order
 - no longer interfere with contracts and city situations (there were errors in log)
-- fixed spawning artefacts in weak locations (a square negative error, lol)
+- fixed spawning artifacts in weak locations (a square negative error)
 - do not overwrite huge files both config and bb classes, this used to overwrite changes from vanilla/DLC updates and brought many small issues
 
 
@@ -25,7 +25,7 @@ Fixes:
 
 Safe to add midgame, can't remove. Is also savegame compatible with the old camps mod, i.e. if you have a campaign played with that you can replace it with this, the artifacts with updated attributes won't be regenerated though.
 
-Should be highly compatible with other mods. May be even with Legends, but did not test it.
+Should be highly compatible with other mods. Maybe even with Legends, but did not test it.
 
 
 ## Install
