@@ -123,7 +123,7 @@ local function positive(value) {
 
     // Second tier Bounty Hunter
     ::mods_hookExactClass("retinue/followers/bounty_hunter_follower", function (cls) {
-        cls.m.ru_promotion <- {Cost = 4000, Tease = "even more champions"}
+        cls.m.ru_promotion <- {Cost = 7000, Tease = "for even more champions"}
 
         local onUpdate = cls.onUpdate;
         cls.onUpdate = function() {
