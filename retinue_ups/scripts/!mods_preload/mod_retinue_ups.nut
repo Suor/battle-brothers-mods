@@ -97,8 +97,8 @@ local function positive(value) {
                     id = 1
                     type = "hint"
                     icon = "retinue_ups/mouse_left_button_ctrl.png"
-                    text = "Promote for " + this.m.ru_promotion.Tease
-                        + ", costs " + this.m.ru_promotion.Cost + "[img]gfx/ui/tooltips/money.png[/img]"
+                    text = "Promote " + this.m.ru_promotion.Tease + ", costs "
+                        + this.m.ru_promotion.Cost + "[img]gfx/ui/tooltips/money.png[/img]"
                 });
             }
             return tooltip;
@@ -157,14 +157,16 @@ local function positive(value) {
 
     // Second tier Scavenger
     ::mods_hookExactClass("retinue/followers/scavenger_follower", function (cls) {
-        cls.m.ru_promotion <- {Cost = 3000, Tease = "double bonus"}
+        cls.m.ru_promotion <- {Cost = 3000, Tease = "to double the ammo and tools recovered"}
     })
     ::mods_hookExactClass("states/tactical_state", function (cls) {
         local gatherLoot = cls.gatherLoot;
         cls.gatherLoot = function () {
             if (::World.Retinue.ru_isPromoted("scavenger_follower")) {
-                this.m.AmmoSpent *= 2;
-                this.m.ArmorParts *= 2;
+                // Double this stuff
+                local te = this.Tactical.Entities;
+                te.spendAmmo(te.getAmmoSpent());
+                te.addArmorParts(te.getArmorParts());
             }
             gatherLoot();
         }
