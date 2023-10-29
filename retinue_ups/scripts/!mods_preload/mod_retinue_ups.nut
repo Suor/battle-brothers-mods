@@ -141,8 +141,8 @@ local function positive(value) {
     ::mods_hookExactClass("retinue/followers/blacksmith_follower", function (cls) {
         cls.m.ru_promotion <- {
             Cost = 3000
-            Tease = "some chance to recover items from slain enemies"
-            Effects = ["Gives some chance to get even broken items from slain enemies as loot"]
+            Tease = "to recover items from slain enemies more often"
+            Effects = ["Gives better chance to get items from slain enemies, even broken ones"]
         }
     })
     ::mods_hookBaseClass("scenarios/world/starting_scenario", function (cls) {
