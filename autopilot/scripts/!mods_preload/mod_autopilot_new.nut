@@ -129,10 +129,8 @@ local mod = ::Autopilot <- {
         local weapon = m.Items.getItemAtSlot(::Const.ItemSlot.Mainhand);
         mode.throwing <- mode.ranged && weapon.isItemType(Const.Items.ItemType.Ammo);
 
-        // if armed with a throwing weapon, use the melee AI instead of the ranged AI
-        // military is a bit more defensive so use it for throwing bros instead of bandit.
-        mode.agent <- !mode.ranged ? "bandit_melee" :
-                      mode.throwing ? "military_melee" : "military_ranged";
+        // if armed with a throwing weapon, use the melee AI instead of the ranged AI.
+        mode.agent <- mode.ranged && !mode.throwing ? "military_ranged" : "military_melee";
         local agent = new("scripts/ai/tactical/agents/" + mode.agent + "_agent");
 
         // agent.compileKnownAllies optimizes itself to no-op for the player faction, but we need it to work
