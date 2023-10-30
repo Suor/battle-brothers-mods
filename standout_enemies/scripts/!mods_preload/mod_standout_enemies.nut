@@ -8,7 +8,7 @@ local se = gt.StandoutEnemies <- {};
 local Mod = se.Mod <- {};
 
 // Short refs to stdlib
-local Rand = ::std.Rand, Str = ::std.Str, Util = ::std.Util, Hook = ::std.Hook;
+local Rand = ::std.Rand, Str = ::std.Str, Util = ::std.Util;
 local Debug = se.Debug <- ::std.Debug.with({prefix = "se: "});
 
 local Config = se.Config <- {
