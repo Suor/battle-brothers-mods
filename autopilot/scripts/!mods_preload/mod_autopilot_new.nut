@@ -13,6 +13,9 @@ local mod = ::Autopilot <- {
   ::include("autopilot/better_behavior");
   ::include("autopilot/fixes");
   ::include("autopilot/verbose");
+  ::include("autopilot/turn_sequence_bar");
+  ::mods_registerJS("autopilot_new.js");
+  ::mods_registerCSS("autopilot_new.css");
 
   // The Meat
   ::mods_hookBaseClass("entity/tactical/actor", function(o) {
@@ -114,10 +117,7 @@ local mod = ::Autopilot <- {
   ::mods_hookBaseClass("entity/tactical/human", function(o) {
     if("getLevelUps" in o) // if it's the player class...
     {
-      o.isUnderAIControl <- function()
-      {
-        return "_oldAgent" in m;
-      }
+      o.isUnderAIControl <- function() {return "_oldAgent" in m;}
   
       o.enableAIControl <- function()
       {

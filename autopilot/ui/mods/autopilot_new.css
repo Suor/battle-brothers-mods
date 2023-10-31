@@ -1,0 +1,11 @@
+.turnsequencebar-module .top-container .skills-container {
+    position: relative;
+    left: -14rem;
+    outline: 1px solid red;
+}
+
+.turnsequencebar-module .top-container .buttons-container {
+    max-width: 16.8rem;
+    width: auto; /* 12.6rem;*/
+    height: auto; /* 4.7rem; */
+}
