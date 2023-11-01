@@ -9,7 +9,7 @@ local mod = ::Autopilot <- {
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "mod_hooks(>=20), !mod_autopilot", function() {
+::mods_queue(mod.ID, "mod_hooks(>=20), >mod_reforged, !mod_autopilot", function() {
   ::include("autopilot/better_behavior");
   ::include("autopilot/fixes");
   ::include("autopilot/verbose");

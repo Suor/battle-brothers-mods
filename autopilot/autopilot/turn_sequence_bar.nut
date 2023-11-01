@@ -1,16 +1,32 @@
 local Debug = ::std.Debug.with({prefix = "ap: "})
 
-local function logEntity(_func, _entity) {
-    local getName = ::std.Util.getMember(_entity, "getName");
-    logInfo(_func + " " + _entity
-        + " ClassName=" + ("ClassName" in _entity ? _entity.ClassName : "")
-        + " name=" + (getName ? getName() : ""))
-}
+::mods_hookExactClass("states/tactical_state", function (cls) {
+    local tactical_flee_screen_onFleePressed = cls.tactical_flee_screen_onFleePressed;
+    cls.tactical_flee_screen_onFleePressed = function () {
+        Tactical.TurnSequenceBar.cancelAutoActions()
+        tactical_flee_screen_onFleePressed()
+    }
+})
 
 ::mods_hookExactClass("ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_bar",
         function (cls) {
     cls.m.CancelPending <- false;
     cls.m.IsWaitingRound <- false;
+
+    cls._debug <- function (_msg, _entity = null) {
+        if (_entity == null) _entity = getActiveEntity();
+        local getName = ::std.Util.getMember(_entity, "getName");
+        local isPlayerControlled = ::std.Util.getMember(_entity, "isPlayerControlled");
+        if (_entity != null && isPlayerControlled == null) {
+            Debug.log(_msg + " weird " + _entity, _entity);
+        }
+        logInfo(_msg + " " + _entity
+            + " ClassName=" + ("ClassName" in _entity ? _entity.ClassName : "")
+            + " name=" + (getName ? _entity.getName() : "")
+            + (isPlayerControlled != null && isHumanControlled(_entity) ? " HUMAN" : " AI")
+            + (this.m.CancelPending ? " CancelPending": "")
+            )
+    }
 
     cls.isHumanControlled <- function (entity = null) {
         if (entity == null) entity = getActiveEntity();
@@ -20,68 +36,84 @@ local function logEntity(_func, _entity) {
 
     local initNextRound = cls.initNextRound;
     cls.initNextRound = function () {
+        // _debug("initNextRound")
+        // this.m.IsWaitingRound = false;
         initNextRound();
         if (this.m.AllEntities.len() > 0) {
             this.m.IsWaitingRound = false;
             this.m.JSHandle.call("setWaitTurnAllButtonVisible", true);
         }
+        // _debug("initNextRound (after)")
     }
 
-    local initNextTurn = cls.initNextTurn;
-    cls.initNextTurn = function (_force = false) {
-        local activeEntity = this.m.CurrentEntities[0];
-        initNextTurn(_force);
-        this.m.IsLastEntityPlayerControlled = activeEntity.isPlayerControlled()
-            || "isUnderAIControl" in activeEntity && activeEntity.isUnderAIControl();
-    }
+    // Should not be needed anymore
+    // local initNextTurn = cls.initNextTurn;
+    // cls.initNextTurn = function (_force = false) {
+    //     _debug("initNextTurn")
+    //     local e = this.getActiveEntity();
+    //     if (e != null && e.isPlayerControlled() && m.IsWaitingRound) {
+    //         if (entityWaitTurn(e)) return
+    //     }
+    //     // local activeEntity = this.m.CurrentEntities[0];
+    //     initNextTurn(_force);
+    //     // this.m.IsLastEntityPlayerControlled = activeEntity.isPlayerControlled()
+    //     //     || "isUnderAIControl" in activeEntity && activeEntity.isUnderAIControl();
+    //     // _debug("initNextTurn (middle)")
+    //     // if (m.CancelPending) cancelAutoActions();
+    //     _debug("initNextTurn (after)")
+    // }
 
-    local onNextTurnButtonPressed = cls.onNextTurnButtonPressed;
-    cls.onNextTurnButtonPressed = function () {
-        if (!this.isHumanControlled()) return;
-        this.initNextTurn();
-    }
+    // // Q: do we need these two?
+    // local onNextTurnButtonPressed = cls.onNextTurnButtonPressed;
+    // cls.onNextTurnButtonPressed = function () {
+    //     _debug("onNextTurnButtonPressed")
+    //     if (!this.isHumanControlled()) return;
+    //     this.initNextTurn();
+    // }
 
-    local onWaitTurnButtonPressed = cls.onWaitTurnButtonPressed;
-    cls.onWaitTurnButtonPressed = function () {
-        if (!this.isHumanControlled()) return;
-        this.entityWaitTurn(this.getActiveEntity());
-    }
+    // local onWaitTurnButtonPressed = cls.onWaitTurnButtonPressed;
+    // cls.onWaitTurnButtonPressed = function () {
+    //     _debug("onWaitTurnButtonPressed")
+    //     if (!this.isHumanControlled()) return;
+    //     this.entityWaitTurn(this.getActiveEntity());
+    // }
 
-    local onEndTurnAllButtonPressed = cls.onEndTurnAllButtonPressed;
-    cls.onEndTurnAllButtonPressed = function () {
-        // if (this.m.IsSkippingRound || this.getActiveEntity() == null || !this.getActiveEntity().isPlayerControlled())
-        if (this.m.IsSkippingRound || !isHumanControlled())
-        {
-            return;
-        }
+    // Dont really need
+    // local onEndTurnAllButtonPressed = cls.onEndTurnAllButtonPressed;
+    // cls.onEndTurnAllButtonPressed = function () {
+    //     _debug("onEndTurnAllButtonPressed")
+    //     // if (this.m.IsSkippingRound || this.getActiveEntity() == null || !this.getActiveEntity().isPlayerControlled())
+    //     if (this.m.IsSkippingRound || !isHumanControlled())
+    //     {
+    //         return;
+    //     }
 
-        this.Tactical.State.showDialogPopup("End Round", "Have all your characters skip their turn until the next round starts?", function ()
-        {
-            this.m.IsSkippingRound = true;
-            this.m.JSHandle.call("setEndTurnAllButtonVisible", false);
-            // START NEW CODE
-            this.m.JSHandle.call("setWaitTurnAllButtonVisible", false);
-            // END NEW CODE
+    //     this.Tactical.State.showDialogPopup("End Round", "Have all your characters skip their turn until the next round starts?", function ()
+    //     {
+    //         this.m.IsSkippingRound = true;
+    //         this.m.JSHandle.call("setEndTurnAllButtonVisible", false);
+    //         // START NEW CODE
+    //         this.m.JSHandle.call("setWaitTurnAllButtonVisible", false);
+    //         // END NEW CODE
 
-            foreach( e in this.m.CurrentEntities )
-            {
-                if (e.isPlayerControlled())
-                {
-                    e.setSkipTurn(true);
-                }
-            }
+    //         foreach( e in this.m.CurrentEntities )
+    //         {
+    //             if (e.isPlayerControlled())
+    //             {
+    //                 e.setSkipTurn(true);
+    //             }
+    //         }
 
-            this.initNextTurn();
-        }.bindenv(this), null);
-    }
+    //         this.initNextTurn();
+    //     }.bindenv(this), null);
+    // }
 
     cls.onWaitTurnAllButtonPressed <- function () {
-        if(this.m.IsSkippingRound || this.m.IsWaitingRound || !isHumanControlled())
-        {
-            return;
-        }
+        _debug("onWaitTurnAllButtonPressed")
+        if(this.m.IsSkippingRound || this.m.IsWaitingRound || !isHumanControlled()) return;
 
-        this.Tactical.State.showDialogPopup("Wait", "Have all your characters wait until the second phase?", function ()
+        this.Tactical.State.showDialogPopup("Wait",
+            "Have all your characters wait until the second phase?", function ()
         {
             this.m.IsWaitingRound = true;
             this.m.JSHandle.call("setWaitTurnAllButtonVisible", false);
@@ -90,93 +122,83 @@ local function logEntity(_func, _entity) {
     }
 
     cls.onShieldWallButtonPressed <- function () {
-        if(this.m.IsSkippingRound || !isHumanControlled())
-        {
-            return;
-        }
+        if(this.m.IsSkippingRound || !isHumanControlled()) return;
 
-        this.Tactical.State.showDialogPopup("Shield Wall", "Have all your characters shieldwall this turn if they can?", function ()
+        this.Tactical.State.showDialogPopup("Shield Wall",
+            "Have all your characters shieldwall this turn if they can?", function ()
         {
-            foreach( e in this.m.CurrentEntities )
-            {
+            foreach (e in this.m.CurrentEntities) {
                 if (e.isPlayerControlled() && !e.m.IsTurnDone) e.addAutoSkill("actives.shieldwall");
             }
-
             this.getActiveEntity().processAutoSkills();
         }.bindenv(this), null);
     }
 
     cls.onIgnoreButtonPressed <- function () {
-        if(this.m.IsSkippingRound || !isHumanControlled())
-        {
-            return;
-        }
-
+        if(this.m.IsSkippingRound || !isHumanControlled()) return;
         this.getActiveEntity().m._isIgnored <- true;
         this.initNextTurn();
     }
 
     cls.onCancelButtonPressed <- function () {
-        if(m.IsLocked || !isHumanControlled()) m.CancelPending = true;
+        _debug("onCancelButtonPressed")
+        if (m.IsLocked || !isHumanControlled()) m.CancelPending = true;
         else cancelAutoActions();
     }
 
     cls.cancelAutoActions <- function (cancelIgnorance = true) {
-        // local entity = this.getActiveEntity();
-        // logEntity("cancelAutoActions", entity);
+        _debug("cancelAutoActions")
 
-        m.IsSkippingRound = false;
-        m.IsWaitingRound = false;
-        Tactical.State.m.IsEnemyRetreatDialogShown = true; // show the "enemy retreating" popup again
-
-        foreach(e in m.AllEntities)
-        {
-            if(e.isPlayerControlled() || "isUnderAIControl" in e && e.isUnderAIControl())
-            {
+        foreach (e in m.AllEntities) {
+            if (e.isPlayerControlled() || "isUnderAIControl" in e && e.isUnderAIControl()) {
+                if (cancelIgnorance) e.m._isIgnored <- false;
                 e.clearAutoSkills();
-                if(cancelIgnorance) e.m._isIgnored <- false;
                 e.setSkipTurn(false);
                 e.cancelAIControl();
             }
         }
 
+        m.IsSkippingRound = false;
+        m.IsWaitingRound = false;
+        // Tactical.State.m.IsEnemyRetreatDialogShown = true; // show the "enemy retreating" popup again
         m.JSHandle.call("setEndTurnAllButtonVisible", true);
         m.JSHandle.call("setWaitTurnAllButtonVisible", true);
-        m.JSHandle.call("setAIButtonVisible", true);
+        // m.JSHandle.call("setAIButtonVisible", true);
+
         m.CancelPending = false;
+        _debug("cancelAutoActions (after)")
     }
 
     cls.onAIButtonPressed <- function () {
-        if(m.IsSkippingRound || !isHumanControlled())
-        {
-            return;
-        }
+        _debug("onAIButtonPressed")
+        if(m.IsSkippingRound || !isHumanControlled()) {return;}
 
         Tactical.State.showDialogPopup("AI Control", "Turn control over to the AI?", function ()
         {
             cancelAutoActions(false); // reset changes we may have made (except ignoring bros)
-            m.JSHandle.call("setEndTurnAllButtonVisible", false);
-            m.JSHandle.call("setWaitTurnAllButtonVisible", false);
-            m.JSHandle.call("setAIButtonVisible", false);
-            Tactical.State.m.IsEnemyRetreatDialogShown = true; // don't show the "enemy retreating" popup
-            foreach(e in m.AllEntities)
-            {
-                if (e.isPlayerControlled() && e.getAIAgent().ClassName == "player_agent" && !e.isGuest() &&
-                    (!("_isIgnored" in e.m) || !e.m._isIgnored))
+            // m.JSHandle.call("setEndTurnAllButtonVisible", false);
+            // m.JSHandle.call("setWaitTurnAllButtonVisible", false);
+            // m.JSHandle.call("setAIButtonVisible", false);
+            // Tactical.State.m.IsEnemyRetreatDialogShown = true; // don't show the "enemy retreating" popup
+            foreach(e in m.AllEntities) {
+                if (e.isPlayerControlled() && e.getAIAgent().ClassName == "player_agent"
+                    && !e.isGuest() && (!("_isIgnored" in e.m) || !e.m._isIgnored))
                 {
                     e.enableAIControl();
+                    // For next line from Adam: seems to cause intermittent crashes...
+                    // But works fine for me so far.
                     e.getAIAgent().onTurnStarted();
-                    // agent.onTurnStarted(); // seems to cause intermittent crashes...
-                    //initNextTurn();
+                    //initNextTurn(); // do not skip turn
                 }
             }
         }.bindenv(this), null);
     }
 
+    // The cancel needs to be here to prevent auto skills, those are called indirectly from here
     local onEntityEntersFirstSlot = cls.onEntityEntersFirstSlot;
     cls.onEntityEntersFirstSlot = function (_entityId) {
-        // local entity = this.findEntityByID(this.m.AllEntities, _entityId);
-        // logEntity("onEntityEntersFirstSlot", entity);
+        local entity = this.findEntityByID(this.m.CurrentEntities, _entityId);
+        _debug("onEntityEntersFirstSlot", entity ? entity.entity : null)
 
         if(m.CancelPending) cancelAutoActions();
         return onEntityEntersFirstSlot(_entityId)
@@ -185,112 +207,46 @@ local function logEntity(_func, _entity) {
     local onEntityEnteredFirstSlotFully = cls.onEntityEnteredFirstSlotFully;
     cls.onEntityEnteredFirstSlotFully = function (_entityId) {
         local entity = this.findEntityByID(this.m.CurrentEntities, _entityId);
+        _debug("onEntityEnteredFirstSlotFully", entity ? entity.entity : null)
+        _debug("onEntityEnteredFirstSlotFully (active)")
 
-        if (entity)
-        {
-            if (this.m.OnEntityEnteredFirstSlotFullyListener != null)
-            {
-                this.m.OnEntityEnteredFirstSlotFullyListener(entity.entity);
-            }
+        onEntityEnteredFirstSlotFully(_entityId);
 
-            this.m.IsLocked = false;
-            // START NEW CODE
+        if (entity) {
             local e = entity.entity;
-            if(e.isPlayerControlled())
-            {
-                if("_isIgnored" in e.m && e.m._isIgnored) initNextTurn();
-                else if(m.IsWaitingRound) onWaitTurnButtonPressed();
+            if (e.isPlayerControlled()) {
+                if ("_isIgnored" in e.m && e.m._isIgnored) initNextTurn();
+                else if (m.IsWaitingRound) entityWaitTurn(e);
+                // onWaitTurnButtonPressed();
             }
-            // END NEW CODE
         }
+        _debug("onEntityEnteredFirstSlotFully (active after)")
     }
 
     local convertEntityToUIData = cls.convertEntityToUIData;
     cls.convertEntityToUIData = function (_entity, isLastEntity = false) {
-        // logEntity("convertEntityToUIData", _entity);
-        // START NEW CODE
-        // if it is or will be human controlled
-        local humanControlled = _entity.isPlayerControlled() && (_entity.getAIAgent() == null || _entity.getAIAgent().ClassName == "player_agent" || m.CancelPending);
-        // END NEW CODE
-        local result = {
-            id = _entity.getID(),
-            name = _entity.getName(),
-            nameOnly = _entity.getNameOnly(),
-            levelImagePath = _entity.getLevelImagePath(),
-            imageOffsetX = _entity.isDiscovered() ? _entity.getImageOffsetX() : 0,
-            imageOffsetY = _entity.isDiscovered() ? _entity.getImageOffsetY() : 0,
-            actionPoints = _entity.getActionPoints(),
-            actionPointsMax = _entity.getActionPointsMax(),
-            hitpoints = _entity.getHitpoints(),
-            hitpointsMax = _entity.getHitpointsMax(),
-            morale = _entity.getMoraleState(),
-            moraleMax = this.Const.MoraleState.COUNT - 1,
-            moraleLabel = this.Const.MoraleStateName[_entity.getMoraleState()],
-            fatigue = _entity.getFatigue(),
-            fatigueMax = _entity.getFatigueMax(),
-            armorHead = _entity.getArmor(this.Const.BodyPart.Head),
-            armorHeadMax = _entity.getArmorMax(this.Const.BodyPart.Head),
-            armorBody = _entity.getArmor(this.Const.BodyPart.Body),
-            armorBodyMax = _entity.getArmorMax(this.Const.BodyPart.Body),
-            // isEnemy = !_entity.isPlayerControlled() || this.Tactical.State.isAutoRetreat(),
-            isEnemy = !humanControlled || this.Tactical.State.isAutoRetreat(),
-            isHiddenToPlayer = _entity.isHiddenToPlayer() || _entity.getFaction() != 1 && this.Settings.getGameplaySettings().FasterAIMovement || this.Tactical.State.isAutoRetreat(),
-            isWaitActionSpent = !this.canEntityWait(_entity)
-        };
+        _debug("convertEntityToUIData", _entity)
 
-        if (_entity.isDiscovered())
-        {
-            result.imagePath <- _entity.getImagePath();
-        }
-        else
-        {
-            result.imagePathFoW <- _entity.getImagePath();
-        }
-
-        return result;
+        local ret = convertEntityToUIData(_entity);
+        local onAuto = m.IsWaitingRound || m.IsSkippingRound || !isHumanControlled(_entity);
+        local cancel = m.CancelPending && _entity.isPlayerControlled();
+        ret.isEnemy = onAuto && !cancel || Tactical.State.isAutoRetreat()
+        return ret;
     }
 
     local convertEntitySkillsToUIData = cls.convertEntitySkillsToUIData;
     cls.convertEntitySkillsToUIData = function (_entity) {
-        // logEntity("convertEntitySkillsToUIData", _entity);
-        // logInfo("ap: isPlayerControlled " + _entity.isPlayerControlled());
-        // logInfo("ap: isHumanControlled " + isHumanControlled(_entity));
-        if (_entity.isPlayerControlled())
-        {
+        _debug("convertEntitySkillsToUIData", _entity)
+        local ret = convertEntitySkillsToUIData(_entity);
+        if (ret == null) return ret;
 
-            local result = [];
-            local activeSkills = _entity.getSkills().queryActives();
-
-            foreach( skill in activeSkills )
-            {
-                if (skill.isHidden())
-                {
-                    continue;
-                }
-
-                local isSkillAffordable = skill.isAffordable();
-
-                if (this.m.ActiveEntityCostsPreview != null && this.m.ActiveEntityCostsPreview.id == _entity.getID())
-                {
-                    isSkillAffordable = skill.isAffordablePreview();
-                }
-
-                result.push({
-                    id = skill.getID(),
-                    imagePath = skill.getIcon(),
-                    isUsable = skill.isUsable() && skill.isAffordable(),
-                    isAffordable = isSkillAffordable
-                });
-            }
-
-            // START NEW CODE
-            foreach(item in _entity.querySwitchableItems())
-                result.push({ id = item.getInstanceID(), imagePath = "ui/items/" + item.getIcon(), isUsable = true, isAffordable = true });
-
-            // END NEW CODE
-            return result;
-        }
-
-        return null;
+        foreach(item in _entity.querySwitchableItems())
+            ret.push({
+                id = item.getInstanceID()
+                imagePath = "ui/items/" + item.getIcon()
+                isUsable = true
+                isAffordable = true // why?
+            });
+        return ret;
     }
 })

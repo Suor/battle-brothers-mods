@@ -4,7 +4,11 @@ AutopilotNew.TacticalScreenTurnSequenceBarModule_createDIV
     = TacticalScreenTurnSequenceBarModule.prototype.createDIV;
 TacticalScreenTurnSequenceBarModule.prototype.createDIV = function (_parentDiv)
 {
+    console.error("createDIV(...)");
     AutopilotNew.TacticalScreenTurnSequenceBarModule_createDIV.call(this, _parentDiv);
+
+    // Need to move active skills left to make space for autopilot buttons
+    this.mSkillsContainer.css("position", "relative").css("left", "-18.3rem")
 
     var self = this;
     var buttonsContainer = this.mEndTurnButtonContainer.parent();
@@ -57,6 +61,7 @@ AutopilotNew.TacticalScreenTurnSequenceBarModule_bindTooltips
     = TacticalScreenTurnSequenceBarModule.prototype.bindTooltips;
 TacticalScreenTurnSequenceBarModule.prototype.bindTooltips = function ()
 {
+    console.error("bindTooltips(...)");
     AutopilotNew.TacticalScreenTurnSequenceBarModule_bindTooltips.call(this);
     this.mWaitAll.button.bindTooltip({
         contentType: 'ui-element',
@@ -79,6 +84,7 @@ AutopilotNew.TacticalScreenTurnSequenceBarModule_unbindTooltips
     = TacticalScreenTurnSequenceBarModule.prototype.unbindTooltips;
 TacticalScreenTurnSequenceBarModule.prototype.unbindTooltips = function ()
 {
+    console.error("unbindTooltips(...)");
     this.mWaitAll.button.unbindTooltip();
     this.mShieldWall.button.unbindTooltip();
     this.mIgnore.button.unbindTooltip();
@@ -87,45 +93,52 @@ TacticalScreenTurnSequenceBarModule.prototype.unbindTooltips = function ()
     AutopilotNew.TacticalScreenTurnSequenceBarModule_unbindTooltips.call(this);
 }
 
-AutopilotNew.TacticalScreenTurnSequenceBarModule_showStatsPanel = TacticalScreenTurnSequenceBarModule.prototype.showStatsPanel;
+AutopilotNew.TacticalScreenTurnSequenceBarModule_showStatsPanel
+    = TacticalScreenTurnSequenceBarModule.prototype.showStatsPanel;
 TacticalScreenTurnSequenceBarModule.prototype.showStatsPanel = function (_show, _instant)
 {
+    console.error("showStatsPanel(" + _show + ", " + _instant + ")");
+    _instant = true; // animated version has some race issue with buttons not showing up sometimes
+    // this.mStatsPanelFadeInTime = this.mStatsPanelFadeOutTime = 1000;
     var items = [this.mWaitAll, this.mShieldWall, this.mIgnore, this.mAI];
-    // if (_instant !== undefined && typeof(_instant) == 'boolean')
-    // {
+    if (_instant !== undefined && typeof(_instant) == 'boolean')
+    {
         items.forEach(function (item) {
-            // item.container.css({opacity: _show ? 1 : 0});
-            item.container.toggle(_show);
+            item.container.toggleClass("display-block", _show).toggleClass("display-none", !_show);
         });
-    // }
-    // else
-    // {
-    //     this.mWaitTurnAllButtonContainer.velocity("finish", true).velocity({ opacity: _show ? 1 : 0 },
-    //     {
-    //         duration: _show ? this.mStatsPanelFadeInTime : this.mStatsPanelFadeOutTime,
-    //         easing: 'swing',
-    //         begin: function ()
-    //         {
-    //             if (_show)
-    //                 $(this).removeClass('display-none').addClass('display-block');
-    //         },
-    //         complete: function ()
-    //         {
-    //             if (!_show)
-    //                 $(this).removeClass('display-block').addClass('display-none');
-    //         }
-    //     });
-    // }
+    }
+    else
+    {
+        var self = this;
+        items.forEach(function (item) {
+            item.container.velocity("finish", true).velocity({ opacity: _show ? 1 : 0 },
+            {
+                duration: _show ? self.mStatsPanelFadeInTime : self.mStatsPanelFadeOutTime,
+                easing: 'swing',
+                begin: function () {
+                    if (_show)
+                        $(this).removeClass('display-none').addClass('display-block');
+                },
+                complete: function () {
+                    if (!_show)
+                        $(this).removeClass('display-block').addClass('display-none');
+                }
+            });
+        })
+    }
+    // AutopilotNew.TacticalScreenTurnSequenceBarModule_showStatsPanel.call(this, _show, true);
     AutopilotNew.TacticalScreenTurnSequenceBarModule_showStatsPanel.call(this, _show, _instant);
 }
 
 // New Functions:
 TacticalScreenTurnSequenceBarModule.prototype.setWaitTurnAllButtonVisible = function (_visible)
 {
+    console.error("setWaitTurnAllButtonVisible(" + _visible + ")");
     this.mWaitAll.button.enableButton(_visible);
 }
 
 TacticalScreenTurnSequenceBarModule.prototype.setAIButtonVisible = function (_visible)
 {
+    console.error("setAIButtonVisible(" + _visible + ")");
     this.mAI.button.enableButton(_visible);
 }
