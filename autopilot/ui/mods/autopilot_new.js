@@ -1,5 +1,18 @@
 var AutopilotNew = {};
 
+// Undo reforged changes
+AutopilotNew.unhook = function (clsName, hooks) {
+    var cls = window[clsName], prefix = clsName + '_';
+    for (var key in hooks) {
+        if (key.slice(0, prefix.length) != prefix) continue; // no .startsWith() in there
+        var funcName = key.split('_')[1];
+        cls.prototype[funcName] = hooks[key];
+    }
+}
+if (window.Reforged) AutopilotNew.unhook("TacticalScreenTurnSequenceBarModule", Reforged.Hooks);
+
+
+// Autopilot hooks
 AutopilotNew.TacticalScreenTurnSequenceBarModule_createDIV
     = TacticalScreenTurnSequenceBarModule.prototype.createDIV;
 TacticalScreenTurnSequenceBarModule.prototype.createDIV = function (_parentDiv)
