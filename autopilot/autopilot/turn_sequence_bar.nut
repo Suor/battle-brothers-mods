@@ -4,12 +4,26 @@
         Tactical.TurnSequenceBar.cancelAutoActions()
         tactical_flee_screen_onFleePressed()
     }
+
+    local turnsequencebar_onCheckEnemyRetreat = cls.turnsequencebar_onCheckEnemyRetreat;
+    cls.turnsequencebar_onCheckEnemyRetreat = function () {
+        if (Tactical.TurnSequenceBar.m.IsOnAI) {
+            // Do not show "run them down" popup if on AI, this flag pevents it.
+            // The flag should return to false if enemy not retreating.
+            this.m.IsEnemyRetreatDialogShown = true;
+            turnsequencebar_onCheckEnemyRetreat();
+            this.m.IsEnemyRetreatDialogShown = Tactical.Entities.isEnemyRetreating();
+        } else {
+            turnsequencebar_onCheckEnemyRetreat()
+        }
+    }
 })
 
 ::mods_hookExactClass("ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_bar",
         function (cls) {
     cls.m.CancelPending <- false;
     cls.m.IsWaitingRound <- false;
+    cls.m.IsOnAI <- false;
 
     cls.isHumanControlled <- function (entity = null) {
         if (entity == null) entity = getActiveEntity();
@@ -91,6 +105,7 @@
             }
         }
 
+        m.IsOnAI = false;
         m.IsSkippingRound = false;
         m.IsWaitingRound = false;
         m.JSHandle.call("setEndTurnAllButtonVisible", true);
@@ -104,6 +119,7 @@
         Tactical.State.showDialogPopup("AI Control", "Turn control over to the AI?", function ()
         {
             cancelAutoActions(false); // reset changes we may have made (except ignoring bros)
+            m.IsOnAI = true;
             foreach(e in m.AllEntities) {
                 if (e.isPlayerControlled() && e.getAIAgent().ClassName == "player_agent"
                     && !e.isGuest() && (!("_isIgnored" in e.m) || !e.m._isIgnored))
