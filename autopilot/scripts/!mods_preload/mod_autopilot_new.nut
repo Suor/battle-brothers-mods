@@ -10,10 +10,10 @@ local mod = ::Autopilot <- {
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 ::mods_queue(mod.ID, "mod_hooks(>=20), >mod_reforged, !mod_autopilot", function() {
+  ::include("autopilot/hooks/turn_sequence_bar");
   ::include("autopilot/better_behavior");
   ::include("autopilot/fixes");
   ::include("autopilot/verbose");
-  ::include("autopilot/turn_sequence_bar");
   ::mods_registerJS("autopilot_new.js");
   ::mods_registerCSS("autopilot_new.css");
 
