@@ -1,4 +1,4 @@
-# Camps and Artifacts (Fixed)
+# Camps and Artifacts (Reworked)
 
 Adds higher difficulty camps and a higher tier of super-named "artifact" items, which help extend the lategame. A rework of a very fun [Expanded Camps and Artifacts][camps-old] by ProFoolie.
 

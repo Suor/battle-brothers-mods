@@ -1,6 +1,6 @@
 local mod = ::CampsAndArtifacts <- {
     ID = "mod_camps_and_artifacts"
-    Name = "Camps and Artifacts (Fixed)"
+    Name = "Camps and Artifacts (Reworked)"
     Version = 3.0
     Data = {}
 };
