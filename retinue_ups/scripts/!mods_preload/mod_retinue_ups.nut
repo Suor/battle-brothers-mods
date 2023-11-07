@@ -162,11 +162,24 @@ local function positive(value) {
     ::mods_hookExactClass("states/tactical_state", function (cls) {
         local gatherLoot = cls.gatherLoot;
         cls.gatherLoot = function () {
+            local te = this.Tactical.Entities;
             if (::World.Retinue.ru_isPromoted("scavenger_follower")) {
                 // Double this stuff
-                local te = this.Tactical.Entities;
                 te.spendAmmo(te.getAmmoSpent());
-                te.addArmorParts(te.getArmorParts());
+
+                // Can't just double armor parts because of 60 cap, so we copy the code
+                if (te.getArmorParts() > 0 && ::World.Assets.m.IsRecoveringArmor) {
+                    local num = te.getArmorParts() * ::Const.World.Assets.ArmorPartsPerArmor * 0.15;
+                    local amount = ::Math.min(60, ::Math.max(1, num));
+                    amount = ::Math.rand(amount / 2, amount);
+
+                    if (amount > 0) {
+                        local parts = ::new("scripts/items/supplies/armor_parts_item");
+                        parts.setAmount(amount);
+                        this.m.CombatResultLoot.add(parts) // put here, will go loot and back here
+                    }
+                }
+
             }
             gatherLoot();
         }
