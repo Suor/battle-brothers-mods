@@ -184,4 +184,24 @@ local function positive(value) {
             gatherLoot();
         }
     })
+
+    // Trader
+    ::mods_hookExactClass("retinue/followers/trader_follower", function (cls) {
+        cls.m.ru_promotion <- {
+            Cost = 7000
+            Tease = "for more stuff in shops, including named items"
+            Effects = ["Finds more stuff in shops, including more named items"]
+        }
+    })
+    ::mods_hookNewObject("entity/world/settlement_modifiers", function (obj) {
+        // NOTE: this is only called on add/remove settlement situation or contract,
+        //       so changes might not be immediate
+        local reset = obj.reset;
+        obj.reset = function () {
+            reset();
+            if (::World.Retinue.ru_isPromoted("trader_follower")) {
+                this.RarityMult *= 1.10; // Not as good as well supplied
+            }
+        }
+    })
 })
