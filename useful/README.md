@@ -1,13 +1,10 @@
-# BroGen (Bro Generation Customizer)
+# Useful Things
 
-Allows to cutomize all sort of things during bro generation and level up:
-- talents
-- perk points
-- traits
-- attribute gain
+...
 
-Both for new bros and veterans.
+## Compatibility
 
+Is safe to add and remove midgame.
 
 ## Install
 
