@@ -1,24 +1,3 @@
-::mods_hookExactClass("states/tactical_state", function (cls) {
-    local tactical_flee_screen_onFleePressed = cls.tactical_flee_screen_onFleePressed;
-    cls.tactical_flee_screen_onFleePressed = function () {
-        Tactical.TurnSequenceBar.cancelAutoActions()
-        tactical_flee_screen_onFleePressed()
-    }
-
-    local turnsequencebar_onCheckEnemyRetreat = cls.turnsequencebar_onCheckEnemyRetreat;
-    cls.turnsequencebar_onCheckEnemyRetreat = function () {
-        if (Tactical.TurnSequenceBar.m.IsOnAI) {
-            // Do not show "run them down" popup if on AI, this flag pevents it.
-            // The flag should return to false if enemy not retreating.
-            this.m.IsEnemyRetreatDialogShown = true;
-            turnsequencebar_onCheckEnemyRetreat();
-            this.m.IsEnemyRetreatDialogShown = Tactical.Entities.isEnemyRetreating();
-        } else {
-            turnsequencebar_onCheckEnemyRetreat()
-        }
-    }
-})
-
 ::mods_hookExactClass("ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_bar",
         function (cls) {
     cls.m.CancelPending <- false;

@@ -1,4 +1,6 @@
 ::mods_hookExactClass("states/tactical_state", function (cls) {
+    cls.m.autopilot_IsInputLocked <- false;
+
     local helper_handleContextualKeyInput = cls.helper_handleContextualKeyInput;
     cls.helper_handleContextualKeyInput = function (key) {
         if (helper_handleDeveloperKeyInput(key)) return true;
@@ -62,120 +64,55 @@
         }
     }
 
+    local isInputLocked = cls.isInputLocked;
+    cls.isInputLocked = function () {
+        return this.m.autopilot_IsInputLocked || isInputLocked()
+    }
+    local updateCurrentEntity = cls.updateCurrentEntity;
     cls.updateCurrentEntity = function () {
-        if (this.m.IsGameFinishable && this.isBattleEnded())
-        {
+        if (this.m.IsGameFinishable && this.isBattleEnded()) {return;}
+        if (this.m.IsGamePaused) {return;}
+
+        local e = Tactical.TurnSequenceBar.getActiveEntity();
+        if (e == null) {
+            Tactical.TurnSequenceBar.initNextTurn();
             return;
         }
 
-        if (this.m.IsGamePaused)
-        {
-            return;
-        }
+        if ("isUnderAIControl" in e && e.isUnderAIControl()) {
+            local pos = Tactical.TurnSequenceBar.getTurnPosition();
 
-        local activeEntity = this.Tactical.TurnSequenceBar.getActiveEntity();
+            this.m.autopilot_IsInputLocked = true;
+            updateCurrentEntity()
+            this.m.autopilot_IsInputLocked = false;
 
-        if (activeEntity == null)
-        {
-            this.Tactical.TurnSequenceBar.initNextTurn();
-            return;
-        }
-
-        activeEntity.onUpdate();
-
-        local agent = activeEntity.getAIAgent();
-        if (!activeEntity.isPlayerControlled() || this.m.IsAutoRetreat ||
-                agent != null && agent.ClassName != "player_agent")
-        {
-            this.setInputLocked(true);
-
-            if (agent != null)
-            {
-                if (!this.m.IsAIPaused)
-                {
-                    if (!this.Const.AI.ParallelizationMode || !agent.isEvaluating())
-                    {
-                        agent.think();
-                    }
-
-                    if (agent.isFinished() || !activeEntity.isAlive())
-                    {
-                        this.Tactical.TurnSequenceBar.initNextTurn();
-                    }
-                }
+            // If not finished turn and should then finish it
+            if ((e.getAIAgent().isFinished() || !e.isAlive())
+                    && Tactical.TurnSequenceBar.getTurnPosition() == pos) {
+                Tactical.TurnSequenceBar.initNextTurn();
             }
-            else
-            {
-                this.Tactical.TurnSequenceBar.initNextTurn();
-            }
-        }
-        else
-        {
-            if (agent != null && !this.m.IsAIPaused)
-            {
-                if (!agent.isFinished())
-                {
-                    this.setInputLocked(true);
-
-                    if (!this.Const.AI.ParallelizationMode || !agent.isEvaluating())
-                    {
-                        agent.think();
-                    }
-                }
-                else if (!activeEntity.isAlive() || activeEntity.getMoraleState() == this.Const.MoraleState.Fleeing)
-                {
-                    this.Tactical.TurnSequenceBar.initNextTurn();
-                }
-                else
-                {
-                    this.setInputLocked(false);
-                }
-            }
-            else
-            {
-                this.setInputLocked(false);
-            }
-
-            if (!this.isInputLocked())
-            {
-                switch(this.m.CurrentActionState)
-                {
-                case this.Const.Tactical.ActionState.SkillSelected:
-                case this.Const.Tactical.ActionState.ComputePath:
-                case null:
-                    if (activeEntity.isTurnDone())
-                    {
-                        this.Tactical.TurnSequenceBar.initNextTurn();
-                    }
-                    else if (!this.Tactical.getNavigator().isTravelling(activeEntity) && !activeEntity.isPlayingRenderAnimation())
-                    {
-                        this.Tactical.getShaker().shake(activeEntity, activeEntity.getTile(), 1);
-                    }
-
-                    break;
-
-                case this.Const.Tactical.ActionState.TravelPath:
-                    if (!this.Tactical.getNavigator().travel(activeEntity, activeEntity.getActionPoints(), activeEntity.getFatigueMax() - activeEntity.getFatigue()))
-                    {
-                        this.Cursor.setCursor(this.Const.UI.Cursor.Hand);
-                        this.m.CurrentActionState = null;
-                        this.m.ActiveEntityNeedsUpdate = true;
-
-                        if (activeEntity.isAlive() && activeEntity.getTile().Level > this.Tactical.getCamera().Level)
-                        {
-                            this.Tactical.getCamera().Level = activeEntity.getTile().Level;
-                        }
-                    }
-
-                    if (activeEntity.isAlive() && this.m.ActiveEntityNeedsUpdate)
-                    {
-                        this.Tactical.TurnSequenceBar.updateEntity(activeEntity.getID());
-                        this.m.ActiveEntityNeedsUpdate = false;
-                    }
-
-                    break;
-                }
-            }
+        } else {
+            updateCurrentEntity()
         }
     }
-});
+
+    local turnsequencebar_onCheckEnemyRetreat = cls.turnsequencebar_onCheckEnemyRetreat;
+    cls.turnsequencebar_onCheckEnemyRetreat = function () {
+        if (Tactical.TurnSequenceBar.m.IsOnAI) {
+            // Do not show "run them down" popup if on AI, this flag pevents it.
+            // The flag should return to false if enemy not retreating.
+            this.m.IsEnemyRetreatDialogShown = true;
+            turnsequencebar_onCheckEnemyRetreat();
+            this.m.IsEnemyRetreatDialogShown = Tactical.Entities.isEnemyRetreating();
+        } else {
+            turnsequencebar_onCheckEnemyRetreat()
+        }
+    }
+
+    // Breaks when trying to retreat in auto mode otherwise
+    local tactical_flee_screen_onFleePressed = cls.tactical_flee_screen_onFleePressed;
+    cls.tactical_flee_screen_onFleePressed = function () {
+        Tactical.TurnSequenceBar.cancelAutoActions()
+        tactical_flee_screen_onFleePressed()
+    }
+})
