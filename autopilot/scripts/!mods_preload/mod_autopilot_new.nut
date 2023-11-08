@@ -1,7 +1,7 @@
 local mod = ::Autopilot <- {
   ID = "mod_autopilot_new"
   Name = "Autopilot New"
-  Version = 2.0
+  Version = 2.1
   // Settings
   FreeWake = true // auto break free out of nets and webs and wake allies when unused AP left
   Reload = true   // auto reload when unused AP left

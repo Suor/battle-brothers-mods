@@ -1,2 +1,15 @@
+2.1
+- made compatible with Reforged
+- better compatibility with Legends (no need to remove any files anymore)
+- added CleverFool's actives.gae_buidhe_thrust to ai_attack_default
+- do not discourage tired ranged bros from disengaging
+Fixes:
+- no disappearing buttons anymore
+- removed always active rundown/it's over in AI mode
+- hide skills and other UI buttons when auto waiting, skipping turn or on AI
+- do not try to unbag shield with quick hands
+- fixed a crash with no attack of opportunity in ai_knock_out
+- fixed a crash with calculating spear wall value in behavior.nut
+
 2.0
 - initial public rewrite, see changes to Adam's autopilot in README
