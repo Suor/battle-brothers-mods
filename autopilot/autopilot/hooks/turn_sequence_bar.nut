@@ -99,6 +99,7 @@
         {
             cancelAutoActions(false); // reset changes we may have made (except ignoring bros)
             m.IsOnAI = true;
+            m.JSHandle.call("showStatsPanel", false);
             foreach(e in m.AllEntities) {
                 if (e.isPlayerControlled() && e.getAIAgent().ClassName == "player_agent"
                     && !e.isGuest() && (!("_isIgnored" in e.m) || !e.m._isIgnored))
