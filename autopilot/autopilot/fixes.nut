@@ -32,6 +32,13 @@
 ::mods_hookBaseClass("ai/tactical/behavior", function(cls) {
     cls = cls.behavior;
 
+    // Sometimes _tile might be 0 ???
+    local querySpearwallValueForTile = cls.querySpearwallValueForTile;
+    cls.querySpearwallValueForTile = function(_entity, _tile) {
+        if (!_tile) return 0.0;
+        return querySpearwallValueForTile(_entity, _tile);
+    }
+
     // For player actors whether somebody is ranged or not is decided by his vision,
     // so a throwing guy in a big hat at night night suddenly becomes not ranged for AI.
     // This makes 2-tile bros start to hide behind such guy :)
