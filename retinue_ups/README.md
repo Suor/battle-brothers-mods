@@ -2,10 +2,10 @@
 
 Adds promotions for some retinue followers to make them better for extra one time investment without taking extra seat. Currently available promotions are:
 
-**Bounty Hunter.** Further increases the chance of encountering champions. Costs 7000 gold.
-**Blacksmith.** Gives better chance to recover items, even broken ones, from slain enemies. Costs 3000 gold.
-**Scavenger.** Doubles the spoils. Costs 3000 gold.
-**Trader.** Finds more stuff in shops, including rare named items. Costs 7000 gold.
+**Bounty Hunter.** Further increases the chance of encountering champions. Costs 7000 gold.<br>
+**Blacksmith.** Gives better chance to recover items, even broken ones, from slain enemies. Costs 3000 gold.<br>
+**Scavenger.** Doubles the spoils. Costs 3000 gold.<br>
+**Trader.** Finds more stuff in shops, including rare named items. Costs 7000 gold.<br>
 
 To promote a follower you need to first hire him or her and then Ctrl-click on a picture in the retinue screen. If you replace a follower you loose the promotion.
 
