@@ -12,7 +12,7 @@ local function positive(value) {
 ::mods_queue(mod.ID, "mod_hooks(>=20), >tnf_expandedRetinue, >mod_more_followers", function() {
     ::mods_registerJS("retinue_ups.js");
 
-    ::mods_hookNewObjectOnce("retinue/retinue_manager", function (obj) {
+    ::mods_hookNewObject("retinue/retinue_manager", function (obj) {
         local setFollower = obj.setFollower;
         obj.setFollower = function(_slot, _follower) {
             // When follower is replaced it looses its promotion
@@ -44,7 +44,7 @@ local function positive(value) {
         }
     })
 
-    ::mods_hookNewObjectOnce("ui/screens/world/world_campfire_screen", function (obj) {
+    ::mods_hookNewObject("ui/screens/world/world_campfire_screen", function (obj) {
         obj.ru_onSlotCtrlClicked <- function (_i) {
             local follower = ::World.Retinue.m.Slots[_i];
             ::logInfo("Promote " + _i + " " + follower.getID());
