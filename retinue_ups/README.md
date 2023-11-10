@@ -3,15 +3,13 @@
 Adds promotions for some retinue followers to make them better for extra one time investment without taking extra seat. Currently available promotions are:
 
 **Bounty Hunter.** Further increases the chance of encountering champions. Costs 7000 gold.
-
 **Blacksmith.** Gives better chance to recover items, even broken ones, from slain enemies. Costs 3000 gold.
-
 **Scavenger.** Doubles the spoils. Costs 3000 gold.
-
 **Trader.** Finds more stuff in shops, including rare named items. Costs 7000 gold.
 
 To promote a follower you need to first hire him or her and then Ctrl-click on a picture in the retinue screen. If you replace a follower you loose the promotion.
 
+More ideas are welcome.
 
 ## Compatibility
 
@@ -23,10 +21,10 @@ Plays nice with Expanded Retinue mod from [Tweaks and Fixes][tnf] and [More Reti
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][], [stdlib][] and [MSU][].
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][].
 
 
-[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/...
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/681
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
 [msu]: https://www.nexusmods.com/battlebrothers/mods/479
