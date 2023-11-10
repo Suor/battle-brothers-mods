@@ -30,6 +30,8 @@ local function positive(value) {
             }
         }
 
+        // TODO: check the presense of a follower, i.e. one might remove the mod,
+        //       replace the follower, reinstall the mod and reap the promotion effects sometimes.
         obj.ru_isPromoted <- function (follower) {
             local clsName = typeof follower == "string" ? follower : follower.ClassName;
             return ::World.Flags.has("mod_retinue_ups." + clsName);
