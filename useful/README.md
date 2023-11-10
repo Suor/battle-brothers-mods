@@ -1,6 +1,12 @@
 # Useful Things
 
-...
+Makes more useful:
+
+- goblin named bows, spears and falchions
+- two handed flails
+- throwing nets
+- hand to hand
+
 
 ## Compatibility
 
