@@ -16,7 +16,8 @@
 
     local onDeath = "onDeath" in o ? o.onDeath : null;
     o.onDeath <- function (_fatalityType) {
-        if (getFunFacts(this)) this.m.ff_Died = true;
+        // Might be triggered out of combat, say by an event
+        if ("ff_Died" in this.m && getFunFacts(this)) this.m.ff_Died = true;
         if (onDeath) onDeath(_fatalityType);
     }
 

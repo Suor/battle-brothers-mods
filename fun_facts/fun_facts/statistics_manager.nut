@@ -1,6 +1,6 @@
 local Debug = ::std.Debug, Util = std.Util;
 
-::mods_hookNewObjectOnce("statistics/statistics_manager", function (o) {
+::mods_hookNewObject("statistics/statistics_manager", function (o) {
     local addFallen = o.addFallen;
     // _fallen
     o.addFallen = function( ... ) {

@@ -1,4 +1,4 @@
-::mods_hookNewObjectOnce("ui/screens/world/world_obituary_screen", function (o)
+::mods_hookNewObject("ui/screens/world/world_obituary_screen", function (o)
 {
 	local convertFallenToUIData = o.convertFallenToUIData;
 	o.convertFallenToUIData = function(...)
