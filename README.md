@@ -9,7 +9,7 @@ A collection of mods to make Battle Brothers more fun and comfy. Written by me o
 [Bro Renamer](renamer) | Autochange each bro title to his profession + roman number.
 **[Bro Studio](bro_studio)** | Customize bro level ups: talents, perk points, traits, attribute gain.
 [Camps and Artifacts (Reworked)](camps_and_artifacts) | Adds extra strong lairs and artifacts. A fixed version of the old [Extended Camps][camps-old].
-[Cheap Meat](mod_cheap_meat) | Cheaper bros and tryots.
+[Cheap Meat](cheap_meat) | Cheaper bros and tryots.
 [Cook and Blacksmith Fix](heal_repair_fix) | Fixes Cook and Blacksmith speeding up healing and repairing.
 **[Elite Few - Master Bros](elite_few)** | A rewrite of the old [The Elite Few - Master Bros][elite-few-old], aimed at better compatibility with other mods and newer DLCs. Plus some fixes.
 [Events and Ambitions Delayed Fix](events_delayed_fix) | Removes unpredicatably long delays before events and ambitions are fired.
