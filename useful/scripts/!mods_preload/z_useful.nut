@@ -1,7 +1,7 @@
 local mod = ::Useful <- {
     ID = "mod_useful"
     Name = "Useful Things"
-    Version = 0.2
+    Version = 0.3
     Debug = ::std.Debug.with({prefix = "u: "})
 }
 local Util = ::std.Util;
