@@ -1,2 +1,9 @@
+3.1
+- made compatible with Item Spawner mod
+- better Legends compatibility
+- use prefixes in artifact names to make them more random
+- fixed lindwurm armor and helmet, they now both provide acid immunit and random perk
+- fixed some artifact prices
+
 3.0
 - first fixed version, see changes in README
