@@ -10,26 +10,10 @@ this.artifact_armor <- this.inherit("scripts/items/armor/armor", {
 	function create()
 	{
 		this.armor.create();
-		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.Artifact;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.Artifact  | this.Const.Items.ItemType.Named;
 		this.m.ShowOnCharacter = true;
 		this.m.IsDroppedAsLoot = true;
 	}
-
-	function getRandomCharacterName( _list )
-	{
-		local vars = [
-			[
-				"randomname",
-				this.Const.Strings.CharacterNames[this.Math.rand(0, this.Const.Strings.CharacterNames.len() - 1)]
-			],
-			[
-				"randomtown",
-				this.Const.World.LocationNames.VillageWestern[this.Math.rand(0, this.Const.World.LocationNames.VillageWestern.len() - 1)]
-			]
-		];
-		return this.buildTextFromTemplate(_list[this.Math.rand(0, _list.len() - 1)], vars);
-	}
-
 
 	function onEquip()
 	{
@@ -37,22 +21,26 @@ this.artifact_armor <- this.inherit("scripts/items/armor/armor", {
 
 		if (this.m.Name.len() == 0)
 		{
-			this.setName();
+			this.setName(this.createRandomName());
 		}
 	}
 
 	function onAddedToStash( _stashID )
 	{
+		logInfo("camps: artifact_armor.onAddedToStash name=" + this.m.Name)
+		std.Debug.log("camps: artifact_armor.onAddedToStash", this.m)
 		if (this.m.Name.len() == 0)
 		{
-			this.setName();
+			this.setName(this.createRandomName());
 		}
 	}
 
-	function setName( _prefix = "" )
+	function setName( _name )
 	{
-		this.m.Name = this.m.NameList[this.Math.rand(0, this.m.NameList.len() - 1)];
+		this.m.Name = _name;
 	}
+
+	createRandomName = ::CampsAndArtifacts.createRandomName
 
 	function randomizeValues()
 	{

@@ -39,7 +39,7 @@ this.artifact_handgonne <- this.inherit("scripts/items/weapons/artifact/artifact
 		this.m.Categories = "Firearm, Two-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
 		this.m.BlockedSlotType = this.Const.ItemSlot.Offhand;
-		this.m.ItemType = this.Const.Items.ItemType.Named | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.RangedWeapon | this.Const.Items.ItemType.Defensive;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.RangedWeapon | this.Const.Items.ItemType.Defensive;
 		this.m.EquipSound = this.Const.Sound.ArmorLeatherImpact;
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = true;

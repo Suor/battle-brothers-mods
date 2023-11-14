@@ -10,7 +10,7 @@ this.artifact_battle_whip <- this.inherit("scripts/items/weapons/artifact/artifa
 		this.m.Description = "This whip is unlike any you have seen.  Clearly crafted by a country of men that have mastered its use, you wonder what strange land could have fashioned such a weapon.";
 		this.m.Categories = "Cleaver, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
 		this.m.IsDoubleGrippable = true;
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = false;

@@ -23,7 +23,7 @@ this.artifact_crossbow <- this.inherit("scripts/items/weapons/artifact/artifact_
 		this.m.Categories = "Crossbow, Two-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
 		this.m.BlockedSlotType = this.Const.ItemSlot.Offhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.RangedWeapon | this.Const.Items.ItemType.Defensive;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.RangedWeapon | this.Const.Items.ItemType.Defensive;
 		this.m.EquipSound = this.Const.Sound.ArmorLeatherImpact;
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = true;

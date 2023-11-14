@@ -4,6 +4,19 @@ local mod = ::CampsAndArtifacts <- {
     Version = 3.0
     Data = {}
 };
+local function choice(options) {
+    return options[::Math.rand(0, options.len() - 1)];
+}
+
+mod.createRandomName <- function () {
+    if (this.m.PrefixList.len() > 0 && ::Math.rand(1, 100) <= 70) {
+        return choice(this.m.PrefixList) + " " + choice(this.m.NameList)
+    }
+    else {
+        return choice(this.m.NameList)
+    }
+}
+
 
 foreach (file in ::IO.enumerateFiles("camps_and_artifacts/config")) ::include(file);
 

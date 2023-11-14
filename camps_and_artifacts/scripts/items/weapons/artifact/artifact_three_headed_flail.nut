@@ -12,7 +12,7 @@ this.artifact_three_headed_flail <- this.inherit("scripts/items/weapons/artifact
 		this.m.Description = "A truly uncanny weapon, both in form and construction.  This flail looks like no other weapon of these lands.";
 		this.m.Categories = "Flail, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
 		this.m.ItemProperty = this.Const.Items.Property.IgnoresShieldwall;
 		this.m.IsDoubleGrippable = true;
 		this.m.IsAgainstShields = true;

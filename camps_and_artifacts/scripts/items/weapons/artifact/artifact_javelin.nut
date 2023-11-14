@@ -22,7 +22,7 @@ this.artifact_javelin <- this.inherit("scripts/items/weapons/artifact/artifact_w
 		this.m.Description = "A bundle of light spears crafted to be thrown.  These weapons are pointed with some material that you cannot discern.  They fly deadly and true."
 		this.m.Categories = "Throwing Weapon, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.RangedWeapon | this.Const.Items.ItemType.Ammo | this.Const.Items.ItemType.Defensive;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.RangedWeapon | this.Const.Items.ItemType.Ammo | this.Const.Items.ItemType.Defensive;
 		this.m.AddGenericSkill = true;
 		this.m.ShowArmamentIcon = true;
 		this.m.IsDroppedAsLoot = true;

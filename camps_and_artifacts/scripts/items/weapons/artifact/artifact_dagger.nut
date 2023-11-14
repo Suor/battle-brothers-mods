@@ -10,7 +10,7 @@ this.artifact_dagger <- this.inherit("scripts/items/weapons/artifact/artifact_we
 		this.m.Description = "An impossibly sharp short blade.  This eerie dagger never seems to lose its edge.";
 		this.m.Categories = "Dagger, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
 		this.m.IsDoubleGrippable = true;
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = false;

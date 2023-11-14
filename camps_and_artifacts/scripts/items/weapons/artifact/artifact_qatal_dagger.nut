@@ -10,7 +10,7 @@ this.artifact_qatal_dagger <- this.inherit("scripts/items/weapons/artifact/artif
 		this.m.Description = "A kingslayer, this dagger has already shaped the fate of empires.";
 		this.m.Categories = "Dagger, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Named | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
 		this.m.IsDoubleGrippable = true;
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = false;

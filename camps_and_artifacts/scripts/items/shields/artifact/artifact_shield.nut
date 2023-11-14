@@ -7,12 +7,7 @@ this.artifact_shield <- this.inherit("scripts/items/shields/shield", {
 	function create()
 	{
 		this.shield.create();
-		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.Artifact;
-	}
-
-	function setName( _prefix = "" )
-	{
-		this.m.Name = this.m.NameList[this.Math.rand(0, this.m.NameList.len() - 1)];
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Named;
 	}
 
 	function randomizeValues()
@@ -54,7 +49,7 @@ this.artifact_shield <- this.inherit("scripts/items/shields/shield", {
 
 		if (this.m.Name.len() == 0)
 		{
-			this.setName();
+			this.setName(this.createRandomName());
 		}
 	}
 
@@ -62,9 +57,16 @@ this.artifact_shield <- this.inherit("scripts/items/shields/shield", {
 	{
 		if (this.m.Name.len() == 0)
 		{
-			this.setName();
+			this.setName(this.createRandomName());
 		}
 	}
+
+	function setName( _name )
+	{
+		this.m.Name = _name;
+	}
+
+	createRandomName = ::CampsAndArtifacts.createRandomName
 
 	function onSerialize( _out )
 	{
@@ -95,6 +97,5 @@ this.artifact_shield <- this.inherit("scripts/items/shields/shield", {
 			this.m.FatigueOnSkillUse = 0;
 		}
 	}
-
 });
 

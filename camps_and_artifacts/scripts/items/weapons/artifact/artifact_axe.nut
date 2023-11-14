@@ -10,7 +10,7 @@ this.artifact_axe <- this.inherit("scripts/items/weapons/artifact/artifact_weapo
 		this.m.Description = "An axe of legend whose making has been lost to time.  It is perfectly honed for dismantling armored opponents.";
 		this.m.Categories = "Axe, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
 		this.m.IsDoubleGrippable = true;
 		this.m.IsAgainstShields = true;
 		this.m.AddGenericSkill = true;

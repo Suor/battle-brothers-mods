@@ -10,7 +10,7 @@ this.artifact_fencing_sword <- this.inherit("scripts/items/weapons/artifact/arti
 		this.m.Description = "This strange sword feels almost weightless in your hand.  Its thin blade passes effortlessly through armor and flesh, though you cannot fathom how it maintains its strength.";
 		this.m.Categories = "Sword, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
 		this.m.IsDoubleGrippable = true;
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = false;

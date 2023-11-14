@@ -10,7 +10,7 @@ this.artifact_spear <- this.inherit("scripts/items/weapons/artifact/artifact_wea
 		this.m.Description = "The material of this spear seems almost crystalline, as if some great force of the earth had forced it into the proper shape.  It seems to sing as you move it through the air.";
 		this.m.Categories = "Spear, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded | this.Const.Items.ItemType.Defensive;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded | this.Const.Items.ItemType.Defensive;
 		this.m.IsDoubleGrippable = true;
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = false;

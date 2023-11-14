@@ -10,7 +10,7 @@ this.artifact_sword <- this.inherit("scripts/items/weapons/artifact/artifact_wea
 		this.m.Description = "A relic from the great kings of legend.  This sword is immaculately crafted, holding still the edge that earned it its name.";
 		this.m.Categories = "Sword, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
 		this.m.IsDoubleGrippable = true;
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = false;

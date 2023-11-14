@@ -11,7 +11,7 @@ this.artifact_orc_axe <- this.inherit("scripts/items/weapons/artifact/artifact_w
 		this.m.Description = "An unworldly piece of metal that has been attached to a haft.  Cumbersome and inelegant, but deadly.";
 		this.m.Categories = "Axe, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
 		this.m.IsDoubleGrippable = true;
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = false;

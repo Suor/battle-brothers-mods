@@ -11,7 +11,7 @@ this.artifact_two_handed_flail <- this.inherit("scripts/items/weapons/artifact/a
 		this.m.Categories = "Flail, Two-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
 		this.m.BlockedSlotType = this.Const.ItemSlot.Offhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.TwoHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.TwoHanded;
 		this.m.IsAoE = true;
 		this.m.EquipSound = this.Const.Sound.ArmorLeatherImpact;
 		this.m.AddGenericSkill = true;

@@ -12,7 +12,7 @@ this.artifact_mace <- this.inherit("scripts/items/weapons/artifact/artifact_weap
 		this.m.Description = "While the form of this weapon is clearly a mace, the construction is unlike anything you have seen.  Ripples and veins of darkness swirl around the metal, and cruel spikes look to have grown from the head.";
 		this.m.Categories = "Mace, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
 		this.m.IsDoubleGrippable = true;
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = false;

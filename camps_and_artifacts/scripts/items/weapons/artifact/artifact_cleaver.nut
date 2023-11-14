@@ -10,7 +10,7 @@ this.artifact_cleaver <- this.inherit("scripts/items/weapons/artifact/artifact_w
 		this.m.Description = "A sword of legend.  This blade bears the mark of an ancient tyrant, built for dismembering opponents and seeming to call out for blood.";
 		this.m.Categories = "Cleaver, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
 		this.m.IsDoubleGrippable = true;
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = false;

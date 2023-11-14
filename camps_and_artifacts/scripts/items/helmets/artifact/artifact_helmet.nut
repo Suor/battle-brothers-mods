@@ -10,7 +10,7 @@ this.artifact_helmet <- this.inherit("scripts/items/helmets/helmet", {
 	function create()
 	{
 		this.helmet.create();
-		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.Artifact;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.Artifact  | this.Const.Items.ItemType.Named;
 		this.m.IsDroppedAsLoot = true;
 	}
 
@@ -20,7 +20,7 @@ this.artifact_helmet <- this.inherit("scripts/items/helmets/helmet", {
 
 		if (this.m.Name.len() == 0)
 		{
-			this.setName();
+			this.setName(this.createRandomName());
 		}
 	}
 
@@ -28,26 +28,28 @@ this.artifact_helmet <- this.inherit("scripts/items/helmets/helmet", {
 	{
 		if (this.m.Name.len() == 0)
 		{
-			this.setName();
+			this.setName(this.createRandomName());
 		}
 	}
 
-	function setName( _prefix = "" )
+	function setName( _name )
 	{
-		this.m.Name = this.m.NameList[this.Math.rand(0, this.m.NameList.len() - 1)];
+		this.m.Name = _name;
 	}
+
+	createRandomName = ::CampsAndArtifacts.createRandomName
 
 	function randomizeValues()
 	{
-		this.m.StaminaModifier = this.Math.min(0, this.m.StaminaModifier + this.Math.rand(4, 6));
-		this.m.Condition = this.Math.floor(this.m.Condition * this.Math.rand(130, 150) * 0.01) * 1.0;
+		this.m.StaminaModifier = ::Math.min(0, this.m.StaminaModifier + ::Math.rand(4, 6));
+		this.m.Condition = ::Math.floor(this.m.Condition * ::Math.rand(130, 150) * 0.01) * 1.0;
 		this.m.ConditionMax = this.m.Condition;
 	}
 	function randomizePerks( _perk_type )
 	{		
 		if ( _perk_type == "light" )
 		{
-			local perk_choice = this.Math.rand(0,5)
+			local perk_choice = ::Math.rand(0,5)
 
 			if (perk_choice == 0)
 			{
@@ -89,7 +91,7 @@ this.artifact_helmet <- this.inherit("scripts/items/helmets/helmet", {
 		
 		if ( _perk_type == "heavy" )
 		{
-			local perk_choice = this.Math.rand(0,4)
+			local perk_choice = ::Math.rand(0,4)
 
 			if (perk_choice == 0)
 			{

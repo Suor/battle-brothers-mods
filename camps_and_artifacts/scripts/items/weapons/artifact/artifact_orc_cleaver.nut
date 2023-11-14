@@ -11,7 +11,7 @@ this.artifact_orc_cleaver <- this.inherit("scripts/items/weapons/artifact/artifa
 		this.m.Description = "A piece of meteoric iron, shaped into an ugly but terrifying cleaver.";
 		this.m.Categories = "Cleaver, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
 		this.m.IsDoubleGrippable = true;
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = false;

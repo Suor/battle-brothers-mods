@@ -7,7 +7,7 @@ this.artifact_weapon <- this.inherit("scripts/items/weapons/weapon", {
 	function create()
 	{
 		this.weapon.create();
-		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.Artifact;
+		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Named;
 	}
 
 	function onEquip()
@@ -16,7 +16,7 @@ this.artifact_weapon <- this.inherit("scripts/items/weapons/weapon", {
 
 		if (this.m.Name.len() == 0)
 		{
-			this.setName();
+			this.setName(this.createRandomName());
 		}
 	}
 
@@ -24,14 +24,16 @@ this.artifact_weapon <- this.inherit("scripts/items/weapons/weapon", {
 	{
 		if (this.m.Name.len() == 0)
 		{
-			this.setName();
+			this.setName(this.createRandomName());
 		}
 	}
 
-	function setName()
+	function setName( _name )
 	{
-		this.m.Name = this.m.NameList[this.Math.rand(0, this.m.NameList.len() - 1)];
+		this.m.Name = _name;
 	}
+
+	createRandomName = ::CampsAndArtifacts.createRandomName
 
 	function randomizeValues()
 	{

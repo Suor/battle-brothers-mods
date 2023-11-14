@@ -10,7 +10,7 @@ this.artifact_flail <- this.inherit("scripts/items/weapons/artifact/artifact_wea
 		this.m.Description = "The form of this weapon matches common flails: A spiked head, a handle, and a chain connecting them.  The construction and materials of this piece, however, resemble no weapon that you have seen.  Though old beyond reckoning, you can see no signs of wear on this weapon.";
 		this.m.Categories = "Flail, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.MeleeWeapon | this.Const.Items.ItemType.OneHanded;
 		this.m.ItemProperty = this.Const.Items.Property.IgnoresShieldwall;
 		this.m.IsDoubleGrippable = true;
 		this.m.IsAgainstShields = true;

@@ -22,7 +22,7 @@ this.artifact_throwing_axe <- this.inherit("scripts/items/weapons/artifact/artif
 		this.m.Description = "These small axes have been forged as a batch from meteoric iron.  Though irreproducible, they fly true and deadly.";
 		this.m.Categories = "Throwing Weapon, One-Handed";
 		this.m.SlotType = this.Const.ItemSlot.Mainhand;
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Weapon | this.Const.Items.ItemType.RangedWeapon | this.Const.Items.ItemType.Ammo | this.Const.Items.ItemType.Defensive;
+		this.m.ItemType = this.m.ItemType | this.Const.Items.ItemType.RangedWeapon | this.Const.Items.ItemType.Ammo | this.Const.Items.ItemType.Defensive;
 		this.m.AddGenericSkill = true;
 		this.m.ShowArmamentIcon = true;
 		this.m.IsDroppedAsLoot = true;
