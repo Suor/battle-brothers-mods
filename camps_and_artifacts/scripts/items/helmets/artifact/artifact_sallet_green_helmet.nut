@@ -17,8 +17,7 @@ this.artifact_sallet_green_helmet <- this.inherit("scripts/items/helmets/artifac
 		this.updateVariant();
 		this.m.ImpactSound = this.Const.Sound.ArmorChainmailImpact;
 		this.m.InventorySound = this.Const.Sound.ArmorChainmailImpact;
-		//this.m.Value = 17000;
-		this.m.Value = 1;
+		this.m.Value = 17000;
 		this.m.Condition = 150;
 		this.m.ConditionMax = 265;
 		this.m.StaminaModifier = -18;

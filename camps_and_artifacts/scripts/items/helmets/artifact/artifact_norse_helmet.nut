@@ -19,7 +19,7 @@ this.artifact_norse_helmet <- this.inherit("scripts/items/helmets/artifact/artif
 		this.updateVariant();
 		this.m.ImpactSound = this.Const.Sound.ArmorChainmailImpact;
 		this.m.InventorySound = this.Const.Sound.ArmorChainmailImpact;
-		this.m.Value = 2000;
+		this.m.Value = 12000;
 		this.m.Condition = 125;
 		this.m.ConditionMax = 125;
 		this.m.StaminaModifier = -6;

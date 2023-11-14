@@ -44,7 +44,7 @@ this.artifact_handgonne <- this.inherit("scripts/items/weapons/artifact/artifact
 		this.m.AddGenericSkill = true;
 		this.m.ShowQuiver = true;
 		this.m.ShowArmamentIcon = true;
-		this.m.Value = 50000;
+		this.m.Value = 15000;
 		this.m.RangeMin = 2;
 		this.m.RangeMax = 3;
 		this.m.RangeIdeal = 2;
