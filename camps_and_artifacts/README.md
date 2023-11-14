@@ -22,7 +22,6 @@ Fixes:
 - do not overwrite huge files both config and bb classes, this used to overwrite changes from vanilla/DLC updates and brought many small issues
 - fixed lindwurm armor and helmet, they now both provide acid immunit and random perk
 - fixed some artifact prices
-- fixed some prices
 
 
 ## Compatibility
