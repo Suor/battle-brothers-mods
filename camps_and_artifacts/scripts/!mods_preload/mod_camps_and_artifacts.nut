@@ -4,6 +4,13 @@ local mod = ::CampsAndArtifacts <- {
     Version = 3.0
     Data = {}
 };
+// TODO: fix weapons reach
+// TODO: add missing artifact versions of named stuff
+// TODO: add extra:
+//   - artifact bolo
+//   - artifact 2h orc axe
+//   - artifact 2h orc chain
+//   - artifact goblin impaler
 local function choice(options) {
     return options[::Math.rand(0, options.len() - 1)];
 }
