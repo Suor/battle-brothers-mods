@@ -42,5 +42,36 @@ this.artifact_lindwurm_armor <- this.inherit("scripts/items/armor/artifact/artif
 		});
 		return result;
 	}
+
+	function onEquip()
+	{
+		this.artifact_armor.onEquip();
+		local c = this.getContainer();
+
+		if (c != null && c.getActor() != null && !c.getActor().isNull())
+		{
+			this.m.Container.getActor().getFlags().add("body_immune_to_acid");
+		}
+		if (c != null && c.getActor() != null && !c.getActor().isNull() && this.m.AttachedPerk != "")
+		{
+			this.m.Container.getActor().getSkills().add(this.new(this.m.AttachedPerk));
+		}
+	}
+
+	function onUnequip()
+	{
+		local c = this.getContainer();
+
+		if (c != null && c.getActor() != null && !c.getActor().isNull())
+		{
+			this.m.Container.getActor().getFlags().remove("body_immune_to_acid");
+		}
+		if (c != null && c.getActor() != null && !c.getActor().isNull() && this.m.AttachedPerk != "")
+		{
+			this.m.Container.getActor().getSkills().removeAllByID(this.m.APID);
+		}
+
+		this.artifact_armor.onUnequip();
+	}
 });
 

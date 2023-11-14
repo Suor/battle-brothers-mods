@@ -48,5 +48,35 @@ this.artifact_lindwurm_helmet <- this.inherit("scripts/items/helmets/artifact/ar
 		return result;
 	}
 
+	function onEquip()
+	{
+		this.artifact_helmet.onEquip();
+		local c = this.getContainer();
+
+		if (c != null && c.getActor() != null && !c.getActor().isNull())
+		{
+			this.m.Container.getActor().getFlags().add("head_immune_to_acid");
+		}
+		if (c != null && c.getActor() != null && !c.getActor().isNull() && this.m.AttachedPerk != "")
+		{
+			this.m.Container.getActor().getSkills().add(this.new(this.m.AttachedPerk));
+		}
+	}
+
+	function onUnequip()
+	{
+		local c = this.getContainer();
+
+		if (c != null && c.getActor() != null && !c.getActor().isNull())
+		{
+			this.m.Container.getActor().getFlags().remove("head_immune_to_acid");
+		}
+		if (c != null && c.getActor() != null && !c.getActor().isNull() && this.m.AttachedPerk != "")
+		{
+			this.m.Container.getActor().getSkills().removeAllByID(this.m.APID);
+		}
+
+		this.artifact_helmet.onUnequip();
+	}
 });
 
