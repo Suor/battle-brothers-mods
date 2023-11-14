@@ -11,6 +11,7 @@ foreach (file in ::IO.enumerateFiles("camps_and_artifacts/config")) ::include(fi
 ::mods_queue(mod.ID, null, function () {
     ::include("camps_and_artifacts/factions/faction");
     foreach (file in ::IO.enumerateFiles("camps_and_artifacts/factions/actions")) ::include(file);
+    ::include("camps_and_artifacts/entity/world/locations/orc_fortress_location");
 
     ::mods_hookExactClass("entity/world/location", function(cls) {
         local onSpawned = cls.onSpawned;
