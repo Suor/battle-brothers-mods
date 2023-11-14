@@ -27,8 +27,6 @@ this.artifact_armor <- this.inherit("scripts/items/armor/armor", {
 
 	function onAddedToStash( _stashID )
 	{
-		logInfo("camps: artifact_armor.onAddedToStash name=" + this.m.Name)
-		std.Debug.log("camps: artifact_armor.onAddedToStash", this.m)
 		if (this.m.Name.len() == 0)
 		{
 			this.setName(this.createRandomName());
