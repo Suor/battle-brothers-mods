@@ -8,7 +8,7 @@ local mod = ::HealRepairFix <- {
     local inAssetManagerUpdate = false;
     local gen = ::rng_new(); // Make our own private generator to not mess with nobody
 
-    ::mods_hookNewObjectOnce("states/world/asset_manager", function (o) {
+    ::mods_hookNewObject("states/world/asset_manager", function (o) {
         local update = o.update;
         o.update = function (_worldState) {
             inAssetManagerUpdate = true;
