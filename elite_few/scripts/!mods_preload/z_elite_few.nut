@@ -181,7 +181,7 @@
     });
 
     // Adjust player party strength (affects enemy scaling), to not make our life too easy
-    ::mods_hookNewObjectOnce("entity/world/player_party", function (o) {
+    ::mods_hookNewObject("entity/world/player_party", function (o) {
         o.updateStrength = wrap(o.updateStrength, function(call, ...) {
             call.super();
             if (!::EliteFew.conf("adjustStrength")) return;
