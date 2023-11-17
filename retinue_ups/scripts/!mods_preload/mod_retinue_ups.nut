@@ -169,8 +169,12 @@ local function positive(value) {
                 // Double this stuff
                 te.spendAmmo(te.getAmmoSpent());
 
+                local sp = this.m.StrategicProperties;
+                local shouldLoot = !this.isScenarioMode() &&
+                    (sp == null || !sp.IsArenaMode && !sp.IsLootingProhibited)
+
                 // Can't just double armor parts because of 60 cap, so we copy the code
-                if (te.getArmorParts() > 0 && ::World.Assets.m.IsRecoveringArmor) {
+                if (shouldLoot && te.getArmorParts() > 0 && ::World.Assets.m.IsRecoveringArmor) {
                     local num = te.getArmorParts() * ::Const.World.Assets.ArmorPartsPerArmor * 0.15;
                     local amount = ::Math.min(60, ::Math.max(1, num));
                     amount = ::Math.rand(amount / 2, amount);
