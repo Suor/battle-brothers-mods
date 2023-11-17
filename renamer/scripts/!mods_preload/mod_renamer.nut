@@ -61,10 +61,9 @@ mod.Aliases <- {
         return roman ? fromRoman(roman) : 1; // If absent then he is the first
     }
 
-    ::mods_hookNewObject("entity/tactical/player", function (obj) {
-        local onHired = obj.onHired;
-        obj.onHired = function() {
-            // this.logInfo("br: hired " + this.getName());
+    ::mods_hookExactClass("entity/tactical/player", function (cls) {
+        local onHired = cls.onHired;
+        cls.onHired = function () {
             onHired();
             local bgID = this.getBackground().getID()
             local bgName = this.getBackground().getNameOnly();
