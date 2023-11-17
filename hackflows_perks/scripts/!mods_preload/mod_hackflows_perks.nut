@@ -32,10 +32,9 @@ local Str = ::std.Str, Text = ::std.Text;
 ::mods_queue(mod.ID, "stdlib, >mod_heal_repair_fix", function() {
     // Hooks for Flesh on the Bones perk
     local inAssetManagerUpdate = false;
-    ::mods_hookNewObjectOnce("states/world/asset_manager", function (o) {
-        this.logInfo("hp: hook asset_manager");
-        local update = o.update;
-        o.update = function (_worldState) {
+    ::mods_hookNewObject("states/world/asset_manager", function (obj) {
+        local update = obj.update;
+        obj.update = function (_worldState) {
             inAssetManagerUpdate = true;
             update(_worldState);
             inAssetManagerUpdate = false;
