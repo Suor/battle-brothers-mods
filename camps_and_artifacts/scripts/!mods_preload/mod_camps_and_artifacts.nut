@@ -16,12 +16,15 @@ local function choice(options) {
 }
 
 mod.createRandomName <- function () {
-    if (this.m.PrefixList.len() > 0 && ::Math.rand(1, 100) <= 70) {
-        return choice(this.m.PrefixList) + " " + choice(this.m.NameList)
+    // Try to find a unique name first
+    local names = this.m.NameList.filter(@(_, n) !::World.Flags.has("camps:artifact_name:" + n));
+    if (names.len() > 0) {
+        local name = choice(names);
+        ::World.Flags.add("camps:artifact_name:" + name, true);
+        return name;
     }
-    else {
-        return choice(this.m.NameList)
-    }
+    // Use prefix if failed
+    return choice(this.m.PrefixList) + " " + choice(this.m.NameList)
 }
 
 
