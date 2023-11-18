@@ -7,7 +7,8 @@ this.artifact_weapon <- this.inherit("scripts/items/weapons/weapon", {
 	function create()
 	{
 		this.weapon.create();
-		this.m.ItemType = this.Const.Items.ItemType.Artifact | this.Const.Items.ItemType.Named;
+		this.m.ItemType = ::Const.Items.ItemType.Weapon
+			| ::Const.Items.ItemType.Artifact | ::Const.Items.ItemType.Named;
 	}
 
 	function onEquip()
