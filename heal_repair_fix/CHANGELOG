@@ -1,2 +1,5 @@
+0.6
+- fixed newOnce bug: cook healing fix stopped to work after second game load
+
 0.5
 - initial version

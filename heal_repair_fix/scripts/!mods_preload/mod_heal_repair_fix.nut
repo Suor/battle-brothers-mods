@@ -1,7 +1,7 @@
 local mod = ::HealRepairFix <- {
     ID = "mod_heal_repair_fix"
     Name = "Cool and Blacksmith Fix"
-    Version = 0.5
+    Version = 0.6
 }
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 ::mods_queue(mod.ID, "mod_hooks(>=20)", function () {
