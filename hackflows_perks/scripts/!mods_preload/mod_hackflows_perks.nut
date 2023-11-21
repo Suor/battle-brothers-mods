@@ -1,7 +1,7 @@
 local mod = ::HackflowsPerks <- {
     ID = "mod_hackflows_perks"
     Name = "Hackflow's Perks"
-    Version = 1.1
+    Version = 1.2
 
     BoneInjuries = [
         "injury.broken_leg"
