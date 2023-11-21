@@ -1,7 +1,7 @@
 local mod = ::EventsFix <- {
     ID = "mod_events_delayed_fix"
     Name = "Events and Ambitions Delayed Fix"
-    Version = 0.6
+    Version = 0.7
 }
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 ::mods_queue(mod.ID, "mod_hooks(>=20)", function () {

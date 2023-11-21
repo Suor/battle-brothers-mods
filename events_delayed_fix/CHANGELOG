@@ -1,3 +1,6 @@
+0.7
+- fix newOnce bug: fast recover stopped working after second game load
+
 0.6
 - recover from "fall between the rolls" bug, news, combat and enemies nearby situations faster
 
