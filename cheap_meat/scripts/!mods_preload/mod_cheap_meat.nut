@@ -1,4 +1,4 @@
-::mods_registerMod("mod_cheap_meat", 0.1);
+::mods_registerMod("mod_cheap_meat", 0.2);
 
 ::mods_queue("mod_cheap_meat", null, function() {
     this.logInfo("cheap_meat: run");

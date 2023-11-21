@@ -1,0 +1,5 @@
+0.2
+- fixed hookNewObjectOnce() bug: stopped working after second game load
+
+0.1
+- initial public version
