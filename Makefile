@@ -19,6 +19,6 @@ cl:
 		fi
 		echo ">>> $$d";
 		git log --pretty='%s %C(yellow)%d%Creset' $$d \
-			| perl -pe "exit if /\(tag:/;"
+			| perl -pe "exit if /\btag:/;"
 	done
 
