@@ -46,6 +46,7 @@ addBehavior("AP_UnbagShield", "UnbagShield", 36, 400);
         ai_defend_shieldwall = 0.8
         ai_disengage = 0.3
         ai_rally = 0
+        ai_line_breaker = 0.5
     }
     local getFatigueScoreMult = cls.getFatigueScoreMult;
     cls.getFatigueScoreMult = function(_skill) {
