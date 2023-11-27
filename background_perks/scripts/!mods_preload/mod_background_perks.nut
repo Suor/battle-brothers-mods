@@ -71,8 +71,8 @@ function BgPerks::giveFreePerks(_player) {
     local starting = false;
     ::mods_hookNewObject("entity/tactical/player", function ( o ) {
         local baseSetStartValuesEx = o.setStartValuesEx;
-        o.setStartValuesEx = function ( _backgrounds ) {
-            baseSetStartValuesEx(_backgrounds);
+        o.setStartValuesEx = function (_backgrounds, _addTraits = true) {
+            baseSetStartValuesEx(_backgrounds, _addTraits);
             if (!starting) ::BgPerks.giveFreePerks(this);
         };
     });
