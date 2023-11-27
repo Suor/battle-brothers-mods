@@ -1,15 +1,28 @@
 local mod = ::Autopilot <- {
   ID = "mod_autopilot_new"
   Name = "Autopilot New"
-  Version = 2.1
-  // Settings
-  FreeWake = true // auto break free out of nets and webs and wake allies when unused AP left
-  Reload = true   // auto reload when unused AP left
-  Verbose = true // show ai debugging for auto bros
+  Version = "2.1.0"
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "mod_hooks(>=20), >mod_reforged, !mod_autopilot", function() {
+::mods_queue(mod.ID, "mod_hooks(>=20), mod_msu(>=1.2.6), >mod_reforged, !mod_autopilot",
+    function () {
+
+  mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
+  mod.conf <- function (name) {
+      return mod.Mod.ModSettings.getSetting(name).getValue();
+  }
+
+  // Settings
+  local page = mod.Mod.ModSettings.addPage("Autopilot");
+
+  page.addElement(::MSU.Class.BooleanSetting("freewake", true, "Auto break free and wake up",
+      "Auto break free out of nets and webs and wake allies when unused AP left"));
+  page.addElement(::MSU.Class.BooleanSetting("reload", true, "Auto reload",
+      "Auto reload when unused AP left"));
+  page.addElement(::MSU.Class.BooleanSetting("verbose", false, "Verbose AI",
+      "Show AI debugging for auto bros"));
+
   ::include("autopilot/hooks/actor");
   ::include("autopilot/hooks/player");
   ::include("autopilot/hooks/tactical_state");

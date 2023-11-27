@@ -3,7 +3,7 @@ local function wrap(_func, _switchControlled = false) {
     return function (_entity = null) {
         local hasArg = !!_entity;
         local actor = _entity || this.m.Actor;
-        if (::Autopilot.Verbose && ("_autopilot" in actor.m)) {
+        if (("_autopilot" in actor.m) && ::Autopilot.conf("verbose")) {
             // Switch to verbose mode and flip the IsControlledByPlayer flag
             // so that things won't be supressed
             local oldVerbose = Const.AI.VerboseMode;

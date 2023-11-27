@@ -37,25 +37,23 @@
 
     local onTurnEnd = cls.onTurnEnd;
     cls.onTurnEnd = function() {
-        if(ClassName == "player" && getMoraleState() != Const.MoraleState.Fleeing)
-        {
+        if (ClassName == "player" && getMoraleState() != Const.MoraleState.Fleeing) {
+            local freewake = ::Autopilot.conf("freewake"), reload = ::Autopilot.conf("reload");
             local skills = getSkills(), tile = getTile();
-            local function tryUseSkill(id, t)
-            {
+            local function tryUseSkill(id, t) {
                 local s = skills.getSkillByID(id);
                 return s != null && s.use(t);
             }
 
             // see if we can help ourselves first
-            if(::Autopilot.FreeWake) tryUseSkill("actives.break_free", tile);
-            if(::Autopilot.Reload) {
+            if (freewake) tryUseSkill("actives.break_free", tile);
+            if (reload) {
                 foreach (s in ["actives.reload_bolt", "actives.reload_handgonne"])
                     tryUseSkill(s, tile);
             }
 
             // then try to help adjacent allies
-            if(::Autopilot.FreeWake)
-            {
+            if (freewake) {
                 foreach(s in ["actives.wake_ally", "actives.break_ally_free"])
                 {
                     local skill = skills.getSkillByID(s);
@@ -77,7 +75,7 @@
             }
 
             // finally, use the recover skill if it'd help
-            if(getFatigue() > m.CurrentProperties.FatigueRecoveryRate)
+            if (getFatigue() > m.CurrentProperties.FatigueRecoveryRate)
                 tryUseSkill("actives.recover", tile);
         }
 
