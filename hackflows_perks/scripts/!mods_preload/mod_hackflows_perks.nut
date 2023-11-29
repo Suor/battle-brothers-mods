@@ -28,7 +28,7 @@ local mod = ::HackflowsPerks <- {
 local Str = ::std.Str, Text = ::std.Text;
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "stdlib, >mod_heal_repair_fix", function() {
+::mods_queue(mod.ID, "stdlib, >mod_heal_repair_fix, >mod_reforged", function() {
     // Hooks for Flesh on the Bones perk
     ::mods_hookExactClass("entity/tactical/actor", function (cls) {
         local setHitpoints = cls.setHitpoints;
@@ -76,4 +76,32 @@ local Str = ::std.Str, Text = ::std.Text;
             }
         }
     })
+
+    // Add these perks to Reforged perk trees.
+    // Do not use Stabilized: Reforged has its own medium armor perk.
+    if (::mods_getRegisteredMod("mod_reforged")) {
+        local groupToPerks = {
+            "pg.rf_sturdy":  [
+                [0, "perk.hackflows.flesh_on_the_bones"],
+                [4, "perk.hackflows.full_force"],
+            ]
+            "pg.rf_militia": [[0, "perk.hackflows.flesh_on_the_bones"]]
+            "pg.rf_pauper": [[1, "perk.hackflows.flesh_on_the_bones"]]
+            "pg.rf_agile": [[3, "perk.hackflows.balance"]]
+            "pg.rf_medium_armor": [[4, "perk.hackflows.balance"]]
+            "pg.rf_heavy_armor": [[3, "perk.hackflows.full_force"]]
+            "pg.rf_large": [[4, "perk.hackflows.full_force"]]
+        }
+
+        local add = ::DynamicPerks.PerkGroups.add;
+        ::DynamicPerks.PerkGroups.add = function (_perkGroup) {
+            add(_perkGroup);
+            if (_perkGroup.getID() in groupToPerks) {
+                local tree = _perkGroup.m.Trees["default"];
+                foreach (pair in groupToPerks[_perkGroup.getID()]) {
+                    tree[pair[0]].push(pair[1])
+                }
+            }
+        }
+    }
 })
