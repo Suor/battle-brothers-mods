@@ -16,7 +16,6 @@ this.build_noble_camp_action <- this.inherit("scripts/factions/faction_action", 
 
 	function onExecute( _faction )
 	{
-        logInfo("build_nomad_camp_action")
 		local camp;
 		local r = this.Math.rand(1, 3);
 		local minY = this.Const.DLC.Desert ? 0.2 : 0.0;
@@ -40,7 +39,6 @@ this.build_noble_camp_action <- this.inherit("scripts/factions/faction_action", 
 			camp.setFaction( _faction.m.ID )
 			camp.setBanner(banner);
 			_faction.ca_addCamp(camp);
-        	logInfo("build_nomad_camp_action DONE")
 		}
 	}
 })

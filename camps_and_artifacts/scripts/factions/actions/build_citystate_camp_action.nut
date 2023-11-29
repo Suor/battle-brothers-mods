@@ -16,7 +16,6 @@ this.build_citystate_camp_action <- this.inherit("scripts/factions/faction_actio
 
 	function onExecute( _faction )
 	{
-        logInfo("build_citystate_camp_action")
 		local camp;
 		local minY = 0.0;
 		local maxY = 0.2;
@@ -39,7 +38,6 @@ this.build_citystate_camp_action <- this.inherit("scripts/factions/faction_actio
 			camp.setFaction(_faction.m.ID);
 			camp.setBanner(banner);
 			_faction.ca_addCamp(camp);
-        	logInfo("build_citystate_camp_action DONE")
 		}
 	}
 })
