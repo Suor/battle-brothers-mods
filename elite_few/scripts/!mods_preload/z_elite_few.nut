@@ -48,6 +48,8 @@
     ));
     add(::MSU.Class.BooleanSetting("excludeDubious", false, "Exclude dubious traits",
         "I.e. ones that not entirely negative like fat or impatient"));
+    add(::MSU.Class.BooleanSetting("eventAll", false, "All event/contract bros are masters",
+        "Make any bro got from an event or a contract to be always master"));
 
     // A helper to wrap methods with unknown number of arguments, i.e. vanilla/legends distinction
     local function wrap(_func, _wrapper) {
@@ -66,6 +68,20 @@
         }
     }
 
+    // Control all event and contract guys
+    local inEventOrContract = false
+    local function markInScreen(cls) {
+        local setScreen = cls.setScreen;
+        cls.setScreen = function (_screen) {
+            inEventOrContract = true;
+            setScreen(_screen);
+            inEventOrContract = false;
+        }
+    }
+    ::mods_hookBaseClass("events/event", function (cls) {markInScreen(cls.event)})
+    ::mods_hookBaseClass("contracts/contract", function (cls) {markInScreen(cls.contract)})
+
+    // Master rolling funcs
     local function isRangedBg(_background) {
         local c = _background.onChangeAttributes();
         local melee = c.MeleeSkill[0], ranged = c.RangedSkill[0];
@@ -75,6 +91,7 @@
     local function rollMaster(_background) {
         local backgroundID = _background.getID();
 
+        if (inEventOrContract && ::EliteFew.conf("eventAll")) return true;
         if (::EliteFew.conf("selectMode") == "none") return false;
         if (backgroundID == "background.slave" && !::EliteFew.conf("allowSlaves")) return false;
         if (::EliteFew.conf("selectMode") == "all") return true;
