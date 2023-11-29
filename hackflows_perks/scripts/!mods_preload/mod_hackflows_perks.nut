@@ -15,15 +15,14 @@ local mod = ::HackflowsPerks <- {
     ]
     function fleshOnBonesActive(_player) {
         local fleshOnTheBones = false;
-        local bonesOk = true;
         foreach (skill in _player.m.Skills.m.Skills) { // -> skills_container -> actual array
             if (skill.isGarbage()) continue;
 
             local id = skill.getID();
             if (id == "perk.hackflows.flesh_on_the_bones") fleshOnTheBones = true;
-            if (this.BoneInjuries.find(id) != null) bonesOk = false;
+            if (this.BoneInjuries.find(id) != null) return false;
         }
-        return fleshOnTheBones && bonesOk;
+        return fleshOnTheBones;
     }
 }
 local Str = ::std.Str, Text = ::std.Text;
