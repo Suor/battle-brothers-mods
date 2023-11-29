@@ -210,4 +210,67 @@ local function positive(value) {
             }
         }
     })
+
+    // Cook
+    ::mods_hookExactClass("retinue/followers/cook_follower", function (cls) {
+        cls.m.ru_promotion <- {
+            Cost = 2500
+            Tease = "to get extra food after combat"
+            Effects = ["Finds extra food after combat"]
+        }
+    })
+    ::mods_hookBaseClass("entity/world/world_entity", function (cls) {
+        cls = cls.world_entity;
+
+        local dropFood = cls.dropFood;
+        cls.dropFood = function(_num, _items, _lootTable) {
+            if (::World.Retinue.ru_isPromoted("cook_follower")) _num++;
+
+            local cook = ::World.Retinue.ru_isPromoted("cook_follower");
+            ::std.Debug.log("Food for " + this.getName(), {cook = cook, num = _num, items = _items})
+            dropFood(_num, _items, _lootTable);
+        }
+    })
+
+    // Drill Sergeant
+    ::mods_hookExactClass("retinue/followers/drill_sergeant_follower", function (cls) {
+        cls.m.ru_promotion <- {
+            Cost = 3500
+            Tease = "to provide training for new recruites and make the most from training halls"
+            Effects = [
+                "New hires get " + positive("+70%") + " experience in first 3 battles"
+                "Training halls experience bonus is doubled"
+            ]
+        }
+    })
+    ::mods_hookExactClass("entity/tactical/player", function (cls) {
+        local onHired = cls.onHired;
+        cls.onHired = function () {
+            onHired();
+            if (!::World.Retinue.ru_isPromoted("drill_sergeant_follower")) return;
+            if (this.getSkills().hasSkill("effects.trained")) return;
+
+            local effect = this.new("scripts/skills/effects_world/new_trained_effect");
+            effect.m.Duration = 3;
+            effect.m.XPGainMult = 1.7; // Double from usual +35%
+            effect.m.Icon = "skills/status_effect_76.png";
+            this.getSkills().add(effect);
+        }
+    })
+    ::mods_hookExactClass("ui/screens/world/modules/world_town_screen/town_training_dialog_module",
+            function (cls) {
+        local onTrain = cls.onTrain;
+        cls.onTrain = function (_data) {
+            local ret = onTrain(_data);
+            if (ret == null) return ret;
+            if (!::World.Retinue.ru_isPromoted("drill_sergeant_follower")) return ret;
+
+            local entityID = _data[0];
+            local entity = this.Tactical.getEntityByID(entityID);
+            local effect = entity.getSkills().getSkillByID("effects.trained");
+            effect.m.XPGainMult += effect.m.XPGainMult - 1;
+
+            return ret;
+        }
+    })
 })
