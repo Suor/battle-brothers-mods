@@ -31,20 +31,10 @@ local Str = ::std.Str, Text = ::std.Text;
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 ::mods_queue(mod.ID, "stdlib, >mod_heal_repair_fix", function() {
     // Hooks for Flesh on the Bones perk
-    local inAssetManagerUpdate = false;
-    ::mods_hookNewObject("states/world/asset_manager", function (obj) {
-        local update = obj.update;
-        obj.update = function (_worldState) {
-            inAssetManagerUpdate = true;
-            update(_worldState);
-            inAssetManagerUpdate = false;
-        }
-    })
-
     ::mods_hookExactClass("entity/tactical/actor", function (cls) {
         local setHitpoints = cls.setHitpoints;
         cls.setHitpoints = function (_h) {
-            if (inAssetManagerUpdate && _h > this.m.Hitpoints && mod.fleshOnBonesActive(this)) {
+            if (_h > this.m.Hitpoints && mod.fleshOnBonesActive(this)) {
                 _h += _h - this.m.Hitpoints; // Double the addition
             }
             setHitpoints(_h);
