@@ -29,52 +29,11 @@ local mod = ::FixReforged <- {
         }
     })
 
-    if (::mods_getRegisteredMod("mod_hackflows_perks")) {
-        local groupToPerks = {
-            "pg.rf_sturdy":  [
-                [0, "perk.hackflows.flesh_on_the_bones"],
-                [4, "perk.hackflows.full_force"],
-            ]
-            "pg.rf_militia": [[0, "perk.hackflows.flesh_on_the_bones"]]
-            "pg.rf_pauper": [[1, "perk.hackflows.flesh_on_the_bones"]]
-            "pg.rf_agile": [[3, "perk.hackflows.balance"]]
-            "pg.rf_medium_armor": [[4, "perk.hackflows.balance"]]
-            "pg.rf_heavy_armor": [[3, "perk.hackflows.full_force"]]
-            "pg.rf_large": [[4, "perk.hackflows.full_force"]]
+    ::mods_hookExactClass("entity/world/player_party", function (cls) {
+        local updateStrength = cls.updateStrength;
+        cls.updateStrength = function () {
+            updateStrength();
+            this.m.Strength *= 1.5;
         }
-
-        local add = ::DynamicPerks.PerkGroups.add;
-        ::DynamicPerks.PerkGroups.add = function (_perkGroup) {
-            add(_perkGroup);
-            if (_perkGroup.getID() in groupToPerks) {
-                logInfo("fr: add hackflows perks to " + _perkGroup.getID())
-                local tree = _perkGroup.m.Trees["default"];
-                foreach (pair in groupToPerks[_perkGroup.getID()]) {
-                    tree[pair[0]].push(pair[1])
-                }
-            }
-        }
-
-        // local function addToGroup(_group, _row, _perk) {
-        //     logInfo("fr: addToGroup " + _group + " " + _perk)
-        //     ::mods_hookExactClass("mods/mod_reforged/perk_groups/" + _group, function (cls) {
-        //         logInfo("fr: hook " + _group)
-        //         local create = cls.create;
-        //         cls.create = function () {
-        //             create();
-        //             logInfo("fr: create " + _group)
-        //             this.m.Trees["default"][_row].push(_perk);
-        //         }
-        //     })
-        //     // local tree = ::DynamicPerks.PerkGroups.LookupMap[_group].m.Trees["default"];
-        //     // tree[_row].push(_perk);
-        // }
-        // // std.debug(::DynamicPerks.PerkGroups.LookupMap["pg.rf_heavy_armor"].m.Trees)
-
-
-        // "perk.hackflows.flesh_on_the_bones", ->
-        //     pg_resilient ? militia(1) ? pg_rf_sturdy(1) ? pg_rf_pauper(2)
-        // "perk.hackflows.balance" -> agile(4) ? resilient ? medium_armor(4,5) ? pg_rf_sturdy
-        // "perk.hackflows.full_force" -> pg_heavy_armor(4,7) ? pg_rf_sturdy(4,5,6)
-    }
+    })
 })
