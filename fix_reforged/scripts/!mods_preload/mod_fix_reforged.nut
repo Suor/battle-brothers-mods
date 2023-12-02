@@ -2,7 +2,7 @@ local mod = ::FixReforged <- {
     ID = "mod_reforged_fix"
     Name = "Reforged Fix"
     Version = 0.1
-    // Debug = ::std.Debug.with({prefix = "u: "})
+    // Debug = ::std.Debug.with({prefix = "fr: "})
 }
 // local Util = ::std.Util;
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
@@ -13,8 +13,8 @@ local mod = ::FixReforged <- {
         local create = cls.create;
         cls.create = function () {
             this.m.PerkTreeMultipliers = {
-                "pg.rf_resilient": 3,
-                "pg.rf_trained": 2,
+                // "pg.rf_resilient": 3,
+                // "pg.rf_trained": 2,
             };
             this.m.PerkTree = ::new(::DynamicPerks.Class.PerkTree).init({
                 DynamicMap = {
