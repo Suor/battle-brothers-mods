@@ -7,7 +7,7 @@ check-compile:
 		if [ "$$d" == "__pycache__/" ]; then
 			continue
 		fi
-		echo ">>> $$d";
+		echo "--------------------------- $$d ---------------------------------";
 		make check-compile -sC $$d;
 	done
 
@@ -17,7 +17,7 @@ cl:
 		if [ "$$d" == "__pycache__/" ]; then
 			continue
 		fi
-		echo ">>> $$d";
+		echo "--------------------------- $$d ---------------------------------";
 		git log --pretty='%s %C(yellow)%d%Creset' $$d \
 			| perl -pe "exit if /\btag:/;"
 	done
