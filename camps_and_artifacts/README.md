@@ -9,7 +9,6 @@ Changes from the base mod:
 - less city state camps, so it's not really crowded
 - updated 2h flail base attributes to match vanilla rebalance (was upped somewhat)
 - update artifact warbow and greatsword base attributes if [Sato's Balance Mod][sato_balance_mod] is present
-- use prefixes in artifact names to make them more random
 
 Fixes:
 

@@ -4,13 +4,19 @@ local mod = ::CampsAndArtifacts <- {
     Version = 3.1
     Mods = {}
 };
-// TODO: fix weapons reach
-// TODO: add missing artifact versions of named stuff
+// TODO: add missing artifact versions of named stuff"
+//    - named_khopesh.nut
+//    - named_polemace.nut
+//    - named_warbrand.nut (buff base)
 // TODO: add extra:
-//   - artifact bolo
-//   - artifact 2h orc axe
-//   - artifact 2h orc chain
-//   - artifact goblin impaler
+//    - artifact bolo
+//    - artifact sling?
+//    - artifact 2h orc axe
+//    - artifact 2h orc chain
+//    - artifact goblin impaler?
+//    - artifact goblin bow?
+// TODO: make artifact ammo more useful, i.e. add some perks
+// TODO: weapon perks?
 local function choice(options) {
     return options[::Math.rand(0, options.len() - 1)];
 }
