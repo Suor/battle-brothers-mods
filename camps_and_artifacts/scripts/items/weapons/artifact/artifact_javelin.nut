@@ -36,6 +36,9 @@ this.artifact_javelin <- this.inherit("scripts/items/weapons/artifact/artifact_w
 		this.m.ArmorDamageMult = 0.75;
 		this.m.DirectDamageMult = 0.45;
 		this.m.ShieldDamage = 0;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 0;
+		}
 		this.randomizeValues();
 	}
 

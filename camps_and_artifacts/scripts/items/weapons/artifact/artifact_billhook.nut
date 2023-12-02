@@ -28,6 +28,7 @@ this.artifact_billhook <- this.inherit("scripts/items/weapons/artifact/artifact_
 		this.m.ArmorDamageMult = 1.5;
 		this.m.DirectDamageMult = 0.3;
 		this.m.ChanceToHitHead = 5;
+		if (::CampsAndArtifacts.Mods.Reforged) this.m.Reach = 6;
 		this.randomizeValues();
 	}
 

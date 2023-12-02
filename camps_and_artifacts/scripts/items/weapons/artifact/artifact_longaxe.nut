@@ -28,6 +28,10 @@ this.artifact_longaxe <- this.inherit("scripts/items/weapons/artifact/artifact_w
 		this.m.ArmorDamageMult = 1.1;
 		this.m.DirectDamageMult = 0.3;
 		this.m.ChanceToHitHead = 5;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 6;
+			this.m.ShieldDamage = 32;
+		}
 		this.randomizeValues();
 	}
 

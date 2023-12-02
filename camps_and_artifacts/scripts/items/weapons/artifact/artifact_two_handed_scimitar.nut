@@ -25,6 +25,11 @@ this.artifact_two_handed_scimitar <- this.inherit("scripts/items/weapons/artifac
 		this.m.RegularDamageMax = 85;
 		this.m.ArmorDamageMult = 1.1;
 		this.m.DirectDamageMult = 0.25;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 5;
+			this.m.ShieldDamage = 16;
+			this.m.ItemType = this.m.ItemType | ::Const.Items.ItemType.RF_Southern;
+		}
 		this.randomizeValues();
 	}
 

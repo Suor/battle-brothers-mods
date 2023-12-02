@@ -22,6 +22,9 @@ this.artifact_qatal_dagger <- this.inherit("scripts/items/weapons/artifact/artif
 		this.m.RegularDamageMax = 45;
 		this.m.ArmorDamageMult = 0.7;
 		this.m.DirectDamageMult = 0.2;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 1;
+		}
 		this.randomizeValues();
 	}
 

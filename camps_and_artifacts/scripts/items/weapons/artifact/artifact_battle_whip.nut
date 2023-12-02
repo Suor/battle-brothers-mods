@@ -26,6 +26,7 @@ this.artifact_battle_whip <- this.inherit("scripts/items/weapons/artifact/artifa
 		this.m.RegularDamageMax = 30;
 		this.m.ArmorDamageMult = 0.25;
 		this.m.DirectDamageMult = 0.1;
+		if (::CampsAndArtifacts.Mods.Reforged) this.m.Reach = 5;
 		this.randomizeValues();
 	}
 

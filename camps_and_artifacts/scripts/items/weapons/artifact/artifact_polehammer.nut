@@ -28,6 +28,9 @@ this.artifact_polehammer <- this.inherit("scripts/items/weapons/artifact/artifac
 		this.m.ArmorDamageMult = 1.75;
 		this.m.DirectDamageMult = 0.5;
 		this.m.ChanceToHitHead = 5;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 6;
+		}
 		this.randomizeValues();
 	}
 

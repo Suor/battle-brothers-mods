@@ -16,6 +16,9 @@ this.artifact_schract_shield <- this.inherit("scripts/items/shields/artifact/art
 		this.m.StaminaModifier = -16;
 		this.m.Condition = 48;
 		this.m.ConditionMax = 48;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.ReachIgnore = 3;
+		}
 		this.randomizeValues();
 	}
 

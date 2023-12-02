@@ -26,6 +26,10 @@ this.artifact_orc_axe <- this.inherit("scripts/items/weapons/artifact/artifact_w
 		this.m.ArmorDamageMult = 1.3;
 		this.m.DirectDamageMult = 0.3;
 		this.m.FatigueOnSkillUse = 5;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 4; // up from 3
+			this.m.ShieldDamage = 22;
+		}
 		this.randomizeValues();
 	}
 

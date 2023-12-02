@@ -27,6 +27,9 @@ this.artifact_warscythe <- this.inherit("scripts/items/weapons/artifact/artifact
 		this.m.RegularDamageMax = 80;
 		this.m.ArmorDamageMult = 1.05;
 		this.m.DirectDamageMult = 0.35;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 6;
+		}
 		this.randomizeValues();
 	}
 

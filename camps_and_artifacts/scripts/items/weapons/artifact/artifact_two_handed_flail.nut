@@ -27,6 +27,9 @@ this.artifact_two_handed_flail <- this.inherit("scripts/items/weapons/artifact/a
 		this.m.ArmorDamageMult = 1.15; // upped this to match vanilla
 		this.m.DirectDamageMult = 0.3;
 		this.m.ChanceToHitHead = 15;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 5;
+		}
 		this.randomizeValues();
 	}
 

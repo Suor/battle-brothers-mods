@@ -29,9 +29,13 @@ this.artifact_greatsword <- this.inherit("scripts/items/weapons/artifact/artifac
 		this.m.ArmorDamageMult = 1.0;
 		this.m.DirectDamageMult = 0.25;
 		this.m.ChanceToHitHead = 5;
-		if (::mods_getRegisteredMod("sato_balance_mod")) {
+		if (::CampsAndArtifacts.Mods.SatoBalance) {
 			this.m.RegularDamageMax = 105;
 			this.m.DirectDamageMult = 0.30;
+		}
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 7;
+			this.m.ShieldDamage = 24;
 		}
 		this.randomizeValues();
 	}

@@ -2,7 +2,7 @@ local mod = ::CampsAndArtifacts <- {
     ID = "mod_camps_and_artifacts"
     Name = "Camps and Artifacts (Reworked)"
     Version = 3.1
-    Data = {}
+    Mods = {}
 };
 // TODO: fix weapons reach
 // TODO: add missing artifact versions of named stuff
@@ -32,6 +32,9 @@ foreach (file in ::IO.enumerateFiles("camps_and_artifacts/config")) ::include(fi
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 ::mods_queue(mod.ID, null, function () {
+    mod.Mods.SatoBalance <- ::mods_getRegisteredMod("sato_balance_mod");
+    mod.Mods.Reforged <- ::mods_getRegisteredMod("mod_reforged");
+
     ::include("camps_and_artifacts/factions/faction");
     foreach (file in ::IO.enumerateFiles("camps_and_artifacts/factions/actions")) ::include(file);
     ::include("camps_and_artifacts/entity/world/locations/orc_fortress_location");

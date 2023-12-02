@@ -28,6 +28,9 @@ this.artifact_pike <- this.inherit("scripts/items/weapons/artifact/artifact_weap
 		this.m.ArmorDamageMult = 1.0;
 		this.m.DirectDamageMult = 0.3;
 		this.m.ChanceToHitHead = 5;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 7;
+		}
 		this.randomizeValues();
 	}
 

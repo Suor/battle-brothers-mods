@@ -27,6 +27,10 @@ this.artifact_two_handed_mace <- this.inherit("scripts/items/weapons/artifact/ar
 		this.m.ArmorDamageMult = 1.25;
 		this.m.DirectDamageMult = 0.5;
 		this.m.ChanceToHitHead = 0;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 5;
+			this.m.ShieldDamage = 22;
+		}
 		this.randomizeValues();
 	}
 

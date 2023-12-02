@@ -27,6 +27,7 @@ this.artifact_flail <- this.inherit("scripts/items/weapons/artifact/artifact_wea
 		this.m.ArmorDamageMult = 1.0;
 		this.m.DirectDamageMult = 0.3;
 		this.m.ChanceToHitHead = 10;
+		if (::CampsAndArtifacts.Mods.Reforged) this.m.Reach = 4;
 		this.randomizeValues();
 	}
 

@@ -28,6 +28,9 @@ this.artifact_swordlance <- this.inherit("scripts/items/weapons/artifact/artifac
 		this.m.RegularDamageMax = 80;
 		this.m.ArmorDamageMult = 0.9;
 		this.m.DirectDamageMult = 0.3;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 6;
+		}
 		this.randomizeValues();
 	}
 

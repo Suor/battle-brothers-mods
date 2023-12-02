@@ -26,6 +26,9 @@ this.artifact_orc_cleaver <- this.inherit("scripts/items/weapons/artifact/artifa
 		this.m.ArmorDamageMult = 1.1;
 		this.m.DirectDamageMult = 0.25;
 		this.m.FatigueOnSkillUse = 5;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 4; // up from 3
+		}
 		this.randomizeValues();
 	}
 

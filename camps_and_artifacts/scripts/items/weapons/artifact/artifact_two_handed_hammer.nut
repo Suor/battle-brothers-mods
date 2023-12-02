@@ -27,6 +27,10 @@ this.artifact_two_handed_hammer <- this.inherit("scripts/items/weapons/artifact/
 		this.m.ArmorDamageMult = 2.0;
 		this.m.DirectDamageMult = 0.5;
 		this.m.ChanceToHitHead = 0;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 5;
+			this.m.ShieldDamage = 22;
+		}
 		this.randomizeValues();
 	}
 

@@ -24,6 +24,7 @@ this.artifact_cleaver <- this.inherit("scripts/items/weapons/artifact/artifact_w
 		this.m.RegularDamageMax = 60;
 		this.m.ArmorDamageMult = 0.9;
 		this.m.DirectDamageMult = 0.25;
+		if (::CampsAndArtifacts.Mods.Reforged) this.m.Reach = 4;
 		this.randomizeValues();
 	}
 

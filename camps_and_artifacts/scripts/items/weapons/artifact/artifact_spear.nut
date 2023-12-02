@@ -23,6 +23,9 @@ this.artifact_spear <- this.inherit("scripts/items/weapons/artifact/artifact_wea
 		this.m.RegularDamageMax = 40;
 		this.m.ArmorDamageMult = 1.0;
 		this.m.DirectDamageMult = 0.25;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 5;
+		}
 		this.randomizeValues();
 	}
 

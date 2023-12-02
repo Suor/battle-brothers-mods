@@ -22,6 +22,7 @@ this.artifact_dagger <- this.inherit("scripts/items/weapons/artifact/artifact_we
 		this.m.RegularDamageMax = 40;
 		this.m.ArmorDamageMult = 0.7;
 		this.m.DirectDamageMult = 0.2;
+		if (::CampsAndArtifacts.Mods.Reforged) this.m.Reach = 1;
 		this.randomizeValues();
 	}
 

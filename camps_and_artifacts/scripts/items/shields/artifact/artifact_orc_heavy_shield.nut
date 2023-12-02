@@ -18,6 +18,9 @@ this.artifact_orc_heavy_shield <- this.inherit("scripts/items/shields/artifact/a
 		this.m.Condition = 72;
 		this.m.ConditionMax = 72;
 		this.m.FatigueOnSkillUse = 5;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.ReachIgnore = 3;
+		}
 		this.randomizeValues();
 	}
 

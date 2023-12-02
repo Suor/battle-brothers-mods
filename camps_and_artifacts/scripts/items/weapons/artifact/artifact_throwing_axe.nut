@@ -37,6 +37,9 @@ this.artifact_throwing_axe <- this.inherit("scripts/items/weapons/artifact/artif
 		this.m.DirectDamageMult = 0.25;
 		this.m.ShieldDamage = 0;
 		this.m.ChanceToHitHead = 5;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 0;
+		}
 		this.randomizeValues();
 	}
 

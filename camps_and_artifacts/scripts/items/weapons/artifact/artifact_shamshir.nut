@@ -23,6 +23,10 @@ this.artifact_shamshir <- this.inherit("scripts/items/weapons/artifact/artifact_
 		this.m.RegularDamageMax = 50;
 		this.m.ArmorDamageMult = 0.75;
 		this.m.DirectDamageMult = 0.2;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 4;
+			this.m.ItemType = this.m.ItemType | ::Const.Items.ItemType.RF_Southern;
+		}
 		this.randomizeValues();
 	}
 

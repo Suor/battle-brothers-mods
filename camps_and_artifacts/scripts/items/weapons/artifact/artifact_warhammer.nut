@@ -24,6 +24,9 @@ this.artifact_warhammer <- this.inherit("scripts/items/weapons/artifact/artifact
 		this.m.RegularDamageMax = 40;
 		this.m.ArmorDamageMult = 2.25;
 		this.m.DirectDamageMult = 0.5;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 3;
+		}
 		this.randomizeValues();
 	}
 

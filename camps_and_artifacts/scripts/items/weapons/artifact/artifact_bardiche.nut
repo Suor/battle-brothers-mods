@@ -27,6 +27,10 @@ this.artifact_bardiche <- this.inherit("scripts/items/weapons/artifact/artifact_
 		this.m.ArmorDamageMult = 1.3;
 		this.m.DirectDamageMult = 0.4;
 		this.m.ChanceToHitHead = 0;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 5;
+			this.m.ShieldDamage = 32;
+		}
 		this.randomizeValues();
 	}
 

@@ -26,6 +26,10 @@ this.artifact_rusty_warblade <- this.inherit("scripts/items/weapons/artifact/art
 		this.m.ArmorDamageMult = 1.1;
 		this.m.DirectDamageAdd = 0.1;
 		this.m.DirectDamageMult = 0.25;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 5;
+			this.m.ShieldDamage = 22;
+		}
 		this.randomizeValues();
 	}
 

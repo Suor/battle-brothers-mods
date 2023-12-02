@@ -26,6 +26,9 @@ this.artifact_mace <- this.inherit("scripts/items/weapons/artifact/artifact_weap
 		this.m.RegularDamageMax = 55;
 		this.m.ArmorDamageMult = 1.1;
 		this.m.DirectDamageMult = 0.4;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 3;
+		}
 		this.randomizeValues();
 	}
 

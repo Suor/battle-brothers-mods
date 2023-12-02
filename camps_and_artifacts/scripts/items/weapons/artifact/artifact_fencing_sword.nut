@@ -23,6 +23,14 @@ this.artifact_fencing_sword <- this.inherit("scripts/items/weapons/artifact/arti
 		this.m.RegularDamageMax = 50;
 		this.m.ArmorDamageMult = 0.75;
 		this.m.DirectDamageMult = 0.2;
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.m.Reach = 4;
+			this.m.ItemType = this.m.ItemType | ::Const.Items.ItemType.RF_Fencing;
+			this.m.DirectDamageMult = 0.25;
+			this.m.DirectDamageAdd = 0.2;
+			this.m.ArmorDamageMult = 0.3;
+			this.m.ChanceToHitHead = -25;
+		}
 		this.randomizeValues();
 	}
 
@@ -36,8 +44,14 @@ this.artifact_fencing_sword <- this.inherit("scripts/items/weapons/artifact/arti
 	function onEquip()
 	{
 		this.artifact_weapon.onEquip();
-		this.addSkill(this.new("scripts/skills/actives/slash"));
-		this.addSkill(this.new("scripts/skills/actives/lunge_skill"));
+		if (::CampsAndArtifacts.Mods.Reforged) {
+			this.addSkill(::new("scripts/skills/actives/rf_sword_thrust_skill"));
+			this.addSkill(::new("scripts/skills/actives/lunge_skill"));
+			this.addSkill(::new("scripts/skills/actives/riposte"));
+		} else {
+			this.addSkill(this.new("scripts/skills/actives/slash"));
+			this.addSkill(this.new("scripts/skills/actives/lunge_skill"));
+		}
 	}
 
 });

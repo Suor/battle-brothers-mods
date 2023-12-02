@@ -29,6 +29,7 @@ this.artifact_bladed_pike <- this.inherit("scripts/items/weapons/artifact/artifa
 		this.m.ArmorDamageMult = 1.25;
 		this.m.DirectDamageMult = 0.3;
 		this.m.ChanceToHitHead = 5;
+		if (::CampsAndArtifacts.Mods.Reforged) this.m.Reach = 7;
 		this.randomizeValues();
 	}
 
