@@ -1,3 +1,14 @@
+3.3
+- better compatibility with Reforged:
+    - proper Reach to artifact weapons
+    - follow changes to fencing and southern swords
+- always provide a unique name for an artifact as long as they are available
+- fixed artifact weapons type to not contain Weapon (affected Autopilot)
+- dropped some debug logInfos
+
+3.2
+- removed unintended dep on stdlib
+
 3.1
 - made compatible with Item Spawner mod
 - better Legends compatibility
