@@ -26,6 +26,7 @@ from itertools import groupby
 from pprint import pprint, pformat
 
 SCRIPTS = "/home/suor/_downloads/Battle Brothers mods/bbtmp2/scripts-base/";
+# SCRIPTS = "/home/suor/_downloads/Battle Brothers mods/bbtmp2/mod_legends_18.1.0/scripts/";
 
 
 def main():
@@ -39,7 +40,7 @@ def main():
     if lopts := [x for x in sys.argv[1:] if x.startswith("--")]:
         exit('Unknown option "%s"' % lopts[0])
     opts = lcat(x[1:] for x in sys.argv[1:] if x.startswith("-") and x != "-")
-    if unknown := set(opts) - set(opt_to_kwarg) - {"h"}:
+    if unknown := set(opts) - set(opt_to_kwarg) - {"h", "i"}:
         exit('Unknown option "-%s"' % unknown.pop())
     kwargs = {full: o in opts for o, full in opt_to_kwarg.items()}
 
@@ -53,80 +54,107 @@ def main():
     filename = args[0]
     outfile = args[1] if len(args) >= 2 else None
 
+    ctx = {"count": 0, "includes": {"": [], "queue": []}}
     path = Path(filename)
     if path.is_dir():
         if outfile is not None:
             exit("Can't specify output file for a dir")
 
-        count = 0
         for subfile in path.glob("**/*.nut"):
             if "/scripts/" in subfile.resolve().as_posix():
-                count += hookify(subfile, **kwargs)
+                hookify(subfile, ctx=ctx, **kwargs)
         verbose_hint = "" if kwargs["verbose"] else " (use -v for verbose output)"
-        print(f"Processed {count} file(s)" + verbose_hint)
+        print(f"Processed {ctx['count']} file(s)" + verbose_hint)
 
     elif path.is_file():
-        hookify(filename, outfile, **kwargs)
+        hookify(filename, outfile, ctx=ctx, **kwargs)
     else:
         print(red("File not found: " + filename), file=sys.stderr)
         sys.exit(1)
+
+    if "i" in opts and ctx["includes"]:
+        print_includes(ctx["includes"])
 
 def exit(message):
     print(red(message), file=sys.stderr)
     print(__doc__, file=sys.stderr)
     sys.exit(1)
 
+def print_includes(includes):
+    if not includes[""] and not includes["queue"]:
+        return
 
-def hookify(file, outfile=None, *, force=False, tabs=False, verbose=False):
+    print("\nIncludes to be added to your mod file:\n")
+    # print("\n".join(ctx["includes"]))
+    # pprint(ctx["includes"])
+
+    if includes[""]:
+        print("\n".join(f'::include("{file}");' for file in includes[""]))
+        print("")
+    if includes["queue"]:
+        print("::mods_queue(..., ..., function () {")
+        print("\n".join(f'    ::include("{file}");' for file in includes["queue"]))
+        print("}")
+
+    print("")
+
+
+
+def hookify(file, outfile=None, *, ctx=None, force=False, tabs=False, verbose=False):
     info = (lambda s, **kw: None) if outfile == "-" else lambda s, **kw: print(s, **kw)
 
-    mod_dir, scripts, cls_path = Path(file).resolve().as_posix().rpartition("/scripts/")
+    mod_dir, scripts, cls_path = Path(file).resolve().as_posix().rpartition("scripts/")
     if not scripts:
         msg = red('No "/scripts/" within path, won\'t be able to find a corresponding vanilla nut')
         print(msg, file=sys.stderr)
-        return 0
+        return
 
     vanilla_file = os.path.join(SCRIPTS, cls_path)
     if not Path(vanilla_file).exists():
         if verbose:
             info(cls_path + "... " + yellow("SKIPPED, no vanilla"))
-        return 0
+        return
 
     info(cls_path + "... ", end="")
 
     if outfile == "-":
-        print(_hookify(file, vanilla_file, cls_path, tabs=tabs))
+        print(_hookify(file, vanilla_file, cls_path, tabs=tabs)[1])
     else:
         if outfile is None:
             mod_name = Path(mod_dir).name
-            hooks_file = Path(mod_dir, mod_name, cls_path)  # mod_name is doubled intentionally
+            diff_file = Path(mod_dir, mod_name, cls_path)  # mod_name is doubled intentionally
         else:
-            hooks_file = Path(outfile)
+            diff_file = Path(outfile)
 
-        exists = hooks_file.exists()
+        exists = diff_file.exists()
         if exists and not force:
             info(yellow("SKIPPED, file exists"))
-            return 0
+            return
 
         try:
-            hook_code = _hookify(file, vanilla_file, cls_path, tabs=tabs)
+            has_hook, diff_code = _hookify(file, vanilla_file, cls_path, tabs=tabs)
         except ParseError as e:
             info(red("Failed to parse: %s" % e))
-            return 0
+            return
 
         # Write to hooks file
-        hooks_file.parent.mkdir(parents=True, exist_ok=True)
-        hooks_file.write_text(hook_code)
+        diff_file.parent.mkdir(parents=True, exist_ok=True)
+        diff_file.write_text(diff_code)
         info(green("UPDATED" if exists else "DONE"))
 
-    return 1
+        # Prepare includes
+        include_name = diff_file.relative_to(mod_dir).as_posix().removesuffix(".nut")
+        ctx["includes"]["queue" if has_hook else ""].append(include_name)
+
+    ctx["count"] += 1
 
 
-def _hookify(file, vanilla_file, cls_path, tabs=False):
+def _hookify(file, vanilla_file, cls_path, *, tabs=False):
     defs = parse_file(file)
     vanilla_defs = parse_file(vanilla_file)
     diff = calc_diff(vanilla_defs, defs)
-    return unparse(cls_path, diff, tabs=tabs)
+    has_hook = any(s.op == "hook" for s in diff[""].body if isinstance(s, Scope))
+    return has_hook, unparse(cls_path, diff, tabs=tabs)
 
 
 def calc_diff(from_defs, to_defs):
@@ -285,7 +313,7 @@ def calc_diff(from_defs, to_defs):
     return {"": _diff_scopes(from_defs[""], to_defs[""])}
 
 
-def unparse(cls_path, defs, tabs=False):
+def unparse(cls_path, defs, *, tabs=False):
     def _block(scope, tail=()):
         if scope is None:
             return
