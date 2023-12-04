@@ -1,3 +1,16 @@
+// Fix crash with skill loosing container,
+// happens when actor looses a skill while evaluating possible targets,
+// i.e. weapon breaks as a result of previous attack delayed calc.
+::mods_hookBaseClass("skills/skill", function (cls) {
+    cls = cls.skill;
+
+    local onVerifyTarget = cls.onVerifyTarget;
+    cls.onVerifyTarget = function(_originTile, _targetTile) {
+        if (this.m.Container == null ||  this.m.Container.isNull()) return false;
+        return onVerifyTarget(_originTile, _targetTile);
+    }
+})
+
 // Fix crash after ranged actor killing somebody or enemy dying while ranged actor is thinking
 ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_ranged", function (cls) {
     local function isRelevant(_actor) {
