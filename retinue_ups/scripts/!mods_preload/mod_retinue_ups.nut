@@ -9,7 +9,9 @@ local function positive(value) {
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "mod_hooks(>=20), >tnf_expandedRetinue, >mod_more_followers", function() {
+::mods_queue(mod.ID,
+        "mod_hooks(>=20), >sato_balance_mod, >tnf_expandedRetinue, >mod_more_followers",
+        function() {
     ::mods_registerJS("retinue_ups.js");
 
     ::mods_hookNewObject("retinue/retinue_manager", function (obj) {
@@ -273,4 +275,30 @@ local function positive(value) {
             return ret;
         }
     })
+
+    // Guide promotion for Sato's Balance mod
+    if (::mods_getRegisteredMod("sato_balance_mod")) {
+        ::mods_hookExactClass("retinue/followers/scout_follower", function (cls) {
+            cls.m.ru_promotion <- {
+                Cost = 9000
+                Tease = "to also move faster on normal terrain"
+                Effects = [
+                    "Makes the company travel " + positive("15%") + " faster on normal terrain"
+                ]
+            }
+        })
+        // Need to use ::mods_hookNewObject() to wrap Sato's same hook
+        ::mods_hookNewObject("retinue/followers/scout_follower", function (obj) {
+            local onUpdate = obj.onUpdate;
+            obj.onUpdate = function () {
+                onUpdate();
+                if (!::World.Retinue.ru_isPromoted("scout_follower")) return;
+                for (local i = 0; i < World.Assets.m.TerrainTypeSpeedMult.len(); ++i) {
+                    if (Const.World.TerrainTypeSpeedMult[i] > 0.8) {
+                        World.Assets.m.TerrainTypeSpeedMult[i] *= 1.15;
+                    }
+                }
+            }
+        })
+    }
 })
