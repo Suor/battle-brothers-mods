@@ -29,41 +29,4 @@ this.artifact_metal_bull_helmet <- this.inherit("scripts/items/helmets/artifact/
 		this.randomizeValues();
 		this.randomizePerks("heavy");
 	}
-
-	function getTooltip()
-	{
-		local result = this.helmet.getTooltip();
-		result.push({
-			id = 7,
-			type = "text",
-			icon = "ui/icons/special.png",
-			text = this.m.APTooltip
-		});
-		return result;
-	}
-
-	function onEquip()
-	{
-		this.artifact_helmet.onEquip();
-		local c = this.getContainer();
-
-		if (c != null && c.getActor() != null && !c.getActor().isNull() && this.m.AttachedPerk != "")
-		{
-			this.m.Container.getActor().getSkills().add(this.new(this.m.AttachedPerk));
-		}
-	}
-
-	function onUnequip()
-	{
-		this.artifact_helmet.onUnequip();
-		local c = this.getContainer();
-
-		if (c != null && c.getActor() != null && !c.getActor().isNull() && this.m.AttachedPerk != "")
-		{
-			this.m.Container.getActor().getSkills().removeAllByID(this.m.APID);
-		}
-
-	}
-
 });
-

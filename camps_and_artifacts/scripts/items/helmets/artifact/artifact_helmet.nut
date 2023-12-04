@@ -14,22 +14,28 @@ this.artifact_helmet <- this.inherit("scripts/items/helmets/helmet", {
 		this.m.IsDroppedAsLoot = true;
 	}
 
+	function getTooltip()
+	{
+		local result = this.helmet.getTooltip();
+		result.push({
+			id = 7,
+			type = "text",
+			icon = "ui/icons/special.png",
+			text = this.m.APTooltip
+		});
+		return result;
+	}
+
 	function onEquip()
 	{
 		this.helmet.onEquip();
-
-		if (this.m.Name.len() == 0)
-		{
-			this.setName(this.createRandomName());
-		}
+		if (this.m.Name.len() == 0) this.setName(this.createRandomName());
+		if (this.m.AttachedPerk != "") this.addSkill(::new(this.m.AttachedPerk))
 	}
 
 	function onAddedToStash( _stashID )
 	{
-		if (this.m.Name.len() == 0)
-		{
-			this.setName(this.createRandomName());
-		}
+		if (this.m.Name.len() == 0) this.setName(this.createRandomName());
 	}
 
 	function setName( _name )
