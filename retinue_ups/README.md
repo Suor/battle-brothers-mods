@@ -4,8 +4,14 @@ Adds promotions for some retinue followers to make them better for extra one tim
 
 **Bounty Hunter.** Further increases the chance of encountering champions. Costs 7000 gold.<br>
 **Blacksmith.** Gives better chance to recover items, even broken ones, from slain enemies. Costs 3000 gold.<br>
+**Cook.** Finds extra food after combat. Costs 2500 gold.<br>
+**Drill Sergeant.** Training halls experience bonus is doubled. New hires get +70% experience in first 3 battles. Costs 3500.<br>
 **Scavenger.** Doubles the spoils. Costs 3000 gold.<br>
 **Trader.** Finds more stuff in shops, including rare named items. Costs 7000 gold.<br>
+
+Also if [Sato's Balance Mod][sato-balance] is installed there will be a promotion for Guide:
+
+**Guide.** Also makes company moves faster on normal terrain. Costs 9000 gold.<br>
 
 To promote a follower you need to first hire him or her and then Ctrl-click on a picture in the retinue screen. If you replace a follower you loose the promotion.
 
@@ -28,5 +34,7 @@ Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
 [msu]: https://www.nexusmods.com/battlebrothers/mods/479
+
 [tnf]: https://www.nexusmods.com/battlebrothers/mods/69
 [more-retinue]: https://www.nexusmods.com/battlebrothers/mods/281
+[sato-balance]: https://github.com/jcsato/sato_balance_mod
