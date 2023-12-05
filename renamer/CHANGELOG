@@ -1,2 +1,5 @@
+0.2
+- fix newOnce bug: mod won't break anymore after load-quit-load
+
 0.1
 - initial public version

@@ -1,7 +1,7 @@
 local mod = ::Renamer <- {
     ID = "mod_renamer"
     Name = "Bro Renamer"
-    Version = 0.1
+    Version = 0.2
 }
 // Export this for people to tweak for their needs and mods adding backgrounds
 mod.Aliases <- {
