@@ -1,3 +1,9 @@
+2.2.0
+- moved Verbose, FreeWake and Reload settings to MSU
+- fixed crash on broken weapon
+- extra consideration on using fatigue for line breaker
+- better compatibility hooking player and actor
+
 2.1
 - made compatible with Reforged
 - better compatibility with Legends (no need to remove any files anymore)

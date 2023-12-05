@@ -10,6 +10,11 @@ This mod adds some automation and quality-of-life improvements to battles: fast 
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
 
 
+## Configuration
+
+It is possible to configure whether bros will free themselves and other bros from nets, webs and sleep and auto reload if some AP left at end turn. Also, there is a way to show AI debug for auto bros. Press Esc -> Mod Options -> Autopilot New. Consult field tooltips there for more info.
+
+
 ## Compatibility
 
 Is always safe to add or remove. Only uses hooks now, no overwritten files.
