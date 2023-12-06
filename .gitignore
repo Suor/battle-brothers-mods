@@ -1,4 +1,3 @@
 *.zip
-test.nut
-test_*.nut
 __pycache__
+_other_options
