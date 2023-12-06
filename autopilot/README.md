@@ -7,7 +7,7 @@ This mod adds some automation and quality-of-life improvements to battles: fast 
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] and [msu][].
 
 
 ## Configuration
@@ -78,4 +78,5 @@ Fixes:
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/675
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
+[msu]: https://www.nexusmods.com/battlebrothers/mods/479
 [original]: https://www.nexusmods.com/battlebrothers/mods/62
