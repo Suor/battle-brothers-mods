@@ -4,21 +4,16 @@
 logInfo <- function(s) {
     print(s + "\n")
 }
-Const <- {
-    // SkillType = {Active = 1}
-    // ItemSlot = {Mainhand = 0, Body = 2, Head = 3}
-    // CharacterBackgrounds = []
-    // CharacterLaborerBackgrounds = []
-    // CharacterVillageBackgrounds = []
-    // CharacterThiefBackgrounds = []
-    // CharacterPiracyBackgrounds = []
-    // CharacterVeteranBackgrounds = []
-    // Strings = {}
+if (!("Const" in getroottable())) ::Const <- {};
+Const.Strings <- {
+    PerkDescription = {SpecFlail = ""}
+}
+Const.Perks <- {
+    LookupMap = {"perk.mastery.flail": {Tooltip = "..."}}
 }
 
-
 // Mod hooks mock
-::mods_registerMod <- function (x, y, x) {}
+::mods_registerMod <- function (x, y, z=null) {}
 ::mods_getRegisteredMod <- function (name) {return false}
 ::mods_queue <- function (x, y, func) {
     func()
@@ -31,7 +26,12 @@ Const <- {
         function create() {}
         function getTooltip() {}
         function onUse() {}
+        function isUsable() {}
         function canDoubleGrip() {}
+        function onAfterUpdate() {}
+        function onAnySkillUsed() {}
+        function onEquip() {}
+        function onUpdate() {}
     })
 }
 ::mods_hookChildren <- function (x, func) {
