@@ -229,7 +229,6 @@ local function positive(value) {
             if (::World.Retinue.ru_isPromoted("cook_follower")) _num++;
 
             local cook = ::World.Retinue.ru_isPromoted("cook_follower");
-            ::std.Debug.log("Food for " + this.getName(), {cook = cook, num = _num, items = _items})
             dropFood(_num, _items, _lootTable);
         }
     })
