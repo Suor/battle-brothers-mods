@@ -21,7 +21,14 @@ local function choice(options) {
     return options[::Math.rand(0, options.len() - 1)];
 }
 
+// If an artifact is created before the World we will need this. Item Spawner does this shit.
+local NoopFlags = {
+    function has(key) {return false}
+    function add(key) {}
+}
+
 mod.createRandomName <- function () {
+    local flags = "Flags" in ::World ? ::World.Flags : NoopFlags;
     // Try to find a unique name first
     local names = this.m.NameList.filter(@(_, n) !::World.Flags.has("camps:artifact_name:" + n));
     if (names.len() > 0) {
