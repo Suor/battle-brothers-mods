@@ -69,10 +69,9 @@ local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve 
             mod.addExtraPerks(this, level);
         }
 
-        // Give rolls of 2 on veteran levels to attrs with talents sometimes
         local getAttributeLevelUpValues = cls.getAttributeLevelUpValues;
         cls.getAttributeLevelUpValues = function () {
-            mod.addVeteranAttributeLevelUpValues(this);
+            mod.addAttributeLevelUpValues(this);
             return getAttributeLevelUpValues()
         }
     })

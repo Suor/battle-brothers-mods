@@ -106,6 +106,41 @@ Const <- {
     }
 }
 
+Const.AttributesLevelUp <- [
+    {
+        Min = 2,
+        Max = 4
+    },
+    {
+        Min = 2,
+        Max = 4
+    },
+    {
+        Min = 2,
+        Max = 4
+    },
+    {
+        Min = 3,
+        Max = 5
+    },
+    {
+        Min = 1,
+        Max = 3
+    },
+    {
+        Min = 2,
+        Max = 4
+    },
+    {
+        Min = 1,
+        Max = 3
+    },
+    {
+        Min = 2,
+        Max = 4
+    }
+];
+
 Const.CharacterTraits <- [
     [
         "trait.eagle_eyes",

@@ -11,6 +11,8 @@ function assertEq(a, b) {
 
 local player = {
     m = {
+        Level = 1
+        LevelUps = 1
         Attributes = []
         Talents = [0 2 0 2 0 3 0 0]
         Skills = {
@@ -25,7 +27,36 @@ local player = {
         return "Hackflow"
     }
     function getSkills() {return this.m.Skills}
-    function fillAttributeLevelUpValues(level) {}
+    function fillAttributeLevelUpValues(_amount, _maxOnly = false, _minOnly = false) {
+        if (this.m.Attributes.len() == 0)
+        {
+            this.m.Attributes.resize(this.Const.Attributes.COUNT);
+
+            for( local i = 0; i != this.Const.Attributes.COUNT; i = ++i )
+            {
+                this.m.Attributes[i] = [];
+            }
+        }
+
+        for( local i = 0; i != this.Const.Attributes.COUNT; i = ++i )
+        {
+            for( local j = 0; j < _amount; j = ++j )
+            {
+                if (_minOnly)
+                {
+                    this.m.Attributes[i].insert(0, 1);
+                }
+                else if (_maxOnly)
+                {
+                    this.m.Attributes[i].insert(0, 3);
+                }
+                else
+                {
+                    this.m.Attributes[i].insert(0, 2);
+                }
+            }
+        }
+    }
     function getBackground() {
         return {
             function getNameOnly() {
@@ -118,6 +149,59 @@ assertEq(player.m.Talents, [2 1 2 0 1 0 3 0])
 mod.fillTalentValues(player, 6, {weighted = true, excluded = "ignored"});
 assertEq(player.m.Talents, [0 0 1 1 1 1 2 3])
 print("Talents OK\n");
+
+// Attrs
+local function genAttributes(_clear = true) {
+    if (_clear) player.m.Attributes.clear()
+    mod.addAttributeLevelUpValues(player);
+    return player.m.Attributes
+}
+
+setconf({attrsVeteran = 11, attrsVeteranBoostValue = "off"})
+assertEq(genAttributes(), [[2], [2], [2], [2], [2], [2], [2], [2]])
+
+player.m.Level = 12;
+assertEq(genAttributes(), []) // 1s will be inserted by default .getAttributeLevelUpValues()
+
+setconf({attrsVeteran = 12})
+assertEq(genAttributes(), [[2], [2], [2], [2], [2], [2], [2], [2]])
+
+// Test empty arrays
+player.m.Attributes = [[], [], [], [], [], [], [], []];
+assertEq(genAttributes(false), [[2], [2], [2], [2], [2], [2], [2], [2]])
+
+// Test 1s filled before
+player.m.Attributes = [[1], [1], [1], [1], [1], [1], [1], [1]];
+assertEq(genAttributes(false), [[2], [2], [2], [2], [2], [2], [2], [2]])
+
+// Veteran higher than our moved limit
+player.m.Level = 13;
+assertEq(genAttributes(), [])
+
+// ..., but generating for level 12 = 13 - 2 + 1
+player.m.LevelUps = 2;
+assertEq(genAttributes(), [[2], [2], [2], [2], [2], [2], [2], [2]])
+
+// Now generating for level 13 = 14 - 2 + 1
+player.m.Level = 14;
+assertEq(genAttributes(), [])
+player.m.LevelUps = 1; // Reset it
+
+// Veteran Boost
+player.m.Talents = [3 3 3 3 2 2 1 1];
+
+::rng.reset(11);
+setconf({attrsVeteran = 11, attrsVeteranBoostValue = "classic"})
+assertEq(genAttributes(), [[2], [2], [1], [3], [1], [2], [1], [2]])
+
+::rng.reset(11);
+setconf({attrsVeteran = 11, attrsVeteranBoostValue = "slight"})
+assertEq(genAttributes(), [[2], [1], [1], [2], [2], [1], [1], [1]])
+
+::rng.reset(11);
+setconf({attrsVeteran = 11, attrsVeteranBoostValue = "high"})
+assertEq(genAttributes(), [[2], [2], [2], [3], [2], [2], [1], [1]])
+
 
 // Perks
 for (local l = 1; l <= 22; l++) assertEq(mod.extraPerks(l), 0);

@@ -1,6 +1,6 @@
 local mod = ::BroStudio,
       Rand = ::std.Rand.using(::rng), // Use non-Math rng generator to preserve seeds better
-      Str = ::std.Str, Text = ::std.Text, Util = ::std.Util;
+      Array = ::std.Array, Str = ::std.Str, Text = ::std.Text, Util = ::std.Util;
 
 // Settings, Talents & Attributes page
 local page = mod.addPage("Talents & Attrs");
@@ -41,9 +41,25 @@ page.add(::MSU.Class.SettingsTitle("attrsTitle", "Attributes"));
 
 page.add(::MSU.Class.RangeSetting("attrsUps", 3, 1, 8, 1, "Attribute Ups",
     "Amount of attribute bros allowed to raise each level-up"));
+page.add(::MSU.Class.SettingsSpacer("attrsVeteranSpacer", "35rem", "8rem"));
 
-page.add(::MSU.Class.BooleanSetting("attrsVeteranBoost", false, "Veteran Boost",
+page.add(::MSU.Class.RangeSetting("attrsVeteran", 11, 11, 21, 1, "Veteran Level for Attributes"));
+page.add(::BroStudio.SliderSetting("attrsVeteranBoostValue", "off", ["off" "slight" "classic" "high"],
+    "Veteran Boost",
     "Allow veterans to get more than 1 sometimes in talented attributes"));
+// Non-veterans get 0.5 per level per star on average,
+// Veteran Boost allows to get certain fraction of it.
+mod.VeteranBoostValues <- {
+    off = 0
+    slight = 0.5 / 5
+    classic = 0.5 / 3
+    high = 0.5 / 2
+}
+mod.getVeteranTalentValue <- function () {
+    local label = mod.conf("attrsVeteranBoostValue");
+    if (!(label in mod.VeteranBoostValues)) return 0;
+    return mod.VeteranBoostValues[label];
+}
 
 
 // The meat
@@ -134,22 +150,36 @@ mod.calcWeights <- function (_bg) {
         if (attack > 1 && weights[i] > 0.001)
             weights[i] = ::Math.minf(2.0, weights[i] + ::Math.minf(0.5, attack * 0.5 - 0.5));
     }
+    // only add one row at a time, do nothing if we are in non-veteran levels
     return weights;
 }
 
-// Give rolls of 2 on veteran levels to attrs with talents sometimes
-mod.addVeteranAttributeLevelUpValues <- function (_player) {
-    // only add one row at a time, do nothing if we are in non-veteran levels
-    // TODO: somehow apply changes immediately
-    if(_player.m.Attributes[0].len() == 0 && mod.conf("attrsVeteranBoost")) {
-        local talentValue = 1.0 / 6; // 3 stars give 0.5 on average, i.e. 50-50 for 1-2 up
+mod.addAttributeLevelUpValues <- function (_player) {
+    // do nothing if we have non-veteran attrs generated
+    if (!mod.isVeteranAttrs(_player.m.Attributes)) return;
+
+    local effectiveLevel = _player.m.Level - _player.m.LevelUps + 1;
+
+    if (effectiveLevel <= mod.conf("attrsVeteran")) {
+        _player.m.Attributes.clear();
+        _player.fillAttributeLevelUpValues(1); // only add one row at a time
+    } else {
+        local talentValue = mod.getVeteranTalentValue();
+        if (talentValue == 0) return;
+
+        _player.m.Attributes = [[], [], [], [], [], [], [], []];
         local extra = function(t, bonus = 0) {
             local high = talentValue * 2 * t * (1 + bonus);
-            return ::Math.rand(0, high * 100 + 99) / 100;
+            return Rand.int(0, high * 100 + 99) / 100;
         }
+        // Give rolls of 2+ on veteran levels to attrs with talents sometimes
         for (local i = 0; i < ::Const.Attributes.COUNT; i++) {
             local bonus = i == ::Const.Attributes.Initiative ? 0.5 : 0;
             _player.m.Attributes[i].insert(0, 1 + extra(_player.m.Talents[i], bonus));
         }
     }
+}
+
+mod.isVeteranAttrs <- function (attrs) {
+    return attrs.len() == 0 || attrs[0].len() == 0 || Array.all(attrs, @(vals) vals[0] == 1)
 }
