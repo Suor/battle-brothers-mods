@@ -24,6 +24,7 @@ local artifactType = maxValue * 2;
     "weapons/artifact/artifact_greataxe",
     "weapons/artifact/artifact_greatsword",
     "weapons/artifact/artifact_javelin",
+    "weapons/artifact/artifact_javelin", // double it to make more throwing weapons
     "weapons/artifact/artifact_longaxe",
     "weapons/artifact/artifact_mace",
     "weapons/artifact/artifact_orc_axe",
@@ -36,6 +37,7 @@ local artifactType = maxValue * 2;
     "weapons/artifact/artifact_sword",
     "weapons/artifact/artifact_three_headed_flail",
     "weapons/artifact/artifact_throwing_axe",
+    "weapons/artifact/artifact_throwing_axe", // double it to make more throwing weapons
     "weapons/artifact/artifact_two_handed_flail",
     "weapons/artifact/artifact_two_handed_hammer",
     "weapons/artifact/artifact_two_handed_mace",
@@ -67,7 +69,16 @@ local artifactType = maxValue * 2;
     "helmets/artifact/artifact_sallet_green_helmet",
     "helmets/artifact/artifact_wolf_helmet",
     "helmets/artifact/artifact_norse_helmet",
-    "ammo/artifact_powder_bag",
-    "ammo/artifact_quiver_of_arrows",
-    "ammo/artifact_quiver_of_bolts"
+
+    // NOTE: these are not used anymore, replaced with more interesting ammo,
+    //       scripts are kept to not break savegames
+    // "ammo/artifact_powder_bag",
+    // "ammo/artifact_quiver_of_arrows",
+    // "ammo/artifact_quiver_of_bolts"
+
+    "ammo/artifact_imbued_arrows"
+    "ammo/artifact_imbued_arrows"
+    "ammo/artifact_imbued_bolts"
+    "ammo/artifact_imbued_bolts"
+    // "ammo/artifact_imbued_shrapnel"
 ]

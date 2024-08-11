@@ -17,7 +17,7 @@ local mod = ::CampsAndArtifacts <- {
 //    - artifact goblin bow?
 // TODO: make artifact ammo more useful, i.e. add some perks
 // TODO: weapon perks?
-local function choice(options) {
+mod.choice <- function(options) {
     return options[::Math.rand(0, options.len() - 1)];
 }
 
@@ -32,12 +32,12 @@ mod.createRandomName <- function () {
     // Try to find a unique name first
     local names = this.m.NameList.filter(@(_, n) !::World.Flags.has("camps:artifact_name:" + n));
     if (names.len() > 0) {
-        local name = choice(names);
+        local name = mod.choice(names);
         ::World.Flags.add("camps:artifact_name:" + name, true);
         return name;
     }
     // Use prefix if failed
-    return choice(this.m.PrefixList) + " " + choice(this.m.NameList)
+    return mod.choice(this.m.PrefixList) + " " + mod.choice(this.m.NameList)
 }
 
 
@@ -79,4 +79,25 @@ foreach (file in ::IO.enumerateFiles("camps_and_artifacts/config")) ::include(fi
             onSpawned()
         }
     })
+
+    // // Make it do auto time reset
+    // ::mods_hookExactClass("skills/effects/chilled_effect", function (cls) {
+    //     local onRefresh = "onRefresh" in cls ? cls.onRefresh : cls.skill.onRefresh;
+    //     cls.onRefresh <- function () {
+    //         onRefresh();
+    //         this.resetTime();
+    //     }
+    // });
+
+    // ::mods_hookBaseClass("items/item", function (cls) {
+    //     cls = cls.item;
+
+    //     local onDeserialize = cls.onDeserialize;
+    //     cls.onDeserialize = function (_in) {
+    //         ::logInfo("BEGIN onDeserialize " + this.ClassName)
+    //         onDeserialize(_in)
+    //         ::logInfo("END onDeserialize " + this.ClassName)
+    //     }
+    // });
+
 })
