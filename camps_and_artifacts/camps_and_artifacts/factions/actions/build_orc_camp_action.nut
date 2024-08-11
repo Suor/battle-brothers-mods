@@ -16,10 +16,10 @@
 
     local onExecute = cls.onExecute;
     cls.onExecute = function (_faction) {
-        logInfo("build_orc_camp_action")
+        // logInfo("build_orc_camp_action")
         // 20% chance to build our special camp
         if (::Math.rand(1, 5) > 1) {onExecute(_faction); return}
-        logInfo("build_orc_camp_action SPECIAL")
+        // logInfo("build_orc_camp_action SPECIAL")
 
         local camp;
         local minY = this.Const.DLC.Desert ? 0.15 : 0.0;
@@ -40,7 +40,7 @@
             camp.onSpawned();
             camp.setBanner(banner);
             _faction.addSettlement(camp, false);
-            logInfo("build_orc_camp_action DONE")
+            // logInfo("build_orc_camp_action DONE")
         }
     }
 })

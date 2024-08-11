@@ -11,10 +11,10 @@
 
     local onExecute = cls.onExecute;
     cls.onExecute = function (_faction) {
-        logInfo("build_barbarian_camp_action")
+        // logInfo("build_barbarian_camp_action")
         // 25% chance to build our special camp
         if (::Math.rand(1, 4) > 1) {onExecute(_faction); return}
-        logInfo("build_barbarian_camp_action SPECIAL")
+        // logInfo("build_barbarian_camp_action SPECIAL")
 
         local camp;
         local tile = this.getTileToSpawnLocation(this.Const.Factions.BuildCampTries, [
@@ -32,7 +32,7 @@
             camp.onSpawned();
             camp.setBanner(banner);
             _faction.addSettlement(camp, false);
-            logInfo("build_barbarian_camp_action DONE")
+            // logInfo("build_barbarian_camp_action DONE")
         }
     }
 })
