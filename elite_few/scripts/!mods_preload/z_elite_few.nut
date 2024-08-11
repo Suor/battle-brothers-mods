@@ -71,12 +71,11 @@
     // Control all event and contract guys
     local inEventOrContract = false
     local function markInScreen(cls) {
-        local setScreen = cls.setScreen;
-        cls.setScreen = function (_screen) {
+        cls.setScreen = wrap(cls.setScreen, function (call, ...) {
             inEventOrContract = true;
-            setScreen(_screen);
+            call.super();
             inEventOrContract = false;
-        }
+        })
     }
     ::mods_hookBaseClass("events/event", function (cls) {markInScreen(cls.event)})
     ::mods_hookBaseClass("contracts/contract", function (cls) {markInScreen(cls.contract)})
@@ -118,7 +117,6 @@
             if (!_force && background != null && isBackgroundUntalented(background)) return;
 
             local talents = this.m.Talents;
-            // ::std.Debug.log("talents before", talents);
             local excluded = background ? background.getExcludedTalents() : [];
 
             // Add a new talent
@@ -137,7 +135,6 @@
                 local roll = rng.next(1, 100);
                 talents[stat] = roll <= 10 ? 1 : roll <= 60 ? 2 : 3;
             }
-            // ::std.Debug.log("talents after", talents);
         })
     });
 
