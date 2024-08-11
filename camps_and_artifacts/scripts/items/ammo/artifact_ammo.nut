@@ -30,9 +30,8 @@ local effects = ::CampsAndArtifacts.AmmoEffects <- {
         Tooltip = "Applies bleeding on target hit"
     }
 }
-local counter = 1;
 
-this.artifact_ammoct_ammo <- this.inherit("scripts/items/ammo/ammo", {
+this.artifact_ammo <- this.inherit("scripts/items/ammo/ammo", {
     m = {
         campart_IconNoun = ""
         campart_Effect = ""
