@@ -1,3 +1,7 @@
+2.4.1
+- added Double Tounged from Legends to dubious list
+- fixed incompatibility with Tutorial contract
+
 2.4.0
 - added a check to make all event/contract bros masters
 
@@ -6,7 +10,7 @@
 
 2.3.0
 - new icon
-- added drunkasrd, huge, tiny and paranoid to dubious traits
+- added drunkard, huge, tiny and paranoid to dubious traits
 - removed <b> junk from tooltips
 
 2.2.0
