@@ -53,15 +53,15 @@ this.artifact_ammo <- this.inherit("scripts/items/ammo/ammo", {
     }
 
     function updateIcon() {
+        local filename = "ammo/campart_" + this.m.campart_IconNoun + "_"  + this.m.campart_Effect;
         if (this.m.campart_IconNoun == "arrows") {
-            local filename = "ammo/campart_" + this.m.campart_IconNoun + "_"  + this.m.campart_Effect;
             this.m.Icon = filename +".png";
             this.m.IconEmpty = filename +"_empty.png";
-            if (this.m.campart_Effect != "poison" && this.m.campart_Effect != "fire")
+            if (this.m.campart_Effect == "bleeding")
                 this.m.IconEmpty = "ammo/quiver_03_empty.png"
         }
-        if (this.m.campart_IconNoun == "bolts" && this.m.campart_Effect == "poison") {
-            local filename = "ammo/campart_" + this.m.campart_IconNoun + "_"  + this.m.campart_Effect;
+        if (this.m.campart_IconNoun == "bolts"
+                && (this.m.campart_Effect == "poison" || this.m.campart_Effect == "ice")) {
             this.m.Icon = filename +".png";
             this.m.IconEmpty = filename +"_empty.png";
         }
