@@ -29,10 +29,10 @@ this.campart_bleeding_ammo <- ::inherit("scripts/skills/skill", {
     function onTargetHit(
         _skill, _targetEntity, _bodyPart, _damageInflictedHitpoints, _damageInflictedArmor )
     {
+        // NOTE: we ignore minimim damage needed for bleeding
         if (!this.m.Item.appliesTo(_skill)) return;
         if (!_targetEntity.isAlive() && !_targetEntity.isDying()
-            || _targetEntity.getCurrentProperties().IsImmuneToBleeding
-            || _damageInflictedHitpoints < ::Const.Combat.MinDamageToApplyBleeding) return;
+            || _targetEntity.getCurrentProperties().IsImmuneToBleeding) return;
 
         if (!_targetEntity.isHiddenToPlayer()) {
             // TODO: add bleeding sounds?

@@ -35,7 +35,8 @@ this.campart_poison_ammo <- ::inherit("scripts/skills/skill", {
         if (!this.m.Item.appliesTo(_skill)) return;
 
         // Copy-pasted from goblin_ambusher_racial
-        if (_targetEntity.getCurrentProperties().IsImmuneToPoison || _damageInflictedHitpoints < this.Const.Combat.PoisonEffectMinDamage || _targetEntity.getHitpoints() <= 0)
+        // NOTE: we ignore minimim damage needed for bleeding
+        if (_targetEntity.getCurrentProperties().IsImmuneToPoison || _targetEntity.getHitpoints() <= 0)
         {
             return;
         }

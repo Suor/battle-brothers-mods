@@ -80,14 +80,14 @@ foreach (file in ::IO.enumerateFiles("camps_and_artifacts/config")) ::include(fi
         }
     })
 
-    // // Make it do auto time reset
-    // ::mods_hookExactClass("skills/effects/chilled_effect", function (cls) {
-    //     local onRefresh = "onRefresh" in cls ? cls.onRefresh : cls.skill.onRefresh;
-    //     cls.onRefresh <- function () {
-    //         onRefresh();
-    //         this.resetTime();
-    //     }
-    // });
+    // Make it do auto time reset
+    ::mods_hookExactClass("skills/effects/chilled_effect", function (cls) {
+        local onRefresh = "onRefresh" in cls ? cls.onRefresh : cls.skill.onRefresh;
+        cls.onRefresh <- function () {
+            onRefresh();
+            this.resetTime();
+        }
+    });
 
     // ::mods_hookBaseClass("items/item", function (cls) {
     //     cls = cls.item;
