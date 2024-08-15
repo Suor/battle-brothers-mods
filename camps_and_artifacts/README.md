@@ -4,9 +4,9 @@ Adds higher difficulty camps and a higher tier of super-named "artifact" items, 
 
 Changes from the base mod:
 
+- added flaming, freezing and poisoned ammo
 - add special camps on top not instead of, i.e. there will be more lairs total
-- add some space between noble and city state camps
-- less city state camps, so it's not really crowded
+- not crowded noble and city state camps
 - updated 2h flail base attributes to match vanilla rebalance (was upped somewhat)
 - update artifact warbow and greatsword base attributes if [Sato's Balance Mod][sato_balance_mod] is present
 
@@ -21,7 +21,8 @@ Fixes:
 - do not overwrite huge files both config and bb classes, this used to overwrite changes from vanilla/DLC updates and brought many small issues
 - fixed lindwurm armor and helmet, they now both provide acid immunit and random perk
 - fixed some artifact prices
-
+- always provide a unique name for an artifact as long as they are available
+- fixed artifact weapons type to not contain Weapon (affected Autopilot)
 
 ## Compatibility
 

@@ -1,7 +1,7 @@
 local mod = ::CampsAndArtifacts <- {
     ID = "mod_camps_and_artifacts"
     Name = "Camps and Artifacts (Reworked)"
-    Version = 3.3
+    Version = 3.4
     Mods = {}
 };
 // TODO: add missing artifact versions of named stuff"
@@ -15,7 +15,6 @@ local mod = ::CampsAndArtifacts <- {
 //    - artifact 2h orc chain
 //    - artifact goblin impaler?
 //    - artifact goblin bow?
-// TODO: make artifact ammo more useful, i.e. add some perks
 // TODO: weapon perks?
 mod.choice <- function(options) {
     return options[::Math.rand(0, options.len() - 1)];
