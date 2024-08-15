@@ -20,7 +20,8 @@ this.artifact_imbued_arrows <- this.inherit("scripts/items/ammo/artifact_ammo", 
         this.m.IsDroppedAsLoot = true;
 
         this.m.campart_IconNoun = "arrows";
-        this.m.campart_Effect = ::CampsAndArtifacts.choice(["fire", "ice", "poison", "bleeding"]);
+        // this.m.campart_Effect = ::CampsAndArtifacts.choice(["fire", "ice", "poison", "bleeding"]);
+        this.m.campart_Effect = ::CampsAndArtifacts.choice(["fire", "ice", "poison"]);
         this.updateIcon();
     }
 })

@@ -20,7 +20,8 @@ this.artifact_imbued_bolts <- this.inherit("scripts/items/ammo/artifact_ammo", {
         this.m.IsDroppedAsLoot = true;
 
         this.m.campart_IconNoun = "bolts";
-        this.m.campart_Effect = ::CampsAndArtifacts.choice(["ice", "poison", "shock", "bleeding"]);
+        // this.m.campart_Effect = ::CampsAndArtifacts.choice(["ice", "poison", "shock", "bleeding"]);
+        this.m.campart_Effect = ::CampsAndArtifacts.choice(["ice", "poison"]);
         this.updateIcon();
     }
 })
