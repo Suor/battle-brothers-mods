@@ -5,6 +5,7 @@ this.cursed_effect <- this.inherit("scripts/skills/skill", {
     m = {
         Count = 1
         TurnsLeft = 3
+        BonusTable = [0, 10, 19, 27, 34, 40, 45, 50, 65, 70, 75, 79, 83, 86, 88, 90]
     }
     function create() {
         this.m.ID = "standout_enemies.effects.cursed";
@@ -29,7 +30,7 @@ this.cursed_effect <- this.inherit("scripts/skills/skill", {
     }
 
     function getTooltip() {
-        local debuffValue = -10 * this.m.Count;
+        local debuffValue = -this.getBonus();
         return [
             {
                 id = 1,
@@ -72,11 +73,16 @@ this.cursed_effect <- this.inherit("scripts/skills/skill", {
         ];
     }
 
+    function getBonus() {
+        local last = this.m.BonusTable.len() - 1;
+        return this.m.BonusTable[Math.min(this.m.Count, last)] + Math.max(0, this.m.Count - last);
+    }
+
     function onUpdate( _properties ) {
-        _properties.MeleeSkillMult *= 1.0 - 0.1 * this.m.Count;
-        _properties.RangedSkillMult *= 1.0 - 0.1 * this.m.Count;
-        _properties.MeleeDefenseMult *= 1.0 - 0.1 * this.m.Count;
-        _properties.RangedDefenseMult *= 1.0 - 0.1 * this.m.Count;
+        _properties.MeleeSkillMult *= 1.0 - 0.01 * this.getBonus();
+        _properties.RangedSkillMult *= 1.0 - 0.01 * this.getBonus();
+        _properties.MeleeDefenseMult *= 1.0 - 0.01 * this.getBonus();
+        _properties.RangedDefenseMult *= 1.0 - 0.01 * this.getBonus();
     }
 
     function onAdded() {

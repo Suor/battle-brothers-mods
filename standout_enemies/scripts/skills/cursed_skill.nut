@@ -27,22 +27,18 @@ this.cursed_skill <- this.inherit("scripts/skills/skill", {
     }
 
     function onTargetHit( _skill, _targetEntity, _bodyPart, _damageInflictedHitpoints, _damageInflictedArmor ) {
-        this.logInfo("se: cursed_skill onTargetHit " + _targetEntity.getName());
         this.curse(_targetEntity)
     }
 
     function onTargetMissed( _skill, _targetEntity ) {
-        this.logInfo("se: cursed_skill onTargetMissed " + _targetEntity.getName());
         this.curse(_targetEntity);
     }
 
     function onMissed( _attacker, _skill ) {
-        this.logInfo("se: cursed_skill onMissed " + _attacker.getName());
         this.curse(_attacker)
     }
 
     function onDamageReceived( _attacker, _damageHitpoints, _damageArmor ) {
-        this.logInfo("se: cursed_skill onDamageReceived " + _attacker.getName());
         this.curse(_attacker)
     }
 
@@ -58,7 +54,6 @@ this.cursed_skill <- this.inherit("scripts/skills/skill", {
 
             local otherActor = otherTile.getEntity();
             if (!otherActor.isAlliedWith(actor)) {
-                this.logInfo("se: cursed_skill onDeath " + otherActor.getName());
                 this.curse(otherActor);
             }
         }
