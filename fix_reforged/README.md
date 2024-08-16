@@ -1,7 +1,8 @@
 # Fix Reforged
 
 - make backgrounds not-aware of reforged still have reforged dynamic perks
-- add hackflows perks to Reforged dynamic trees
+- make enemies 1.5x stronger (feels way too easy otherwise)
+
 
 ## Compatibility
 
