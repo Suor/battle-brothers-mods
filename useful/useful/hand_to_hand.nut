@@ -6,13 +6,12 @@ local Text = ::std.Text;
         return actor.ClassName == "player" ? actor.getLevel() : null;
     }
 
-    cls.getTooltip = function() {
+    cls.getTooltip = function () {
         local ret = this.getDefaultTooltip();
+        local props = this.m.Container.buildPropertiesForUse(this, null);
+        local baseProps = this.m.Container.m.Actor.getCurrentProperties();
 
-        local props = {MeleeSkill = 0, FatigueDealtPerHitMult = 0};
-        this.onAnySkillUsed(this, null, props);
-
-        local bonus = props.MeleeSkill;
+        local bonus = props.MeleeSkill - baseProps.MeleeSkill;
         local colored = bonus > 0 ? Text.positive : Text.negative;
         if (bonus != 0) {
             ret.push({
@@ -34,21 +33,21 @@ local Text = ::std.Text;
         return ret;
     }
 
+    // Level 1: 5-10 damage, -10% to hit, 5 fat (same as vanilla)
+    // Level 6: 15-20 damage, 10% direct, 9 fat
+    // Level 11: 25-30 damage, 20% direct, +5% to hit, 14 fat
+    // Level 21: 35-40 damage (cap), 30% direct, +15% to hit, 15 fat (cap)
+    // Direct damage and to hit continue to grow 1% per level
     local onUpdate = cls.onUpdate;
     cls.onUpdate = function (_properties) {
         if (this.isUsable()) {
             local level = skillToLevel(this);
             if (level != null) {
-                // Get damage 15-20 with 20% direct on level 11
-                // TODO: should probably cap at level 21 or brawler lvl 31 gets:
-                //          50-60 dmg, 40% direct, +25 to hit, +10 fatigure
-                //       That is a real late game though.
                 local bonus = Math.min(10, level - 1) + Math.max(0, level - 11) / 2;
-                _properties.DamageRegularMin = 5 + bonus;
-                _properties.DamageRegularMax = 10 + bonus;
+                _properties.DamageRegularMin = 5 + Math.min(30, bonus * 2);
+                _properties.DamageRegularMax = 10 + Math.min(30, bonus * 2);
                 _properties.DamageArmorMult = 0.5;
                 _properties.DamageDirectMult += 0.02 * bonus;
-                // _properties.DamageDirectAdd += 0.02 * bonus;
             } else {
                 onUpdate(_properties)
             }
@@ -65,6 +64,35 @@ local Text = ::std.Text;
             } else {
                 _properties.MeleeSkill -= 10;
             }
+        }
+    }
+})
+
+::mods_hookExactClass("skills/backgrounds/brawler_background", function (cls) {
+    local getTooltip = cls.getTooltip;
+    cls.getTooltip = function () {
+        local ret = getTooltip().filter(@(_, rec) rec.id != 12);
+        ret.push({
+            id = 6,
+            type = "text",
+            icon = "ui/icons/hitchance.png"
+            text = "Has " + Text.positive("+10%") + " chance to hit when unarmed"
+        })
+        ret.push({
+            id = 12,
+            type = "text",
+            icon = "ui/icons/regular_damage.png",
+            text = Text.positive("+5-10") + " damage when unarmed"
+        })
+        return ret;
+    }
+
+    // Double damage becomes too large for brawler so we do +5-10 damage and +10 hit chance instead
+    cls.onAnySkillUsed = function ( _skill, _targetEntity, _properties ) {
+        if (_skill.getID() == "actives.hand_to_hand") {
+            _properties.MeleeSkill += 10;
+            _properties.DamageRegularMin += 5;
+            _properties.DamageRegularMax += 10;
         }
     }
 })
