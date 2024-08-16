@@ -150,7 +150,7 @@
     local convertEntitySkillsToUIData = cls.convertEntitySkillsToUIData;
     cls.convertEntitySkillsToUIData = function (_entity) {
         local ret = convertEntitySkillsToUIData(_entity);
-        if (ret == null) return ret;
+        if (ret == null || !("querySwitchableItems" in _entity)) return ret;
 
         foreach (item in _entity.querySwitchableItems())
             ret.push({
