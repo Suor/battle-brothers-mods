@@ -1,3 +1,4 @@
+.env
 *.zip
 __pycache__
 _other_options

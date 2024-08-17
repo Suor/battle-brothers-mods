@@ -5,4 +5,4 @@ SOURCES = background_perks scripts
 include ../Makefile.common
 
 test:
-	cd $(SUBDIR);squirrel mod_background_perks.nut
+	squirrel scripts/!mods_preload/mod_background_perks.nut

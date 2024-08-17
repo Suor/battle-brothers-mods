@@ -52,7 +52,9 @@ if ("dofile" in gt) {
         func(TacticalEntityManager);
     }
     ::mods_hookBaseClass <- function (x, func) {
-        func({})
+        func({
+            function onSpawnAssets() {}
+        })
     }
     ::mods_hookNewObject <- function (x, func) {
         // func({});
@@ -60,4 +62,5 @@ if ("dofile" in gt) {
 
     // Load mod script to check for syntax at least
     dofile("mod_vap.nut", true);
+    print("Tests OK\n");
 }

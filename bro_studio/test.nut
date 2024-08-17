@@ -1,5 +1,5 @@
+dofile(getenv("STDLIB_DIR") + "load.nut", true);
 dofile("mocks.nut", true);
-dofile("scripts/!mods_preload/!stdlib.nut", true);
 dofile("scripts/!mods_preload/mod_bro_studio.nut", true);
 
 local Util = ::std.Util, Debug = ::std.Debug;

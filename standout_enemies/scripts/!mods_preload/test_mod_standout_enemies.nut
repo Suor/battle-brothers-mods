@@ -3,9 +3,6 @@ local gt = getroottable();
 
 if ("dofile" in gt) {
     // Provide this stubs to enable simple testing
-    ::include <- function (script) {
-        return dofile("../../" + script + ".nut", true)
-    }
     logInfo <- function(s) {
         print(s + "\n")
     }
@@ -40,7 +37,7 @@ if ("dofile" in gt) {
     }
     new <- function (script) {
         if (script == "scripts/skills/cursed_skill" || script == "scripts/skills/cursed_effect") {
-            dofile("../../" + script + ".nut");
+            dofile(script + ".nut");
         }
 
         return {
@@ -205,8 +202,7 @@ if ("dofile" in gt) {
     }
 
     // Load mod script to check for syntax at least
-    dofile("../../scripts/!mods_preload/!stdlib.nut", true);
-    dofile("mod_standout_enemies.nut", true);
+    dofile("scripts/!mods_preload/mod_standout_enemies.nut", true);
 
     function setupParty(party) {
         foreach (t in party.m.Troops) {
