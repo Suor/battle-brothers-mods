@@ -29,7 +29,19 @@ addBehavior("AP_UnbagShield", "UnbagShield", 36, 400);
 ::mods_hookExactClass("ai/tactical/behaviors/ai_attack_default", function (cls) {
     cls.m.PossibleSkills.extend([
         "actives.lunge"
-        "actives.gae_buidhe_thrust" // CleverFool's mod
+        // CleverFool's mod
+        "actives.gae_buidhe_thrust"
+        "actives.gae_dearg_thrust"
+    ]);
+});
+::mods_hookExactClass("ai/tactical/behaviors/ai_attack_split", function (cls) {
+    cls.m.PossibleSkills.extend([
+        "actives.excalibur_split" // CleverFool's mod
+    ]);
+});
+::mods_hookExactClass("ai/tactical/behaviors/ai_defend_rotation", function (cls) {
+    cls.m.PossibleSkills.extend([
+        "actives.spin" // Heroic Scenario Pack
     ]);
 });
 
