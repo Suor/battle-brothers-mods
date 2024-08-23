@@ -56,15 +56,3 @@ mod.extraPerks <- function(level) {
 
     return perks;
 }
-
-// The meat
-mod.addExtraPerks <- function (_player, level) {
-    if (level >= _player.m.Level) return;
-
-    this.logInfo("studio: Leveling up " + _player.getName()
-                 + " from " + level + " to " + _player.m.Level);
-    // give extra perk points for certain levels
-    for (; ++level <= _player.m.Level;) {
-        _player.m.PerkPoints += extraPerks(level);
-    }
-}

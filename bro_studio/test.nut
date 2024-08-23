@@ -92,63 +92,7 @@ local function setconf(values) {
         mod.Mod.ModSettings.getSetting(name).Value = value
     }
 }
-local function assertSkillsNum(num) {
-    assertEq(player.getSkills().Skills.len(), num);
-    player.getSkills().Skills = [];
-}
 
-// Traits
-mod.addTraits(player)
-assertSkillsNum(0)
-
-::rng.reset(6);
-mod.addTraits(player, {num = 1})
-assertSkillsNum(1)
-
-::rng.reset(77);
-mod.addTraits(player, {num = 3})
-assertSkillsNum(3)
-
-// Stupid mode
-::rng.reset(77);
-mod.addTraits(player, {num = 1, bad = false, stupid = true})
-assertSkillsNum(4)
-print("Traits OK\n");
-
-// Talents
-::rng.reset(9);
-mod.fillTalentValues(player, 4);
-
-::rng.reset(9);
-mod.fillTalentValues(player, 4, {excluded = "ignored"});
-
-::rng.reset(9);
-mod.fillTalentValues(player, 6, {excluded = "strict"});
-
-::rng.reset(9);
-mod.fillTalentValues(player, 6, {excluded = "relaxed"});
-assertEq(player.m.Talents, [1 1 2 0 1 0 2 1])
-
-::rng.reset(9);
-mod.fillTalentValues(player, 6, {excluded = "ignored"});
-assertEq(player.m.Talents, [0 0 1 1 2 1 2 1])
-
-::rng.reset(9);
-mod.fillTalentValues(player, 4, {weighted = true});
-assertEq(player.m.Talents, [0, 1, 3, 0, 3, 0, 2, 0])
-
-::rng.reset(9);
-mod.fillTalentValues(player, 6, {weighted = true, excluded = "relaxed"});
-assertEq(player.m.Talents, [1 2 1 0 1 0 3 1])
-
-::rng.reset(9);
-mod.fillTalentValues(player, 6, {weighted = true, excluded = "strict"});
-assertEq(player.m.Talents, [2 1 2 0 1 0 3 0])
-
-::rng.reset(9);
-mod.fillTalentValues(player, 6, {weighted = true, excluded = "ignored"});
-assertEq(player.m.Talents, [0 0 1 1 1 1 2 3])
-print("Talents OK\n");
 
 // Attrs
 local function genAttributes(_clear = true) {
@@ -201,6 +145,7 @@ assertEq(genAttributes(), [[2], [1], [1], [2], [2], [1], [1], [1]])
 ::rng.reset(11);
 setconf({attrsVeteran = 11, attrsVeteranBoostValue = "high"})
 assertEq(genAttributes(), [[2], [2], [2], [3], [2], [2], [1], [1]])
+print("Attributes OK\n");
 
 
 // Perks

@@ -1,6 +1,7 @@
 local mod = ::BroStudio,
+      Player = ::std.Player,
       Rand = ::std.Rand.using(::rng), // Use non-Math rng generator to preserve seeds better
-      Array = ::std.Array, Str = ::std.Str, Text = ::std.Text, Util = ::std.Util;
+      Array = ::std.Array, Text = ::std.Text, Util = ::std.Util;
 
 // Settings, Talents & Attributes page
 local page = mod.addPage("Talents & Attrs");
@@ -63,11 +64,6 @@ mod.getVeteranTalentValue <- function () {
 
 
 // The meat
-// Average values taken from character_background.buildAttributes(),
-// will use them to determine how much a change from onChangeAttributes() means.
-// Q: should I use level 11 expected instead? Then might not need special treatment for defense.
-mod.AttributeBase <- [55.0, 35.0, 95.0, 105, 52.0, 37.0, 2.5, 2.5]
-
 local isBackgroundUntalented = ::mods_getRegisteredMod("mod_legends")
     ? @(b) b.isBackgroundType(Const.BackgroundType.Untalented)
     : @(b) b.isUntalented()
@@ -78,80 +74,11 @@ mod.fillTalentValues <- function (_player, _num, _opts = null) {
         excluded = mod.conf("talentsExcluded")
         force = mod.conf("talentsRandomStart")
     }, _opts || {})
-    if (["strict" "relaxed" "ignored"].find(_opts.excluded) == null)
-        throw "Should use excluded = \"strict\", \"relaxed\" or \"ignored\", not " + _opts.excluded;
-
 
     local bg = _player.getBackground();
     if (!_opts.force && bg != null && isBackgroundUntalented(bg)) return;
-    if (mod.Debug)
-        ::logInfo("studio: fillTalentValues " + _player.getName()
-            + ", bg: " + (bg ? bg.getNameOnly() : "null"));
 
-    // Erase anything set up prior
-    _player.m.Talents = array(::Const.Attributes.COUNT, 0);
-
-    local weights = _opts.weighted && bg ? mod.calcWeights(bg) : array(::Const.Attributes.COUNT, 1);
-    if (mod.Debug) mod.Debug.log("weights", weights);
-
-    // Split excluded
-    local indexes = [], iWeights = [], excluded = [], eWeights = [];
-    if (_opts.excluded == "ignored" || !bg) {
-        indexes = [0 1 2 3 4 5 6 7];
-        iWeights = weights;
-    } else {
-        local excludedTalents = bg.getExcludedTalents();
-        foreach (i, w in weights) {
-            if (excludedTalents.find(i) == null) {
-                indexes.push(i); iWeights.push(w);
-            } else {
-                excluded.push(i); eWeights.push(w);
-            }
-        }
-    }
-
-    // Choose talents
-    local chosen = Rand.take(_num, indexes, iWeights);
-    if (_opts.excluded != "strict" && chosen.len() < _num) {
-        chosen.extend(Rand.take(_num - chosen.len(), excluded, eWeights))
-    }
-
-    // Roll ralent stars
-    local probsStr = array(8, "-");
-    foreach (i in chosen) {
-        local w = weights[i];
-        local probs = [60 30 10];
-        probs[2] *= w;           // 3 stars
-        probs[1] *= (w + 1) / 2; // 2 stars
-        _player.m.Talents[i] = Rand.choice([1 2 3], probs);
-        if (mod.Debug) {
-            local psum = probs[0] + probs[1] + probs[2];
-            probsStr[i] = Str.join(".", probs.map(@(p) ::Math.round(p * 100 / psum)));
-        }
-    }
-    if (mod.Debug) mod.Debug.log("talents probs", Str.join(" ", probsStr));
-    if (mod.Debug) mod.Debug.log("talents after", _player.m.Talents);
-}
-
-mod.calcWeights <- function (_bg) {
-    local weights = clone mod.AttributeBase;
-    foreach (k, v in _bg.onChangeAttributes()) {
-        local i = ::Const.Attributes[k == "Stamina" ? "Fatigue" : k];
-        local isDefense = k == "MeleeDefense" || k == "RangedDefense";
-        local min = isDefense ? 0.8 : 0.5,
-              max = isDefense ? 1.5 : 3.0,
-              exp = i == 1 || i == 5 ? 3 : 4;
-        weights[i] = Util.clamp(pow((v[0] + v[1]) * 0.5 / weights[i] + 1, exp), min, max);
-    }
-
-    // Make defense talents scale up slightly with attack talents
-    for (local i = 6; i < 8; i++) {
-        local attack = weights[i-2];
-        if (attack > 1 && weights[i] > 0.001)
-            weights[i] = ::Math.minf(2.0, weights[i] + ::Math.minf(0.5, attack * 0.5 - 0.5));
-    }
-    // only add one row at a time, do nothing if we are in non-veteran levels
-    return weights;
+    Player.rerollTalents(_player, _num, _opts);
 }
 
 mod.addAttributeLevelUpValues <- function (_player) {
@@ -162,7 +89,8 @@ mod.addAttributeLevelUpValues <- function (_player) {
 
     if (effectiveLevel <= mod.conf("attrsVeteran")) {
         _player.m.Attributes.clear();
-        _player.fillAttributeLevelUpValues(1); // only add one row at a time
+        // only add one row at a time, this works as long as mod.conf("attrsVeteran") >= 11
+        _player.fillAttributeLevelUpValues(1);
     } else {
         local talentValue = mod.getVeteranTalentValue();
         if (talentValue == 0) return;

@@ -7,7 +7,7 @@ local mod = ::BroStudio <- {
 local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve seeds better
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "stdlib, mod_hooks(>=20), mod_msu(>=1.2.6), !mod_vap, !mod_ultrabros",
+::mods_queue(mod.ID, "stdlib(>=1.8), mod_hooks(>=20), mod_msu(>=1.2.6), !mod_vap, !mod_ultrabros",
         function() {
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
     mod.conf <- function (name) {
@@ -38,6 +38,18 @@ local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve 
         return min + Rand.poly(max - min, chance / 100.0);
     }
 
+    local function onLevels(_player, _prevLevel) {
+        if (_prevLevel >= _player.m.Level) return;
+
+        this.logInfo("studio: Leveling up " + _player.getName()
+                     + " from " + _prevLevel + " to " + _player.m.Level);
+        // give extra perk points for certain levels
+        for (local level = _prevLevel; ++level <= _player.m.Level;) {
+            _player.m.PerkPoints += mod.extraPerks(level);
+            mod.addTraits(_player, mod.extraTraits(level));
+        }
+    }
+
     ::mods_hookExactClass("entity/tactical/player", function (cls) {
         local fillTalentValues = cls.fillTalentValues;
         if (::mods_getRegisteredMod("mod_legends")) {
@@ -58,15 +70,15 @@ local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve 
         local onHired = cls.onHired;
         cls.onHired = function () {
             onHired();
-            mod.addTraits(this);
-            mod.addExtraPerks(this, 1);
+            mod.addTraits(this, mod.conf("traitsNum"));
+            onLevels(this, 1);
         }
 
         local updateLevel = cls.updateLevel;
         cls.updateLevel = function () {
             local level = m.Level;
             updateLevel();
-            mod.addExtraPerks(this, level);
+            onLevels(this, level);
         }
 
         local getAttributeLevelUpValues = cls.getAttributeLevelUpValues;
@@ -89,9 +101,11 @@ local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve 
             // Set up starting bros
             local roster = World.getPlayerRoster().getAll();
             foreach (bro in roster) {
+                // Need to reroll talents here because some scenarios assign them by hand
+                // after the player.setStartValuesEx() call
                 if (mod.conf("talentsRandomStart")) mod.fillTalentValues(bro, rollTalentsNum());
-                mod.addExtraPerks(bro, 1);
-                mod.addTraits(bro);
+                mod.addTraits(bro, mod.conf("traitsNum"));
+                onLevels(bro, 1);
             }
         }
     })
