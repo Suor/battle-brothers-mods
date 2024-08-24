@@ -1,2 +1,7 @@
+0.4
+- better balanced hand to hand
+- undo Reforged nerfs to named goblin weapons
+- fixed Reforged/new MSU BaseScript thing breaking hooking named items
+
 0.3
 - initial public release
