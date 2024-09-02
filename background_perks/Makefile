@@ -3,6 +3,3 @@ TAG_NAME = background-perks
 SOURCES = background_perks scripts
 
 include ../Makefile.common
-
-test:
-	squirrel scripts/!mods_preload/mod_background_perks.nut
