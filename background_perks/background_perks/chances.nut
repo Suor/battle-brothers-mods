@@ -38,6 +38,7 @@
         "relentless": 50
         "colossus": 15
         "pathfinder": 10
+        "berserk": 3
     }
 
     bastard = {
@@ -63,9 +64,9 @@
     }
 
     belly_dancer = {
-        "dodge": 100
-        "nimble": 35
-        "quick_hands": 5
+        "dodge": 33
+        "nimble": 15
+        "footwork": 33
     }
 
     bowyer = {
@@ -217,7 +218,7 @@
     }
 
     historian = {
-        "student": 100
+        "student": 50
         "gifted": 25
         "pathfinder": 10
     }
@@ -244,7 +245,7 @@
     }
 
     killer_on_the_run = {
-        "duelist": 50
+        "duelist": 33
         "backstabber": 25
         "adrenaline": 20
         "head_hunter": 10
@@ -273,7 +274,7 @@
 
     messenger = {
         "recover": 5
-        "pathfinder": 50
+        "pathfinder": 33
         "footwork": 5
         "bags_and_belts": 5
         "relentless": 3
@@ -296,7 +297,7 @@
 
     miner = {
         "mastery.hammer": 50
-        "steel_brow": 60
+        "steel_brow": 30
         "hold_out": 15
     }
 
@@ -304,20 +305,20 @@
         "taunt": 80
         "rally_the_troops": 25
         "student": 25
-        "fortified_mind": 30
+        "fortified_mind": 25
     }
 
     monk = {
-        "fortified_mind": 100
+        "fortified_mind": 50
         "student": 10
     }
 
     nomad = {
         "pathfinder": 33
         "nine_lives": 10
-        "colossus": 10
+        "colossus": 5
         "recover": 5
-        "rotation": 5
+        "rotation": 15
         "mastery.cleaver": 3
     }
 
@@ -382,14 +383,14 @@
     }
 
     refugee = {
-        "pathfinder": 100
+        "pathfinder": 50
         "recover": 20
         "lone_wolf": 7
     }
 
     retired_soldier = {
         "lone_wolf": 25
-        "rotation": 100
+        "rotation": 50
         "mastery.mace": 3
         "mastery.flail": 3
         "mastery.hammer": 3
@@ -462,11 +463,12 @@
     }
 
     thief = {
-        "quick_hands": 100
+        "quick_hands": 50
         "mastery.dagger": 25
         "crippling_strikes": 10
         "backstabber": 33
         "bags_and_belts": 10
+        "dodge": 1
     }
 
     vagabond = {
