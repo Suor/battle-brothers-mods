@@ -13,11 +13,11 @@ check-compile:
 
 cl:
 	@set -e;
-	ignore=("__pycache__/" "tmp/" "fix_reforged/" "fun_facts/" "more_blood/")
+	ignore=("__pycache__/" "tmp/" "hook_check/" "fix_reforged/" "mod_vap/" "fun_facts/")
 	for d in */ ; do
 		if [[ " $${ignore[*]}" =~ "$$d" ]]; then continue; fi
 		CHANGES=`git log --pretty='%s %C(yellow)%d%Creset' $$d \
-			| perl -ne "exit if /\btag:/; print if /:/ && !/README|CHANGELOG/"`
+			| perl -ne "exit if /\btag:/; print if /:/ && !/README|CHANGELOG|Makefile/"`
 		if [ "$$CHANGES" == "" ]; then continue; fi
 		echo "--------------------------- $$d ---------------------------------";
 		echo "$$CHANGES"
