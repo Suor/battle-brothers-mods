@@ -496,3 +496,6 @@
 }
 ::BgPerks.chances.assassin_southern <- ::BgPerks.chances.assassin;
 ::BgPerks.chances.crucified <- ::BgPerks.chances.crusader;
+
+::BgPerks.chances.gladiator_origin <- ::BgPerks.chances.gladiator;
+::BgPerks.chances.belly_dancer_origin <- ::BgPerks.chances.belly_dancer;
