@@ -1,4 +1,4 @@
-# More Blood (Updated)
+# More Blood (Compatible)
 
 It won't cover your entire screen in dripping blood, but will make things satisfyingly gruesome.
 
