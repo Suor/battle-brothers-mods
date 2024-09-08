@@ -20,6 +20,12 @@ local mod = ::Autopilot <- {
       "Uncheck this for autopilot mode to skip Player Characters"));
 
   page.addElement(::MSU.Class.SettingsDivider("behaviorsDiv"));
+  page.addElement(::MSU.Class.SettingsTitle("behaviorsTitle", "Behaviors"));
+
+  page.addElement(::MSU.Class.BooleanSetting("nets", true, "Throw Nets",
+      "Use Throwing Nets when in autopilot mode"));
+  // page.addElement(::MSU.Class.SettingsDivider("autoDiv"));
+
   page.addElement(::MSU.Class.BooleanSetting("freewake", true, "Auto break free and wake up",
       "Auto break free out of nets and webs and wake allies when unused AP left"));
   page.addElement(::MSU.Class.BooleanSetting("reload", true, "Auto reload",

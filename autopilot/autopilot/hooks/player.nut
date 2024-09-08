@@ -56,23 +56,27 @@
         }
 
         // Our behaviors
-        agent.addBehavior(this.new("scripts/ai/autopilot_unbag_net"));
         agent.addBehavior(this.new("scripts/ai/autopilot_unbag_shield"));
+        if (::Autopilot.conf("dogs")) {
+            agent.addBehavior(this.new("scripts/ai/autopilot_unleash_dog"));
+        }
+        if (::Autopilot.conf("nets")) {
+            agent.addBehavior(this.new("scripts/ai/autopilot_unbag_net"));
+            agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_throw_net"));
+        }
 
         // Military agents don't have this
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_disengage"));
-        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_throw_net"));
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_adrenaline"));
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_pickup_weapon"));
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_line_breaker"));
+        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_rally"));
         // Disabled since doesn't consult offhand/backpack at all
         // agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_throw_bomb"));
 
         // military doesn't have it, but bandit does
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_deathblow"));
 
-        // Until we properly use standard bearer
-        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_rally"));
 
         // Only works because we overwrite break_free.onEvaluate() below
         agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.BreakFree] = 2.5;
