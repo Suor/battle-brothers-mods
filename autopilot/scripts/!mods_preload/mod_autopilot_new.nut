@@ -16,6 +16,10 @@ local mod = ::Autopilot <- {
   // Settings
   local page = mod.Mod.ModSettings.addPage("Autopilot");
 
+  page.addElement(::MSU.Class.BooleanSetting("player", true, "Auto Player Characters",
+      "Uncheck this for autopilot mode to skip Player Characters"));
+
+  page.addElement(::MSU.Class.SettingsDivider("behaviorsDiv"));
   page.addElement(::MSU.Class.BooleanSetting("freewake", true, "Auto break free and wake up",
       "Auto break free out of nets and webs and wake allies when unused AP left"));
   page.addElement(::MSU.Class.BooleanSetting("reload", true, "Auto reload",

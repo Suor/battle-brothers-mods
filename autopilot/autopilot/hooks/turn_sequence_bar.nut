@@ -4,10 +4,16 @@
     cls.m.IsWaitingRound <- false;
     cls.m.IsOnAI <- false;
 
-    cls.isHumanControlled <- function (entity = null) {
-        if (entity == null) entity = getActiveEntity();
-        return entity != null && entity.isPlayerControlled()
-            && (entity.getAIAgent() == null || entity.getAIAgent().ClassName == "player_agent");
+    cls.isHumanControlled <- function (_entity = null) {
+        if (_entity == null) _entity = getActiveEntity();
+        return _entity != null && _entity.isPlayerControlled()
+            && (_entity.getAIAgent() == null || _entity.getAIAgent().ClassName == "player_agent");
+    }
+    cls.canAuto <- function (_entity = null) {
+        if (_entity == null) _entity = getActiveEntity();
+        return this.isHumanControlled(_entity)
+            && !_entity.isGuest() && (!("_isIgnored" in _entity.m) || !_entity.m._isIgnored)
+            && (::Autopilot.conf("player") || !_entity.getSkills().hasSkill("trait.player"));
     }
 
     local initNextRound = cls.initNextRound;
@@ -93,7 +99,7 @@
     }
 
     cls.onAIButtonPressed <- function () {
-        if (m.IsSkippingRound || !isHumanControlled()) {return;}
+        if (m.IsSkippingRound || !canAuto()) {return;}
 
         Tactical.State.showDialogPopup("AI Control", "Turn control over to the AI?", function ()
         {
@@ -101,9 +107,7 @@
             m.IsOnAI = true;
             m.JSHandle.call("showStatsPanel", false);
             foreach(e in m.AllEntities) {
-                if (e.isPlayerControlled() && e.getAIAgent().ClassName == "player_agent"
-                    && !e.isGuest() && (!("_isIgnored" in e.m) || !e.m._isIgnored))
-                {
+                if (canAuto(e)) {
                     e.enableAIControl();
                     // For next line from Adam: seems to cause intermittent crashes...
                     // But works fine for me so far.
@@ -128,6 +132,8 @@
         if (entity) {
             local e = entity.entity;
             if (e.isPlayerControlled()) {
+                // NOTE: this works unless you just changed settings, not really needed though.
+                // m.JSHandle.call("setAIButtonVisible", canAuto(e));
                 if ("_isIgnored" in e.m && e.m._isIgnored) initNextTurn();
                 else if (m.IsWaitingRound) entityWaitTurn(e);
             }
