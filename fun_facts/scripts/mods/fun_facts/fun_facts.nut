@@ -1,4 +1,14 @@
-local Str = ::std.Str, Util = ::std.Util;
+local Str = ::std.Str, Text = ::std.Text, Array = ::std.Array, Util = ::std.Util;
+
+local function Prop(_def) {
+    return Util.extend({
+        value = null
+        function get() {
+            if (value == null) value = _def.calc()
+            return value;
+        }
+    }, _def)
+}
 
 this.fun_facts <- {
     m = {
@@ -22,6 +32,7 @@ this.fun_facts <- {
         // })
         Stats = {
             Kills = []
+            Deaths = []
             Injuries = []
             InjuriesDealt = []
             BattlesLog = []
@@ -33,10 +44,29 @@ this.fun_facts <- {
             // Obsolete
             BattlesSkipped = 0  // Supserseded by CombatsSkipped array
         }
+        Props = null
         TmpCombatStart = null
         // Ranks = {}
         Name = "<not-set>"
         Version = 2
+    }
+
+    function create() {
+        this.m.Props = {
+            PlayerKills = Prop({
+                ref = this.m.Stats.Kills
+                calc = @() ref.filter(@(_, r) r.IsPlayer)
+                function onKill(_record) {if (_record.IsPlayer) this.value.push(_record)}
+            })
+        }
+    }
+    function getProp(_name) {
+        return this.m.Props[_name].get();
+    }
+    function updateProps(_event, _record) {
+        foreach (_, prop in this.m.Props) {
+            if (_event in prop) prop[_event](_record);
+        }
     }
 
     function setName(_name) {
@@ -95,9 +125,6 @@ this.fun_facts <- {
     }
 
     function onKill(_target, _fatalityType) {
-        // ::FunFacts.Debug.log("onKill target", _target);
-        // ::FunFacts.Debug.log("onKill fatality", _fatalityType);
-
         local record = {
             BattleId = ::FunFacts.getBattleId()
             IsPlayer = _target.isPlayerControlled()
@@ -110,6 +137,22 @@ this.fun_facts <- {
         ::FunFacts.Debug.log("onKill record", record);
         this.m.Stats.Kills.push(record);
         ::FunFacts.Debug.log("onKill total records", this.m.Stats.Kills.len());
+        this.updateProps("onKill", record);
+    }
+
+    function onDeath(_killer, _fatalityType) {
+        local record = {
+            BattleId = ::FunFacts.getBattleId()
+            IsPlayer = _killer.isPlayerControlled()
+            Name = _killer.getName()
+            ClassName = _killer.ClassName
+            XP = _killer.getXPValue()
+            Fatality = _fatalityType
+            Day = this.World.getTime().Days
+        }
+        ::FunFacts.Debug.log("onDeath record", record);
+        this.m.Stats.Deaths.push(record);
+        ::FunFacts.Debug.log("onDeath total records", this.m.Stats.Deaths.len());
     }
 
     function onTargetHit(_skill, _target, _bodyPart, _damageHitpoints, _damageArmor) {
@@ -162,6 +205,17 @@ this.fun_facts <- {
             _tooltip.push({id = _idCounter, type = "hint", icon = icon, text = text});
         }
 
+        local deaths = this.m.Stats.Deaths.len();
+        if (deaths > 0) {
+            local text = deaths == 1 ? "Died once"
+                : format("Died %s time%s", red(deaths), Text.plural(deaths));
+            local fromBros = this.m.Stats.Deaths.filter(@(_, d) d.IsPlayer).len();
+            if (fromBros) {
+                text += ". " + (fromBros == 1 ? "One" : fromBros) + " of them from a hand of a bro."
+            }
+            addHint("ui/icons/obituary.png", text);
+        }
+
         local kills = this.m.Stats.Kills.len();
         if (kills > 0) {
             local chopped = 0, gutted = 0, smashed = 0;
@@ -204,6 +258,27 @@ this.fun_facts <- {
             // local killsByClassSorted = killsByClass.toArray(false);
             // killsByClassSorted.sort(@(a, b) b[0] <=> a[0])
             // ::FunFacts.Debug.log("killsByClass", killsByClassSorted);
+        }
+
+        local maxKills = Array.max(this.m.Stats.BattlesLog.map(@(b) b.Kills));
+        if (maxKills && maxKills >= 5) {
+            local text = format("Killed %s %s in a single battle",
+                                red(maxKills), Text.plural(maxKills, "enemy", "enemies"));
+            addHint("ui/icons/round_information/enemies_icon.png", text);
+        }
+
+        local playerKills = this.getProp("PlayerKills");
+        local fatalities = {
+            [1] = "chopped %s's head",
+            [2] = "smashed %s's head",
+            [3] = "gutted %s"
+        }
+        if (playerKills.len() > 0) {
+            local kills = playerKills.map(function(_kill) {
+                local tpl = _kill.Fatality in fatalities ? fatalities[_kill.Fatality] : "killed %s";
+                return format(tpl, Text.ally(_kill.Name));
+            })
+            addHint("ui/icons/asset_brothers.png", Str.join(", ", text));
         }
 
         if (this.m.Stats.Injuries.len() > 0) {
