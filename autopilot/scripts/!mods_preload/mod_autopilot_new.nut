@@ -22,6 +22,8 @@ local mod = ::Autopilot <- {
   page.addElement(::MSU.Class.SettingsDivider("behaviorsDiv"));
   page.addElement(::MSU.Class.SettingsTitle("behaviorsTitle", "Behaviors"));
 
+  page.addElement(::MSU.Class.BooleanSetting("dogs", true, "Let The Dogs Out",
+      "Use dogs in autopilot mode"));
   page.addElement(::MSU.Class.BooleanSetting("nets", true, "Throw Nets",
       "Use Throwing Nets when in autopilot mode"));
   // page.addElement(::MSU.Class.SettingsDivider("autoDiv"));
