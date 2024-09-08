@@ -44,6 +44,11 @@ addBehavior("AP_UnbagShield", "UnbagShield", 36, 400);
         "actives.spin" // Heroic Scenario Pack
     ]);
 });
+::mods_hookExactClass("ai/tactical/behaviors/ai_boost_stamina", function (cls) {
+    cls.m.PossibleSkills.extend([
+        "actives.nem_barbarian_drum" // North Expansion Mod
+    ]);
+});
 
 // Adjust fatigue score mult
 ::mods_hookBaseClass("ai/tactical/behavior", function(cls) {

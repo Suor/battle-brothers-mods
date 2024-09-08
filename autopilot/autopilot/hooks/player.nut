@@ -77,6 +77,8 @@
         // military doesn't have it, but bandit does
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_deathblow"));
 
+        // If we somehow get drum, say with North Expansion mod
+        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_boost_stamina"));
 
         // Only works because we overwrite break_free.onEvaluate() below
         agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.BreakFree] = 2.5;
