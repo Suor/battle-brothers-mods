@@ -121,7 +121,7 @@ this.immortal_soul_jar <- this.inherit("scripts/items/item", {
 
         local info = mod.getImmortalInfo(this.m.immortal_Index);
 
-        mod.giveLevels(_actor, this.levelsBoost(info));
+        Player.giveLevels(_actor, this.levelsBoost(info));
 
         // Set name and stats
         if (info.Name) {
@@ -137,20 +137,14 @@ this.immortal_soul_jar <- this.inherit("scripts/items/item", {
 
     function onSerialize( _out )
     {
-        ::logInfo("immortal_soul_jar onSerialize 1")
         this.item.onSerialize(_out);
-        ::logInfo("immortal_soul_jar onSerialize 2")
         _out.writeU16(this.m.immortal_Index);
-        ::logInfo("immortal_soul_jar onSerialize 3")
     }
 
     function onDeserialize( _in )
     {
-        ::logInfo("immortal_soul_jar onDeserialize 1")
         this.item.onDeserialize(_in);
-        ::logInfo("immortal_soul_jar onDeserialize 2")
         this.m.immortal_Index = _in.readU16();
-        ::logInfo("immortal_soul_jar onDeserialize 3")
     }
 });
 

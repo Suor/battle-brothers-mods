@@ -6,74 +6,6 @@ local mod = ::ImmortalWarriors <- {
 local Rand = ::std.Rand.using(::rng), Util = ::std.Util, Table = ::std.Table;
 local Debug = ::std.Debug.with({prefix = "iw: "});
 
-mod.DefaultInfo <- {
-    Name = null
-    Title = null
-    Level = 0
-    Battles = 0
-    Kills = 0
-    Deaths = 0
-}
-mod.getImmortalInfo <- function (_i) {
-    // if ("_ImmortalInfo" in mod) return null;
-    local n = mod.conf("number");
-    if (_i >= n) throw "No info for immortal numero " + _i + ", only have " + n + " of them";
-
-    if (!(_i in this._ImmortalInfo)) this._ImmortalInfo[_i] <- clone this.DefaultInfo;
-    return this._ImmortalInfo[_i];
-}
-
-// TODO: maybe cache this func
-mod.isRangedBg <- function (_background) {
-    local c = _background.onChangeAttributes();
-    local melee = c.MeleeSkill[0], ranged = c.RangedSkill[0];
-    return ranged > 0 && ranged - melee >= 10;
-}
-mod.giveLevels <- function (_player, _num) {
-    for (local i = 0; i < _num; i++) {
-        local nextlevelXP = _player.getXPForNextLevel() - _player.m.XP;
-        _player.m.XP += nextlevelXP;
-        _player.m.CombatStats.XPGained += nextlevelXP;
-        _player.updateLevel();
-    }
-    if (_num > 0) _player.getSkills().update();
-}
-mod.boostTalents <- function (_player, _num) {
-    if (_num <= 0) return;
-
-    Debug.log("talents before", _player.m.Talents);
-    local talents = _player.m.Talents;
-    local options = [0 1 2 3 4 5 6 7].filter(@(_, t) talents[t] < 3);
-
-    for (local i = 0; i < _num; i++) {
-        local o = Rand.index(options.len());
-        local t = options[o];
-        talents[t] = ::Math.max(talents[t] + 1, Rand.choice([1 2 3], [50 25 25]));
-        if (talents[t] == 3) {
-            options.remove(o);
-            if (options.len() == 0) break;
-        }
-    }
-    Debug.log("talents after", _player.m.Talents);
-
-    // Since this.m.Attributes are already filled in according to old talents we need to reroll.
-    // NOTE: there might be Gifted or Blue Vial rows, which we need to preserve.
-    Debug.log("boostTalents before", _player.m.Attributes);
-    local extras = _player.m.Attributes.map(@(v) v.slice(0, _player.m.immortal_extraALUV));
-    Debug.log("extras before", extras);
-    _player.m.Attributes.clear();
-    _player.fillAttributeLevelUpValues(
-        ::Const.XP.MaxLevelWithPerkpoints - _player.getLevel()
-        + _player.m.LevelUps - _player.m.immortal_extraALUV
-    );
-    Debug.log("boostTalents rolled", _player.m.Attributes);
-    for (local i = 0; i < ::Const.Attributes.COUNT; i++) {
-        extras[i].extend(_player.m.Attributes[i]);
-        _player.m.Attributes[i] = extras[i];
-    }
-    Debug.log("boostTalents after", _player.m.Attributes);
-}
-
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 ::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=1.8), mod_msu(>=1.5.0)", function () {
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
@@ -179,3 +111,58 @@ mod.boostTalents <- function (_player, _num) {
         }
     });
 });
+
+
+// The meat
+mod.DefaultInfo <- {
+    Name = null
+    Title = null
+    Level = 0
+    Battles = 0
+    Kills = 0
+    Deaths = 0
+}
+mod.getImmortalInfo <- function (_i) {
+    // if ("_ImmortalInfo" in mod) return null;
+    local n = mod.conf("number");
+    if (_i >= n) throw "No info for immortal numero " + _i + ", only have " + n + " of them";
+
+    if (!(_i in this._ImmortalInfo)) this._ImmortalInfo[_i] <- clone this.DefaultInfo;
+    return this._ImmortalInfo[_i];
+}
+
+mod.boostTalents <- function (_player, _num) {
+    if (_num <= 0) return;
+
+    Debug.log("talents before", _player.m.Talents);
+    local talents = _player.m.Talents;
+    local options = [0 1 2 3 4 5 6 7].filter(@(_, t) talents[t] < 3);
+
+    for (local i = 0; i < _num; i++) {
+        local o = Rand.index(options.len());
+        local t = options[o];
+        talents[t] = ::Math.max(talents[t] + 1, Rand.choice([1 2 3], [50 25 25]));
+        if (talents[t] == 3) {
+            options.remove(o);
+            if (options.len() == 0) break;
+        }
+    }
+    Debug.log("talents after", _player.m.Talents);
+
+    // Since this.m.Attributes are already filled in according to old talents we need to reroll.
+    // NOTE: there might be Gifted or Blue Vial rows, which we need to preserve.
+    Debug.log("boostTalents before", _player.m.Attributes);
+    local extras = _player.m.Attributes.map(@(v) v.slice(0, _player.m.immortal_extraALUV));
+    Debug.log("extras before", extras);
+    _player.m.Attributes.clear();
+    _player.fillAttributeLevelUpValues(
+        ::Const.XP.MaxLevelWithPerkpoints - _player.getLevel()
+        + _player.m.LevelUps - _player.m.immortal_extraALUV
+    );
+    Debug.log("boostTalents rolled", _player.m.Attributes);
+    for (local i = 0; i < ::Const.Attributes.COUNT; i++) {
+        extras[i].extend(_player.m.Attributes[i]);
+        _player.m.Attributes[i] = extras[i];
+    }
+    Debug.log("boostTalents after", _player.m.Attributes);
+}

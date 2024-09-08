@@ -67,10 +67,6 @@ this.immortal_warrior_trait <- this.inherit("scripts/skills/traits/character_tra
         local skill = mod.conf("skill");
         _properties.MeleeSkill += skill;
         _properties.RangedSkill += skill;
-        // if (skill > 0) {
-        //     local bg = actor.getBackground();
-        //     _properties[bg && mod.isRangedBg(bg) ? "RangedSkill" : "MeleeSkill"] += skill;
-        // }
 
         local defense = mod.conf("defense");
         _properties.MeleeDefense += defense;
