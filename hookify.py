@@ -16,6 +16,7 @@ Options:
     -f          Overwrite existing files
     -t          Use tabs instead of spaces
     -v          Verbose output
+    -i          Print includes to be added
     -h, --help  Show this help
 """
 import os
