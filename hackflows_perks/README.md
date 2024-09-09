@@ -21,7 +21,7 @@ So here we have:
 
 Safe to add and remove midgame. However, if you remove it when having bros with any of these perks, they will simply disappear, perk points won't be refunded.
 
-Compatible with Reforged, most probably no-op with Legends.
+Compatible with Reforged (all perks but Stabilized are added to appropriate perk trees), most probably no-op with Legends.
 
 
 ## Install

@@ -1,7 +1,7 @@
 1.3
-- added these perks to Reforged perk trees
+- added these perks to appropriate Reforged perk trees
 - optimized Flesh on the Bones check a bit
-- made Flesh on the Bones double all healing
+- made Flesh on the Bones double all healing: Nine Lives, regeneration, whatever
 
 1.2
 - fixed newOnce bug: double healing stopped to work after second game load
