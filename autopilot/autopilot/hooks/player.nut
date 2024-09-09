@@ -65,6 +65,11 @@
             agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_throw_net"));
         }
 
+        // AC (Accessory Companions)
+        if (this.getSkills().hasSkill("actives.companions_tame")) {
+            agent.addBehavior(this.new("scripts/ai/autopilot_tame"));
+        }
+
         // Military agents don't have this
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_disengage"));
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_adrenaline"));
