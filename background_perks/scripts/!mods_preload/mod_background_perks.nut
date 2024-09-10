@@ -91,3 +91,13 @@ function BgPerks::giveFreePerks(_player) {
         }
     });
 })
+
+::mods_queue(::BgPerks.ID, ">msu", function () {
+    if (!("MSU" in getroottable())) return;
+    ::include("background_perks/hack_msu");
+    ::HackMSU.setup(::BgPerks, {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/661"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/background_perks"
+        tagPrefix = "background-perks-"
+    })
+});
