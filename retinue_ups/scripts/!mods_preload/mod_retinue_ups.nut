@@ -347,3 +347,14 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
         })
     }
 })
+
+// hack for updates
+::mods_queue(mod.ID, ">msu", function () {
+    if (!("MSU" in getroottable())) return;
+    ::include("scripts/retinue_ups_hack_msu");
+    ::HackMSU.setup(mod, {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/681"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/retinue_ups"
+        tagPrefix = "retinue-ups-"
+    })
+})
