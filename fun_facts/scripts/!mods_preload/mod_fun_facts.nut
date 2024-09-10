@@ -1,12 +1,12 @@
-::FunFacts <- {
+local mod = ::FunFacts <- {
     ID = "mod_fun_facts"
     Name = "Fun Facts"
-    Version = "0.2.0"
+    Version = "0.5.0"
     LastFallen = null
     BattleId = null
 };
-::FunFacts.Debug <- ::std.Debug.with({prefix = "ff: "})
-::FunFacts.getBattleId <- function() {
+mod.Debug <- ::std.Debug.with({prefix = "ff: "})
+mod.getBattleId <- function() {
     if (this.BattleId) return this.BattleId;
 
     local bros = ::World.getPlayerRoster().getAll();
@@ -23,17 +23,17 @@
     this.BattleId = maxId + 1;
     return this.BattleId;
 }
-::FunFacts.incrBattleId <- function() {
+mod.incrBattleId <- function() {
     if (this.BattleId) this.BattleId++;
 }
 
-::mods_registerMod(::FunFacts.ID, ::FunFacts.Version, ::FunFacts.Name);
-::mods_queue(::FunFacts.ID, "mod_hooks(>=20), stdlib(>=2.0), mod_msu(>=1.5.0)", function() {
-    ::FunFacts.Mod <- ::MSU.Class.Mod(::FunFacts.ID, ::FunFacts.Version, ::FunFacts.Name);
+::mods_registerMod(mod.ID, mod.Version, mod.Name);
+::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.0), mod_msu(>=1.5.0)", function() {
+    mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
 
-    // ::FunFacts.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHub, "https://github.com/Suor/battle-brothers-mods");
-    // // ::FunFacts.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods, "https://www.nexusmods.com/battlebrothers/mods/...");
-    // ::FunFacts.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHub);
+    // mod.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHub, "https://github.com/Suor/battle-brothers-mods");
+    // // mod.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods, "https://www.nexusmods.com/battlebrothers/mods/...");
+    // mod.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHub);
 
     ::include("fun_facts/hack_msu");
     ::HackMSU.setup(mod, {
@@ -50,12 +50,12 @@
     //     return _b.m.FunFacts_Stats[currentStatGetter]() <=> _a.m.FunFacts_Stats[currentStatGetter]();
     // }
 
-    // ::FunFacts.evaluateRanks = function()
+    // mod.evaluateRanks = function()
     // {
-    //     if (::FunFacts.IsLoading) return;
+    //     if (mod.IsLoading) return;
     //     local bros = ::World.getPlayerRoster().getAll();
-    //     local ranks = clone ::FunFacts.DummyStats.m.Ranks;
-    //     foreach (statKey, statArray in ::FunFacts.DummyStats.m.Ranks)
+    //     local ranks = clone mod.DummyStats.m.Ranks;
+    //     foreach (statKey, statArray in mod.DummyStats.m.Ranks)
     //     {
     //         local clonedBros = clone bros;
     //         ranks[statKey] = clonedBros;
@@ -74,7 +74,7 @@
     //     }
     // }
 
-    ::FunFacts.Mod.Tooltips.setTooltips({
+    mod.Mod.Tooltips.setTooltips({
         Fallen = ::MSU.Class.CustomTooltip(
             @(_data) ::World.Statistics.FunFacts_getTooltipForFallen(_data.FunFacts_Idx))
     });

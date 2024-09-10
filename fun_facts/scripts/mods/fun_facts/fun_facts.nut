@@ -52,6 +52,7 @@ this.fun_facts <- {
     }
 
     function create() {
+        // TODO: move props to stdlib?
         this.m.Props = {
             PlayerKills = Prop({
                 ref = this.m.Stats.Kills
@@ -133,6 +134,8 @@ this.fun_facts <- {
             XP = _target.getXPValue()
             Fatality = _fatalityType
             Day = this.World.getTime().Days
+            // Faction ???
+            // Skill ???
         }
         ::FunFacts.Debug.log("onKill record", record);
         this.m.Stats.Kills.push(record);

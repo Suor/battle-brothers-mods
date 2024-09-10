@@ -13,7 +13,7 @@ A collection of mods to make Battle Brothers more fun and comfy. Written by me o
 [Cook and Blacksmith Fix](heal_repair_fix) | Fixes Cook and Blacksmith speeding up healing and repairing.
 **[Elite Few - Master Bros](elite_few)** | A rewrite of the old [The Elite Few - Master Bros][elite-few-old], aimed at better compatibility with other mods and newer DLCs. Plus some fixes.
 [Events and Ambitions Delayed Fix](events_delayed_fix) | Removes unpredicatably long delays before events and ambitions are fired.
-[Fun Facts](fun_facts) *(Alpha)* | Collects and shows some fun facts about your bros.
+[Fun Facts](fun_facts) | Collects and shows some fun facts about your bros.
 **[Hackflow's Perks](hackflows_perks)** | Adds several perks either collected or newly crafted. 
 [Immortal Warriors](immortal_warriors) | Get several warriors who are reborn after death.
 [Retinue Promotions](retinue_ups) | Allows promoting followers to make them extra useful.
