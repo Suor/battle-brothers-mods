@@ -284,8 +284,8 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
             Cost = 3500
             Tease = "to show more info about locations"
             Effects = [
-                "Shows the faction of unscoutable locations "
-                + "and whether its treasurery has " + named("named items")
+                "Shows a faction of unscoutable locations "
+                + "and whether its treasury has " + named("named items")
             ]
         }
     })
