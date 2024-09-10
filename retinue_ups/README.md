@@ -8,6 +8,7 @@ Adds promotions for some retinue followers to make them better for extra one tim
 **Drill Sergeant.** Training halls experience bonus is doubled. New hires get +70% experience in first 3 battles. Costs 3500.<br>
 **Scavenger.** Doubles the spoils. Costs 3000 gold.<br>
 **Trader.** Finds more stuff in shops, including rare named items. Costs 7000 gold.<br>
+**Lookout.** Shows a faction of unscoutable locations and whether its treasury has named items. Costs 3500.<br>
 
 Also if [Sato's Balance Mod][sato-balance] is installed there will be a promotion for Guide:
 

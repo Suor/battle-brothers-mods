@@ -1,3 +1,7 @@
+1.0
+- added Lookout promotion
+- added hack MSU updater
+
 0.7
 - fix hang up at battle end because of straw ::std.Debug.log()
 
