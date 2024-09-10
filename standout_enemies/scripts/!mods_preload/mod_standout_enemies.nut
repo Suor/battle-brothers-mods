@@ -1,4 +1,9 @@
-::mods_registerMod("mod_standout_enemies", 1.1, "Standout Enemies");
+local mod = {
+    ID = "mod_standout_enemies"
+    Name = "Standout Enemies"
+    Version = 1.1
+}
+::mods_registerMod(mod.ID, mod.Version, mod.Name);
 
 local gt = this.getroottable();
 
@@ -1003,3 +1008,13 @@ Util.extend(Mod, {
         }
     })
 })
+
+::mods_queue("mod_standout_enemies", ">msu", function () {
+     if (!("MSU" in getroottable())) return;
+    ::include("scripts/standout_enemies_hack_msu");
+    ::HackMSU.setup(mod, {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/331"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/standout_enemies"
+        tagPrefix = "standout-enemies-"
+    })
+});
