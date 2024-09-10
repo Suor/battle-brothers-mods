@@ -12,8 +12,10 @@ Should be highly compatible with other mods.
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][], [stdlib][] and [MSU][].
 
 
-[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/665
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/763
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
+[stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
+[msu]: https://www.nexusmods.com/battlebrothers/mods/479

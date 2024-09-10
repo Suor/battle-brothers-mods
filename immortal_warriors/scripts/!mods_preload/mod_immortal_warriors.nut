@@ -1,13 +1,13 @@
 local mod = ::ImmortalWarriors <- {
     ID = "mod_immortal_warriors"
     Name = "Immortal Warriors"
-    Version = "0.0.1"
+    Version = "0.1.0"
 };
 local Rand = ::std.Rand.using(::rng), Util = ::std.Util, Table = ::std.Table;
-local Debug = ::std.Debug.with({prefix = "iw: "});
+local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=1.8), mod_msu(>=1.5.0)", function () {
+::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.0), mod_msu(>=1.5.0)", function () {
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
 
     local page = mod.Mod.ModSettings.addPage("General");
