@@ -216,6 +216,7 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
     })
 
     // Cook
+    // Q: is there a way to make it more useful and/or fun?
     ::mods_hookExactClass("retinue/followers/cook_follower", function (cls) {
         cls.m.ru_promotion <- {
             Cost = 2500
