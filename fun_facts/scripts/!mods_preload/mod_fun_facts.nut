@@ -28,12 +28,19 @@
 }
 
 ::mods_registerMod(::FunFacts.ID, ::FunFacts.Version, ::FunFacts.Name);
-::mods_queue(::FunFacts.ID, "stdlib(>=1.51), mod_msu(>=1.2.0)", function() {
+::mods_queue(::FunFacts.ID, "mod_hooks(>=20), stdlib(>=2.0), mod_msu(>=1.5.0)", function() {
     ::FunFacts.Mod <- ::MSU.Class.Mod(::FunFacts.ID, ::FunFacts.Version, ::FunFacts.Name);
 
-    ::FunFacts.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHub, "https://github.com/Suor/battle-brothers-mods");
-    // ::FunFacts.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods, "https://www.nexusmods.com/battlebrothers/mods/...");
-    ::FunFacts.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHub);
+    // ::FunFacts.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHub, "https://github.com/Suor/battle-brothers-mods");
+    // // ::FunFacts.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods, "https://www.nexusmods.com/battlebrothers/mods/...");
+    // ::FunFacts.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHub);
+
+    ::include("fun_facts/hack_msu");
+    ::HackMSU.setup(mod, {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/764"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/fun_facts"
+        tagPrefix = "fun-facts-"
+    })
 
 
     // local currentStatGetter;
