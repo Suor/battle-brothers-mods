@@ -1,7 +1,7 @@
 local mod = ::ImmortalWarriors <- {
     ID = "mod_immortal_warriors"
     Name = "Immortal Warriors"
-    Version = "0.1.0"
+    Version = "0.1.1"
 };
 local Rand = ::std.Rand.using(::rng), Util = ::std.Util, Table = ::std.Table;
 local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
