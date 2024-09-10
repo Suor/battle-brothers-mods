@@ -1,3 +1,13 @@
+2.3.0
+- added setting to auto or not player chars
+- added a setting to throw nets and let the dogs out
+- unleash dogs
+- beat the drum (and barbarian drum from North Expansion)
+- tame beasts if Accessory Companions are used
+- support some active skills from CleverFool's mod and Heroic Scenario Pack
+- fixed breaking with AC
+- added hack MSU updater
+
 2.2.0
 - moved Verbose, FreeWake and Reload settings to MSU
 - fixed crash on broken weapon

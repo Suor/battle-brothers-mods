@@ -23,6 +23,9 @@ Tested with:
 - Swifter
 - Reforged
 - Legends (no need to remove any files from that anymore)
+- Accessory Companions
+- North Expansion
+- Heroic Scenario Pack
 
 
 ## Limitations
@@ -35,7 +38,7 @@ So, what auto bros won't do currently (probably, not an exhaustive list):
 - throw grenades, holy water, acid
 - use poison, bandages
 - taunt
-- use any active skills from other mods, i.e. Sprint from Reforged, which are not used by enemy military
+- use any active skills from other mods, unless mentioned lower, i.e. Sprint from Reforged, which are not used by enemy military
 - use custom weapon skills that are not used by enemies
 
 The last two points might be fixed easy enough if there are behaviors in that mod. So contact me to add those to autopilot agent.
@@ -51,7 +54,7 @@ Aside from better compatibility my modifications to auto bros behavior include:
 
 - use rally the troops, adrenalin, line breaker, lunge, deathblow skills
 - pick up a weapon
-- throw nets
+- throw nets, unleash dogs, beat the drum
 - equip a net or a shield from bag (completely new behaviors)
 - mind spent fatigue more when thinking of using shield wall, split shield, adrenaline, rotation, knock back and disengage
 - specific improvements to 2-tile bros:
@@ -62,9 +65,17 @@ Aside from better compatibility my modifications to auto bros behavior include:
     - do not be afraid of throwing over the shoulder of an ally
     - do not move next to an ally to protect him, i.e. like a melee bro
 
+Support some skills from third-party mods:
+
+- support custom weapons from CleverFool's mod
+- use custom active skills from Heroic Scenario Pack
+- beat the barbarian drum from North Expansion
+- unleash companions from AC (Accessory Companions)
+
 Other additions:
 
 - a way to debug AI for bros, not only for enemies
+- MSU Mod options to enable and disable some behaviors
 
 Fixes:
 
