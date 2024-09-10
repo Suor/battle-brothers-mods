@@ -5,13 +5,28 @@ local mod = ::Autopilot <- {
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "mod_hooks(>=20), mod_msu(>=1.2.6), >mod_reforged, !mod_autopilot",
+::mods_queue(mod.ID, "mod_hooks(>=20), mod_msu(>=1.5.0), >mod_reforged, !mod_autopilot",
     function () {
 
   mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
   mod.conf <- function (name) {
       return mod.Mod.ModSettings.getSetting(name).getValue();
   }
+
+  // mod.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods,
+  //     "https://www.nexusmods.com/battlebrothers/mods/675");
+  // mod.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHubTags,
+  //     "https://github.com/Suor/battle-brothers-mods/tree/master/autopilot",
+  //     {Prefix = "autopilot-new-"}
+  // );
+  // mod.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHubTags);
+
+  ::include("autopilot/hack_msu");
+  ::HackMSU.setup(mod, {
+      nexus = "https://www.nexusmods.com/battlebrothers/mods/675"
+      github = "https://github.com/Suor/battle-brothers-mods/tree/master/autopilot"
+      tagPrefix = "autopilot-new-"
+  })
 
   // Settings
   local page = mod.Mod.ModSettings.addPage("Autopilot");
