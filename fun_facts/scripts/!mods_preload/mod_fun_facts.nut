@@ -2,13 +2,6 @@
     ID = "mod_fun_facts"
     Name = "Fun Facts"
     Version = "0.2.0"
-    // ActiveUser = null,
-    // ActiveTarget = null,
-    // MinHitChance = 5,
-    // MaxHitChance = 95,
-    // evaluateRanks = null,
-    // DummyStats = ::new("scripts/mods/fun_facts/fun_facts")
-    // IsLoading = false,
     LastFallen = null
     BattleId = null
 };
@@ -20,18 +13,6 @@
     local fallen = ::World.Statistics.getFallen();
     local ffs = bros.map(@(b) b.m.FunFacts);
     ffs.extend(fallen.filter(@(_, f) "FunFacts" in f).map(@(f) f.FunFacts));
-
-    // // Repair batlles with bad ids
-    // foreach (ff in ffs) {
-    //     local prev = 0;
-    //     ::FunFacts.Debug.log("battles for " + ff.m.Name, ff.m.Stats.BattlesLog);
-    //     foreach (battle in ff.m.Stats.BattlesLog) {
-    //         if (!("Id" in battle)) continue;
-    //         if (battle.Id <= prev) battle.Id = prev + 1;
-    //         prev = battle.Id;
-    //     }
-    //     ::FunFacts.Debug.log("FIXED battles for " + ff.m.Name, ff.m.Stats.BattlesLog);
-    // }
 
     local maxId = 0;
     foreach (ff in ffs) {
@@ -55,7 +36,6 @@
     ::FunFacts.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHub);
 
 
-    // ::FunFacts.Debug("battleId", ::FunFacts.getBattleId());
     // local currentStatGetter;
 
     // local function compareByStat(_a, _b)

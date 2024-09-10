@@ -342,13 +342,4 @@ this.fun_facts <- {
         local state = Util.unpack(packed);
         Util.extend(this.m.Stats, state);
     }
-
-    // Old shit
-    function onSerialize( _out ) {
-        ::MSU.Utils.serialize(this.m.Stats, _out);
-    }
-
-    function onDeserialize( _in ) {
-        ::MSU.Utils.deserializeInto(this.m.Stats, _in);
-    }
 }

@@ -99,14 +99,5 @@
             this.m.FunFacts.setName(this.m.Name);
             return
         }
-
-        if (::FunFacts.Mod.Serialization.isSavedVersionAtLeast("0.1.1", _in.getMetaData())) {
-            // this.logInfo("ff: player.onDeserialize saved version at least 0.1.1");
-            this.m.FunFacts.onDeserialize(
-                ::FunFacts.Mod.Serialization.getDeserializationEmulator("FunFacts", this.getFlags()));
-            this.m.FunFacts.setName(this.m.Name);
-        } else {
-            this.logInfo("ff: player.onDeserialize saved version OLD");
-        }
     }
 });
