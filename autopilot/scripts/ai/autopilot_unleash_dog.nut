@@ -40,7 +40,7 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         // Find tile and count allies and enemies
         local myTile = _entity.getTile();
         local us = 0, enemies = 0;
-        for (local i = 0; i < ::Const.Direction.COUNT; i = ++i) {
+        for (local i = 0; i < ::Const.Direction.COUNT; i++) {
             if (!myTile.hasNextTile(i)) continue;
 
             local tile = myTile.getNextTile(i);
@@ -54,21 +54,15 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         if (this.m.TargetTile == null) return this.Const.AI.Behavior.Score.Zero;
 
         if (enemies > us + 1) {
-            this.logInfo("Defending with dog")
+            ::logInfo("Defending with dog")
             // TODO: adjust score if having backstabber/underdog
             score *= enemies / (us + 1);
             return score;
         }
         if (enemies > 0 && (_entity.getHitpointsPct() < 0.5
                         || _entity.getSkills().hasSkillOfType(::Const.SkillType.TemporaryInjury))) {
-            this.logInfo("Saving myself with dog")
+            ::logInfo("Saving myself with dog")
             return score * 2;
-        }
-        // Do not feel outnumbered, maybe unleash for fun :)
-        // NOTE: we need this condition or this will happen all the time on low AP
-        if (_entity.getActionPoints() >= _entity.getActionPointsMax()) {
-            this.logInfo("Playing with dog")
-            return 10 + enemies * 10;
         }
 
         // Go for goblins, geists, alps, fleeing and ranged enemies
@@ -79,9 +73,18 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
             Strong = 0
         };
         ::Tactical.queryActorsInRange(myTile, 1, 7, this.onCollectWeak, q);
+        delete q.Self;
+        delete q.Actor;
         if (q.Weak > q.Strong) {
-            this.logInfo("Bullying with dog")
-            return score / 4 * q.Weak  //* this.getFatigueScoreMult(this.m.Skill);
+            ::logInfo("Bullying with dog")
+            return score / 2 * (q.Weak - q.Strong) //* this.getFatigueScoreMult(this.m.Skill);
+        }
+
+        // Do not feel outnumbered and nobody to bully, maybe unleash just for fun :)
+        // NOTE: we need this condition or this will happen all the time on low AP
+        if (_entity.getActionPoints() >= _entity.getActionPointsMax()) {
+            ::logInfo("Playing with dog")
+            return 10 + enemies * score / 10;
         }
 
         return ::Const.AI.Behavior.Score.Zero;
@@ -101,7 +104,7 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
 
         local type = _actor.getType()
         if (type == ::Const.EntityType.Ghost || type == Const.EntityType.Alp
-            || _actor.m.Flags.get("goblin")
+            || _actor.m.Flags.has("goblin")
             || _actor.getMoraleState() == ::Const.MoraleState.Fleeing
             || _tag.Self.isRangedUnit(_actor))
         {
@@ -115,7 +118,7 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
     function onExecute( _entity )
     {
         if (this.Const.AI.VerboseMode) {
-            this.logInfo("* " + _entity.getName()
+            ::logInfo("* " + _entity.getName()
                 + ": Unleashes " + this.m.Skill.m.Item.getName() + "!");
         }
 

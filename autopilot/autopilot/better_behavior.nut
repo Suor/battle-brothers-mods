@@ -11,7 +11,7 @@ local function registerBehavior(_id, _name, _order, _score) {
 }
 registerBehavior("AP_UnbagNet", "UnbagNet", 35, 100);
 registerBehavior("AP_UnbagShield", "UnbagShield", 36, 400);
-registerBehavior("AP_UnleashDog", "UnleashDog", 37, 150);
+registerBehavior("AP_UnleashDog", "UnleashDog", 37, 200);
 registerBehavior("AP_Tame", "Tame", 38, 600);
 
 // Prefer doing something else than wandering around/waiting
