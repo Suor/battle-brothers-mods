@@ -7,6 +7,8 @@ local mod = ::RetinueUps <- {
 local function positive(value) {
     return ::Const.UI.getColorized(value + "", ::Const.UI.Color.PositiveValue)
 }
+local function named(value) {return ::Const.UI.getColorized(value + "", "#1e468f")}
+local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e")}
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 ::mods_queue(mod.ID,
@@ -274,6 +276,49 @@ local function positive(value) {
             return ret;
         }
     })
+
+    // Lookout
+    ::mods_hookExactClass("retinue/followers/lookout_follower", function (cls) {
+        cls.m.ru_promotion <- {
+            Cost = 3500
+            Tease = "to show more info about locations"
+            Effects = [
+                "Shows the faction of unscoutable locations "
+                + "and whether its treasurery has " + named("named items")
+            ]
+        }
+    })
+    ::mods_hookExactClass("entity/world/location", function (cls) {
+        local function hasNamed(_location) {
+            foreach (item in _location.m.Loot.getItems()) {
+                if (item != null && item.isItemType(::Const.Items.ItemType.Named)) return true;
+            }
+            return false;
+        }
+
+        local getTooltip = cls.getTooltip;
+        cls.getTooltip = function () {
+            local tooltip = getTooltip();
+            if (!::World.Retinue.ru_isPromoted("lookout_follower")) return tooltip;
+
+            foreach (entry in tooltip)
+                if (entry.type == "text" && entry.text == "Unknown garrison") {
+                    local faction = ::World.FactionManager.getFaction(this.getFaction()).getName();
+                    entry.text = "Unknown " + enemy(faction);
+                }
+
+            if (hasNamed(this)) {
+                tooltip.push({
+                    id = 30
+                    type = "hint"
+                    icon = "ui/icons/bag.png"
+                    text = "Has " + named("named item") + " in there"
+                });
+            }
+            return tooltip;
+        }
+    })
+
 
     // Guide promotion for Sato's Balance mod
     if (::mods_getRegisteredMod("sato_balance_mod")) {
