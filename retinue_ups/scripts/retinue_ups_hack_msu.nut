@@ -1,10 +1,10 @@
-local version = 0.3, prev = null;
-logInfo("HackMSU 0.3 (retinue_ups)");
+local version = 0.4, prev = null;
+logInfo("HackMSU 0.4 (retinue_ups)");
 if ("HackMSU" in getroottable()) {
     if (::HackMSU.version >= version) return;
     prev = ::HackMSU;
 }
-logInfo("HackMSU 0.3 in (retinue_ups), prev = " + prev);
+logInfo("HackMSU 0.4 in (retinue_ups), prev = " + prev);
 ::HackMSU <- {
     version = version             // HackMSU version to not overwrite newer versions of itself
     mods = prev ? prev.mods : {}  // Store our mods here
@@ -92,16 +92,15 @@ if (!checkIfModVersionsAreNew) return;
             if (::HackMSU.isBiggerVersion(version, maxVersion)) maxVersion = version;
         }
         // ::std.Debug.log("maxVersion", maxVersion);
-        myData[modID] <- {
-            UpdateInfo = {
-                name = mod.name
-                availableVersion = maxVersion.tostring()
-                currentVersion = mod.version.tostring()
-                updateType = ::HackMSU.getUpdateType(maxVersion, mod.version)
-                sources = mod.sourcesToUI()
-                changes = ""
-            }
-            body = "" // changes for old MSU
+        myData[modID] <- {body = ""}; // changes for old MSU
+        if (mod.version.tostring() == maxVersion.tostring()) continue;
+        myData[modID].UpdateInfo <- {
+            name = mod.name
+            availableVersion = maxVersion.tostring()
+            currentVersion = mod.version.tostring()
+            updateType = ::HackMSU.getUpdateType(maxVersion, mod.version)
+            sources = mod.sourcesToUI()
+            changes = ""
         };
     }
     // ::std.Debug.log("checkIfModVersionsAreNew", myData, 10);
