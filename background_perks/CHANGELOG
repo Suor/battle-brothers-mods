@@ -1,3 +1,9 @@
+2.4
+- rebalance some chances
+- apply perks to starting Gladiators and Belly Dancers (the latter come from Heroic Scenario Pack)
+- improved compatibility with mods hooking .setStartValuesEx()
+- added hack MSU updater
+
 2.3
 - support Hackflow's Perks
 - warn about perks not found

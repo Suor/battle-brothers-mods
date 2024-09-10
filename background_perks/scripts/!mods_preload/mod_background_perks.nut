@@ -1,7 +1,7 @@
 ::BgPerks <- {
     ID = "mod_background_perks"
     Name = "Background Perks"
-    Version = 2.3
+    Version = 2.4
 
     Debug = false // requires stdlib
     WarnOnUnlockFailure = true
