@@ -1,7 +1,7 @@
 local mod = ::Autopilot <- {
   ID = "mod_autopilot_new"
   Name = "Autopilot New"
-  Version = "2.3.0"
+  Version = "2.3.1"
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);

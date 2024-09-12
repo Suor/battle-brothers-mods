@@ -23,7 +23,7 @@ Tested with:
 - Swifter
 - Reforged
 - Legends (no need to remove any files from that anymore)
-- Accessory Companions
+- Accessory Companions (including Legends)
 - North Expansion
 - Heroic Scenario Pack
 
