@@ -61,8 +61,12 @@ this.autopilot_tame <- this.inherit("scripts/ai/tactical/behavior", {
         if (this.m.TargetTile == null) return ::Const.AI.Behavior.Score.Zero;
         ::logInfo("Tame chance: " + bestChance + ", beast: " + this.m.TargetEntity.getName());
 
-        // All modifiers go in here
-        score *= bestChance / (::Const.Companions.TameChance.Default / 10);
+        // modAccessoryCompanions is a AC_legends thing
+        local defaultChance = "modAccessoryCompanions" in getroottable()
+            ? ::modAccessoryCompanions.TameChance
+            : ::Const.Companions.TameChance.Default;
+        // All modifiers (beastmaster, hp, effects) go in chance
+        score *= bestChance / (defaultChance / 10);
 
         return score;
     }
