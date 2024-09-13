@@ -70,19 +70,29 @@ this.perk_hackflows_stabilized <- this.inherit("scripts/skills/skill", {
 				})
 			}
 		}
-		else if (totalArmorFatPenalty < this.m.ArmorIdealMin)
+		local fatDesc = bonus == this.m.BonusMax ? Text.positive("is perfect") + ", i.e. " :
+		                               bonus > 0 ? Text.negative("is not perfect") + ", i.e. " :
+		                               Text.negative("disables Stabilized") + ", get back to ";
+		tooltip.push({
+			id = 8,
+			type = "text",
+			icon = "ui/icons/fatigue.png",
+			text = format("Total fatigue of armor weared is %s, which %s25 to 37",
+			              Text.negative(totalArmorFatPenalty), fatDesc)
+		});
+		if (totalArmorFatPenalty < this.m.ArmorIdealMin && bonus <= 0)
 		{
 			tooltip.push({
-				id = 6,
+				id = 9,
 				type = "text",
 				icon = "ui/icons/warning.png",
 				text = "This brother\'s armor is too flimsy to benefit from being stabilized! Try equipping some heavier armor."
 			});
 		}
-		else if (totalArmorFatPenalty > this.m.ArmorIdealMax)
+		else if (totalArmorFatPenalty > this.m.ArmorIdealMax && bonus <= 0)
 		{
 			tooltip.push({
-				id = 6,
+				id = 9,
 				type = "text",
 				icon = "ui/icons/warning.png",
 				text = "This brother\'s armor is too cumbersome to benefit from being stabilized! Try equipping some lighter armor."
