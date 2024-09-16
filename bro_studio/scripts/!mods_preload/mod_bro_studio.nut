@@ -7,7 +7,7 @@ local mod = ::BroStudio <- {
 local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve seeds better
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "stdlib(>=1.8), mod_hooks(>=20), mod_msu(>=1.2.6), !mod_vap, !mod_ultrabros",
+::mods_queue(mod.ID, "stdlib(>=2.0), mod_hooks(>=20), mod_msu(>=1.2.6), !mod_vap, !mod_ultrabros",
         function() {
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
     mod.conf <- function (name) {
