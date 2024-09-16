@@ -7,18 +7,13 @@ local mod = ::Useful <- {
 local Util = ::std.Util;
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 
-local function getMember(table, key) {
-    while (!(key in table) && "SuperName" in table) table = table[table.SuperName];
-    return key in table ? table[key] : null;
-}
-
 // A universal item attrs hook
 mod.hookItem <- function (script, values) {
     ::mods_hookExactClass(script, function (cls) {mod.hookItemClass(cls, values)})
 }
 mod.hookItemClass <- function (cls, values) {
     // Reforged/MSU thing breaking named items
-    local setValuesBeforeRandomize = getMember(cls, "setValuesBeforeRandomize");
+    local setValuesBeforeRandomize = Util.getMember(cls, "setValuesBeforeRandomize");
     if (setValuesBeforeRandomize) {
         cls.setValuesBeforeRandomize <- function (_values) {
             Util.extend(_values, values);
@@ -28,7 +23,7 @@ mod.hookItemClass <- function (cls, values) {
     }
 
     // Named items
-    local randomizeValues = getMember(cls, "randomizeValues");
+    local randomizeValues = Util.getMember(cls, "randomizeValues");
     if (randomizeValues) {
         cls.randomizeValues <- function () {
             Util.extend(this.m, values);
@@ -48,7 +43,7 @@ mod.hookItemClass <- function (cls, values) {
 // This file is named z_* for this to work
 local extraDep = ::mods_getRegisteredMod("tnf_refillableNet") ? ", !tnf_refillableNet" : "";
 
-::mods_queue(mod.ID, "stdlib, >mod_msu, >mod_reforged, >sato_balance_mod" + extraDep, function() {
+::mods_queue(mod.ID, "stdlib(>=2.0), >mod_msu, >mod_reforged, >sato_balance_mod" + extraDep, function() {
     ::include("useful/flails");
     ::include("useful/goblin");
     ::include("useful/hand_to_hand");
