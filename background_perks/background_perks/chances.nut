@@ -140,11 +140,11 @@
     }
 
     disowned_noble = {
-        "rally_the_troops": 2
-        "backstabber": 15
+        "rally_the_troops": 3
+        "backstabber": 5
         "mastery.sword": 7
         "mastery.mace": 7
-        "shield_expert": 4
+        "shield_expert": 5
         "duelist": 10
     }
 
@@ -500,4 +500,7 @@
 ::BgPerks.chances.crucified <- ::BgPerks.chances.crusader;
 
 ::BgPerks.chances.gladiator_origin <- ::BgPerks.chances.gladiator;
+
+// HeroicScenarioPack
 ::BgPerks.chances.belly_dancer_origin <- ::BgPerks.chances.belly_dancer;
+::BgPerks.chances.adventurous_noble_southern <- ::BgPerks.chances.adventurous_noble;
