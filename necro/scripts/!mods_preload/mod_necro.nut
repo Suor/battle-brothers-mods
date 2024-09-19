@@ -12,13 +12,11 @@ local hmod = ::Hooks.register(mod.ID, mod.Version, mod.Name);
 hmod.queue(function() {
     ::include("necro/skills/actives/raise_undead");
 
-    // Summon necros in swamp and tundra settlements
+    // Summon necros in swamp, tundra settlements and medium/large too
     hmod.hookTree("scripts/entity/world/settlement", function (q) {
-        if (q.ClassName.find("__swamp__") == null && q.ClassName.find("__tundra__") == null)
-            return;
-
-        local num = 1;
-        if (q.ClassName.find("large_") != null) num += 3;
+        local num = 0;
+        if (q.ClassName.find("_swamp_") != null || q.ClassName.find("_tundra_") != null) num++;
+        if (q.ClassName.find("large_") != null) num++;
         if (q.ClassName.find("medium_") != null) num++;
 
         q.create = @(__original) function () {
