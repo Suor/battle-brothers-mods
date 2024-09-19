@@ -37,7 +37,8 @@
 
     local onTurnEnd = cls.onTurnEnd;
     cls.onTurnEnd = function() {
-        if (ClassName == "player" && getMoraleState() != Const.MoraleState.Fleeing) {
+        if (ClassName == "player" && getMoraleState() != Const.MoraleState.Fleeing
+                && !::Tactical.State.isFleeing()) {
             local freewake = ::Autopilot.conf("freewake"), reload = ::Autopilot.conf("reload");
             local skills = getSkills(), tile = getTile();
             local function tryUseSkill(id, t) {
