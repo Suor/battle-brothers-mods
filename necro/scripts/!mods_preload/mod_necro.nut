@@ -3,12 +3,20 @@ local mod = ::Necro <- {
     Name = "Proper Necro"
     Version = "0.1.0"
 }
-// local Str = ::std.Str, Text = ::std.Text;
 
+// TODO:
+//  - special perks:
+//      - raise range
+//      - raise more full health/armor
+//      - raise greenskins and animals
+//      - raise limit?
+//      - bonuses/perks to raised undead (maybe based on necro perks)
+//      - better possess
+//   - remove some perks?
+//   - control/block enemy undead
+//   - curses/debuffs?
+//   - balance skills
 local hmod = ::Hooks.register(mod.ID, mod.Version, mod.Name);
-// mod.require("mod_msu >= 1.0.0");
-// mod.conflictsWith("mod_bad_mod");
-// ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 hmod.queue(function() {
     ::include("necro/skills/actives/raise_undead");
 
