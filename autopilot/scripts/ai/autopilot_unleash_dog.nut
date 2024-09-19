@@ -103,7 +103,9 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         }
 
         local type = _actor.getType()
-        if (type == ::Const.EntityType.Ghost || type == Const.EntityType.Alp
+        if (type == ::Const.EntityType.Ghost
+            || type == ::Const.EntityType.Alp
+            || type == ::Const.EntityType.Spider
             || _actor.m.Flags.has("goblin")
             || _actor.getMoraleState() == ::Const.MoraleState.Fleeing
             || _tag.Self.isRangedUnit(_actor))
