@@ -35,7 +35,10 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         this.m.Skill = this.selectSkill(this.m.PossibleSkills);
         if (this.m.Skill == null) return this.Const.AI.Behavior.Score.Zero;
         // score *= this.getFatigueScoreMult(this.m.Skill);
-        // TODO: higher score for Houndmaster
+
+        if (_entity.getSkills().hasSkill("background.houndmaster")) score *= 2;
+        if (_entity.getSkills().hasSkill("background.companions_beastmaster")) score *= 3; // AC
+        if (_entity.getSkills().hasSkill("trait.wolfmaster")) score *= 10; // North Expansion
 
         // Find tile and count allies and enemies
         local myTile = _entity.getTile();
