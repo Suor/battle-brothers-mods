@@ -48,6 +48,13 @@ local extraDep = ::mods_getRegisteredMod("tnf_refillableNet") ? ", !tnf_refillab
     ::include("useful/goblin");
     ::include("useful/hand_to_hand");
     ::include("useful/nets");
+
+    mod.hookItem("items/shields/special/craftable_lindwurm_shield",
+        {StaminaModifier = -8}); // from -14
+    // This is not used in vanilla and thus has worse base props than normal lindwurm shield
+    mod.hookItem("items/shields/special/named_lindwurm_shield",
+        {StaminaModifier = -8, MeleeDefense = 17, Condition = 64, ConditionMax = 64});
+
 });
 
 // tnf_resistFXResilient messes up with nets otherwise
