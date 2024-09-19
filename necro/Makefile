@@ -1,5 +1,5 @@
 MOD_NAME = necro
 TAG_NAME = necro
-SOURCES = necro scripts
+SOURCES = gfx necro scripts
 
 include ../Makefile.common

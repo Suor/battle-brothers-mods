@@ -3,6 +3,7 @@ local hmod = ::Hooks.getMod("mod_necro")
 hmod.hook("scripts/skills/actives/raise_undead", function (q) {
     q.create = @(__original) function () {
         __original();
+        this.m.IconDisabled = "skills/active_26_sw.png";
         this.m.MaxRange = 8;
     }
 
