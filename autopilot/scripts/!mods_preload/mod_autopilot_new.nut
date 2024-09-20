@@ -60,6 +60,8 @@ local mod = ::Autopilot <- {
   ::mods_registerJS("autopilot_new.js");
   ::mods_registerCSS("autopilot_new.css");
 
+  ::include("autopilot/debug");
+
   // The Meat
   ::mods_hookNewObject("ui/screens/tooltip/tooltip_events", function(o) {
     local queryTooltipData = o.general_queryUIElementTooltipData;

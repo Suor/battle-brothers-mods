@@ -40,8 +40,6 @@
 })
 
 
-
-
 ::mods_hookBaseClass("ai/tactical/behavior", function(cls) {
     cls = cls.behavior;
 
