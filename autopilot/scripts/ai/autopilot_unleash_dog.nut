@@ -109,9 +109,11 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         if (type == ::Const.EntityType.Ghost
             || type == ::Const.EntityType.Alp
             || type == ::Const.EntityType.Spider
+            || type == ::Const.EntityType.Ghoul && _actor.getSize() == 1
             || _actor.m.Flags.has("goblin")
             || _actor.getMoraleState() == ::Const.MoraleState.Fleeing
             || _tag.Self.isRangedUnit(_actor))
+            || _actor.getHitpointsPct() <= 0.25
         {
             _tag.Weak++;
             // _tag.Targets.push(_actor);
