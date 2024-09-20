@@ -1,21 +1,9 @@
 local mod = ::Necro <- {
     ID = "mod_necro"
-    Name = "Proper Necro"
+    Name = "Necro (Resurrected)"
     Version = "0.1.0"
 }
 
-// TODO:
-//  - special perks:
-//      - raise range
-//      - raise more full health/armor
-//      - raise greenskins and animals
-//      - raise limit?
-//      - bonuses/perks to raised undead (maybe based on necro perks)
-//      - better possess
-//   - remove some perks?
-//   - control/block enemy undead
-//   - curses/debuffs?
-//   - balance skills
 local hmod = ::Hooks.register(mod.ID, mod.Version, mod.Name);
 hmod.queue(function() {
     // if (::Hooks.hasMod("mod_msu")) {
