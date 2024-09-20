@@ -4,8 +4,8 @@ Following the idea of [Recrutable Necromancer](old) this adds a Necromancer back
 
 Plans:
 
-- loot everything on friendly zombies on comabt end (now stuff is lost)
-- count kills from his zombies as his?
+- loot everything on friendly zombies on combat end (now stuff is lost)
+- count kills and damage from his zombies as his? (to not loose XP)
 - make Necro gain power gradually via special perks:
     - raise range
     - raise with fuller health/armor?
@@ -13,9 +13,9 @@ Plans:
     - raise limit?
     - bonuses/perks to raised undead (maybe based on necro perks)
     - possess and/or better possess
-- remove some perks from Necro tree?
+- remove some perks from Necro tree? e.g. Battle Forged
 - control/block enemy undead
-- curses/debuffs?
+- curses/debuffs? or other magick
 - balance skills
     - AP/fatigue
     - limit range?
