@@ -357,16 +357,16 @@ this.fun_facts <- {
 
         local playerKills = this.getProp("PlayerKills");
         local fatalities = {
-            [1] = "chopped %s's head",
-            [2] = "smashed %s's head",
-            [3] = "gutted %s"
+            [1] = "Chopped %s's head",
+            [2] = "Smashed %s's head",
+            [3] = "Gutted %s"
         }
         if (playerKills.len() > 0) {
             local kills = playerKills.map(function(_kill) {
-                local tpl = _kill.Fatality in fatalities ? fatalities[_kill.Fatality] : "killed %s";
+                local tpl = _kill.Fatality in fatalities ? fatalities[_kill.Fatality] : "Killed %s";
                 return format(tpl, Text.ally(_kill.Name));
             })
-            addHint("ui/icons/asset_brothers.png", Str.join(", ", text));
+            addHint("ui/icons/asset_brothers.png", Str.join(", ", kills));
         }
 
         if (this.m.Stats.Injuries.len() > 0) {
