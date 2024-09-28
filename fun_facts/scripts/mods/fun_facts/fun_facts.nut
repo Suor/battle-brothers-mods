@@ -13,25 +13,8 @@ local function Prop(_def) {
 
 this.fun_facts <- {
     m = {
-        // Logs = Util.struct({
-        //     Kills = [{
-        //         BattleId = 0
-        //         IsPlayer = false
-        //         Name = ""
-        //         ClassName = ""
-        //         XP = 0
-        //         Fatality = 0
-        //         Day = 0
-        //     }]
-        //     Injures = [{
-        //         ...
-        //     }]
-        //     InjuresDealt = [{
-        //         ...
-        //     }]
-        //     Combats = [{...}]  // skipped go here?
-        // })
         Stats = {
+            // TODO: kills in a single hit, single turn
             Kills = []
             Deaths = []
             Injuries = []
