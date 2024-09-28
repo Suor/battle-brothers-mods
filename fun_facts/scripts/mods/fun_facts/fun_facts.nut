@@ -1,10 +1,11 @@
-local Str = ::std.Str, Text = ::std.Text, Array = ::std.Array, Util = ::std.Util;
+local Str = ::std.Str, Text = ::std.Text,
+      Array = ::std.Array, Table = ::std.Table, Util = ::std.Util;
 
 local function Prop(_def) {
     return Util.extend({
         value = null
         function get() {
-            if (value == null) value = _def.calc()
+            if (value == null) value = calc()
             return value;
         }
     }, _def)
@@ -45,7 +46,7 @@ this.fun_facts <- {
             BattlesSkipped = 0  // Supserseded by CombatsSkipped array
         }
         Props = null
-        TmpCombatStart = null
+        TmpCombat = null
         // Ranks = {}
         Player = null
         Name = "<not-set>"
@@ -53,12 +54,57 @@ this.fun_facts <- {
     }
 
     function create() {
+        createProps();
+    }
+    function createProps() {
+        local function countEffectProp(_effect) {
+            return Prop({
+                ref = this.m.Stats.BattlesLog
+                function calc() {
+                    return Array.sum(
+                        ref.map(@(c) "Added" in c && _effect in c.Added ? c.Added[_effect] : 0))
+                }
+                function onCombatEnd(_record) {
+                    value += Table.get(_record.Added, _effect, 0);
+                }
+            })
+        }
+
         // TODO: move props to stdlib?
         this.m.Props = {
             PlayerKills = Prop({
                 ref = this.m.Stats.Kills
                 calc = @() ref.filter(@(_, r) r.IsPlayer)
-                function onKill(_record) {if (_record.IsPlayer) this.value.push(_record)}
+                function onKill(_record) {if (_record.IsPlayer) value.push(_record)}
+            })
+            SkippedDrunk = Prop({
+                ref = this.m.Stats.CombatsSkipped
+                // calc = @() ref.filter(@(_, c) c.Effects.find("effects.drunk") != null).len()
+                function calc() {
+                    value = 0;
+                    ::std.Debug.log("SkippedDrunk calc", ref);
+                    foreach (record in ref) onCombatSkipped(record);
+                    return value;
+                }
+                function onCombatSkipped(_record) {
+                    if (_record.Effects.find("effects.drunk") != null
+                        || _record.Effects.find("effects.hangover") != null) value++
+                }
+            })
+            Charmed = countEffectProp("charmed")
+            Swallowed = countEffectProp("swallowed_whole")
+            Rooted = Prop({
+                ref = this.m.Stats.BattlesLog
+                function calc() {
+                    value = 0;
+                    foreach (record in ref) onCombatEnd(record);
+                    return value;
+                }
+                function onCombatEnd(_record) {
+                    if (!("Added" in _record)) return;
+                    foreach (effect in ["net" "web" "rooted"])
+                        value += Table.get(_record.Added, effect, 0);
+                }
             })
         }
     }
@@ -67,7 +113,10 @@ this.fun_facts <- {
     }
     function updateProps(_event, _record) {
         foreach (_, prop in this.m.Props) {
-            if (_event in prop) prop[_event](_record);
+            if (_event in prop) {
+                if (prop.value == null) prop.value = prop.calc();
+                prop[_event](_record);
+            }
         }
     }
 
@@ -86,22 +135,29 @@ this.fun_facts <- {
     }
 
     function onCombatStart(_player) {
-        this.m.TmpCombatStart = this.getEffectsDesc(_player);
-        ::FunFacts.Debug.log("onCombatStart " + _player.getName(), this.m.TmpCombatStart);
+        this.m.TmpCombat = {
+            Start = this.getEffectsDesc(_player)
+            Added = {}
+        }
+        ::FunFacts.Debug.log("onCombatStart " + _player.getName(), this.m.TmpCombat.Start);
     }
 
     function getEffectsDesc(_player) {
         local interestingIds = [
             "effects.drunk" "effects.hangover" "effects.exhausted" "effects.afraid"
+            "injury.sickness"
         ]
         local ids = [];
-        local injured = false;
+        local injured = false, drugged = false;
         foreach (skill in _player.getSkills().m.Skills) {
-            local id = skill.getID();
-            if (interestingIds.find(id) != null) ids.push(id);
+            local id = skill.getID(), isDrug = skill.isType(::Const.SkillType.DrugEffect);
+            if (isDrug || interestingIds.find(id) != null) ids.push(id);
+            if (isDrug) drugged = true;
             if (skill.isType(::Const.SkillType.TemporaryInjury)) injured = true;
         }
-        return {Effects = ids, Injured = injured}
+        local hpPct = Math.round(_player.getHitpointsPct() * 100);
+        // NOTE: Drugged and hpPct was added later
+        return {Effects = ids, Injured = injured, Drugged = drugged, HpPct = hpPct}
     }
 
     function onCombatEnd(_player) {
@@ -112,22 +168,23 @@ this.fun_facts <- {
             XPGained = _player.m.CombatStats.XPGained
             Fled = _player.m.ff_fled
             Returned = _player.m.ff_returned
-            Start = this.m.TmpCombatStart
+            // Added later
+            Start = this.m.TmpCombat.Start
+            Added = this.m.TmpCombat.Added
         }
-        this.m.TmpCombatStart = null;
+        this.m.TmpCombat = null;
         ::FunFacts.Debug.log("onBattle ", record);
         this.m.Stats.BattlesLog.push(record);
+        this.updateProps("onCombatEnd", record);
     }
 
     function onCombatSkipped(_player) {
         this.m.Stats.BattlesSkipped++;
-        local record = {Id = ::FunFacts.getBattleId()}
-        local effects = this.getEffectsDesc(_player);
-        foreach (key, value in effects) record[key] <- value;
+        local record = Table.extend({Id = ::FunFacts.getBattleId()}, this.getEffectsDesc(_player));
         this.m.Stats.CombatsSkipped.push(record);
+        this.updateProps("onCombatSkipped", record);
         // ::FunFacts.Debug.log("onCombatSkipped ", record);
-        // ::FunFacts.Debug.log("onCombatSkipped tmp", this.m.TmpCombatStart)
-        this.m.TmpCombatStart = null;
+        this.m.TmpCombat = null;
     }
 
     function onKill(_target, _skill, _fatalityType) {
@@ -196,6 +253,23 @@ this.fun_facts <- {
         ::FunFacts.Debug.log("onInjuryDealt record", record);
         this.m.Stats.InjuriesDealt.push(record);
         ::FunFacts.Debug.log("onInjuryDealt total records", this.m.Stats.InjuriesDealt.len());
+    }
+
+    function onSkillAdded(_skill) {
+        if (this.m.TmpCombat == null) return;
+        local interestingIds = [
+            "effects.charmed" "effects.sleeping" "effects.net" "effects.web" "effects.rooted"
+            "effects.chilled" "effects.dazed" "effects.distracted" "effects.disarmed"
+            "effects.horrified" "effects.stunned" "effects.swallowed_whole"
+            "effects.acid" "effects.bleeding" "effects.goblin_poison" "effects.spider_poison"
+            "effects.whipped"
+        ]
+        local id = _skill.getID();
+        if (interestingIds.find(id) == null) return;
+
+        local name = Str.cutprefix(id, "effects.");
+        if (name in this.m.TmpCombat.Added) this.m.TmpCombat.Added[name]++;
+        else this.m.TmpCombat.Added[name] <- 1;
     }
 
     function onNineLivesUse() {
@@ -274,7 +348,7 @@ this.fun_facts <- {
             // ::FunFacts.Debug.log("killsByClass", killsByClassSorted);
         }
 
-        local maxKills = Array.max(this.m.Stats.BattlesLog.map(@(b) b.Kills));
+        local maxKills = Array.max(this.m.Stats.BattlesLog.map(@(b) b.Kills)); // move to prop
         if (maxKills && maxKills >= 5) {
             local text = format("Killed %s %s in a single battle",
                                 red(maxKills), Text.plural(maxKills, "enemy", "enemies"));
@@ -321,14 +395,9 @@ this.fun_facts <- {
             addHint("ui/perks/perk_07.png", text);
         }
 
-        if (this.m.Stats.BattlesSkipped > 0) {
-            local total = this.m.Stats.BattlesSkipped + this.m.Stats.Battles;
-            local text = "Slacked for " + this.m.Stats.BattlesSkipped + " battles of total " + total;
-            addHint("ui/icons/campfire.png", text)
-        }
-
         local fled = 0;
         local fledBattles = 0;
+        // TODO: move to props
         foreach (battle in this.m.Stats.BattlesLog) {
             fled += battle.Fled;
             if (battle.Fled) fledBattles++;
@@ -336,6 +405,35 @@ this.fun_facts <- {
         if (fled > 0) {
             local text = format("Fled %s times in %s battles", red(fled), red(fledBattles));
             addHint("ui/icons/tracking_disabled.png", text);
+        }
+
+        if (this.m.Stats.BattlesSkipped > 0) {
+            local total = this.m.Stats.BattlesSkipped + this.m.Stats.Battles;
+            local text = "Slacked for " + this.m.Stats.BattlesSkipped + " battles of total " + total;
+            local skippedDrunk = this.getProp("SkippedDrunk");
+            if (skippedDrunk != 0) {
+                text += ". " + skippedDrunk + " of them being drunk or hangover.";
+            }
+            addHint("ui/icons/campfire.png", text)
+        }
+
+        // Experimental
+        local swallowed = getProp("Swallowed");
+        local charmed = getProp("Charmed");
+        local rooted = getProp("Rooted");
+        if (charmed > 0 || swallowed > 0 || rooted > 0) {
+            local text = "";
+            if (swallowed >= 3) {
+                text = format("Was swallowed %d time%s", swallowed, Text.plural(swallowed));
+            }
+            if (charmed >= 3 || text && charmed > 0) {
+                text += text.len() ? "," : "Was";
+                text += format(" charmed %d time%s", charmed, Text.plural(charmed));
+            }
+            if (rooted >= 3 || text && rooted > 0) {
+                text += text.len() ? "," : "Was";
+                text += format(" captured %d time%s", rooted, Text.plural(rooted));
+            }
         }
     }
 
@@ -355,5 +453,6 @@ this.fun_facts <- {
     function unpack(packed) {
         local state = Util.unpack(packed);
         Util.extend(this.m.Stats, state);
+        createProps(); // need to call since "ref" things changed, may be remove in future
     }
 }
