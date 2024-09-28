@@ -1,8 +1,21 @@
+// ::Hooks.DebugMode = true;
 local mod = ::Necro <- {
     ID = "mod_necro"
-    Name = "Necro (Resurrected)"
-    Version = "0.1.0"
+    Name = "Proper Necro"
+    Version = "0.2.0"
+    FakeKill = false
+
+    function restoreArmor(_actor, _part, _pct) {
+        local slot = _part == "head" ? ::Const.ItemSlot.Head : ::Const.ItemSlot.Body;
+        local piece = _actor.m.Items.getItemAtSlot(slot);
+        if (piece) {
+            local armor = piece.getArmor();
+            local armorMax = piece.getArmorMax();
+            piece.setArmor(::Math.min(armorMax,  armor + (armorMax - armor) * _pct));
+        }
+    }
 }
+local Table = ::std.Table, Util = ::std.Util;
 
 local hmod = ::Hooks.register(mod.ID, mod.Version, mod.Name);
 hmod.queue(function() {
@@ -21,7 +34,10 @@ hmod.queue(function() {
     //     }
     // }
 
-    ::include("necro/skills/actives/raise_undead");
+    ::Hooks.registerJS("ui/mods/necro.js");
+    ::Hooks.registerCSS("ui/mods/necro.css");
+
+    ::include("necro/tactical_state");
 
     // Summon necros in swamp, tundra settlements and medium/large too
     hmod.hookTree("scripts/entity/world/settlement", function (q) {
@@ -43,6 +59,143 @@ hmod.queue(function() {
             for (local i = 0; i < 4; i++) _draftList.push("necro_background")
         }
     })
+
+    // Necromancer should get XP and kills from his zombies, but should not activate on kill effects
+    hmod.hookTree("scripts/skills/skill", function (q) {
+        q.onTargetKilled = @(__original) function (_targetEntity, _skill) {
+            ::logInfo("onTargetKilled 1")
+            // If this is a fake kill for necro then only collect stats
+            if (!mod.FakeKill || this.m.ID == "special.stats_collector") {
+                ::logInfo("onTargetKilled 2 fake=" + mod.FakeKill + " skill=" + this.m.ID);
+                return __original(_targetEntity, _skill);
+            }
+            ::logInfo("onTargetKilled end")
+        }
+    })
+    hmod.hook("scripts/entity/tactical/actor", function (q) {
+        q.onActorKilled = @(__original) function(_actor, _tile, _skill) {
+            ::logInfo("onActorKilled " + this.getName() + " e=" + this)
+            // ::logInfo()
+            if ("necro_master" in this.m && !this.m.necro_master.isNull()) {
+                ::logInfo("onActorKilled necro")
+                mod.FakeKill = true;
+                ::logInfo("onActorKilled necro 2")
+                this.m.necro_master.onActorKilled(_actor, _tile, _skill);
+                ::logInfo("onActorKilled necro 3")
+                mod.FakeKill = false;
+                ::logInfo("onActorKilled necro 4")
+            }
+            ::logInfo("onActorKilled after")
+            __original(_actor, _tile, _skill);
+            ::logInfo("onActorKilled after2")
+        }
+
+        q.onResurrected = @(__original) function (_info) {
+            ::logInfo("necro: onResurrected")
+            ::std.Debug.log("_info", _info, 1)
+            __original(_info);
+            ::std.Debug.log("_info after", _info, 1)
+
+            // Track necro and original faction
+            ::logInfo("necro: onResurrected nm=" + ("necro_master" in _info ? _info.necro_master.getName() : "???"));
+            if ("necro_master" in _info) {
+                this.m.necro_master <- _info.necro_master;
+                // this.m.necro_originalFaction <- _info.necro_originalFaction;
+            }
+
+            // Future Flesh of Iron perk
+            mod.restoreArmor(this, "head", 0.333);
+            mod.restoreArmor(this, "body", 0.333);
+            this.getSkills().update();
+
+            // TODO: regeneration, life steal?
+
+            // local b = this.m.BaseProperties;
+            // b.MeleeSkill += 50;
+            // b.RangedSkill += 50;
+            // b.DamageTotalMult *= 5;
+            // b.MeleeDefense += 50;
+            // b.RangedDefense += 50;
+            // b.HitpointsMult *= 5;
+        }
+
+        q.necro_hasMaster <- function () {return Util.isIn("necro_master", this.m)}
+    })
+    // // When undead raised by us dies we want our sruff back, for this to work reliably need to
+    // // remember the original faction.
+    // hmod.hookTree("scripts/entity/tactical/actor", function (q) {
+    //     q.onDeath = @(__original) function (_killer, _skill, _tile, _fatalityType) {
+    //         __original(_killer, _skill, _tile, _fatalityType);
+
+    //         if (_tile != null) {
+    //             local faction = Table.get(this.m, "necro_originalFaction", this.getFaction());
+    //             _tile.Properties.get("Corpse").Faction = faction;
+    //         }
+    //     }
+    // })
+
+    // Want to get loot when zombies raised by us, so that necromancer won't be a loot destroyer
+    hmod.hook("scripts/items/item_container", function (q) {
+        q.dropAll = @(__original) function(_tile, _killer, _flip = false) {
+            ::logInfo("necro: in hooked dropAll");
+            if (this.m.Actor.necro_hasMaster()) {
+                ::logInfo("necro: drop");
+
+                // They dropped already once so rolls had their say,
+                // use Player/Blacksmith and whatnot to maximize chance to save them
+                this.onFactionChanged(::Const.Faction.Player)
+
+                // It's just too hard to jump through all the dropAll conditions so we duplicate
+                local tile = _tile, emergency = false;
+                if (tile == null && this.m.Actor.isPlacedOnMap()) {
+                    tile = this.m.Actor.getTile();
+                    emergency = true;
+                }
+                if (tile == null) return;
+
+                foreach (item in this.getAllItems()) {
+                    if (item == null || item == -1) continue;
+                    if (item.isChangeableInBattle() || emergency) item.drop(_tile);
+                    // Items not dropped go into corpse and later collected or reused from there
+                }
+            } else {
+                __original(_tile, _killer, _flip);
+            }
+        }
+    })
+
+    if (!("DynamicPerks" in getroottable())) ::DynamicPerks <- "placeholder to fool mod_plan_perks";
+    // Add perk tree to bros data
+    hmod.hook("scripts/ui/global/data_helper", function (q) {
+        local function set(...) {
+            local s = {};
+            foreach (c in vargv) s[c] <- true;
+            return s;
+        }
+        local allowedMasteries = set(
+            "perk.mastery.mace"
+            "perk.mastery.cleaver"
+            "perk.mastery.dagger"
+            "perk.mastery.polearm"
+            "perk.mastery.crossbow"
+        )
+
+        q.convertEntityToUIData = @(__original) function(_entity, _activeEntity)
+        {
+            local result = __original(_entity, _activeEntity);
+            if (_entity != null && _entity.getSkills().hasSkill("background.necro")) {
+                local perks = clone ::Const.Perks.Perks;
+                perks[1] = clone perks[1];
+                perks[1].push(::Const.Perks.LookupMap["perk.necro.flesh_of_iron"]);
+                perks[3] = perks[3].filter(@(_, p) p.ID in allowedMasteries);
+                perks[3].push(::Const.Perks.LookupMap["perk.necro.mastery"])
+                result.necro_perkTree <- perks;
+            } else {
+                result.necro_perkTree <- ::Const.Perks.Perks;
+            }
+            return result;
+        }
+    });
 })
 
 // TODO: switch to GithubTags from MSU 1.6.0
