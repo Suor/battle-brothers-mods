@@ -504,3 +504,8 @@
 // HeroicScenarioPack
 ::BgPerks.chances.belly_dancer_origin <- ::BgPerks.chances.belly_dancer;
 ::BgPerks.chances.adventurous_noble_southern <- ::BgPerks.chances.adventurous_noble;
+
+// Fantasy Brothers (Adventurer there is masked behind other backgrounds)
+::BgPerks.chances.xxherosp <- ::BgPerks.chances.adventurous_noble;
+::BgPerks.chances.xxheroroyal <- ::BgPerks.chances.adventurous_noble;
+
