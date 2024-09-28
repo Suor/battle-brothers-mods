@@ -55,6 +55,17 @@ local extraDep = ::mods_getRegisteredMod("tnf_refillableNet") ? ", !tnf_refillab
     mod.hookItem("items/shields/special/named_lindwurm_shield",
         {StaminaModifier = -8, MeleeDefense = 17, Condition = 64, ConditionMax = 64});
 
+    // Give +25 Melee def when fleeing not only retreating
+    ::mods_hookExactClass("skills/traits/weasel_trait", function (cls) {
+        local onUpdate  = ::mods_getMember(cls, "onUpdate");
+        ::mods_override(cls, "onUpdate", function (_properties) {
+            onUpdate(_properties);
+            local actor = this.getContainer().getActor();
+            if (actor.getMoraleState() == ::Const.MoraleState.Fleeing) {
+                _properties.MeleeDefense += 25;
+            }
+        });
+    })
 });
 
 // tnf_resistFXResilient messes up with nets otherwise
