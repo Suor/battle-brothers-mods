@@ -1,5 +1,5 @@
 local mod = ::FixReforged <- {
-    ID = "mod_reforged_fix"
+    ID = "mod_reforged_fix_custom_backgrounds"
     Name = "Reforged Fix"
     Version = 0.1
     // Debug = ::std.Debug.with({prefix = "fr: "})
@@ -29,11 +29,11 @@ local mod = ::FixReforged <- {
         }
     })
 
-    ::mods_hookExactClass("entity/world/player_party", function (cls) {
-        local updateStrength = cls.updateStrength;
-        cls.updateStrength = function () {
-            updateStrength();
-            this.m.Strength *= 1.5;
-        }
-    })
+    // ::mods_hookExactClass("entity/world/player_party", function (cls) {
+    //     local updateStrength = cls.updateStrength;
+    //     cls.updateStrength = function () {
+    //         updateStrength();
+    //         this.m.Strength *= 1.5;
+    //     }
+    // })
 })
