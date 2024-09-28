@@ -34,6 +34,9 @@ registerBehavior("AP_Tame", "Tame", 38, 600);
         // CleverFool's mod
         "actives.gae_buidhe_thrust"
         "actives.gae_dearg_thrust"
+        // Fantasy Brothers
+        "actives.xxitem_leftsaa_skill" // Dual Attack
+        // "actives.xx_a" // Looks like it's already added
     ]);
 });
 ::mods_hookExactClass("ai/tactical/behaviors/ai_attack_split", function (cls) {
