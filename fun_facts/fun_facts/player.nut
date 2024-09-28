@@ -8,7 +8,8 @@
         local ret = create.acall(vargv);
         // this.logInfo("ff: player new fun_facts");
         this.m.FunFacts = ::new("scripts/mods/fun_facts/fun_facts");
-        this.m.FunFacts.setName(this.getName());
+        this.m.FunFacts.setPlayer(this);
+        // this.m.FunFacts.setName(this.getName());
         // this.logInfo("ff: fun_facts.Version "
         //         + ("Version" in this.m.FunFacts.m ? this.m.FunFacts.m.Version : 0));
         return ret;
@@ -96,7 +97,7 @@
         local packed = this.getFlags().get("FunFacts");
         if (packed) {
             this.m.FunFacts.unpack(packed);
-            this.m.FunFacts.setName(this.m.Name);
+            // this.m.FunFacts.setName(this.m.Name);
             return
         }
     }

@@ -47,6 +47,7 @@ this.fun_facts <- {
         Props = null
         TmpCombatStart = null
         // Ranks = {}
+        Player = null
         Name = "<not-set>"
         Version = 2
     }
@@ -70,6 +71,10 @@ this.fun_facts <- {
         }
     }
 
+    function setPlayer(_player) {
+        this.m.Player = ::WeakTableRef(_player);
+        this.m.Name = _player.getName();
+    }
     function setName(_name) {
         this.m.Name = _name;
     }
@@ -132,10 +137,16 @@ this.fun_facts <- {
             Name = _target.getName()
             ClassName = _target.ClassName
             XP = _target.getXPValue()
-            Faction = _target.getFaction() // This or target player could be charmed or smth
             Fatality = _fatalityType
             Day = this.World.getTime().Days
+            // Added later
+            Faction = _target.getFaction() // This or target player could be charmed or smth
             Skill = _skill ? _skill.getID() : null
+            // about this player
+            // Self = {
+            //     Faction = this.m.Player.getFaction()
+            //     Charmed = this.m.Player.m.Flags.has("Charmed")
+            // }
         }
         ::FunFacts.Debug.log("onKill record", record);
         this.m.Stats.Kills.push(record);
