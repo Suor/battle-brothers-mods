@@ -125,17 +125,17 @@ this.fun_facts <- {
         this.m.TmpCombatStart = null;
     }
 
-    function onKill(_target, _fatalityType) {
+    function onKill(_target, _skill, _fatalityType) {
         local record = {
             BattleId = ::FunFacts.getBattleId()
             IsPlayer = _target.isPlayerControlled()
             Name = _target.getName()
             ClassName = _target.ClassName
             XP = _target.getXPValue()
+            Faction = _target.getFaction() // This or target player could be charmed or smth
             Fatality = _fatalityType
             Day = this.World.getTime().Days
-            // Faction ???
-            // Skill ???
+            Skill = _skill ? _skill.getID() : null
         }
         ::FunFacts.Debug.log("onKill record", record);
         this.m.Stats.Kills.push(record);
