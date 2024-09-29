@@ -5,14 +5,13 @@ hmod.hook("scripts/states/tactical_state", function (q) {
         if (this.m.IsExitingToMenu) return;
         this.m.IsBattleEnded = true;  // Stop turns and user input
 
-        ::logInfo("necro: onBattleEnded");
         this.necro_chopHeads(__original.bindenv(this));
     }
 
     q.necro_chopHeads <- function (_callback) {
         local actors = ::Tactical.Entities.getInstancesOfFaction(::Const.Faction.PlayerAnimals);
         local toKill = 0;
-        ::logInfo("necro: got " + actors.len() + " animals");
+        ::logInfo("necro: has " + actors.len() + " animals");
         foreach (actor in actors) {
             if (!actor.necro_hasMaster()) continue;
             if (!actor.isAlive() || actor.isDying()) continue;

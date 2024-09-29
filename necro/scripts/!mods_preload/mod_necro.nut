@@ -34,8 +34,8 @@ hmod.queue(function() {
     //     }
     // }
 
-    ::Hooks.registerJS("ui/mods/necro.js");
-    ::Hooks.registerCSS("ui/mods/necro.css");
+    // ::Hooks.registerJS("ui/mods/necro.js");
+    // ::Hooks.registerCSS("ui/mods/necro.css");
 
     ::include("necro/tactical_state");
 
@@ -100,7 +100,6 @@ hmod.queue(function() {
             ::logInfo("necro: onResurrected nm=" + ("necro_master" in _info ? _info.necro_master.getName() : "???"));
             if ("necro_master" in _info) {
                 this.m.necro_master <- _info.necro_master;
-                // this.m.necro_originalFaction <- _info.necro_originalFaction;
             }
 
             // Future Flesh of Iron perk
@@ -119,20 +118,8 @@ hmod.queue(function() {
             // b.HitpointsMult *= 5;
         }
 
-        q.necro_hasMaster <- function () {return Util.isIn("necro_master", this.m)}
+        q.necro_hasMaster <- function () {return "necro_master" in this.m}
     })
-    // // When undead raised by us dies we want our sruff back, for this to work reliably need to
-    // // remember the original faction.
-    // hmod.hookTree("scripts/entity/tactical/actor", function (q) {
-    //     q.onDeath = @(__original) function (_killer, _skill, _tile, _fatalityType) {
-    //         __original(_killer, _skill, _tile, _fatalityType);
-
-    //         if (_tile != null) {
-    //             local faction = Table.get(this.m, "necro_originalFaction", this.getFaction());
-    //             _tile.Properties.get("Corpse").Faction = faction;
-    //         }
-    //     }
-    // })
 
     // Want to get loot when zombies raised by us, so that necromancer won't be a loot destroyer
     hmod.hook("scripts/items/item_container", function (q) {
@@ -164,38 +151,38 @@ hmod.queue(function() {
         }
     })
 
-    if (!("DynamicPerks" in getroottable())) ::DynamicPerks <- "placeholder to fool mod_plan_perks";
-    // Add perk tree to bros data
-    hmod.hook("scripts/ui/global/data_helper", function (q) {
-        local function set(...) {
-            local s = {};
-            foreach (c in vargv) s[c] <- true;
-            return s;
-        }
-        local allowedMasteries = set(
-            "perk.mastery.mace"
-            "perk.mastery.cleaver"
-            "perk.mastery.dagger"
-            "perk.mastery.polearm"
-            "perk.mastery.crossbow"
-        )
+    // if (!("DynamicPerks" in getroottable())) ::DynamicPerks <- "placeholder to fool mod_plan_perks";
+    // // Add perk tree to bros data
+    // hmod.hook("scripts/ui/global/data_helper", function (q) {
+    //     local function set(...) {
+    //         local s = {};
+    //         foreach (c in vargv) s[c] <- true;
+    //         return s;
+    //     }
+    //     local allowedMasteries = set(
+    //         "perk.mastery.mace"
+    //         "perk.mastery.cleaver"
+    //         "perk.mastery.dagger"
+    //         "perk.mastery.polearm"
+    //         "perk.mastery.crossbow"
+    //     )
 
-        q.convertEntityToUIData = @(__original) function(_entity, _activeEntity)
-        {
-            local result = __original(_entity, _activeEntity);
-            if (_entity != null && _entity.getSkills().hasSkill("background.necro")) {
-                local perks = clone ::Const.Perks.Perks;
-                perks[1] = clone perks[1];
-                perks[1].push(::Const.Perks.LookupMap["perk.necro.flesh_of_iron"]);
-                perks[3] = perks[3].filter(@(_, p) p.ID in allowedMasteries);
-                perks[3].push(::Const.Perks.LookupMap["perk.necro.mastery"])
-                result.necro_perkTree <- perks;
-            } else {
-                result.necro_perkTree <- ::Const.Perks.Perks;
-            }
-            return result;
-        }
-    });
+    //     q.convertEntityToUIData = @(__original) function(_entity, _activeEntity)
+    //     {
+    //         local result = __original(_entity, _activeEntity);
+    //         if (_entity != null && _entity.getSkills().hasSkill("background.necro")) {
+    //             local perks = clone ::Const.Perks.Perks;
+    //             perks[1] = clone perks[1];
+    //             perks[1].push(::Const.Perks.LookupMap["perk.necro.flesh_of_iron"]);
+    //             perks[3] = perks[3].filter(@(_, p) p.ID in allowedMasteries);
+    //             perks[3].push(::Const.Perks.LookupMap["perk.necro.mastery"])
+    //             result.necro_perkTree <- perks;
+    //         } else {
+    //             result.necro_perkTree <- ::Const.Perks.Perks;
+    //         }
+    //         return result;
+    //     }
+    // });
 })
 
 // TODO: switch to GithubTags from MSU 1.6.0
