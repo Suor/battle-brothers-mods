@@ -2,6 +2,11 @@ local mod = ::HackflowsPerks <- {
     ID = "mod_hackflows_perks"
     Name = "Hackflow's Perks"
     Version = 1.3
+    Updates = {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/673"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/hackflows_perks"
+        tagPrefix = "hackflows-perks--"
+    }
 
     BoneInjuries = [
         "injury.broken_leg"
@@ -25,6 +30,7 @@ local mod = ::HackflowsPerks <- {
         return fleshOnTheBones;
     }
 }
+// if ("HackMSU" in getroottable()) HackMSU.setup(mod);
 local Str = ::std.Str, Text = ::std.Text;
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
@@ -105,3 +111,9 @@ local Str = ::std.Str, Text = ::std.Text;
         }
     }
 })
+
+::mods_queue(mod.ID, ">msu", function () {
+     if (!("MSU" in getroottable())) return;
+    ::include("scripts/hp_hack_msu");
+    ::HackMSU.setup(mod, mod.Updates)
+});
