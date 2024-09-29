@@ -1,2 +1,7 @@
+0.2.0
+- raise undead requires more AP and Fatigue, also have limited range to balance it a bit
+- prevent loosing loot on friendly zombies
+- XP not lost anymore, count kills and damage from zombies as their master's
+
 0.1.0
 - initial public release

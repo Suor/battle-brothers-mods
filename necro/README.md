@@ -1,26 +1,27 @@
-# Necromancer (Resurrected)
+# Proper Necromancer
 
-Following the idea of [Recrutable Necromancer](old) this adds a Necromancer background, who can raise undead and posess them.
+Following the idea of [Recrutable Necromancer](old) this adds a Necromancer background, who can raise undead and possess them.
+
+In an addition of simply having a guy who can raise and possess undead this mod:
+
+- raise undead requires more AP and Fatigue, also have limited range to balance it a bit
+- prevent loosing loot on friendly zombies
+- XP not lost anymore, count kills and damage from zombies as their master's
 
 Plans:
 
-- loot everything on friendly zombies on combat end (now stuff is lost)
-- count kills and damage from his zombies as his? (to not loose XP)
 - make Necro gain power gradually via special perks:
-    - raise range
-    - raise with fuller health/armor?
-    - raise greenskins and animals, and whoever else can't raise
-    - raise limit?
-    - bonuses/perks to raised undead (maybe based on necro perks)
-    - possess and/or better possess
-- remove some perks from Necro tree? e.g. Battle Forged
-- control/block enemy undead
-- curses/debuffs? or other magick
-- balance skills
-    - AP/fatigue
-    - limit range?
-    - limit number of "controlled" undead
-    - check Necro morale when possesed is hit/killed?
+    - Necromastery (AP/Fatigue)
+    - Possess as perk
+    - Mind Meld (share perks with zombies)
+    - Double Raise Undead range
+    - Zombie skills:
+        - Regeneration
+        - Blood Sucking
+    - Flesh of Iron (restore some armor on raise)
+    - Soul Link (share damage with random zombie)
+- remove some perks from Necro tree
+- check Necro morale when possesed is hit/killed
 
 
 ## Compatibility
@@ -33,7 +34,7 @@ Is safe to add midgame, can't remove once you have these guys anywhere including
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHooks][].
 
 
-[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/772
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/775
 [ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
