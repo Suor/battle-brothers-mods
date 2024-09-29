@@ -40,12 +40,9 @@ this.necro_raise_undead <- this.inherit("scripts/skills/actives/raise_undead", {
 
     function spawnUndead( _user, _tile )
     {
-        logInfo("necro: spawnUndead " + _user)
         local p = _tile.Properties.get("Corpse");
-        logInfo("necro: spawnUndead " + _user.getName())
         // Leave our mark
         p.necro_master <- ::MSU.asWeakTableRef(_user);
-        // p.necro_OriginalFaction <- p.Faction;
         p.Faction = _user.getFaction();
         // Raise as an animal, i.e. no control
         if (p.Faction == ::Const.Faction.Player) p.Faction = ::Const.Faction.PlayerAnimals;
@@ -54,9 +51,5 @@ this.necro_raise_undead <- this.inherit("scripts/skills/actives/raise_undead", {
         if (e == null) return
 
         e.getSprite("socket").setBrush(_user.getSprite("socket").getBrush().Name);
-
-        // ::logInfo("necro: set master " + e.getName() + " e=" + e)
-        // e.m.necro_master <- ::MSU.asWeakTableRef(_user);
-        // ::logInfo("necro: master in " + ("necro_master" in e.m))
     }
 });

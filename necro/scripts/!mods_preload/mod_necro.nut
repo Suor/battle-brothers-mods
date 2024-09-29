@@ -15,7 +15,6 @@ local mod = ::Necro <- {
         }
     }
 }
-local Table = ::std.Table, Util = ::std.Util;
 
 local hmod = ::Hooks.register(mod.ID, mod.Version, mod.Name);
 hmod.queue(function() {
@@ -63,41 +62,26 @@ hmod.queue(function() {
     // Necromancer should get XP and kills from his zombies, but should not activate on kill effects
     hmod.hookTree("scripts/skills/skill", function (q) {
         q.onTargetKilled = @(__original) function (_targetEntity, _skill) {
-            ::logInfo("onTargetKilled 1")
             // If this is a fake kill for necro then only collect stats
             if (!mod.FakeKill || this.m.ID == "special.stats_collector") {
-                ::logInfo("onTargetKilled 2 fake=" + mod.FakeKill + " skill=" + this.m.ID);
                 return __original(_targetEntity, _skill);
             }
-            ::logInfo("onTargetKilled end")
         }
     })
     hmod.hook("scripts/entity/tactical/actor", function (q) {
         q.onActorKilled = @(__original) function(_actor, _tile, _skill) {
-            ::logInfo("onActorKilled " + this.getName() + " e=" + this)
-            // ::logInfo()
             if ("necro_master" in this.m && !this.m.necro_master.isNull()) {
-                ::logInfo("onActorKilled necro")
                 mod.FakeKill = true;
-                ::logInfo("onActorKilled necro 2")
                 this.m.necro_master.onActorKilled(_actor, _tile, _skill);
-                ::logInfo("onActorKilled necro 3")
                 mod.FakeKill = false;
-                ::logInfo("onActorKilled necro 4")
             }
-            ::logInfo("onActorKilled after")
             __original(_actor, _tile, _skill);
-            ::logInfo("onActorKilled after2")
         }
 
         q.onResurrected = @(__original) function (_info) {
-            ::logInfo("necro: onResurrected")
-            ::std.Debug.log("_info", _info, 1)
             __original(_info);
-            ::std.Debug.log("_info after", _info, 1)
 
             // Track necro and original faction
-            ::logInfo("necro: onResurrected nm=" + ("necro_master" in _info ? _info.necro_master.getName() : "???"));
             if ("necro_master" in _info) {
                 this.m.necro_master <- _info.necro_master;
             }
