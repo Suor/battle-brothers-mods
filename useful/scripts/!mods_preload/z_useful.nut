@@ -2,6 +2,11 @@ local mod = ::Useful <- {
     ID = "mod_useful"
     Name = "Useful Things"
     Version = 0.4
+    Updates = {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/682"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/useful"
+        tagPrefix = "useful-"
+    }
     Debug = ::std.Debug.with({prefix = "u: "})
 }
 local Util = ::std.Util;
@@ -70,3 +75,9 @@ local extraDep = ::mods_getRegisteredMod("tnf_refillableNet") ? ", !tnf_refillab
 
 // tnf_resistFXResilient messes up with nets otherwise
 ::mods_registerMod("tnf_refillableNet", 2.0, "Refillable Nets via Useful Things")
+
+::mods_queue(mod.ID, ">msu", function () {
+     if (!("MSU" in getroottable())) return;
+    ::include("useful/hack_msu");
+    ::HackMSU.setup(mod, mod.Updates)
+});
