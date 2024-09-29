@@ -86,10 +86,10 @@ hmod.queue(function() {
                 this.m.necro_master <- _info.necro_master;
             }
 
-            // Future Flesh of Iron perk
-            mod.restoreArmor(this, "head", 0.333);
-            mod.restoreArmor(this, "body", 0.333);
-            this.getSkills().update();
+            // // Future Flesh of Iron perk
+            // mod.restoreArmor(this, "head", 0.333);
+            // mod.restoreArmor(this, "body", 0.333);
+            // this.getSkills().update();
 
             // TODO: regeneration, life steal?
 

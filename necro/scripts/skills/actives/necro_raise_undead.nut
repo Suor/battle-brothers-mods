@@ -12,10 +12,10 @@ this.necro_raise_undead <- this.inherit("scripts/skills/actives/raise_undead", {
         this.m.MinRange = 1;
         this.m.MaxRange = 4; // Not 99 anymore
 
-        // DEBUG
-        this.m.ActionPointCost = 4;
-        this.m.FatigueCost = 15;
-        this.m.MaxRange = 8;
+        // // DEBUG
+        // this.m.ActionPointCost = 4;
+        // this.m.FatigueCost = 15;
+        // this.m.MaxRange = 8;
     }
 
     function getTooltip() {
