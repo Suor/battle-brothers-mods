@@ -5,7 +5,7 @@ local mod = ::HackflowsPerks <- {
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/673"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/hackflows_perks"
-        tagPrefix = "hackflows-perks--"
+        tagPrefix = "hackflows-perks-"
     }
 
     BoneInjuries = [
