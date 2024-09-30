@@ -22,6 +22,8 @@ Plans:
     - Soul Link (share damage with random zombie)
 - remove some perks from Necro tree
 - check Necro morale when possesed is hit/killed
+- a Necromancer origin
+- an event with Undead raise to start chopping their heads
 
 
 ## Compatibility
