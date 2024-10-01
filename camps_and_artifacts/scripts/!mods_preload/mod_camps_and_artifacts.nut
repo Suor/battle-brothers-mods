@@ -56,6 +56,8 @@ foreach (file in ::IO.enumerateFiles("camps_and_artifacts/config")) ::include(fi
     mod.Mods.SatoBalance <- ::mods_getRegisteredMod("sato_balance_mod");
     mod.Mods.Reforged <- ::mods_getRegisteredMod("mod_reforged");
 
+    // Add Artifact type and hack the func to show Artifact, not "Famed Item, Artifact"
+    ::Const.Items.addNewItemType("Artifact", "Artifact");
     ::include("camps_and_artifacts/factions/faction");
     foreach (file in ::IO.enumerateFiles("camps_and_artifacts/factions/actions")) ::include(file);
     ::include("camps_and_artifacts/entity/world/locations/orc_fortress_location");

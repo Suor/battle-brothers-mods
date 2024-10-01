@@ -1,12 +1,3 @@
-// Add "Artifact" item type on top
-local maxValue = -1;
-foreach (_, value in ::Const.Items.ItemType) {
-    if (value > maxValue) maxValue = value;
-}
-local artifactType = maxValue * 2;
-::Const.Items.ItemType.Artifact <- artifactType;
-::Const.Items.ItemFilter.All = ::Const.Items.ItemFilter.All | artifactType;
-
 // List of artifact classes
 ::Const.Items.Artifacts <- [
     "weapons/artifact/artifact_axe",
