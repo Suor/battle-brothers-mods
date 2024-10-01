@@ -95,17 +95,5 @@ foreach (file in ::IO.enumerateFiles("camps_and_artifacts/config")) ::include(fi
             onRefresh();
             this.resetTime();
         }
-    });
-
-    // ::mods_hookBaseClass("items/item", function (cls) {
-    //     cls = cls.item;
-
-    //     local onDeserialize = cls.onDeserialize;
-    //     cls.onDeserialize = function (_in) {
-    //         ::logInfo("BEGIN onDeserialize " + this.ClassName)
-    //         onDeserialize(_in)
-    //         ::logInfo("END onDeserialize " + this.ClassName)
-    //     }
-    // });
-
+    })
 })
