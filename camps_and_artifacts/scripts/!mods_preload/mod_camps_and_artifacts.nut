@@ -1,7 +1,7 @@
 local mod = ::CampsAndArtifacts <- {
     ID = "mod_camps_and_artifacts"
     Name = "Camps and Artifacts (Reworked)"
-    Version = 3.4
+    Version = "3.5.0"
     Mods = {}
 };
 // TODO: add missing artifact versions of named stuff"
@@ -43,7 +43,16 @@ mod.createRandomName <- function () {
 foreach (file in ::IO.enumerateFiles("camps_and_artifacts/config")) ::include(file);
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, null, function () {
+::mods_queue(mod.ID, "mod_msu(>=1.6.0)", function () {
+    mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
+    mod.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods,
+      "https://www.nexusmods.com/battlebrothers/mods/678");
+    mod.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHubTags,
+      "https://github.com/Suor/battle-brothers-mods/tree/master/camps_and_artifacts",
+      {Prefix = "camps-"}
+    );
+    mod.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHubTags);
+
     mod.Mods.SatoBalance <- ::mods_getRegisteredMod("sato_balance_mod");
     mod.Mods.Reforged <- ::mods_getRegisteredMod("mod_reforged");
 
