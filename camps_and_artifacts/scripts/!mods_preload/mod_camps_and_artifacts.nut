@@ -58,6 +58,19 @@ foreach (file in ::IO.enumerateFiles("camps_and_artifacts/config")) ::include(fi
 
     // Add Artifact type and hack the func to show Artifact, not "Famed Item, Artifact"
     ::Const.Items.addNewItemType("Artifact", "Artifact");
+    ::mods_hookExactClass("items/item", function (cls) {
+            local getDescription = cls.getDescription;
+            cls.getDescription = function () {
+                if (!(this.m.ItemType & ::Const.Items.ItemType.Artifact)) return getDescription();
+
+                local named = this.m.ItemType & ::Const.Items.ItemType.Named;
+                this.m.ItemType -= named;
+                local ret = getDescription();
+                this.m.ItemType += named;
+                return ret;
+            }
+    })
+
     ::include("camps_and_artifacts/factions/faction");
     foreach (file in ::IO.enumerateFiles("camps_and_artifacts/factions/actions")) ::include(file);
     ::include("camps_and_artifacts/entity/world/locations/orc_fortress_location");
