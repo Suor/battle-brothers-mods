@@ -1,3 +1,6 @@
+0.2.1
+- fixed unable to possess after ending battle possessing
+
 0.2.0
 - raise undead requires more AP and Fatigue, also have limited range to balance it a bit
 - prevent loosing loot on friendly zombies
