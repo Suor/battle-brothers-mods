@@ -172,6 +172,10 @@ hmod.queue(function() {
     //         return result;
     //     }
     // });
+
+    hmod.hook("scripts/skills/effects/possessing_undead_effect", function (q) {
+        q.m.IsRemovedAfterBattle = true;
+    })
 })
 
 // TODO: switch to GithubTags from MSU 1.6.0
