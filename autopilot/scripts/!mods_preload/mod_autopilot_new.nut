@@ -50,6 +50,8 @@ local mod = ::Autopilot <- {
   page.addElement(::MSU.Class.BooleanSetting("verbose", false, "Verbose AI",
       "Show AI debugging for auto bros"));
 
+  ::MSU.Skills.addEvent("onSetupAI", function (_agent) {}, false, true);
+
   ::include("autopilot/hooks/actor");
   ::include("autopilot/hooks/player");
   ::include("autopilot/hooks/tactical_state");

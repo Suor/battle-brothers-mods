@@ -15,7 +15,7 @@
         local agent = new("scripts/ai/tactical/agents/" + mode.agent + "_agent");
 
         // agent.compileKnownAllies optimizes itself to no-op for the player faction, but we need it to work
-        agent.compileKnownAllies = function() {
+        agent.compileKnownAllies = function () {
             local instances = this.Tactical.Entities.getAllInstances();
             this.m.KnownAllies = [];
             foreach( i, faction in instances )
@@ -85,7 +85,7 @@
         // If we somehow get drum, say with North Expansion mod
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_boost_stamina"));
 
-        // Only works because we overwrite break_free.onEvaluate() below
+        // Only works because we overwrite break_free.onEvaluate()
         agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.BreakFree] = 2.5;
 
         // Look at this for bros having scare stuff
@@ -98,8 +98,18 @@
         // reduce the chance of friendly fire, affects ranged in a weird manner
         // agent.m.Properties.TargetPriorityHittingAlliesMult *= 0.2;
 
-        // Affects .isPlayerControlled(), which affects many behaviors and logging
-        // this.m.IsControlledByPlayer = false;
+        this.getSkills().onSetupAI(agent); // Our new event
+
+        // Autodetect ranged-like bros, i.e. no hide behind them and more disengage
+        local hasMelee = agent.findBehavior(::Const.AI.Behavior.ID.EngageMelee);
+        local hasRanged = agent.findBehavior(::Const.AI.Behavior.ID.EngageRanged);
+        logInfo("ap: " + this.getName() + " melee=" + hasMelee + " ranged=" + hasRanged)
+        if (hasRanged && !hasMelee) {
+            logInfo("ap: mode ranged")
+            mode.ranged = true;
+        }
+
+        // "actives.raise_companion"
 
         agent.finalizeBehaviors();
         agent.setActor(this);
