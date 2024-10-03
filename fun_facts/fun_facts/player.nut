@@ -97,7 +97,7 @@
         local packed = this.getFlags().get("FunFacts");
         if (packed) {
             this.m.FunFacts.unpack(packed);
-            // this.m.FunFacts.setName(this.m.Name);
+            this.m.FunFacts.setName(this.m.Name);
             return
         }
     }
