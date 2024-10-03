@@ -46,6 +46,18 @@ local Str = ::std.Str, Text = ::std.Text;
         }
     })
 
+    // Double Nine Lives too, it uses direct hitpoints assignment so the above won't work
+    ::mods_hookExactClass("skills/perks/perk_nine_lives", function (cls) {
+        local setSpent = cls.setSpent;
+        cls.setSpent = function (_f) {
+            if (!_f || !mod.fleshOnBonesActive(this.getContainer().getActor())) return setSpent(_f);
+
+            local actor = this.getContainer().getActor();
+            actor.m.Hitpoints = ::Math.min(actor.m.Hitpoints * 2, actor.getHitpointsMax());
+            return setSpent(_f);
+        }
+    })
+
     ::mods_hookExactClass("entity/tactical/player", function (cls) {
         local getRosterTooltip = cls.getRosterTooltip;
         cls.getRosterTooltip = function () {
@@ -85,6 +97,7 @@ local Str = ::std.Str, Text = ::std.Text;
 
     // Add these perks to Reforged perk trees.
     // Do not use Stabilized: Reforged has its own medium armor perk.
+    // TODO: add Battle Flow/Bloody Harvest?
     if (::mods_getRegisteredMod("mod_reforged")) {
         local groupToPerks = {
             "pg.rf_sturdy":  [
