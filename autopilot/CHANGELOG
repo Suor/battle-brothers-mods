@@ -1,3 +1,12 @@
+2.4.0
+- improved and fixed raise undead behavior
+- improved unleash behavior
+- fixed crash when retreating
+- added dual attack fantasy skill
+- use fixed default chance for tame
+Experimental:
+- new onSetupAI() event
+
 2.3.1
 - fixed AC for Legends
 

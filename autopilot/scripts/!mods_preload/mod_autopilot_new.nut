@@ -1,7 +1,12 @@
 local mod = ::Autopilot <- {
-  ID = "mod_autopilot_new"
-  Name = "Autopilot New"
-  Version = "2.3.1"
+    ID = "mod_autopilot_new"
+    Name = "Autopilot New"
+    Version = "2.4.0"
+    Updates = {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/675"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/autopilot"
+        tagPrefix = "autopilot-new-"
+    }
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
@@ -22,11 +27,7 @@ local mod = ::Autopilot <- {
   // mod.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHubTags);
 
   ::include("autopilot/hack_msu");
-  ::HackMSU.setup(mod, {
-      nexus = "https://www.nexusmods.com/battlebrothers/mods/675"
-      github = "https://github.com/Suor/battle-brothers-mods/tree/master/autopilot"
-      tagPrefix = "autopilot-new-"
-  })
+  ::HackMSU.setup(mod, mod.Updates);
 
   // Settings
   local page = mod.Mod.ModSettings.addPage("Autopilot");

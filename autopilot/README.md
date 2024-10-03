@@ -26,6 +26,8 @@ Tested with:
 - Accessory Companions (including Legends)
 - North Expansion
 - Heroic Scenario Pack
+- Fantasy Brothers
+- Proper Necromancer (uses Raise Undead and Possess)
 
 
 ## Limitations
@@ -39,7 +41,7 @@ So, what auto bros won't do currently (probably, not an exhaustive list):
 - use poison, bandages
 - taunt
 - use any active skills from other mods, unless mentioned lower, i.e. Sprint from Reforged, which are not used by enemy military
-- use custom weapon skills that are not used by enemies
+- use custom weapon skills that are not used by enemies, unless added here manually
 
 The last two points might be fixed easy enough if there are behaviors in that mod. So contact me to add those to autopilot agent.
 
@@ -56,6 +58,7 @@ Aside from better compatibility my modifications to auto bros behavior include:
 - pick up a weapon
 - throw nets, unleash dogs, beat the drum
 - equip a net or a shield from bag (completely new behaviors)
+- much better Raise Undead behavior
 - mind spent fatigue more when thinking of using shield wall, split shield, adrenaline, rotation, knock back and disengage
 - specific improvements to 2-tile bros:
     - more active overall, move and attack more, wait less
@@ -70,7 +73,7 @@ Support some skills from third-party mods:
 - support custom weapons from CleverFool's mod
 - use custom active skills from Heroic Scenario Pack
 - beat the barbarian drum from North Expansion
-- unleash companions from AC (Accessory Companions)
+- unleash companions and tame from AC (Accessory Companions)
 
 Other additions:
 
@@ -84,7 +87,7 @@ Fixes:
 - hide skills and other UI buttons when auto waiting, skipping turn or on AI
 - immediately act after switching to auto, no skipping turn anymore
 - fixed many crashes in combat AI
-- more compatibility, see below
+- more compatibility, see above
 
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/675
