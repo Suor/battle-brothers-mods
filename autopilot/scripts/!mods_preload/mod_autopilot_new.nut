@@ -55,6 +55,7 @@ local mod = ::Autopilot <- {
   ::include("autopilot/hooks/tactical_state");
   ::include("autopilot/hooks/turn_sequence_bar");
   ::include("autopilot/better_behavior");
+  ::include("autopilot/better_raise_undead");
   ::include("autopilot/fixes");
   ::include("autopilot/verbose");
   ::mods_registerJS("autopilot_new.js");
