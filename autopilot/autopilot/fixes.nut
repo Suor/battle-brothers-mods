@@ -55,6 +55,7 @@
     // This makes 2-tile bros start to hide behind such guy :)
     local isRangedUnit = cls.isRangedUnit;
     cls.isRangedUnit = function (_entity) {
+        if (typeof _entity == "instance" && _entity.isNull()) return false;
         if ("_autopilot" in _entity.m) return _entity.m._autopilot.ranged;
         return isRangedUnit(_entity);
     }
