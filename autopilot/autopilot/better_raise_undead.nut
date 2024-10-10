@@ -1,4 +1,5 @@
-// local Table = ::std.Table, Debug = ::std.Debug;
+local debug = true;
+local Table = ::std.Table, Debug = ::std.Debug;
 
 local function tileStr(_tile) {
     return _tile.X + ", " + _tile.Y;
@@ -16,7 +17,7 @@ local function corpseRepr(_corpse) {
         this.m.IsTravelling = false;
         local time = this.Time.getExactTime();
         local scoreMult = this.getProperties().BehaviorMult[this.m.ID];
-        // logInfo("raise: 1 " + scoreMult)
+        if (debug) logInfo("raise: 1 " + scoreMult)
 
         if (_entity.getActionPoints() < this.Const.Movement.AutoEndTurnBelowAP)
         {
@@ -27,11 +28,21 @@ local function corpseRepr(_corpse) {
         {
             return this.Const.AI.Behavior.Score.Zero;
         }
+        if (debug) logInfo("raise: 1.2 " + scoreMult)
 
-        if (_entity.getTile().hasZoneOfControlOtherThan(_entity.getAlliedFactions()))
+        local isPlayer = ::MSU.isKindOf(_entity, "player");
+        local agent = _entity.getAIAgent();
+        local hasMelee = agent.getProperties().BehaviorMult[::Const.AI.Behavior.ID.EngageMelee] > 0
+                      && agent.findBehavior(::Const.AI.Behavior.ID.EngageMelee);
+        local notAfraid = hasMelee && _entity.getIdealRange() == 1;
+        local bigDanger = ::Const.AI.Behavior.RaiseUndeadMaxDanger * (notAfraid ? 2 : 1);
+
+        // Only player is allowed to do it when having enemy in ZOC
+        if (!isPlayer && _entity.getTile().hasZoneOfControlOtherThan(_entity.getAlliedFactions()))
         {
             return this.Const.AI.Behavior.Score.Zero;
         }
+        if (debug) logInfo("raise: 1.3 " + scoreMult)
 
         this.m.Skill = this.selectSkill(this.m.PossibleSkills);
 
@@ -39,14 +50,14 @@ local function corpseRepr(_corpse) {
         {
             return this.Const.AI.Behavior.Score.Zero;
         }
-        // logInfo("raise: 2 " + scoreMult)
+        if (debug) logInfo("raise: 2 " + scoreMult)
 
         scoreMult = scoreMult * this.getFatigueScoreMult(this.m.Skill);
         local myTile = _entity.getTile();
         local potentialDanger = this.getPotentialDanger(true);
         local currentDanger = 0.0;
         yield null;
-        // logInfo("raise: 3 " + scoreMult + " potentialDanger=" + potentialDanger)
+        if (debug) logInfo("raise: 3 " + scoreMult + " potentialDanger=" + potentialDanger)
 
         foreach( t in potentialDanger )
         {
@@ -57,7 +68,7 @@ local function corpseRepr(_corpse) {
                 currentDanger = currentDanger + (1.0 - d.Turns);
             }
         }
-        // logInfo("raise: 4 " + scoreMult + " currentDanger=" + currentDanger)
+        if (debug) logInfo("raise: 4 " + scoreMult + " currentDanger=" + currentDanger)
 
         yield null;
         local corpses = this.Tactical.Entities.getCorpses();
@@ -66,7 +77,7 @@ local function corpseRepr(_corpse) {
         {
             return this.Const.AI.Behavior.Score.Zero;
         }
-        // logInfo("raise: 5 " + scoreMult + " corpses " + corpses.len())
+        if (debug) logInfo("raise: 5 " + scoreMult + " corpses " + corpses.len())
 
         local potentialCorpses = [];
         local alliedFactions = _entity.getAlliedFactions();
@@ -92,7 +103,7 @@ local function corpseRepr(_corpse) {
 
             local score = 1.0;
             local dist = c.getDistanceTo(myTile);
-            // logInfo("raise: P1 " + n + " score=" + score + " dist=" + dist)
+            if (debug) logInfo("raise: P1 " + n + " score=" + score + " dist=" + dist)
 
             if (dist > this.Const.AI.Behavior.RaiseUndeadMaxDistance)
             {
@@ -103,14 +114,14 @@ local function corpseRepr(_corpse) {
             {
                 continue;
             }
-            // logInfo("raise: P2 " + n + " score=" + score)
+            if (debug) logInfo("raise: P2 " + n + " score=" + score)
 
             if (this.isAllottedTimeReached(time))
             {
                 yield null;
                 time = this.Time.getExactTime();
             }
-            // logInfo("raise: P3 " + n + " score=" + score)
+            if (debug) logInfo("raise: P3 " + n + " score=" + score)
 
             // TODO: vary on weapon quality and armor
             local isWeaponOnGround = false;
@@ -128,23 +139,23 @@ local function corpseRepr(_corpse) {
             }
 
             score = score + c.Properties.get("Corpse").Value * this.Const.AI.Behavior.RaiseUndeadStrengthMult * (isWeaponOnGround ? 1.0 : this.Const.AI.Behavior.RaiseUndeadNoWeaponMult);
-            // logInfo("raise: P4 " + n + " score=" + score)
+            if (debug) logInfo("raise: P4 " + n + " score=" + score)
             local mag = this.queryOpponentMagnitude(c, this.Const.AI.Behavior.RaiseUndeadMagnitudeMaxRange);
             score = score + mag.Opponents * (1.0 - mag.AverageDistanceScore) * this.Math.maxf(0.5, 1.0 - mag.AverageEngaged) * this.Const.AI.Behavior.RaiseUndeadOpponentValue;
-            // logInfo("raise: P5 " + n + " score=" + score)
-            // Debug.log("raise: mag", mag);
+            if (debug) logInfo("raise: P5 " + n + " score=" + score)
+            if (debug) Debug.log("raise: mag", mag);
 
             if (c.hasZoneOfOccupationOtherThan(alliedFactions))
             {
                 if (dist <= 2)
                 {
                     score = score + this.Const.AI.Behavior.RaiseUndeadNearEnemyNearMeValue;
-                    // logInfo("raise: P6 " + n + " score=" + score)
+                    if (debug) logInfo("raise: P6 " + n + " score=" + score)
                 }
                 else
                 {
                     score = score + this.Const.AI.Behavior.RaiseUndeadNearEnemyValue;
-                    // logInfo("raise: P7 " + n + " score=" + score)
+                    if (debug) logInfo("raise: P7 " + n + " score=" + score)
                 }
 
                 for( local i = 0; i != 6; i = ++i )
@@ -174,14 +185,14 @@ local function corpseRepr(_corpse) {
                         }
                     }
                 }
-                // logInfo("raise: P8 " + n + " score=" + score)
+                if (debug) logInfo("raise: P8 " + n + " score=" + score)
             }
 
             if (currentDanger != 0)
             {
                 score = score - dist * this.Const.AI.Behavior.RaiseUndeadDistToMeValue;
             }
-            // logInfo("raise: P9 " + n + " score=" + score)
+            if (debug) logInfo("raise: P9 " + n + " score=" + score)
 
             potentialCorpses.push({
                 Tile = c,
@@ -189,16 +200,16 @@ local function corpseRepr(_corpse) {
                 Score = score
             });
         }
-        // logInfo("raise: 6 " + scoreMult + " potentialCorpses " + potentialCorpses.len())
+        if (debug) logInfo("raise: 6 " + scoreMult + " potentialCorpses " + potentialCorpses.len())
 
         if (potentialCorpses.len() == 0)
         {
             return this.Const.AI.Behavior.Score.Zero;
         }
-        // logInfo("raise: 7 " + scoreMult)
+        if (debug) logInfo("raise: 7 " + scoreMult)
 
         potentialCorpses.sort(this.onSortByScore);
-        // Debug.log("potentialCorpses", potentialCorpses.map(corpseRepr))
+        if (debug) Debug.log("potentialCorpses", potentialCorpses.map(corpseRepr))
         local navigator = this.Tactical.getNavigator();
         local bestTarget;
         local bestIntermediateTile;
@@ -215,14 +226,14 @@ local function corpseRepr(_corpse) {
         foreach( t in potentialCorpses )
         {
             n = ++n;
-            // logInfo("raise: C" + n + " 1 " + Debug.pp(corpseRepr(t)))
+            if (debug) logInfo("raise: C" + n + " 1 " + Debug.pp(corpseRepr(t)))
 
             if (n > this.Const.AI.Behavior.RaiseUndeadMaxAttempts && bestTarget != null)
             {
                 break;
             }
 
-            // logInfo("raise: C" + n + " 1.5")
+            if (debug) logInfo("raise: C" + n + " 1.5")
             if (this.isAllottedTimeReached(time))
             {
                 yield null;
@@ -232,11 +243,11 @@ local function corpseRepr(_corpse) {
             local score = 0 + t.Score;
             local tiles = 0;
             local intermediateTile;
-            // logInfo("raise: C" + n + " 2 score=" + score)
+            if (debug) logInfo("raise: C" + n + " 2 score=" + score)
 
             if (!this.m.Skill.isInRange(t.Tile))
             {
-                // logInfo("raise: C" + n + " 3 !inrange score=" + score)
+                if (debug) logInfo("raise: C" + n + " 3 !inrange score=" + score)
 
                 local settings = navigator.createSettings();
                 settings.ActionPointCosts = entityActionPointCosts;
@@ -251,7 +262,7 @@ local function corpseRepr(_corpse) {
 
                 if (!_entity.getCurrentProperties().IsRooted && navigator.findPath(myTile, t.Tile, settings, maxRange))
                 {
-                    // logInfo("raise: C" + n + " 4 findPath score=" + score)
+                    if (debug) logInfo("raise: C" + n + " 4 findPath score=" + score)
 
                     local movementCosts = navigator.getCostForPath(_entity, settings, necroAP, _entity.getFatigueMax() - _entity.getFatigue());
 
@@ -262,8 +273,8 @@ local function corpseRepr(_corpse) {
                     if (movementCosts.IsComplete && !this.m.Skill.onVerifyTarget(movementCosts.End, t.Tile)) {
                         continue;
                     }
-                    // logInfo("raise: C" + n + " 5 score=" + score + " moveTo=" + tileStr(movementCosts.End));
-                    // Debug.log("movementCosts", movementCosts);
+                    if (debug) logInfo("raise: C" + n + " 5 score=" + score + " moveTo=" + tileStr(movementCosts.End));
+                    if (debug) Debug.log("movementCosts", movementCosts);
 
                     if (!movementCosts.IsComplete)
                     {
@@ -287,46 +298,45 @@ local function corpseRepr(_corpse) {
                     {
                         score = score - this.Const.AI.Behavior.RaiseUndeadMoveToBadTerrainPenalty * this.getProperties().EngageOnBadTerrainPenaltyMult;
                     }
-                    // logInfo("raise: C" + n + " 6 score=" + score)
+                    if (debug) logInfo("raise: C" + n + " 6 score=" + score)
 
                     if (this.getProperties().EngageOnBadTerrainPenaltyMult != 0.0)
                     {
                         score = score - movementCosts.End.TVLevelDisadvantage;
                     }
-                    // logInfo("raise: C" + n + " 7 score=" + score)
+                    if (debug) logInfo("raise: C" + n + " 7 score=" + score)
 
                     score = score - movementCosts.ActionPointsRequired;
-                    // logInfo("raise: C" + n + " 8 score=" + score)
+                    if (debug) logInfo("raise: C" + n + " 8 score=" + score)
                     score = score + movementCosts.End.Level;
-                    // logInfo("raise: C" + n + " 9 score=" + score)
+                    if (debug) logInfo("raise: C" + n + " 9 score=" + score)
                     local inAllyZOC = t.Tile.getZoneOfControlCount(_entity.getFaction());
                     score = score + inAllyZOC * this.Const.AI.Behavior.RaiseUndeadAllyZocBonus;
-                    // logInfo("raise: C" + n + " 10 score=" + score)
+                    if (debug) logInfo("raise: C" + n + " 10 score=" + score)
 
                     // Score will go only down from here, so can short-circuit
                     if (score <= bestCost) continue;
 
                     local danger = 0.0;
-                    local danger_intermediate = 0.0;
 
                     foreach( opponent in potentialDanger )
                     {
-                        // logInfo("raise: C" + n + "op 11 danger=" + danger + " opp=" + opponent.getName())
+                        if (debug) logInfo("raise: C" + n + "op 11 danger=" + danger + " opp=" + opponent.getName())
                         if (this.isAllottedTimeReached(time))
                         {
                             yield null;
                             time = this.Time.getExactTime();
                         }
-                        // logInfo("raise: C" + n + "op 12 danger=" + danger)
+                        if (debug) logInfo("raise: C" + n + "op 12 danger=" + danger)
 
                         if (!this.isRangedUnit(opponent))
                         {
-                            logInfo("raise: C" + n + "op 13 danger=" + danger)
+                            if (debug) logInfo("raise: C" + n + "op 13 danger=" + danger)
 
                             local d = this.queryActorTurnsNearTarget(opponent, movementCosts.End, _entity);
                             danger = danger + this.Math.maxf(0.0, 1.0 - d.Turns);
-                            // logInfo("raise: C" + n + "op 13 danger=" + danger)
-                            // ::std.Debug.log("d", d);
+                            if (debug) logInfo("raise: C" + n + "op 13 danger=" + danger)
+                            if (debug) Debug.log("d", d);
 
                             if (d.Turns <= 1.0)
                             {
@@ -339,7 +349,7 @@ local function corpseRepr(_corpse) {
                                     score = score - this.Const.AI.Behavior.RaiseUndeadHighDangerPenalty;
                                 }
                             }
-                            // logInfo("raise: C" + n + "op 14 score=" + score)
+                            if (debug) logInfo("raise: C" + n + "op 14 score=" + score)
                         }
                         else if (!opponent.getTile().hasZoneOfControlOtherThan(opponent.getAlliedFactions()) && opponent.getTile().getDistanceTo(movementCosts.End) <= opponent.getIdealRange())
                         {
@@ -348,7 +358,7 @@ local function corpseRepr(_corpse) {
                             local d = alliesOnEnd > 0 ? 0.5 : 1.0;
                             danger = danger + d;
 
-                            // logInfo("raise: C" + n + "op 15 danger=" + danger)
+                            if (debug) logInfo("raise: C" + n + "op 15 danger=" + danger)
                             if (alliesOnEnd == 0)
                             {
                                 score = score - this.Const.AI.Behavior.RaiseUndeadHighDangerPenalty;
@@ -357,19 +367,19 @@ local function corpseRepr(_corpse) {
                             {
                                 score = score - this.Const.AI.Behavior.RaiseUndeadLowDangerPenalty;
                             }
-                            // logInfo("raise: C" + n + "op 16 score=" + score)
+                            if (debug) logInfo("raise: C" + n + "op 16 score=" + score)
                         }
 
-                        // logInfo("raise: C" + n + "op 17 score=" + score + " danger=" + danger + " danger_intermediate="+danger_intermediate)
-                        if (danger >= this.Const.AI.Behavior.RaiseUndeadMaxDanger || danger_intermediate >= this.Const.AI.Behavior.RaiseUndeadMaxDanger)
+                        if (debug) logInfo("raise: C" + n + "op 17 score=" + score + " danger=" + danger)
+                        if (danger >= bigDanger)
                         {
                             score = -9999;
                             break;
                         }
-                        // logInfo("raise: C" + n + "op 18 score=" + score)
+                        if (debug) logInfo("raise: C" + n + "op 18 score=" + score)
                     }
 
-                    // logInfo("raise: C" + n + "op 20 score=" + score)
+                    if (debug) logInfo("raise: C" + n + "op 20 score=" + score)
                 }
                 else
                 {
@@ -378,51 +388,51 @@ local function corpseRepr(_corpse) {
             }
             else
             {
-                // logInfo("raise: C" + n + "op 21 score=" + score)
-                if (currentDanger >= this.Const.AI.Behavior.RaiseUndeadMaxDanger) break;
-                // logInfo("raise: C" + n + "op 22 score=" + score)
+                if (debug) logInfo("raise: C" + n + "op 21 score=" + score)
+                if (!isPlayer && currentDanger >= bigDanger) break;
+                if (debug) logInfo("raise: C" + n + "op 22 score=" + score)
 
-                if (!this.m.Skill.onVerifyTarget(myTile, t.Tile))
-                {
-                    continue;
-                }
+                if (!this.m.Skill.onVerifyTarget(myTile, t.Tile)) continue;
+
+                if (currentDanger >= bigDanger)
+                    score /= t.Distance * t.Distance * 0.5;
 
                 score = score + myTile.Level;
-                // logInfo("raise: C" + n + "op 23 score=" + score)
+                if (debug) logInfo("raise: C" + n + "op 23 score=" + score)
             }
 
             if (score > bestCost)
             {
                 bestTarget = t.Tile;
                 bestCost = score;
-                // bestTiles = tiles;
                 bestIntermediateTile = intermediateTile;
             }
         }
-        // ::std.Debug.log("raise: 8",
-        //     {bestTarget=bestTarget, bestCost=bestCost,
-        //      bestIntermediateTile=bestIntermediateTile}, 2);
+        if (debug) Debug.log("raise: 8",
+            {bestTarget=bestTarget, bestCost=bestCost,
+             bestIntermediateTile=bestIntermediateTile}, 2);
 
         if (bestTarget == null)
         {
             return this.Const.AI.Behavior.Score.Zero;
         }
-        // logInfo("raise: 9 " + scoreMult)
+        if (debug) logInfo("raise: 9 " + scoreMult)
 
         this.m.TargetTile = bestTarget;
         this.m.IsTravelling = !this.m.Skill.isInRange(this.m.TargetTile);
 
         if (this.m.IsTravelling && bestIntermediateTile != null && bestIntermediateTile.ID == myTile.ID)
         {
-            // logInfo("raise: 9.5 intermediateTile=" + tileStr(bestIntermediateTile) + " myTile=" + tileStr(myTile))
+            if (debug) logInfo("raise: 9.5 intermediateTile=" + tileStr(bestIntermediateTile) + " myTile=" + tileStr(myTile))
             return this.Const.AI.Behavior.Score.Zero;
         }
-        // logInfo("raise: 10 " + scoreMult)
+        if (debug) logInfo("raise: 10 " + scoreMult)
 
         scoreMult = scoreMult * (1.0 + bestTarget.Properties.get("Corpse").Value / 25.0);
-        // logInfo("raise: 11 " + scoreMult)
-        scoreMult = scoreMult * this.Math.maxf(0.0, 1.0 - currentDanger / this.Const.AI.Behavior.RaiseUndeadMaxDanger);
-        // logInfo("raise: 12 " + scoreMult)
+        if (debug) logInfo("raise: 11 " + scoreMult)
+        if (!isPlayer)
+            scoreMult = scoreMult * this.Math.maxf(0.0, 1.0 - currentDanger / bigDanger);
+        if (debug) logInfo("raise: 12 " + scoreMult)
         return this.Const.AI.Behavior.Score.RaiseUndead * scoreMult;
     }
 });
