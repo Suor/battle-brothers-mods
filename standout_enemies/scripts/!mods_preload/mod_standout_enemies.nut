@@ -986,6 +986,7 @@ Util.extend(Mod, {
                 logInfo("Died " + this.getName() + " quirk = " + this.m.se_Quirk.pp);
                 local corpse = _tile.Properties.get("Corpse");
                 corpse.se_Quirk <- this.m.se_Quirk;
+                corpse.Value *= corpse.se_Quirk.XPMult;
             }
         }
 
