@@ -1,3 +1,4 @@
+include .env
 SHELL := /bin/bash
 
 .ONESHELL:
@@ -22,4 +23,7 @@ cl:
 		echo "--------------------------- $$d ---------------------------------";
 		echo "$$CHANGES"
 	done
+
+log:
+	perl -nE 'say for m~class="text">(.*?)</div>~g' ${LOG_FILE} | less
 
