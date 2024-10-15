@@ -172,6 +172,7 @@
         "indomitable": 5
         "relentless": 5
         "nine_lives": 3
+        "crippling_strikes": 3
     }
 
     gambler = {
@@ -195,9 +196,8 @@
         "shield_expert": 2
         "dodge": 5
         "reach_advantage": 5
-        "lone_wolf": 3
+        "nine_lives": 3
         "fast_adaption": 2
-        "nine_lives": 1
     }
 
     gravedigger = {
@@ -234,6 +234,7 @@
         "mastery.bow": 12
         "mastery.crossbow": 5
         "mastery.throwing": 7
+        "lone_wolf": 3
     }
 
     juggler = {
@@ -303,7 +304,7 @@
 
     minstrel = {
         "taunt": 80
-        "rally_the_troops": 25
+        "rally_the_troops": 40
         "student": 25
         "fortified_mind": 25
     }
@@ -334,9 +335,8 @@
         "fortified_mind": 50
         "relentless": 15
         "hold_out": 5
-        "steel_brow": 20
+        "steel_brow": 25
         "student": 10
-        "fast_adaption": 3
     }
 
     peddler = {
@@ -386,6 +386,7 @@
         "pathfinder": 50
         "recover": 20
         "lone_wolf": 7
+        "fast_adaption": 4
     }
 
     retired_soldier = {
