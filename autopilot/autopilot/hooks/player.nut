@@ -1,6 +1,4 @@
 ::mods_hookExactClass("entity/tactical/player", function (cls) {
-    cls.isUnderAIControl <- function() {return "_autopilot" in m}
-
     cls.enableAIControl <- function() {
         m._oldAgent <- getAIAgent();
         local mode = m._autopilot <- {ranged = false, throwing = false};
@@ -124,7 +122,7 @@
     }
 
     cls.cancelAIControl <- function() {
-        if (!isUnderAIControl()) return;
+        if (!::Autopilot.isUnderAIControl(this)) return;
 
         local agent = getAIAgent();
         if(agent.ClassName != "player_agent")

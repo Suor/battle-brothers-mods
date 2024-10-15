@@ -79,7 +79,7 @@
             return;
         }
 
-        if ("isUnderAIControl" in e && e.isUnderAIControl()) {
+        if (::Autopilot.isUnderAIControl(e)) {
             local pos = Tactical.TurnSequenceBar.getTurnPosition();
 
             this.m.autopilot_IsInputLocked = true;

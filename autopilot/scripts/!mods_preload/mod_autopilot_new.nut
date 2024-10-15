@@ -7,6 +7,7 @@ local mod = ::Autopilot <- {
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/autopilot"
         tagPrefix = "autopilot-new-"
     }
+    function isUnderAIControl(_actor) {return "_autopilot" in _actor.m}
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);

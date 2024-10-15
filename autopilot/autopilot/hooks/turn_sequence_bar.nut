@@ -82,7 +82,7 @@
 
     cls.cancelAutoActions <- function (cancelIgnorance = true) {
         foreach (e in m.AllEntities) {
-            if (e.isPlayerControlled() || "isUnderAIControl" in e && e.isUnderAIControl()) {
+            if (e.isPlayerControlled() || ::Autopilot.isUnderAIControl(e)) {
                 if (cancelIgnorance) e.m._isIgnored <- false;
                 e.clearAutoSkills();
                 e.setSkipTurn(false);
