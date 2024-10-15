@@ -65,11 +65,6 @@
             agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_throw_net"));
         }
 
-        // AC (Accessory Companions)
-        if (this.getSkills().hasSkill("actives.companions_tame")) {
-            agent.addBehavior(this.new("scripts/ai/autopilot_tame"));
-        }
-
         // Military agents don't have this
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_disengage"));
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_adrenaline"));
@@ -98,18 +93,30 @@
         // reduce the chance of friendly fire, affects ranged in a weird manner
         // agent.m.Properties.TargetPriorityHittingAlliesMult *= 0.2;
 
-        this.getSkills().onSetupAI(agent); // Our new event
-
-        // Autodetect ranged-like bros, i.e. no hide behind them and more disengage
-        local hasMelee = agent.findBehavior(::Const.AI.Behavior.ID.EngageMelee);
-        local hasRanged = agent.findBehavior(::Const.AI.Behavior.ID.EngageRanged);
-        logInfo("ap: " + this.getName() + " melee=" + hasMelee + " ranged=" + hasRanged)
-        if (hasRanged && !hasMelee) {
-            logInfo("ap: mode ranged")
-            mode.ranged = true;
+        // AC (Accessory Companions)
+        if (this.getSkills().hasSkill("actives.companions_tame")) {
+            agent.addBehavior(this.new("scripts/ai/autopilot_tame"));
         }
 
-        // "actives.raise_companion"
+        // Necromancers
+        local necroSkills = [
+            "actives.raise_undead"
+            "actives.possess_undead"
+            "actives.raise_companion" // AC
+        ]
+        local skills = getSkills()
+        if (::std.Array.any(necroSkills, @(s) skills.hasSkill(s))) {
+            ::logInfo("ap: setting up a necro")
+            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_raise_undead"));
+            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_possess_undead"));
+            // This adds keep safe distance behavior
+            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_engage_ranged"));
+
+            agent.removeBehavior(::Const.AI.Behavior.ID.Protect);
+
+            agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.EngageMelee] = 0.2;
+            agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.RaiseUndead] = 3.0;
+        }
 
         agent.finalizeBehaviors();
         agent.setActor(this);
