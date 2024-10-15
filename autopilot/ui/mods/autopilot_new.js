@@ -89,6 +89,17 @@ TacticalScreenTurnSequenceBarModule.prototype.showStatsPanel = function (_show, 
     AutopilotNew.TacticalScreenTurnSequenceBarModule_showStatsPanel.call(this, _show, true);
 }
 
+
+AutopilotNew.TacticalScreenTurnSequenceBarModule_showEntityStatusEffectbar
+    = TacticalScreenTurnSequenceBarModule.prototype.showEntityStatusEffectbar;
+TacticalScreenTurnSequenceBarModule.prototype.showEntityStatusEffectbar = function (_show) {
+    if (!_show) this.notifyStatusEffectTooltipsToHide();
+
+    // The original function uses animation and forgets to toggle class in the end.
+    this.mStatusEffectsContainer.css({ opacity: _show ? 1 : 0 });
+    this.mStatusEffectsContainer.toggleClass("display-block", _show).toggleClass("display-none", !_show);
+};
+
 // New Functions:
 TacticalScreenTurnSequenceBarModule.prototype.setWaitTurnAllButtonVisible = function (_visible)
 {
