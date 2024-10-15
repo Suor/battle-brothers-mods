@@ -42,6 +42,16 @@ mod.queue(function() {
     ::Hooks.registerCSS("ui/mods/necro.css");
     ::include("necro/tactical_state");
 
+    // Allow origin to adjust hiring and tryout cost on per bro basis
+    mod.hook("scripts/entity/tactical/player", function (q) {
+        q.getHiringCost = q.getTryoutCost = @(__original) function () {
+            local cost = __original();
+            local origin = ::World.Assets.getOrigin();
+            return "getBroCostMult" in origin
+                ? ::Math.floor(cost * origin.getBroCostMult(this)) : cost;
+        }
+    })
+
     // Summon necros in swamp, tundra settlements and medium/large too
     mod.hookTree("scripts/entity/world/settlement", function (q) {
         local num = 0;
