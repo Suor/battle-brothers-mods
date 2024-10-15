@@ -26,23 +26,15 @@ local def = ::Necro <- {
     }
 }
 
-    // if (::Hooks.hasMod("mod_msu")) {
-    //     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("mod_msu >= 1.6.0", "stdlib >= 2.1");
 mod.queue(function() {
+    def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
 
-    //     mod.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods,
-    //         "https://www.nexusmods.com/battlebrothers/mods/772");
-    //     if ("GitHubTags" in ::MSU.System.Registry.ModSourceDomain) {
-    //         mod.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHubTags,
-    //             "https://github.com/Suor/battle-brothers-mods/tree/master/necro");
-    //         mod.Mod.Registry.setUpdateSource(
-    //             ::MSU.System.Registry.ModSourceDomain.GitHubTags,
-    //             {Prefix = "necro-"}
-    //         );
-    //     }
-    // }
+    local msd = ::MSU.System.Registry.ModSourceDomain, upd = def.Updates;
+    def.msu.Registry.addModSource(msd.NexusMods, upd.nexus);
+    def.msu.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
+    def.msu.Registry.setUpdateSource(msd.GitHubTags);
 
     ::MSU.Skills.addEvent("onRaiseUndead", function (_undead) {});//, false, true);
 
@@ -164,10 +156,3 @@ mod.queue(function() {
         q.m.IsRemovedAfterBattle = true;
     })
 })
-
-// TODO: switch to GithubTags from MSU 1.6.0
-hmod.queue(">msu", function () {
-     if (!("MSU" in getroottable())) return;
-    ::include("necro/hack_msu");
-    ::HackMSU.setup(mod, mod.Updates);
-});
