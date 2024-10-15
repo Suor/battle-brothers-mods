@@ -2,7 +2,7 @@
 local def = ::Necro <- {
     ID = "mod_necro"
     Name = "Proper Necro"
-    Version = "0.2.1"
+    Version = "0.3.0"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/775"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/necro"

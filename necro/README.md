@@ -2,35 +2,24 @@
 
 Following the idea of [Recrutable Necromancer](old) this adds a Necromancer background, who can raise undead and possess them.
 
-In an addition of simply having a guy who can raise and possess undead this mod:
-
-- raise undead requires more AP and Fatigue, also have limited range to balance it a bit
-- prevent loosing loot on friendly zombies
-- XP not lost anymore, count kills and damage from zombies as their master's
+- gradually tap into the craft of controlling the undead via special perks
+- pure mage and mage/fighter hybrid necromancer builds
+- a dedicated origin
+- loot and XP not lost anymore when zombie kills
 
 Plans:
 
-- make Necro gain power gradually via special perks:
-    - Necromastery (AP/Fatigue)
-    - Possess as perk
-    - Mind Meld (share perks with zombies)
-    - Double Raise Undead range
-    - Zombie skills:
-        - Regeneration
-        - Blood Sucking
-    - Flesh of Iron (restore some armor on raise)
-    - Soul Link (share damage with random zombie)
-- remove some perks from Necro tree
-- check Necro morale when possesed is hit/killed
-- a Necromancer origin
+- check Necro morale when a possesed is hit/killed
 - an event with Undead raise to start chopping their heads
+- more events
+- special mechanics for origin or all necros
 
 
 ## Compatibility
 
 Is safe to add midgame, can't remove once you have these guys anywhere including city hiring rosters. Compatible with most other mods.
 
-Will work with [Autopilot New][autopilot] >= 2.4.0.
+Will play nice with [Autopilot New][autopilot] >= 2.4.0.
 
 
 ## Install
