@@ -10,14 +10,19 @@ local mod = ::Necro <- {
     }
     FakeKill = false
 
-    function restoreArmor(_actor, _part, _pct) {
+    // Q: rename to addArmorPct() ?
+    function restoreArmorPct(_actor, _part, _pct) {
         local slot = _part == "head" ? ::Const.ItemSlot.Head : ::Const.ItemSlot.Body;
         local piece = _actor.m.Items.getItemAtSlot(slot);
-        if (piece) {
-            local armor = piece.getArmor();
-            local armorMax = piece.getArmorMax();
-            piece.setArmor(::Math.min(armorMax,  armor + (armorMax - armor) * _pct));
-        }
+        ::logInfo("necro: restore piece " + piece);
+        if (!piece) return false;
+
+        ::logInfo("necro: restore " + _part);
+        local armor = piece.getArmor(), armorMax = piece.getArmorMax();
+        if (armor >= armorMax) return false;
+        ::logInfo("necro: restore setArmor");
+        piece.setArmor(::Math.min(armorMax,  armor + armorMax * _pct));
+        return true;
     }
 }
 
@@ -38,9 +43,10 @@ hmod.queue(function() {
     //     }
     // }
 
-    // ::Hooks.registerJS("ui/mods/necro.js");
-    // ::Hooks.registerCSS("ui/mods/necro.css");
+    ::MSU.Skills.addEvent("onRaiseUndead", function (_undead) {});//, false, true);
 
+    ::Hooks.registerJS("ui/mods/necro.js");
+    ::Hooks.registerCSS("ui/mods/necro.css");
     ::include("necro/tactical_state");
 
     // Summon necros in swamp, tundra settlements and medium/large too
@@ -89,22 +95,8 @@ hmod.queue(function() {
             // Track necro and original faction
             if ("necro_master" in _info) {
                 this.m.necro_master <- _info.necro_master;
+                this.m.necro_master.getSkills().onRaiseUndead(this);
             }
-
-            // // Future Flesh of Iron perk
-            // mod.restoreArmor(this, "head", 0.333);
-            // mod.restoreArmor(this, "body", 0.333);
-            // this.getSkills().update();
-
-            // TODO: regeneration, life steal?
-
-            // local b = this.m.BaseProperties;
-            // b.MeleeSkill += 50;
-            // b.RangedSkill += 50;
-            // b.DamageTotalMult *= 5;
-            // b.MeleeDefense += 50;
-            // b.RangedDefense += 50;
-            // b.HitpointsMult *= 5;
         }
 
         q.necro_hasMaster <- function () {return "necro_master" in this.m}
@@ -140,38 +132,31 @@ hmod.queue(function() {
         }
     })
 
-    // if (!("DynamicPerks" in getroottable())) ::DynamicPerks <- "placeholder to fool mod_plan_perks";
-    // // Add perk tree to bros data
-    // hmod.hook("scripts/ui/global/data_helper", function (q) {
-    //     local function set(...) {
-    //         local s = {};
-    //         foreach (c in vargv) s[c] <- true;
-    //         return s;
-    //     }
-    //     local allowedMasteries = set(
-    //         "perk.mastery.mace"
-    //         "perk.mastery.cleaver"
-    //         "perk.mastery.dagger"
-    //         "perk.mastery.polearm"
-    //         "perk.mastery.crossbow"
-    //     )
+    if (!("DynamicPerks" in getroottable())) ::DynamicPerks <- "placeholder to fool mod_plan_perks";
+    // Add perk tree to bros data
+    mod.hook("scripts/ui/global/data_helper", function (q) {
+        local allowedMasteries = {};
+        foreach (w in ["mace" "cleaver" "sword" "dagger" "polearm" "crossbow" "throwing"])
+            allowedMasteries["perk.mastery." + w] <- true;
 
-    //     q.convertEntityToUIData = @(__original) function(_entity, _activeEntity)
-    //     {
-    //         local result = __original(_entity, _activeEntity);
-    //         if (_entity != null && _entity.getSkills().hasSkill("background.necro")) {
-    //             local perks = clone ::Const.Perks.Perks;
-    //             perks[1] = clone perks[1];
-    //             perks[1].push(::Const.Perks.LookupMap["perk.necro.flesh_of_iron"]);
-    //             perks[3] = perks[3].filter(@(_, p) p.ID in allowedMasteries);
-    //             perks[3].push(::Const.Perks.LookupMap["perk.necro.mastery"])
-    //             result.necro_perkTree <- perks;
-    //         } else {
-    //             result.necro_perkTree <- ::Const.Perks.Perks;
-    //         }
-    //         return result;
-    //     }
-    // });
+        q.convertEntityToUIData = @(__original) function(_entity, _activeEntity)
+        {
+            local result = __original(_entity, _activeEntity);
+            if (_entity != null && _entity.getSkills().hasSkill("background.necro")) {
+                local perks = ::Const.Perks.Perks.map(@(row) clone row);
+                perks[2] = perks[2].filter(@(_, p) p.ID != "perk.taunt");
+                perks[3] = perks[3].filter(@(_, p) p.ID in allowedMasteries);
+                perks[5] = perks[5].filter(@(_, p) p.ID != "perk.battle_forged");
+                foreach (perk in ::Const.Perks.Necro) {
+                    perks[perk.Row].push(perk);
+                }
+                result.necro_perkTree <- perks;
+            } else {
+                result.necro_perkTree <- ::Const.Perks.Perks;
+            }
+            return result;
+        }
+    });
 
     hmod.hook("scripts/skills/effects/possessing_undead_effect", function (q) {
         q.m.IsRemovedAfterBattle = true;

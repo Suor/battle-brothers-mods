@@ -11,11 +11,6 @@ this.necro_raise_undead <- this.inherit("scripts/skills/actives/raise_undead", {
         this.m.FatigueCost = 20;    // Need to stay fit :)
         this.m.MinRange = 1;
         this.m.MaxRange = 4; // Not 99 anymore
-
-        // // DEBUG
-        // this.m.ActionPointCost = 4;
-        // this.m.FatigueCost = 15;
-        // this.m.MaxRange = 8;
     }
 
     function getTooltip() {
@@ -35,11 +30,25 @@ this.necro_raise_undead <- this.inherit("scripts/skills/actives/raise_undead", {
                 type = "text",
                 text = this.getCostString()
             }
+            {
+                id = 6,
+                type = "text",
+                icon = "ui/icons/vision.png",
+                text = "Has a range of " + ::std.Text.positive(this.getMaxRange())
+            }
         ];
     }
 
-    function spawnUndead( _user, _tile )
-    {
+    function onAfterUpdate(_properties) {
+        local hasMastery = this.getContainer().hasSkill("perk.necro.mastery");
+        this.m.ActionPointCost = hasMastery ? 4 : 5;
+        this.m.FatigueCost = hasMastery ? 15 : 20;
+
+        local hasRange = this.getContainer().hasSkill("perk.necro.range");
+        if (hasRange) this.m.MaxRange *= 2;
+    }
+
+    function spawnUndead(_user, _tile) {
         local p = _tile.Properties.get("Corpse");
         // Leave our mark
         p.necro_master <- ::MSU.asWeakTableRef(_user);
@@ -47,7 +56,6 @@ this.necro_raise_undead <- this.inherit("scripts/skills/actives/raise_undead", {
         // Raise as an animal, i.e. no control
         if (p.Faction == ::Const.Faction.Player) p.Faction = ::Const.Faction.PlayerAnimals;
         local e = this.Tactical.Entities.onResurrect(p, true);
-        ::logInfo("necro: spawnUndead e=" + e);
         if (e == null) return
 
         e.getSprite("socket").setBrush(_user.getSprite("socket").getBrush().Name);
