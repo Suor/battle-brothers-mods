@@ -81,10 +81,6 @@
         // Only works because we overwrite break_free.onEvaluate()
         agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.BreakFree] = 2.5;
 
-        // Look at this for bros having scare stuff
-        // TargetPriorityMoraleMult = 0.0,
-        // TargetPriorityBraveryMult = 0.0,
-
         // Should not be needed as long as we set IsControlledByPlayer to true
         agent.removeBehavior(Const.AI.Behavior.ID.Retreat); // retreat is always chosen for players if available, so remove it
 
@@ -134,7 +130,7 @@
         // Return control
         // this.m.IsControlledByPlayer = true;
         delete m._oldAgent;
-        delete this.m._autopilot;
+        delete m._autopilot;
     }
 
     local onDeath = cls.onDeath;

@@ -1,4 +1,5 @@
 local mod = ::Hooks.getMod("mod_autopilot_new");
+local Actor = ::std.Actor;
 
 // Fix crash with skill loosing container,
 // happens when actor looses a skill while evaluating possible targets,
@@ -15,13 +16,9 @@ local mod = ::Hooks.getMod("mod_autopilot_new");
 
 // Fix crash after ranged actor killing somebody or enemy dying while ranged actor is thinking
 ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_ranged", function (cls) {
-    local function isRelevant(_actor) {
-        return !_actor.isNull() && !_actor.m.IsDying && _actor.m.IsAlive;
-    }
-
     local function cleanup(_b) {
-        _b.m.ValidTargets = _b.m.ValidTargets.filter(@(_, t) isRelevant(t.Actor));
-        _b.m.PotentialDanger = _b.m.PotentialDanger.filter(@(_, a) isRelevant(a));
+        _b.m.ValidTargets = _b.m.ValidTargets.filter(@(_, t) Actor.isAlive(t.Actor));
+        _b.m.PotentialDanger = _b.m.PotentialDanger.filter(@(_, a) Actor.isAlive(a));
     }
 
     // The problem with this is while we go through tiles a target might become invalid,

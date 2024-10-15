@@ -36,7 +36,10 @@ registerBehavior("AP_Tame", "Tame", 38, 600);
         "actives.gae_dearg_thrust"
         // Fantasy Brothers
         "actives.xxitem_leftsaa_skill" // Dual Attack
-        // "actives.xx_a" // Looks like it's already added
+        // "actives.xxitem_deadbookaa_skill" // Death Ritual, isUsable not defined
+        // Looks like these are already added
+        // "actives.xx_a" // Cut with Ring blade
+        // "actives.xx_b" // Throw Ring blade
     ]);
 });
 ::mods_hookExactClass("ai/tactical/behaviors/ai_attack_split", function (cls) {
