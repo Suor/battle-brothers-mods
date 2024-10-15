@@ -1,5 +1,5 @@
 // ::Hooks.DebugMode = true;
-local mod = ::Necro <- {
+local def = ::Necro <- {
     ID = "mod_necro"
     Name = "Proper Necro"
     Version = "0.2.1"
@@ -26,10 +26,11 @@ local mod = ::Necro <- {
     }
 }
 
-local hmod = ::Hooks.register(mod.ID, mod.Version, mod.Name);
-hmod.queue(function() {
     // if (::Hooks.hasMod("mod_msu")) {
     //     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
+local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
+mod.require("mod_msu >= 1.6.0", "stdlib >= 2.1");
+mod.queue(function() {
 
     //     mod.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods,
     //         "https://www.nexusmods.com/battlebrothers/mods/772");
@@ -50,7 +51,7 @@ hmod.queue(function() {
     ::include("necro/tactical_state");
 
     // Summon necros in swamp, tundra settlements and medium/large too
-    hmod.hookTree("scripts/entity/world/settlement", function (q) {
+    mod.hookTree("scripts/entity/world/settlement", function (q) {
         local num = 0;
         if (q.ClassName.find("_swamp_") != null || q.ClassName.find("_tundra_") != null) num++;
         if (q.ClassName.find("large_") != null) num++;
@@ -62,7 +63,7 @@ hmod.queue(function() {
         }
     })
     // Summon necros during cultist event
-    hmod.hook("scripts/entity/world/settlements/situations/cultist_procession_situation",
+    mod.hook("scripts/entity/world/settlements/situations/cultist_procession_situation",
             function (q) {
         q.onUpdateDraftList = @(__original) function (_draftList) {
             __original(_draftList);
@@ -71,20 +72,20 @@ hmod.queue(function() {
     })
 
     // Necromancer should get XP and kills from his zombies, but should not activate on kill effects
-    hmod.hookTree("scripts/skills/skill", function (q) {
+    mod.hookTree("scripts/skills/skill", function (q) {
         q.onTargetKilled = @(__original) function (_targetEntity, _skill) {
             // If this is a fake kill for necro then only collect stats
-            if (!mod.FakeKill || this.m.ID == "special.stats_collector") {
+            if (!def.FakeKill || this.m.ID == "special.stats_collector") {
                 return __original(_targetEntity, _skill);
             }
         }
     })
-    hmod.hook("scripts/entity/tactical/actor", function (q) {
+    mod.hook("scripts/entity/tactical/actor", function (q) {
         q.onActorKilled = @(__original) function(_actor, _tile, _skill) {
             if ("necro_master" in this.m && !this.m.necro_master.isNull()) {
-                mod.FakeKill = true;
+                def.FakeKill = true;
                 this.m.necro_master.onActorKilled(_actor, _tile, _skill);
-                mod.FakeKill = false;
+                def.FakeKill = false;
             }
             __original(_actor, _tile, _skill);
         }
@@ -103,7 +104,7 @@ hmod.queue(function() {
     })
 
     // Want to get loot when zombies raised by us, so that necromancer won't be a loot destroyer
-    hmod.hook("scripts/items/item_container", function (q) {
+    mod.hook("scripts/items/item_container", function (q) {
         q.dropAll = @(__original) function(_tile, _killer, _flip = false) {
             ::logInfo("necro: in hooked dropAll");
             if (this.m.Actor.necro_hasMaster()) {
@@ -158,7 +159,8 @@ hmod.queue(function() {
         }
     });
 
-    hmod.hook("scripts/skills/effects/possessing_undead_effect", function (q) {
+    // If not removed we cannot possess at the start of next battle
+    mod.hook("scripts/skills/effects/possessing_undead_effect", function (q) {
         q.m.IsRemovedAfterBattle = true;
     })
 })
