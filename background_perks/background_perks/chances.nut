@@ -531,3 +531,16 @@
     "gifted": 33
     "fearsome": 20
 }
+
+// Proper Necromancer
+::BgPerks.chances.necro <- {
+    "fortified_mind": 10
+    "mastery.dagger": 5
+    "fearsome": 2
+    "lone_wolf": 7
+    "hacflows.bloody_harvest": 1
+    "necro.regeneration": 5
+    "necro.blood_sucking": 5
+    "necro.mind_meld": 3
+    "necro.soul_link": 3
+}
