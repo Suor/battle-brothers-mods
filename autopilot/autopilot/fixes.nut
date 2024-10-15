@@ -1,3 +1,5 @@
+local mod = ::Hooks.getMod("mod_autopilot_new");
+
 // Fix crash with skill loosing container,
 // happens when actor looses a skill while evaluating possible targets,
 // i.e. weapon breaks as a result of previous attack delayed calc.
@@ -55,6 +57,7 @@
     // This makes 2-tile bros start to hide behind such guy :)
     local isRangedUnit = cls.isRangedUnit;
     cls.isRangedUnit = function (_entity) {
+        if (typeof _entity == "instance" && _entity.isNull()) return false;
         if ("_autopilot" in _entity.m) return _entity.m._autopilot.ranged;
         return isRangedUnit(_entity);
     }
@@ -88,3 +91,105 @@
         return getBestTarget(mock, _skill, _targets);
     }
 })
+
+
+// The great delayed melee kill fix.
+// Same problem as with ranged kill, but the fix is more complicated - we wrap all the known
+// opponents and allies into special WeakTableRef descendant, which will save the day when
+// some code will try to access bad actor.
+mod.hook("scripts/ai/tactical/strategy", function (q) {
+    q.onOpponentSighted = @(__original) function (_entity) {
+        __original(ActorRef(_entity));
+    }
+})
+mod.hook("scripts/ai/tactical/agent", function (q) {
+    q.compileKnownAllies = @(__original) function () {
+        __original();
+        this.m.KnownAllies = this.m.KnownAllies.map(@(e) ::ActorRef(e));
+    }
+})
+
+// local debugSkills = [
+//     "actives.xxitem_leftsaa_skill"
+//     "actives.cascade"
+// ]
+
+mod.hook("scripts/ai/tactical/behavior", function (q) {
+    // q.selectSkill = @(__original) function (_potentialSkills) {
+    //     local entity = this.getAgent().getActor();
+    //     foreach (sid in debugSkills) {
+    //         if (_potentialSkills.find(sid) == null) continue;
+
+    //         local skill = entity.getSkills().getSkillByID(sid);
+    //         if (skill != null && skill.isUsable() && skill.isAffordable()) return skill;
+    //     }
+    //     return __original(_potentialSkills);
+    // }
+    q.queryTargetValue = @(__original) function (_entity, _target, _skill = null) {
+        if (!Actor.isValidTarget(_target)) return 0;
+        return __original(_entity, _target, _skill);
+    }
+    q.queryActorTurnsNearTarget = @(__original) function (_actor, _target, _entity) {
+        if (!Actor.isValidTarget(_actor) || !Actor.isValidTarget(_entity)) return {
+            Turns = 9000.0
+            TurnsWithAttack = 9000.0
+            InZonesOfControl = false
+            InZonesOfOccupation = false
+        }
+        return __original(_actor, _target, _entity)
+    }
+})
+
+// local r_LastId = 0;
+local function getBound(_actor, _index) {
+    local result = _actor[_index];
+    if (typeof result == "function") result = result.bindenv(_actor);
+    return result;
+}
+::ActorRef <- class extends WeakTableRef {
+    r_Suffix = "<not-set>";
+
+    constructor(_obj) {
+        if (typeof _obj == "instance" && _obj instanceof ::WeakTableRef) {
+            _obj = _obj.get()
+        }
+        if (_obj != null && typeof _obj != "table") throw "Passed something unexpected here";
+        if (_obj != null) {
+            this.WeakTable = _obj.weakref();
+            // if (!("r_Id" in _obj)) _obj.r_Id <- ++r_LastId;
+            this.r_Suffix = " of " + _obj.getName();// + " " + _obj.r_Id;
+        }
+    }
+
+    function _get(_index) {
+        if (_index in this) return this[_index];
+        else if (this.WeakTable == null) {
+            if (_index in ::ActorFake) {
+                ::logWarning("autopilot: null ActorRef, saving " + _index + this.r_Suffix);
+                return getBound(::ActorFake, _index);
+            }
+            ::logWarning("autopilot: null ActorRef, crashing " + _index + this.r_Suffix);
+            throw "null ActorRef, index = " + _index + this.r_Suffix;
+        }
+        else {
+            if (_index == "getTile" && !this.WeakTable.isPlacedOnMap()) {
+                ::logWarning("autopilot: bad ActorRef, saving " + _index + this.r_Suffix);
+                return getBound(::ActorFake, _index);
+            }
+            return getBound(this.WeakTable, _index);
+        }
+    }
+}
+::ActorFake <- {
+    function getTile() {return ::Tactical.getTileSquare(0, 0)}
+    function isAlive() {return false}
+    function isDying() {return true}
+    function isPlacedOnMap() {return false}
+    function getAlliedFactions() {return []}
+    function getMoraleState() {return ::Const.MoraleState.Fleeing}
+    function getAIAgent() {
+        return {
+            function getEngagementsDeclared(_entity) {return 0}
+        }
+    }
+}
