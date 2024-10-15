@@ -9,8 +9,11 @@ local function corpseRepr(_corpse) {
 }
 
 ::mods_hookExactClass("ai/tactical/behaviors/ai_raise_undead", function (cls) {
-    cls.onEvaluate = function (_entity)
-    {
+    cls.m.PossibleSkills.extend([
+        "actives.raise_companion" // AC
+    ]);
+
+    cls.onEvaluate = function (_entity) {
         // Function is a generator.
         this.m.Skill = null;
         this.m.TargetTile = null;
@@ -435,4 +438,4 @@ local function corpseRepr(_corpse) {
         if (debug) logInfo("raise: 12 " + scoreMult)
         return this.Const.AI.Behavior.Score.RaiseUndead * scoreMult;
     }
-});
+})
