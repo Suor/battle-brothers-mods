@@ -146,6 +146,21 @@
         cancelAIControl();
         if("_isIgnored" in m) delete m._isIgnored;
         onCombatFinished();
+
+        foreach (skill in getSkills().m.Skills) {
+            if (skill.m.IsRemovedAfterBattle) {
+                ::logInfo("autopilot: Skill " + skill.getID() + " should be removed, garbage = "
+                    + skill.isGarbage());
+            }
+        }
+
+        // getSkills().removeByID("effects.hex_slave");
+        // getSkills().removeByID("effects.charmed");
+        // local charmed = this.getSkills().getSkillByID("effects.charmed");
+        // if (charmed) {
+            // actor.setFaction(this.m.OriginalFaction);
+            // actor.getFlags().set("Charmed", false);
+        // }
     }
 
     cls.querySwitchableItems <- function() {
