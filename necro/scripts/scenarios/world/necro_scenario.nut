@@ -72,7 +72,7 @@ this.necro_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
         for (local i = 0; i < 3; i++) {
             local meat = roster.create("scripts/entity/tactical/player");
             meat.setStartValuesEx(this.m.MeatBackgrounds);
-            meat.setPlaceInFormation(4 + i);
+            meat.setPlaceInFormation(3 + i);
         }
     }
 
@@ -163,7 +163,7 @@ this.necro_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
     }
 
     function onHired(_bro) {
-        _bro.worsenMood(1.0, "Disgrunted by undead");
+        _bro.worsenMood(1.0, "Disgruntled by undead");
     }
 
     function onUpdateDraftList(_list) {
