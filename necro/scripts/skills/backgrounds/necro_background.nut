@@ -44,11 +44,17 @@ this.necro_background <- this.inherit("scripts/skills/backgrounds/character_back
                 id = 1,
                 type = "title",
                 text = this.getName()
-            },
+            }
             {
                 id = 2,
                 type = "description",
                 text = this.getDescription()
+            }
+            {
+                id = 10,
+                type = "text",
+                icon = "ui/icons/morale.png",
+                text = "No morale check triggered upon allies dying"
             }
         ];
     }
@@ -93,6 +99,11 @@ this.necro_background <- this.inherit("scripts/skills/backgrounds/character_back
         this.character_background.onAdded();
         this.m.Container.add(::new("scripts/skills/actives/necro_raise_undead"));
         // Possess is available via perk now
+    }
+
+    function onUpdate( _properties )
+    {
+        _properties.IsAffectedByDyingAllies = false;
     }
 
     function onAddEquipment()
