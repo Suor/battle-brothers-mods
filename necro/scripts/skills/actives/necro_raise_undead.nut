@@ -4,8 +4,9 @@ this.necro_raise_undead <- this.inherit("scripts/skills/actives/raise_undead", {
     function create() {
         this.raise_undead.create()
         this.m.Description = "Raises a corpse to fight for you as undead."
-                           + "Will attack your enemies but otherwise cannot really be controlled."
+                           + " Will attack your enemies but otherwise cannot really be controlled."
         this.m.IconDisabled = "skills/active_26_sw.png";
+        this.m.Order = ::Const.SkillOrder.Any + 75;
         this.m.SoundVolume = 1.5;   // More loud
         this.m.ActionPointCost = 5; // Cannot raise three in a single turn anymore
         this.m.FatigueCost = 20;    // Need to stay fit :)
@@ -34,7 +35,7 @@ this.necro_raise_undead <- this.inherit("scripts/skills/actives/raise_undead", {
                 id = 6,
                 type = "text",
                 icon = "ui/icons/vision.png",
-                text = "Has a range of " + ::std.Text.positive(this.getMaxRange())
+                text = "Has a range of " + ::std.Text.positive(this.getMaxRange()) + " tiles"
             }
         ];
     }

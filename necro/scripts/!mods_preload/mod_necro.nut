@@ -167,4 +167,13 @@ mod.queue(function() {
     mod.hook("scripts/skills/effects/possessing_undead_effect", function (q) {
         q.m.IsRemovedAfterBattle = true;
     })
+    // Fill in missing description
+    mod.hook("scripts/skills/actives/possess_undead_skill", function (q) {
+        q.create = @(__original) function() {
+            __original();
+            this.m.Order = ::Const.SkillOrder.Any + 76;
+            this.m.Description
+                = "Possess an undead giving it extra speed, skill, defense and damage tolerance.";
+        }
+    })
 })
