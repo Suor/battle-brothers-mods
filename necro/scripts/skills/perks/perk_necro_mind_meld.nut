@@ -1,5 +1,7 @@
 this.perk_necro_mind_meld <- this.inherit("scripts/skills/skill", {
-    m = {}
+    m = {
+        Skip = null
+    }
     function create() {
         this.m.ID = "perk.necro.mind_meld";
         local perk = ::Const.Perks.LookupMap[this.m.ID];
@@ -10,6 +12,17 @@ this.perk_necro_mind_meld <- this.inherit("scripts/skills/skill", {
 
         this.m.Type = this.Const.SkillType.Perk;
         this.m.Order = this.Const.SkillOrder.Perk;
+
+        this.m.Skip = [
+            "perk.gifted"
+            "perk.nimble"
+            "perk.battle_forged"
+            // Medium Armor perks
+            "perk.hackflows.stabilized" // Hackflow's Perks
+            "perk.stabilized"           // mod_stabilized
+            "perk.rf_poise"             // Reforged
+            "perk.lithe"                // True Balance
+        ]
     }
 
     function onRaiseUndead(_undead) {
@@ -22,7 +35,8 @@ this.perk_necro_mind_meld <- this.inherit("scripts/skills/skill", {
         // }
 
         foreach (skill in this.getContainer().getAllSkillsOfType(::Const.SkillType.Perk)) {
-            if (skill.m.ID == "perk.gifted" || skill.m.ID.find("perk.necro.") != null) continue;
+            if (this.m.Skip.find(skill.m.ID) != null || skill.m.ID.find("perk.necro.") != null)
+                continue;
             local script = IO.scriptFilenameByHash(skill.ClassNameHash);
             ::logInfo("necro: to meld " + script);
             _undead.m.Skills.add(::new(script))
