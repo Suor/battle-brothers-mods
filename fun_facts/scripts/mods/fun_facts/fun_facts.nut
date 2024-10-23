@@ -65,7 +65,6 @@ this.fun_facts <- {
                 // calc = @() ref.filter(@(_, c) c.Effects.find("effects.drunk") != null).len()
                 function calc() {
                     value = 0;
-                    ::std.Debug.log("SkippedDrunk calc", ref);
                     foreach (record in ref) onCombatSkipped(record);
                     return value;
                 }
