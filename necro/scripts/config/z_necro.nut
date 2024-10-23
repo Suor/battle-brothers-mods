@@ -54,7 +54,7 @@ addPerk({
 addPerk({
     ID = "perk.necro.blood_sucking"
     Script = "scripts/skills/perks/perk_necro_blood_sucking"
-    Name = "Blood Sucking"
+    Name = "Blood Suckers"
     Tooltip = "Give your undead blood sucking ability."
     Icon = "necro/perk_blood_sucking.png"
     IconDisabled = "necro/perk_blood_sucking_sw.png"
@@ -75,7 +75,7 @@ addPerk({
     Name = "Flesh of Iron"
     Tooltip = "Iron is another dead matter."
             + " Partially restores armor when raising undead."
-            + " Continues to do so if you also have Undead Regeneration."
+            + "\n\nContinues to do so if you also have Undead Regeneration."
     Icon = "necro/perk_flesh_of_iron.png"
     IconDisabled = "necro/perk_flesh_of_iron_sw.png"
     Row = 5
