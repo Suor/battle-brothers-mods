@@ -1,18 +1,8 @@
 // Add our behaviors
-local function registerBehavior(_id, _name, _order, _score) {
-    if (_id in ::Const.AI.Behavior.ID) throw "Aleady have behavior with ID = " + _id;
-
-    ::Const.AI.Behavior.ID[_id] <- ::Const.AI.Behavior.ID.COUNT;
-    ::Const.AI.Behavior.ID.COUNT += 1;
-
-    ::Const.AI.Behavior.Name.push(_name);
-    ::Const.AI.Behavior.Order[_id] <- _order;
-    ::Const.AI.Behavior.Score[_id] <- _score;
-}
-registerBehavior("AP_UnbagNet", "UnbagNet", 35, 100);
-registerBehavior("AP_UnbagShield", "UnbagShield", 36, 400);
-registerBehavior("AP_UnleashDog", "UnleashDog", 37, 200);
-registerBehavior("AP_Tame", "Tame", 38, 600);
+::MSU.AI.addBehavior("AP_UnbagNet", "AP.UnbagNet", 35, 100);
+::MSU.AI.addBehavior("AP_UnbagShield", "AP.UnbagShield", 36, 400);
+::MSU.AI.addBehavior("AP_UnleashDog", "AP.UnleashDog", 37, 200);
+::MSU.AI.addBehavior("AP_Tame", "AP.Tame", 38, 400);
 
 // Prefer doing something else than wandering around/waiting
 ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_melee", function(cls) {
