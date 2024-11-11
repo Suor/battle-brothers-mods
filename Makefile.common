@@ -16,7 +16,7 @@ zip: check-compile
 clean:
 	@rm -f *_MODIFIED.zip;
 
-install: check-compile
+install: include check-compile
 	@set -e;
 	FILENAME=${DATA_DIR}mod_$(MOD_NAME)_TMP.zip;
 	zip --filesync -r "$${FILENAME}" $(SOURCES);
@@ -29,3 +29,17 @@ check-compile:
 test: check-compile
 	@squirrel test.nut;
 
+include:
+	@set -e
+	for i in $(INCLUDES); do
+		for src in `find ../_includes/$$i -type f`; do
+			rel_path="$${src#../_includes/$$i/}"
+			dst="$$(dirname "$$rel_path")/i_$(MOD_NAME)_$$(basename "$$rel_path")";
+
+			if [[ ! -f "$$dst" || "$src_file" -nt "$$dst" ]]; then
+				echo "COPY $$src -> $$dst";
+				mkdir -p `dirname $$dst`;
+				cp $$src $$dst;
+			fi
+		done
+	done
