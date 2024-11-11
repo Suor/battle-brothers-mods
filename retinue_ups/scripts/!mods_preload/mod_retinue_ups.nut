@@ -346,6 +346,49 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
             }
         })
     }
+
+    // Surgeon
+    ::mods_hookExactClass("retinue/followers/surgeon_follower", function (cls) {
+        cls.m.ru_promotion <- {
+            Cost = 3500
+            Tease = "to sometimes fix permanent injuries on level ups"
+            Effects = [
+                "Give " + positive("15%") + " chance to fix permanent injury on level up"
+            ]
+        }
+    })
+    ::include("scripts/i_retinue_ups_levelup_changes");
+    ::LevelUpChanges.onLevel(function (_player, _level) {
+        if (!::World.Retinue.ru_isPromoted("surgeon_follower")) return;
+        ::logInfo("Promoted Surgeon active " + _player.getName());
+
+        local injuries = _player.getSkills().query(::Const.SkillType.PermanentInjury);
+        if (injuries.len() == 0) return;
+        ::logInfo("Promoted Surgeon tries to do stuff for " + _player.getName())
+        if (::Math.rand(1, 100) > 50) return; // TODO: 15% !
+
+        local index = ::Math.rand(0, injuries.len() - 1);
+        local toRemove = injuries[index].get(); // .query() returns weakrefs
+        ::logInfo("Promoted Surgeon fixes " + toRemove.getName() + " on " + _player.getName());
+        _player.getSkills().remove(toRemove);
+
+        _player.addLevelUpChanges("Promoted Surgeon fixes", [{
+            id = toRemove.getID()
+            icon = toRemove.getIcon()
+            removed = true
+            tooltip = toRemove.getTooltip() // TODO: do not save tooltip and icon?
+        }])
+
+        _player.getSprite("permanent_injury_1").Visible = false;
+        _player.getSprite("permanent_injury_2").Visible = false;
+        _player.getSprite("permanent_injury_3").Visible = false;
+        _player.getSprite("permanent_injury_4").Visible = false;
+        _player.getSprite("permanent_injury_1").resetBrush();
+        _player.getSprite("permanent_injury_2").resetBrush();
+        _player.getSprite("permanent_injury_3").resetBrush();
+        _player.getSprite("permanent_injury_4").resetBrush();
+        _player.updateInjuryVisuals()
+    })
 })
 
 // hack for updates
