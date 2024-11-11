@@ -54,6 +54,7 @@
         }
 
         // Our behaviors
+        agent.addBehavior(this.new("scripts/ai/autopilot_attack_alternate"));
         agent.addBehavior(this.new("scripts/ai/autopilot_unbag_shield"));
         if (::Autopilot.conf("dogs")) {
             agent.addBehavior(this.new("scripts/ai/autopilot_unleash_dog"));

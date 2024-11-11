@@ -3,6 +3,8 @@
 ::MSU.AI.addBehavior("AP_UnbagShield", "AP.UnbagShield", 36, 400);
 ::MSU.AI.addBehavior("AP_UnleashDog", "AP.UnleashDog", 37, 200);
 ::MSU.AI.addBehavior("AP_Tame", "AP.Tame", 38, 400);
+::MSU.AI.addBehavior("AP_AttackAlternate", "AP.AttackAlternate",
+    ::Const.AI.Behavior.Order.AttackDefault - 1, ::Const.AI.Behavior.Score.Attack * 2);
 
 // Prefer doing something else than wandering around/waiting
 ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_melee", function(cls) {
@@ -26,7 +28,6 @@
         "actives.gae_dearg_thrust"
         // Fantasy Brothers
         "actives.xxitem_leftsaa_skill" // Dual Attack
-        // "actives.xxitem_deadbookaa_skill" // Death Ritual, isUsable not defined
         // Looks like these are already added
         // "actives.xx_a" // Cut with Ring blade
         // "actives.xx_b" // Throw Ring blade
