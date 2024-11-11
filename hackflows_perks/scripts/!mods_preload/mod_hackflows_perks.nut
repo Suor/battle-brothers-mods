@@ -35,6 +35,8 @@ local Str = ::std.Str, Text = ::std.Text;
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 ::mods_queue(mod.ID, "stdlib, >mod_heal_repair_fix, >mod_reforged", function() {
+    ::include("scripts/hp_rosetta_ru");
+
     // Hooks for Flesh on the Bones perk
     ::mods_hookExactClass("entity/tactical/actor", function (cls) {
         local setHitpoints = cls.setHitpoints;
