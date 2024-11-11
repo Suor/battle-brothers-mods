@@ -39,12 +39,10 @@ local function corpseRepr(_corpse) {
                       && agent.findBehavior(::Const.AI.Behavior.ID.EngageMelee);
         local notAfraid = hasMelee && _entity.getIdealRange() == 1;
         local bigDanger = ::Const.AI.Behavior.RaiseUndeadMaxDanger * (notAfraid ? 2 : 1);
+        local zocCount = _entity.getTile().getZoneOfControlCountOtherThan(_entity.getAlliedFactions());
 
         // Only player is allowed to do it when having enemy in ZOC
-        if (!isPlayer && _entity.getTile().hasZoneOfControlOtherThan(_entity.getAlliedFactions()))
-        {
-            return this.Const.AI.Behavior.Score.Zero;
-        }
+        if (!isPlayer && zocCount > 0) return this.Const.AI.Behavior.Score.Zero;
         if (debug) logInfo("raise: 1.3 " + scoreMult)
 
         this.m.Skill = this.selectSkill(this.m.PossibleSkills);
@@ -317,6 +315,9 @@ local function corpseRepr(_corpse) {
                     score = score + inAllyZOC * this.Const.AI.Behavior.RaiseUndeadAllyZocBonus;
                     if (debug) logInfo("raise: C" + n + " 10 score=" + score)
 
+                    score -= zocCount * 8;
+                    if (debug) logInfo("raise: C" + n + " 10a score=" + score)
+
                     // Score will go only down from here, so can short-circuit
                     if (score <= bestCost) continue;
 
@@ -431,11 +432,11 @@ local function corpseRepr(_corpse) {
         }
         if (debug) logInfo("raise: 10 " + scoreMult)
 
-        scoreMult = scoreMult * (1.0 + bestTarget.Properties.get("Corpse").Value / 25.0);
+        if (isPlayer) scoreMult *= ::Math.pow(2, bestCost / 10.0);
+        else scoreMult *= 1.0 + bestTarget.Properties.get("Corpse").Value / 25.0;
         if (debug) logInfo("raise: 11 " + scoreMult)
-        if (!isPlayer)
-            scoreMult = scoreMult * this.Math.maxf(0.0, 1.0 - currentDanger / bigDanger);
+        if (!isPlayer) scoreMult *= ::Math.maxf(0.0, 1.0 - currentDanger / bigDanger);
         if (debug) logInfo("raise: 12 " + scoreMult)
-        return this.Const.AI.Behavior.Score.RaiseUndead * scoreMult;
+        return ::Const.AI.Behavior.Score.RaiseUndead * scoreMult;
     }
 })

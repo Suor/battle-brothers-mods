@@ -110,7 +110,8 @@
             agent.removeBehavior(::Const.AI.Behavior.ID.Protect);
 
             agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.EngageMelee] = 0.2;
-            agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.RaiseUndead] = 3.0;
+            agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.EngageRanged] = 0.3;
+            // agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.RaiseUndead] = 3.0;
         }
 
         agent.finalizeBehaviors();
