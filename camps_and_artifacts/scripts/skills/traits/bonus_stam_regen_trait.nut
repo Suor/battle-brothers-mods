@@ -7,7 +7,6 @@ this.bonus_stam_regen_trait <- this.inherit("scripts/skills/traits/character_tra
 		this.m.Name = "Bonus Stamina Regen";
 		this.m.Icon = "ui/traits/trait_icon_33.png";
 		this.m.Description = "Renewed strength with every breath";
-		this.m.IsStacking = true;
 	}
 
 	function getTooltip()
