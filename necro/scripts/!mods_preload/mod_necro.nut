@@ -95,13 +95,18 @@ mod.queue(function() {
         }
 
         q.onResurrected = @(__original) function (_info) {
+            if (!("necro_master" in _info)) return __original(_info);
+
+            // Do not receive loot, which you are not supposed to receive
+            foreach (slot in [::Const.ItemSlot.Head, ::Const.ItemSlot.Body]) {
+                local piece = _info.Items.getItemAtSlot(slot);
+                if (piece) piece.m.IsDroppedAsLoot = piece.isDroppedAsLoot();
+            }
+
             __original(_info);
 
-            // Track necro and original faction
-            if ("necro_master" in _info) {
-                this.m.necro_master <- _info.necro_master;
-                this.m.necro_master.getSkills().onRaiseUndead(this);
-            }
+            this.m.necro_master <- _info.necro_master; // Track necro
+            this.m.necro_master.getSkills().onRaiseUndead(this);
         }
 
         q.necro_hasMaster <- function () {return "necro_master" in this.m}
