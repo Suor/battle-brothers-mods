@@ -1,8 +1,8 @@
 var Necro = {};
 
-Necro.CharacterScreenPerksModule_loadPerkTreesWithBrotherData = CharacterScreenPerksModule.prototype.loadPerkTreesWithBrotherData;
-CharacterScreenPerksModule.prototype.loadPerkTreesWithBrotherData = function (_brother)
-{
+Necro.CharacterScreenPerksModule_loadPerkTreesWithBrotherData
+    = CharacterScreenPerksModule.prototype.loadPerkTreesWithBrotherData;
+CharacterScreenPerksModule.prototype.loadPerkTreesWithBrotherData = function (_brother) {
     // console.error("brother = " + JSON.stringify(_brother.necro));
     if (_brother.necro_perkTree) {
         this.resetPerkTree(this.mPerkTree);

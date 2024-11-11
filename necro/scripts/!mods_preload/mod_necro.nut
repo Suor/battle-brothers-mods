@@ -10,7 +10,7 @@ local def = ::Necro <- {
     }
     FakeKill = false
 
-    // Q: rename to addArmorPct() ?
+    // Q: rename to addArmorPct() ? move to stdlib?
     function restoreArmorPct(_actor, _part, _pct) {
         local slot = _part == "head" ? ::Const.ItemSlot.Head : ::Const.ItemSlot.Body;
         local piece = _actor.m.Items.getItemAtSlot(slot);
@@ -149,9 +149,10 @@ mod.queue(function() {
         foreach (w in ["mace" "cleaver" "sword" "dagger" "polearm" "crossbow" "throwing"])
             allowedMasteries["perk.mastery." + w] <- true;
 
-        q.convertEntityToUIData = @(__original) function(_entity, _activeEntity)
-        {
+        // TODO: harmonize with DynamicPerks
+        q.convertEntityToUIData = @(__original) function(_entity, _activeEntity) {
             local result = __original(_entity, _activeEntity);
+            logInfo("necro: convertEntityToUIData " + _entity.getName())
             if (_entity != null && _entity.getSkills().hasSkill("background.necro")) {
                 local perks = ::Const.Perks.Perks.map(@(row) clone row);
                 perks[2] = perks[2].filter(@(_, p) p.ID != "perk.taunt");
