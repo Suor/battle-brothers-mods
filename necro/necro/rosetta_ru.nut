@@ -2,7 +2,7 @@ if (!("Rosetta" in getroottable())) return;
 
 local rosetta = {
     mod = {id = "mod_necro", version = "0.4.0"}
-    author = "hacflow"
+    author = "hackflow"
     lang = "ru"
 }
 local pairs = [
@@ -57,7 +57,7 @@ local pairs = [
     }
     {
         en = "Share some of your perks with raised undead and learn a couple in return."
-        ru = "Передаёт некоторые навыками поднятой нежити и получает кое-что взамен."
+        ru = "Передаёт некоторые навыки поднятой нежити и получает кое-что взамен."
     }
     {
         en = "Blood Suckers"
