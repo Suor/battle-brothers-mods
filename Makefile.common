@@ -36,10 +36,11 @@ include:
 			rel_path="$${src#../_includes/$$i/}"
 			dst="$$(dirname "$$rel_path")/i_$(MOD_NAME)_$$(basename "$$rel_path")";
 
-			if [[ ! -f "$$dst" || "$src_file" -nt "$$dst" ]]; then
+			if [[ ! -f "$$dst" || "$$src" -nt "$$dst" ]]; then
 				echo "COPY $$src -> $$dst";
 				mkdir -p `dirname $$dst`;
-				cp $$src $$dst;
+				perl -pE 's/<mod_name>/$(MOD_NAME)/g' $$src > $$dst;
+				# cp $$src $$dst;
 			fi
 		done
 	done

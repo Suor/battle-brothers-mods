@@ -1,10 +1,10 @@
 local version = 0.5, prev = null, debug = false;
-logInfo("HackMSU 0.5 (includes)");
+logInfo("HackMSU 0.5 (<mod_name>)");
 if ("HackMSU" in getroottable()) {
     if (::HackMSU.version >= version) return;
     prev = ::HackMSU;
 }
-logInfo("HackMSU 0.5 in (hackflows_perks), prev = " + prev);
+logInfo("HackMSU 0.5 in (<mod_name>), prev = " + prev);
 ::HackMSU <- {
     version = version             // HackMSU version to not overwrite newer versions of itself
     mods = prev ? prev.mods : {}  // Store our mods here

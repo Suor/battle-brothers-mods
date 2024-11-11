@@ -1,5 +1,5 @@
 local version = 0.1, prev = null, debug = false;
-logInfo("LevelUpChanges " + version + " (includes)"); // TODO: put module name
+logInfo("LevelUpChanges " + version + " (<mod_name>)");
 if ("LevelUpChanges" in getroottable()) {
     if (::LevelUpChanges.version >= version) return;
     prev = ::LevelUpChanges;
@@ -30,7 +30,8 @@ logInfo("LevelUpChanges " + version + ", prev = " + prev);
     // }
 };
 
-::mods_registerJS("i_retinue_ups_levelup_changes.js"); // TODO: set up s///;
+// TODO: handle different versions, including different js versions
+::mods_registerJS("i_<mod_name>_levelup_changes.js");
 
 ::mods_hookExactClass("entity/tactical/player", function (cls) {
     cls.addLevelUpChanges <- function (_title, _items) {
