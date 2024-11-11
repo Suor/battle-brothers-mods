@@ -166,7 +166,6 @@
 
     cls.querySwitchableItems <- function() {
         local items = [], inv = getItems();
-        if (!inv.isActionAffordable([]))  return items; // if we can't afford any kind of action
 
         for (local itemType = Const.Items.ItemType, i = 0; i < inv.getUnlockedBagSlots(); i++)
         {
