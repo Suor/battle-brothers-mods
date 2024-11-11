@@ -34,7 +34,7 @@ mod.addTraits <- function (_player, _num, _opts = null) {
         stupid = mod.conf("traitsStupid")
     }, _opts || {})
 
-    Player.addTraits(_player, _num, _opts);
+    return Player.addTraits(_player, _num, _opts);
 }
 
 mod.extraTraits <- function (_level) {

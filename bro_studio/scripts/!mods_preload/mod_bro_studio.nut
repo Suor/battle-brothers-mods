@@ -38,6 +38,8 @@ local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve 
         return min + Rand.poly(max - min, chance / 100.0);
     }
 
+    ::include("scripts/i_bro_studio_levelup_changes");
+
     local function onLevels(_player, _prevLevel) {
         if (_prevLevel >= _player.m.Level) return;
 
@@ -46,7 +48,8 @@ local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve 
         // give extra perk points for certain levels
         for (local level = _prevLevel; ++level <= _player.m.Level;) {
             _player.m.PerkPoints += mod.extraPerks(level);
-            mod.addTraits(_player, mod.extraTraits(level));
+            local added = mod.addTraits(_player, mod.extraTraits(level));
+            if (level > 1) _player.addLevelUpChanges("Bro Studio", added)
         }
     }
 
