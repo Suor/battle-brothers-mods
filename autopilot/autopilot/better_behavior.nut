@@ -88,29 +88,3 @@
         return mixed;
     }
 })
-
-
-// ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_melee", function (cls) {
-//     // local won't work
-//     function debughook(event, file, line, func) {
-//         if (event == 'l' && func == "onEvaluate") {
-//             ::logInfo("LINE line [" + line + "] func [" + func + "] file ["+ file + "]");
-//         }
-//     }
-
-//     local onEvaluate = cls.onEvaluate;
-//     cls.onEvaluate = function( _entity ) {
-//         local ret;
-//         local gen = onEvaluate(_entity);
-//         logInfo("DEBUG ON");
-
-//         while (true) {
-//             ::setdebughook(debughook);
-//             ret = resume gen;
-//             ::setdebughook(null);
-//             // Proxy "results"
-//             if (ret != null) return ret;
-//             yield ret;
-//         }
-//     }
-// });
