@@ -54,6 +54,7 @@
             // TODO: separate throwing only from hybrids
             // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.SwitchToMelee] = 0.5;
             // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 2.0;
+            // TODO: fix this better, i.e. fix behavior.queryBestRangedTarget()
             // Otherwise is afraid of "shooting over shoulder"
             agent.m.Properties.TargetPriorityHittingAlliesMult = 1.0;
             // This guys are supposed to hit and injure
@@ -61,6 +62,7 @@
         }
         if (mode.ranged) {
             agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.Disengage] = 5.0;
+            // agent.m.Properties.TargetPriorityHittingAlliesMult = -100.0; // Q: does not work???
         }
 
         // Our behaviors
