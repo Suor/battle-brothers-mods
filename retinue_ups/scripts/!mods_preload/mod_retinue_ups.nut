@@ -1,7 +1,7 @@
-local mod = ::RetinueUps <- {
+local def = ::RetinueUps <- {
     ID = "mod_retinue_ups"
     Name = "Retinue Promotions"
-    Version = 1.1
+    Version = "1.1.0"
 }
 
 local function positive(value) {
@@ -10,24 +10,20 @@ local function positive(value) {
 local function named(value) {return ::Const.UI.getColorized(value + "", "#1e468f")}
 local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e")}
 
-::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID,
-        "mod_hooks(>=20), >sato_balance_mod, >tnf_expandedRetinue, >mod_more_followers",
-        function() {
-    ::mods_registerJS("retinue_ups.js");
+local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
+mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", function () {
+    ::Hooks.registerJS("ui/mods/retinue_ups.js");
 
-    ::mods_hookNewObject("retinue/retinue_manager", function (obj) {
-        local setFollower = obj.setFollower;
-        obj.setFollower = function(_slot, _follower) {
+    mod.hook("scripts/retinue/retinue_manager", function (q) {
+        q.setFollower = @(__original) function (_slot, _follower) {
             // When follower is replaced it looses its promotion
             local prev = this.m.Slots[_slot];
             if (prev != null) this.ru_demote(prev);
-            return setFollower(_slot, _follower);
+            return __original(_slot, _follower);
         }
 
-        local onDeserialize = obj.onDeserialize;
-        obj.onDeserialize = function ( _in ) {
-            onDeserialize(_in);
+        q.onDeserialize = @(__original) function ( _in ) {
+            __original(_in);
             // Update costs and effects
             foreach (f in this.m.Followers) {
                 if (this.ru_isPromoted(f)) f.ru_onPromote();
@@ -36,22 +32,22 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
 
         // TODO: check the presense of a follower, i.e. one might remove the mod,
         //       replace the follower, reinstall the mod and reap the promotion effects sometimes.
-        obj.ru_isPromoted <- function (follower) {
+        q.ru_isPromoted <- function (follower) {
             local clsName = typeof follower == "string" ? follower : follower.ClassName;
             return ::World.Flags.has("mod_retinue_ups." + clsName);
         }
-        obj.ru_promote <- function (follower) {
+        q.ru_promote <- function (follower) {
             ::World.Flags.add("mod_retinue_ups." + follower.ClassName);
             follower.ru_onPromote();
         }
-        obj.ru_demote <- function (follower) {
+        q.ru_demote <- function (follower) {
             ::World.Flags.remove("mod_retinue_ups." + follower.ClassName);
             follower.ru_onDemote();
         }
     })
 
-    ::mods_hookNewObject("ui/screens/world/world_campfire_screen", function (obj) {
-        obj.ru_onSlotCtrlClicked <- function (_i) {
+    mod.hook("scripts/ui/screens/world/world_campfire_screen", function (q) {
+        q.ru_onSlotCtrlClicked <- function (_i) {
             local follower = ::World.Retinue.m.Slots[_i];
             ::logInfo("Promote " + _i + " " + follower.getID());
             if (follower == null
@@ -74,8 +70,7 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
 
         // Both tnf_expandedRetinue and mod_more_followers may set slot to null, after which they
         // call this. Here we check if deleted one should be demoted and also recalc asset values.
-        local refresh = obj.refresh;
-        obj.refresh = function () {
+        q.refresh = @(__original) function () {
             local R = ::World.Retinue;
             foreach (f in R.m.Followers) {
                 if (R.ru_isPromoted(f) && R.m.Slots.find(f) == null) R.ru_demote(f)
@@ -83,21 +78,17 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
             // This is a bug that those two modules don't do this recalc, we clean up after them.
             // Might move to the click handler above otherwise.
             ::World.Assets.resetToDefaults();
-            refresh();
+            __original();
         }
     });
 
-    ::mods_hookBaseClass("retinue/follower", function (cls) {
-        cls = cls[cls.SuperName];
-
-        local getName = cls.getName;
-        cls.getName = function () {
-            return getName() + (::World.Retinue.ru_isPromoted(this) ? " (Promoted)" : "")
+    mod.hookTree("scripts/retinue/follower", function (q) {
+        q.getName = @(__original) function () {
+            return __original() + (::World.Retinue.ru_isPromoted(this) ? " (Promoted)" : "")
         }
 
-        local getTooltip = cls.getTooltip;
-        cls.getTooltip = function () {
-            local tooltip = getTooltip();
+        q.getTooltip = @(__original) function () {
+            local tooltip = __original();
             if (this.ru_hasPromotion() && !::World.Retinue.ru_isPromoted(this)) {
                 tooltip.push({
                     id = 1
@@ -110,8 +101,8 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
             return tooltip;
         }
 
-        cls.ru_hasPromotion <- function () {return "ru_promotion" in this.m}
-        cls.ru_onPromote <- function () {
+        q.ru_hasPromotion <- function () {return "ru_promotion" in this.m}
+        q.ru_onPromote <- function () {
             this.m.ru_base <- {
                 Cost = this.m.Cost
                 Effects = clone this.m.Effects
@@ -121,22 +112,21 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
             this.m.Cost += up.Cost;  // Add cost for expanded retinue/more followers refund
             if ("Effects" in up) this.m.Effects.extend(up.Effects);
         }
-        cls.ru_onDemote <- function () {
+        q.ru_onDemote <- function () {
             this.m.Cost = this.m.ru_base.Cost;
             this.m.Effects = this.m.ru_base.Effects;
         }
     })
 
     // Second tier Bounty Hunter
-    ::mods_hookExactClass("retinue/followers/bounty_hunter_follower", function (cls) {
-        cls.m.ru_promotion <- {Cost = 7000, Tease = "for even more champions"}
+    mod.hook("scripts/retinue/followers/bounty_hunter_follower", function (q) {
+        q.m.ru_promotion <- {Cost = 7000, Tease = "for even more champions"}
 
-        local onUpdate = cls.onUpdate;
-        cls.onUpdate = function() {
+        q.onUpdate = @(__original) function () {
             ::World.Assets.m.ChampionChanceAdditional = ::World.Retinue.ru_isPromoted(this) ? 7 : 3;
         }
 
-        cls.ru_onPromote <- function () {
+        q.ru_onPromote <- function () {
             this.follower.ru_onPromote();
             this.m.Effects[0] =
                 positive("Greatly") + " increases the chance of encountering champions";
@@ -144,30 +134,26 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
     })
 
     // Second tier Blacksmith
-    ::mods_hookExactClass("retinue/followers/blacksmith_follower", function (cls) {
-        cls.m.ru_promotion <- {
+    mod.hook("scripts/retinue/followers/blacksmith_follower", function (q) {
+        q.m.ru_promotion <- {
             Cost = 3000
             Tease = "to recover items from slain enemies more often"
             Effects = ["Gives better chance to get items from slain enemies, even broken ones"]
         }
     })
-    ::mods_hookBaseClass("scenarios/world/starting_scenario", function (cls) {
-        cls = cls[cls.SuperName];
-
-        local isDroppedAsLoot = cls.isDroppedAsLoot;
-        cls.isDroppedAsLoot = function (_item) {
+    mod.hookTree("scripts/scenarios/world/starting_scenario", function (q) {
+        q.isDroppedAsLoot = @(__original) function (_item) {
             local isPromoted = ::World.Retinue.ru_isPromoted("blacksmith_follower");
-            return isDroppedAsLoot(_item) || isPromoted && ::Math.rand(1, 100) <= 7;
+            return __original(_item) || isPromoted && ::Math.rand(1, 100) <= 7;
         }
     })
 
     // Second tier Scavenger
-    ::mods_hookExactClass("retinue/followers/scavenger_follower", function (cls) {
-        cls.m.ru_promotion <- {Cost = 3000, Tease = "to double the ammo and tools recovered"}
+    mod.hook("scripts/retinue/followers/scavenger_follower", function (q) {
+        q.m.ru_promotion <- {Cost = 3000, Tease = "to double the ammo and tools recovered"}
     })
-    ::mods_hookExactClass("states/tactical_state", function (cls) {
-        local gatherLoot = cls.gatherLoot;
-        cls.gatherLoot = function () {
+    mod.hook("scripts/states/tactical_state", function (q) {
+        q.gatherLoot = @(__original) function () {
             local te = this.Tactical.Entities;
             if (::World.Retinue.ru_isPromoted("scavenger_follower")) {
                 // Double this stuff
@@ -191,24 +177,23 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
                 }
 
             }
-            gatherLoot();
+            __original();
         }
     })
 
     // Trader
-    ::mods_hookExactClass("retinue/followers/trader_follower", function (cls) {
-        cls.m.ru_promotion <- {
+    mod.hook("scripts/retinue/followers/trader_follower", function (q) {
+        q.m.ru_promotion <- {
             Cost = 7000
             Tease = "for more stuff in shops, including named items"
             Effects = ["Finds more stuff in shops, including more named items"]
         }
     })
-    ::mods_hookNewObject("entity/world/settlement_modifiers", function (obj) {
+    mod.hook("scripts/entity/world/settlement_modifiers", function (q) {
         // NOTE: this is only called on add/remove settlement situation or contract,
         //       so changes might not be immediate
-        local reset = obj.reset;
-        obj.reset = function () {
-            reset();
+        q.reset = @(__original) function () {
+            __original();
             if (::World.Retinue.ru_isPromoted("trader_follower")) {
                 this.RarityMult *= 1.10; // Not as good as well supplied
             }
@@ -217,28 +202,25 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
 
     // Cook
     // Q: is there a way to make it more useful and/or fun?
-    ::mods_hookExactClass("retinue/followers/cook_follower", function (cls) {
-        cls.m.ru_promotion <- {
+    mod.hook("scripts/retinue/followers/cook_follower", function (q) {
+        q.m.ru_promotion <- {
             Cost = 2500
             Tease = "to get extra food after combat"
             Effects = ["Finds extra food after combat"]
         }
     })
-    ::mods_hookBaseClass("entity/world/world_entity", function (cls) {
-        cls = cls.world_entity;
-
-        local dropFood = cls.dropFood;
-        cls.dropFood = function(_num, _items, _lootTable) {
+    mod.hookTree("scripts/entity/world/world_entity", function (q) {
+        q.dropFood = @(__original) function (_num, _items, _lootTable) {
             if (::World.Retinue.ru_isPromoted("cook_follower")) _num++;
 
             local cook = ::World.Retinue.ru_isPromoted("cook_follower");
-            dropFood(_num, _items, _lootTable);
+            __original(_num, _items, _lootTable);
         }
     })
 
     // Drill Sergeant
-    ::mods_hookExactClass("retinue/followers/drill_sergeant_follower", function (cls) {
-        cls.m.ru_promotion <- {
+    mod.hook("scripts/retinue/followers/drill_sergeant_follower", function (q) {
+        q.m.ru_promotion <- {
             Cost = 3500
             Tease = "to provide training for new recruites and make the most from training halls"
             Effects = [
@@ -247,10 +229,9 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
             ]
         }
     })
-    ::mods_hookExactClass("entity/tactical/player", function (cls) {
-        local onHired = cls.onHired;
-        cls.onHired = function () {
-            onHired();
+    mod.hook("scripts/entity/tactical/player", function (q) {
+        q.onHired = @(__original) function () {
+            __original();
             if (!::World.Retinue.ru_isPromoted("drill_sergeant_follower")) return;
             if (this.getSkills().hasSkill("effects.trained")) return;
 
@@ -261,11 +242,10 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
             this.getSkills().add(effect);
         }
     })
-    ::mods_hookExactClass("ui/screens/world/modules/world_town_screen/town_training_dialog_module",
-            function (cls) {
-        local onTrain = cls.onTrain;
-        cls.onTrain = function (_data) {
-            local ret = onTrain(_data);
+    mod.hook("scripts/ui/screens/world/modules/world_town_screen/town_training_dialog_module",
+            function (q) {
+        q.onTrain = @(__original) function (_data) {
+            local ret = __original(_data);
             if (ret == null) return ret;
             if (!::World.Retinue.ru_isPromoted("drill_sergeant_follower")) return ret;
 
@@ -279,8 +259,8 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
     })
 
     // Lookout
-    ::mods_hookExactClass("retinue/followers/lookout_follower", function (cls) {
-        cls.m.ru_promotion <- {
+    mod.hook("scripts/retinue/followers/lookout_follower", function (q) {
+        q.m.ru_promotion <- {
             Cost = 3500
             Tease = "to show more info about locations"
             Effects = [
@@ -289,7 +269,7 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
             ]
         }
     })
-    ::mods_hookExactClass("entity/world/location", function (cls) {
+    mod.hook("scripts/entity/world/location", function (q) {
         local function hasNamed(_location) {
             foreach (item in _location.m.Loot.getItems()) {
                 if (item != null && item.isItemType(::Const.Items.ItemType.Named)) return true;
@@ -297,9 +277,8 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
             return false;
         }
 
-        local getTooltip = cls.getTooltip;
-        cls.getTooltip = function () {
-            local tooltip = getTooltip();
+        q.getTooltip = @(__original) function () {
+            local tooltip = __original();
             if (!::World.Retinue.ru_isPromoted("lookout_follower")) return tooltip;
 
             foreach (entry in tooltip)
@@ -323,8 +302,8 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
 
     // Guide promotion for Sato's Balance mod
     if (::mods_getRegisteredMod("sato_balance_mod")) {
-        ::mods_hookExactClass("retinue/followers/scout_follower", function (cls) {
-            cls.m.ru_promotion <- {
+        mod.hook("scripts/retinue/followers/scout_follower", function (q) {
+            q.m.ru_promotion <- {
                 Cost = 9000
                 Tease = "to also move faster on normal terrain"
                 Effects = [
@@ -333,10 +312,9 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
             }
         })
         // Need to use ::mods_hookNewObject() to wrap Sato's same hook
-        ::mods_hookNewObject("retinue/followers/scout_follower", function (obj) {
-            local onUpdate = obj.onUpdate;
-            obj.onUpdate = function () {
-                onUpdate();
+        mod.hook("scripts/retinue/followers/scout_follower", function (q) {
+            q.onUpdate = @(__original) function () {
+                __original();
                 if (!::World.Retinue.ru_isPromoted("scout_follower")) return;
                 for (local i = 0; i < World.Assets.m.TerrainTypeSpeedMult.len(); ++i) {
                     if (Const.World.TerrainTypeSpeedMult[i] > 0.8) {
@@ -348,8 +326,8 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
     }
 
     // Surgeon
-    ::mods_hookExactClass("retinue/followers/surgeon_follower", function (cls) {
-        cls.m.ru_promotion <- {
+    mod.hook("scripts/retinue/followers/surgeon_follower", function (q) {
+        q.m.ru_promotion <- {
             Cost = 3500
             Tease = "to sometimes fix permanent injuries on level ups"
             Effects = [
@@ -365,7 +343,7 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
         local injuries = _player.getSkills().query(::Const.SkillType.PermanentInjury);
         if (injuries.len() == 0) return;
         ::logInfo("Promoted Surgeon tries to do stuff for " + _player.getName())
-        if (::Math.rand(1, 100) > 50) return; // TODO: 15% !
+        if (::Math.rand(1, 100) <= 50) return; // TODO: 15% !
 
         local index = ::Math.rand(0, injuries.len() - 1);
         local toRemove = injuries[index].get(); // .query() returns weakrefs
@@ -392,10 +370,10 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
 })
 
 // hack for updates
-::mods_queue(mod.ID, ">msu", function () {
+mod.queue(">msu", function () {
     if (!("MSU" in getroottable())) return;
     ::include("scripts/i_retinue_ups_hack_msu");
-    ::HackMSU.setup(mod, {
+    ::HackMSU.setup(def, {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/681"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/retinue_ups"
         tagPrefix = "retinue-ups-"
