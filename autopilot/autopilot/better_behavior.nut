@@ -90,6 +90,7 @@ mod.hook("scripts/ai/tactical/behaviors/ai_attack_handgonne", function (q) {
         ai_disengage = 0.3
         ai_rally = 0
         ai_line_breaker = 0.5
+        autopilot_tame = 0.5
     }
     local getFatigueScoreMult = cls.getFatigueScoreMult;
     cls.getFatigueScoreMult = function(_skill) {
