@@ -14,6 +14,10 @@ import sys
 
 
 def update_code(file_path, inplace=False):
+    # Detect newline style, then read converting to \n for easier handling
+    with open(file_path, 'rb') as file:
+        line = file.readline()
+        newline = detect_newline_style(line)
     with open(file_path, 'r') as file:
         content = file.read()
 
@@ -74,7 +78,8 @@ def update_code(file_path, inplace=False):
     else:
         name, ext = os.path.splitext(file_path)
         new_path = f"{name}_new{ext}"
-    with open(new_path, 'w', newline='\r\n') as file:
+
+    with open(new_path, 'w', newline=newline) as file:
         file.write(content)
 
 
@@ -153,6 +158,15 @@ def find_matching_brace(content, start_index):
         if stack == 0:
             return i
     return -1
+
+
+def detect_newline_style(content):
+    if b'\r\n' in content:
+        return '\r\n'  # CRLF (Windows)
+    elif b'\r' in content:
+        return '\r'    # CR (Old Mac)
+    else:
+        return '\n'    # LF (Unix)
 
 
 update_code(sys.argv[1], inplace="-i" in sys.argv)
