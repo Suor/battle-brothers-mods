@@ -10,40 +10,36 @@ logInfo("LevelUpChanges " + version + ", prev = " + prev);
 
     callbacks = []
     function onLevel(_func) {callbacks.push(_func)}
-
-    // hooks = {}
-    // function prepareHook(_obj, _method) {
-    //     if (_obj in hooks && _method in hooks[_obj]) throw "Forgot to unhook " + _method;
-    //     if (!(_method in _obj)) {
-    //         // We are trying to hook a thing that is not there, MSU changed, unhook all and hide!
-    //         unhookAll();
-    //         return;
-    //     }
-    //     if (!(_obj in hooks)) hooks[_obj] <- {};
-    //     return hooks[_obj][_method] <- _obj[_method];
-    // }
-    // function unhookAll() {
-    //     foreach (obj, methods in hooks) {
-    //         foreach (method, original in methods) obj[method] <- original;
-    //     }
-    //     hooks = {};
-    // }
-};
+}
 
 // TODO: handle different versions, including different js versions
 ::mods_registerJS("i_<mod_name>_levelup_changes.js");
 
 ::mods_hookExactClass("entity/tactical/player", function (cls) {
+    if (version != ::LevelUpChanges.version) return;
+
     cls.addLevelUpChanges <- function (_title, _items) {
         if (_items.len() == 0) return;
         if (!("levelUpChanges" in this)) this.levelUpChanges <- [];
+
+        local items = _items.map(function (_skill) {
+            if ("id" in _skill && "icon" in _skill) return _skill;
+
+            return {
+                id = _skill.getID()
+                icon = _skill.getIcon()
+                tooltip = _skill.getTooltip() // TODO: do not save tooltip and icon?
+                removed = false
+            }
+        })
+
         foreach (line in this.levelUpChanges) {
             if (line.title == _title) {
-                line.item.extend(_items);
+                line.items.extend(items);
                 return;
             }
         }
-        this.levelUpChanges.push({title = _title, items = _items});
+        this.levelUpChanges.push({title = _title, items = items});
     }
 
     local updateLevel = cls.updateLevel;
@@ -57,16 +53,26 @@ logInfo("LevelUpChanges " + version + ", prev = " + prev);
     }
 })
 ::mods_hookExactClass("ui/global/data_helper", function (cls) {
+    if (version != ::LevelUpChanges.version) return;
+
     local convertEntityToUIData = cls.convertEntityToUIData;
     cls.convertEntityToUIData = function (_entity, _activeEntity) {
         local ret = convertEntityToUIData(_entity, _activeEntity);
         if (!("levelUpChanges" in _entity) || _entity.levelUpChanges.len() == 0) return ret;
 
-        ret.levelUpChanges <- _entity.levelUpChanges;
+        local title = null, items = [];
+        foreach (line in _entity.levelUpChanges) {
+            title = title ? title + ", " + line.title : line.title;
+            items.extend(line.items);
+        }
+        ret.levelUpChanges <- {title = title, items = items}
+        _entity.levelUpChanges;
         return ret;
     }
 })
 ::mods_hookExactClass("ui/screens/tooltip/tooltip_events", function (cls) {
+    if (version != ::LevelUpChanges.version) return;
+
     local onQueryStatusEffectTooltipData = cls.onQueryStatusEffectTooltipData;
     cls.onQueryStatusEffectTooltipData = function (_entityId, _statusEffectId) {
         local ret = onQueryStatusEffectTooltipData(_entityId, _statusEffectId);
