@@ -32,6 +32,16 @@
                 }
             }
         }
+        // Do not let onUpdate overwrite our weights permanently
+        local onUpdate = agent.onUpdate;
+        agent.onUpdate = function () {
+            if (!("autopilot_mults" in this)) this.autopilot_mults <- clone m.Properties.BehaviorMult;
+            m.Properties.BehaviorMult = array(m.Properties.BehaviorMult.len(), 1.0);
+            onUpdate();
+            for (local i = 0; i < this.autopilot_mults.len(); i++) {
+                m.Properties.BehaviorMult[i] *= this.autopilot_mults[i];
+            }
+        }
 
         // Make backrow more active
         if (!mode.ranged && this.getIdealRange() == 2) {
@@ -112,6 +122,14 @@
             agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.EngageMelee] = 0.2;
             agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.EngageRanged] = 0.3;
             // agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.RaiseUndead] = 3.0;
+        }
+
+        // Fantasy Brothers: prefer shooting to walking
+        if (this.getSkills().hasSkill("actives.xxitem_rifleaa_skill")) {
+            // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.AttackDefault] = 25;
+            // agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.AttackBow] = 25;
+            // Doesn't work: messed up with onUpdate() -> setRangedAtDayOnly()
+            agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.EngageRanged] = 0.1;
         }
 
         agent.finalizeBehaviors();

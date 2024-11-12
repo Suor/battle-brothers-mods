@@ -15,7 +15,8 @@ mod.require("mod_msu >= 1.6.0", "stdlib >= 2.1");
 mod.conflictWith("mod_autopilot");
 // mod_reforged has a couple of tweaks taken from here, which we need to undo
 // mod_sellswords overwrites ai_break_free.onEvaluate()
-mod.queue(">mod_reforged", ">mod_sellswords", function () {
+// mod_fantasybro adds riffle shot to a wrong behavior, we want to move that
+mod.queue(">mod_reforged", ">mod_sellswords", ">mod_fantasybro" function () {
     def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
     def.conf <- function (name) {
             return def.msu.ModSettings.getSetting(name).getValue();

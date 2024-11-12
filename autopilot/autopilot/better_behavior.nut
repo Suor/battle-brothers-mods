@@ -1,3 +1,5 @@
+local mod = ::Hooks.getMod("mod_autopilot_new");
+
 // Add our behaviors
 ::MSU.AI.addBehavior("AP_UnbagNet", "AP.UnbagNet", 35, 100);
 ::MSU.AI.addBehavior("AP_UnbagShield", "AP.UnbagShield", 36, 400);
@@ -28,11 +30,36 @@
         "actives.gae_dearg_thrust"
         // Fantasy Brothers
         "actives.xxitem_leftsaa_skill" // Dual Attack
+        "actives.sb_devablow_skill"
         // Looks like these are already added
         // "actives.xx_a" // Cut with Ring blade
         // "actives.xx_b" // Throw Ring blade
     ]);
-});
+    // Rifle shoot moved to ai_attack_bow
+    local pos = cls.m.PossibleSkills.find("actives.xxitem_rifleaa_skill");
+    if (pos != null) cls.m.PossibleSkills.remove(pos)
+})
+::mods_hookExactClass("ai/tactical/behaviors/ai_attack_bow", function (cls) {
+    cls.m.PossibleSkills.extend([
+        // Fantasy Brothers
+        "actives.xxitem_rifleaa_skill"
+    ]);
+})
+mod.hook("scripts/ai/tactical/behaviors/ai_attack_handgonne", function (q) {
+    q.m.PossibleSkills.extend([
+        // Fantasy Brothers
+        "actives.sb_fireball_skill"
+    ])
+})
+
+::mods_hookExactClass("ai/tactical/behaviors/ai_engage_ranged", function (cls) {
+    cls.m.PossibleSkills.extend([
+        // Fantasy Brothers
+        "actives.xxitem_rifleaa_skill"
+        "actives.xxitem_deadbookaa_skill"
+    ]);
+})
+
 ::mods_hookExactClass("ai/tactical/behaviors/ai_attack_split", function (cls) {
     cls.m.PossibleSkills.extend([
         "actives.excalibur_split" // CleverFool's mod
