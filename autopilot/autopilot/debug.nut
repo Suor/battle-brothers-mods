@@ -7,7 +7,162 @@ local function tileStr(_tile) {
     return _tile.X + ", " + _tile.Y;
 }
 
+
+hmod.hook("scripts/entity/tactical/actor", function (q) {
+    q.onMovementStart = @() function ( _tile, _numTiles )
+    {
+        ::logInfo("tile " + _tile);
+        ::logInfo("tileStr " + tileStr(_tile));
+        this.m.IsMoving = true;
+        this.setZoneOfControl(_tile, false);
+
+        if (this.m.IsExertingZoneOfOccupation)
+        {
+            _tile.removeZoneOfOccupation(this.getFaction());
+            this.m.IsExertingZoneOfOccupation = false;
+        }
+
+        if (this.Const.Tactical.TerrainEffectID[_tile.Type].len() > 0)
+        {
+            this.m.Skills.removeByID(this.Const.Tactical.TerrainEffectID[_tile.Type]);
+        }
+
+        if (_tile.IsHidingEntity)
+        {
+            this.m.Skills.removeByID(this.Const.Movement.HiddenStatusEffectID);
+        }
+
+        if (_numTiles > 1)
+        {
+            this.playSound(this.Const.Sound.ActorEvent.Move, this.Const.Sound.Volume.Actor * this.m.SoundVolume[this.Const.Sound.ActorEvent.Move] * this.m.SoundVolumeOverall * (this.Math.rand(50, 100) * 0.01) * (_tile.IsVisibleForPlayer ? 1.0 : 0.5));
+        }
+
+        this.m.IsMoving = false;
+    }
+})
+
 hmod.hook("scripts/ai/tactical/behaviors/ai_engage_melee", function (q) {
+    q.onExecute = @() function (_entity)
+    {
+        if ((this.getProperties().PreferWait || this.m.IsWaitingBeforeMove) && this.Tactical.TurnSequenceBar.entityWaitTurn(_entity))
+        {
+            if (this.Const.AI.VerboseMode)
+            {
+                this.logInfo("* " + _entity.getName() + ": Waiting until others have moved!");
+            }
+
+            return true;
+        }
+
+        if (this.m.TargetTile != null)
+        {
+            local navigator = this.Tactical.getNavigator();
+
+            if (this.m.IsFirstExecuted)
+            {
+                if (this.m.Skill != null)
+                {
+                    this.m.Agent.adjustCameraToTarget(this.m.TargetTile);
+                    this.m.Skill.use(this.m.TargetTile);
+                }
+                else
+                {
+                    this.m.OriginTile = _entity.getTile();
+                    local settings = navigator.createSettings();
+                    settings.ActionPointCosts = _entity.getActionPointCosts();
+                    settings.FatigueCosts = _entity.getFatigueCosts();
+                    settings.FatigueCostFactor = 0.0;
+                    settings.ActionPointCostPerLevel = _entity.getLevelActionPointCost();
+                    settings.FatigueCostPerLevel = _entity.getLevelFatigueCost();
+                    settings.MaxLevelDifference = _entity.getMaxTraversibleLevels();
+                    settings.AllowZoneOfControlPassing = this.m.IsIgnoringZOC;
+                    settings.ZoneOfControlCost = this.Const.AI.Behavior.ZoneOfControlAPPenalty;
+                    settings.AlliedFactions = _entity.getAlliedFactions();
+                    settings.Faction = _entity.getFaction();
+                    settings.HiddenCost = this.getProperties().OverallHideMult >= 1 ? -1 : 0;
+                    settings.HeatCost = this.getAgent().isUsingHeat() && this.m.OriginTile.getDistanceTo(this.m.TargetTile) >= this.Const.AI.Behavior.EngageMinHeatDistance && this.getProperties().EngageFlankingMult > 1.0 ? this.Const.AI.Behavior.EngageHeatCost : 0;
+
+                    if (this.Const.AI.VerboseMode && this.m.TargetActor != null)
+                    {
+                        this.logInfo("* " + _entity.getName() + ": Engaging to melee range with " + this.m.TargetActor.getName() + " (" + (this.m.TargetActor.getTile().IsVisibleForEntity ? "visible" : "not visible") + "), accepted_distance=" + this.m.TargetDistance + ", value=" + this.queryTargetValue(_entity, this.m.TargetActor));
+                    }
+
+                    if (!navigator.findPath(this.m.OriginTile, this.m.TargetTile, settings, this.m.TargetDistance))
+                    {
+                        this.logWarning("* " + _entity.getName() + ": Failed to execute path for Melee Engage - No path found");
+                        return true;
+                    }
+
+                    if (this.Const.AI.PathfindingDebugMode)
+                    {
+                        navigator.buildVisualisation(_entity, settings, _entity.getActionPoints(), _entity.getFatigueMax() - _entity.getFatigue());
+                    }
+
+                    local movement = navigator.getCostForPath(_entity, settings, _entity.getActionPoints(), _entity.getFatigueMax() - _entity.getFatigue());
+                    this.m.Agent.adjustCameraToDestination(movement.End);
+                    this.m.IsFirstExecuted = false;
+                    return false;
+                }
+            }
+
+            if (this.m.Skill != null)
+            {
+                if (!this.Tactical.getNavigator().isTravelling(_entity))
+                {
+                    this.m.TargetTile = null;
+                    this.m.TargetActor = null;
+                    this.m.OriginTile = null;
+                    this.m.Skill = null;
+                    return true;
+                }
+            }
+            else if (!navigator.travel(_entity, _entity.getActionPoints(), _entity.getFatigueMax() - _entity.getFatigue()))
+            {
+                if (_entity.isAlive())
+                {
+                    if (this.m.TargetActor != null && this.m.TargetActor.getAIAgent() != null && _entity.getTile().getDistanceTo(this.m.TargetTile) < this.Const.AI.Behavior.EngageMaxDistance)
+                    {
+                        this.m.TargetActor.getAIAgent().declareEngagement(_entity);
+                    }
+
+                    if (!_entity.getTile().hasZoneOfOccupationOtherThan(_entity.getAlliedFactions()))
+                    {
+                        this.m.IsEngagedThisTurn = true;
+                    }
+                }
+
+                if (_entity.isAlive() && !_entity.isHiddenToPlayer() && _entity.getActionPoints() >= this.Const.Movement.AutoEndTurnBelowAP)
+                {
+                    this.getAgent().declareAction();
+                }
+
+                if (this.Const.AI.VerboseMode)
+                {
+                    if (_entity.getTile().ID == this.m.TargetTile.ID)
+                    {
+                        this.logInfo("* " + _entity.getName() + ": Reached engage destination");
+                    }
+                    else
+                    {
+                        this.logInfo("* " + _entity.getName() + ": Stopped before reaching destination");
+                    }
+                }
+
+                this.m.TargetTile = null;
+                this.m.TargetActor = null;
+                this.m.OriginTile = null;
+                this.m.TargetDistance = 0;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     q.onEvaluate = @() function (_entity) {
         // Function is a generator.
         // if (debug) ::logInfo("aiem 01")
@@ -1417,40 +1572,7 @@ hmod.hook("scripts/ai/tactical/behaviors/ai_engage_melee", function (q) {
         // if (debug) ::logInfo("aiem 55")
         return this.Const.AI.Behavior.Score.Zero;
     }
-})
-
-// ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_melee", function (cls) {
-//     local onEvaluate = cls.onEvaluate;
-//     cls.onEvaluate = function (_entity) {
-//         if (::std.Array.any(debugSkills, @(s) _entity.getSkills().hasSkill(s))) {
-//             // ::logInfo("autopilot: debugAI ON for " + _entity.getName())
-//             ::debug = true;
-
-//             local ret;
-//             local gen = onEvaluate(_entity);
-//             while (true) {
-//                 ret = resume gen;
-//                 // Proxy "results"
-//                 if (ret != null) break;
-//                 yield ret;
-//             }
-
-//             // ::logInfo("autopilot: debugAI OFF for " + _entity.getName())
-//             ::debug = false;
-//             return ret;
-//         } else {
-//             ::debug = false;
-//             local ret;
-//             local gen = onEvaluate(_entity);
-//             while (true) {
-//                 ret = resume gen;
-//                 // Proxy "results"
-//                 if (ret != null) return ret;
-//                 yield ret;
-//             }
-//         }
-//     }
-// })
+});
 
 return
 // ::mods_hookExactClass("ai/tactical/behaviors/ai_engage_ranged", function (cls) {

@@ -1,14 +1,16 @@
-::mods_hookExactClass("entity/tactical/actor", function (cls) {
-    cls.addAutoSkill <- function(skillId) {
+local mod = ::Hooks.getMod("mod_autopilot_new");
+
+mod.hook("scripts/entity/tactical/actor", function (q) {
+    q.addAutoSkill <- function(skillId) {
         if(!("autoSkills" in m)) m.autoSkills <- [];
         m.autoSkills.append(skillId);
     }
 
-    cls.clearAutoSkills <- function() {
+    q.clearAutoSkills <- function() {
         if("autoSkills" in m) m.autoSkills.clear();
     }
 
-    cls.processAutoSkills <- function() {
+    q.processAutoSkills <- function() {
         if (m.MoraleState != Const.MoraleState.Fleeing && "autoSkills" in m)
         {
             local skills = getSkills();
@@ -23,20 +25,17 @@
         }
     }
 
-    local onTurnStart = cls.onTurnStart;
-    cls.onTurnStart = function() {
-        onTurnStart();
+    q.onTurnStart = @(__original) function () {
+        __original();
         processAutoSkills();
     }
 
-    local onTurnResumed = cls.onTurnResumed;
-    cls.onTurnResumed = function() {
-        onTurnResumed();
+    q.onTurnResumed = @(__original) function () {
+        __original();
         processAutoSkills();
     }
 
-    local onTurnEnd = cls.onTurnEnd;
-    cls.onTurnEnd = function() {
+    q.onTurnEnd = @(__original) function () {
         if (ClassName == "player" && getMoraleState() != Const.MoraleState.Fleeing
                 && !::Tactical.State.isAutoRetreat() && isPlacedOnMap()) {
             local freewake = ::Autopilot.conf("freewake"), reload = ::Autopilot.conf("reload");
@@ -80,7 +79,7 @@
                 tryUseSkill("actives.recover", tile);
         }
 
-        onTurnEnd();
+        __original();
         clearAutoSkills();
     }
 })

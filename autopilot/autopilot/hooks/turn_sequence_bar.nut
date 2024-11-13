@@ -1,50 +1,32 @@
-::mods_hookExactClass("ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_bar",
-        function (cls) {
-    cls.m.CancelPending <- false;
-    cls.m.IsWaitingRound <- false;
-    cls.m.IsOnAI <- false;
+local mod = ::Hooks.getMod("mod_autopilot_new");
 
-    cls.isHumanControlled <- function (_entity = null) {
+mod.hook("scripts/ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_bar",
+        function (q) {
+    q.m.CancelPending <- false;
+    q.m.IsWaitingRound <- false;
+    q.m.IsOnAI <- false;
+
+    q.isHumanControlled <- function (_entity = null) {
         if (_entity == null) _entity = getActiveEntity();
         return _entity != null && _entity.isPlayerControlled()
             && (_entity.getAIAgent() == null || _entity.getAIAgent().ClassName == "player_agent");
     }
-    cls.canAuto <- function (_entity = null) {
+    q.canAuto <- function (_entity = null) {
         if (_entity == null) _entity = getActiveEntity();
         return this.isHumanControlled(_entity)
             && !_entity.isGuest() && (!("_isIgnored" in _entity.m) || !_entity.m._isIgnored)
             && (::Autopilot.conf("player") || !_entity.getSkills().hasSkill("trait.player"));
     }
 
-    local initNextRound = cls.initNextRound;
-    cls.initNextRound = function () {
-        initNextRound();
+    q.initNextRound = @(__original) function () {
+        __original();
         if (this.m.AllEntities.len() > 0) {
             this.m.IsWaitingRound = false;
             this.m.JSHandle.call("setWaitTurnAllButtonVisible", true);
         }
     }
 
-    // Q: do we need these?
-    // local onNextTurnButtonPressed = cls.onNextTurnButtonPressed;
-    // cls.onNextTurnButtonPressed = function () {
-    //     if (!this.isHumanControlled()) return;
-    //     onNextTurnButtonPressed()
-    // }
-
-    // local onWaitTurnButtonPressed = cls.onWaitTurnButtonPressed;
-    // cls.onWaitTurnButtonPressed = function () {
-    //     if (!this.isHumanControlled()) return;
-    //     onWaitTurnButtonPressed()
-    // }
-
-    // local onEndTurnAllButtonPressed = cls.onEndTurnAllButtonPressed;
-    // cls.onEndTurnAllButtonPressed = function () {
-    //     if (this.m.IsSkippingRound || !isHumanControlled()) return;
-    //     onEndTurnAllButtonPressed()
-    // }
-
-    cls.onWaitTurnAllButtonPressed <- function () {
+    q.onWaitTurnAllButtonPressed <- function () {
         if(this.m.IsSkippingRound || this.m.IsWaitingRound || !isHumanControlled()) return;
 
         this.Tactical.State.showDialogPopup("Wait",
@@ -56,7 +38,7 @@
         }.bindenv(this), null);
     }
 
-    cls.onShieldWallButtonPressed <- function () {
+    q.onShieldWallButtonPressed <- function () {
         if(this.m.IsSkippingRound || !isHumanControlled()) return;
 
         this.Tactical.State.showDialogPopup("Shield Wall",
@@ -69,18 +51,18 @@
         }.bindenv(this), null);
     }
 
-    cls.onIgnoreButtonPressed <- function () {
+    q.onIgnoreButtonPressed <- function () {
         if(this.m.IsSkippingRound || !isHumanControlled()) return;
         this.getActiveEntity().m._isIgnored <- true;
         this.initNextTurn();
     }
 
-    cls.onCancelButtonPressed <- function () {
+    q.onCancelButtonPressed <- function () {
         if (m.IsLocked || !isHumanControlled()) m.CancelPending = true;
         else cancelAutoActions();
     }
 
-    cls.cancelAutoActions <- function (cancelIgnorance = true) {
+    q.cancelAutoActions <- function (cancelIgnorance = true) {
         foreach (e in m.AllEntities) {
             if (e.isPlayerControlled() || ::Autopilot.isUnderAIControl(e)) {
                 if (cancelIgnorance) e.m._isIgnored <- false;
@@ -98,7 +80,7 @@
         m.CancelPending = false;
     }
 
-    cls.onAIButtonPressed <- function () {
+    q.onAIButtonPressed <- function () {
         if (m.IsSkippingRound || !canAuto()) {return;}
 
         Tactical.State.showDialogPopup("AI Control", "Turn control over to the AI?", function ()
@@ -118,15 +100,13 @@
     }
 
     // The cancel needs to be here to prevent auto skills, those are called indirectly from here
-    local onEntityEntersFirstSlot = cls.onEntityEntersFirstSlot;
-    cls.onEntityEntersFirstSlot = function (_entityId) {
+    q.onEntityEntersFirstSlot = @(__original) function (_entityId) {
         if (m.CancelPending) cancelAutoActions();
-        return onEntityEntersFirstSlot(_entityId)
+        return __original(_entityId)
     }
 
-    local onEntityEnteredFirstSlotFully = cls.onEntityEnteredFirstSlotFully;
-    cls.onEntityEnteredFirstSlotFully = function (_entityId) {
-        onEntityEnteredFirstSlotFully(_entityId);
+    q.onEntityEnteredFirstSlotFully = @(__original) function (_entityId) {
+        __original(_entityId);
 
         local entity = this.findEntityByID(this.m.CurrentEntities, _entityId);
         if (entity) {
@@ -140,9 +120,8 @@
         }
     }
 
-    local convertEntityToUIData = cls.convertEntityToUIData;
-    cls.convertEntityToUIData = function (_entity, isLastEntity = false) {
-        local ret = convertEntityToUIData(_entity);
+    q.convertEntityToUIData = @(__original) function (_entity, isLastEntity = false) {
+        local ret = __original(_entity);
         // Either auto controlled player or non-player entity
         local isPlayer = _entity.isPlayerControlled();
         local onAuto = !m.CancelPending && (
@@ -153,9 +132,8 @@
         return ret;
     }
 
-    local convertEntitySkillsToUIData = cls.convertEntitySkillsToUIData;
-    cls.convertEntitySkillsToUIData = function (_entity) {
-        local ret = convertEntitySkillsToUIData(_entity);
+    q.convertEntitySkillsToUIData = @(__original) function (_entity) {
+        local ret = __original(_entity);
         if (ret == null || !("querySwitchableItems" in _entity)) return ret;
 
         foreach (item in _entity.querySwitchableItems())

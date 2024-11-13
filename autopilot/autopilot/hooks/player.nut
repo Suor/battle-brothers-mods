@@ -1,5 +1,7 @@
-::mods_hookExactClass("entity/tactical/player", function (cls) {
-    cls.enableAIControl <- function() {
+local mod = ::Hooks.getMod("mod_autopilot_new");
+
+mod.hook("scripts/entity/tactical/player", function (q) {
+    q.enableAIControl <- function() {
         m._oldAgent <- getAIAgent();
         local mode = m._autopilot <- {ranged = false, throwing = false};
         mode.ranged <- isArmedWithRangedWeapon();
@@ -139,7 +141,7 @@
         setAIAgent(agent);
     }
 
-    cls.cancelAIControl <- function() {
+    q.cancelAIControl <- function() {
         if (!::Autopilot.isUnderAIControl(this)) return;
 
         local agent = getAIAgent();
@@ -155,19 +157,17 @@
         delete m._autopilot;
     }
 
-    local onDeath = cls.onDeath;
-    cls.onDeath = function(killer, skill, tile, fatalityType) {
+    q.onDeath = @(__original) function (killer, skill, tile, fatalityType) {
         // if a bro dies while under AI control it may hang around as a "ghost"
         this.cancelAIControl();
-        onDeath(killer, skill, tile, fatalityType);
+        __original(killer, skill, tile, fatalityType);
     }
 
-    local onCombatFinished = cls.onCombatFinished;
-    cls.onCombatFinished = function() {
+    q.onCombatFinished = @(__original) function () {
         clearAutoSkills();
         cancelAIControl();
         if("_isIgnored" in m) delete m._isIgnored;
-        onCombatFinished();
+        __original();
 
         foreach (skill in getSkills().m.Skills) {
             if (skill.m.IsRemovedAfterBattle) {
@@ -185,7 +185,7 @@
         // }
     }
 
-    cls.querySwitchableItems <- function() {
+    q.querySwitchableItems <- function() {
         local items = [], inv = getItems();
 
         for (local itemType = Const.Items.ItemType, i = 0; i < inv.getUnlockedBagSlots(); i++)

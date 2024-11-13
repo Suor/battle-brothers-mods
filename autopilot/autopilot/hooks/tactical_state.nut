@@ -1,8 +1,9 @@
-::mods_hookExactClass("states/tactical_state", function (cls) {
-    cls.m.autopilot_IsInputLocked <- false;
+local mod = ::Hooks.getMod("mod_autopilot_new");
 
-    local helper_handleContextualKeyInput = cls.helper_handleContextualKeyInput;
-    cls.helper_handleContextualKeyInput = function (key) {
+mod.hook("scripts/states/tactical_state", function (q) {
+    q.m.autopilot_IsInputLocked <- false;
+
+    q.helper_handleContextualKeyInput = @(__original) function (key) {
         if (helper_handleDeveloperKeyInput(key)) return true;
 
         // V. allow cancel during enemy's turn
@@ -12,7 +13,7 @@
             return true;
         }
 
-        local result = helper_handleContextualKeyInput(key);
+        local result = __original(key);
         if (!result && key.getState() == 0 && key.getModifier() != 1 && !isInCharacterScreen()) {
             if (key.getKey() == 18) { // H
                 Tactical.TurnSequenceBar.onWaitTurnAllButtonPressed();
@@ -27,7 +28,7 @@
         return result;
     }
 
-    cls.swapToItem <- function (entity, item) {
+    q.swapToItem <- function (entity, item) {
         if (m.CurrentActionState != null) {
             Tooltip.reload();
             Tactical.TurnSequenceBar.deselectActiveSkill();
@@ -40,8 +41,7 @@
         m.CharacterScreen.onEquipBagItem([entity.getID(), item.getInstanceID()]);
     }
 
-    local onSkillClickedFunc = cls.turnsequencebar_onEntitySkillClicked;
-    cls.turnsequencebar_onEntitySkillClicked = function(skillId) {
+    q.turnsequencebar_onEntitySkillClicked = @(__original) function (skillId) {
         local activeEntity = this.Tactical.TurnSequenceBar.getActiveEntity();
         if (activeEntity == null || activeEntity.getSkills().getSkillByID(skillId) != null) {
             onSkillClickedFunc(skillId);
@@ -52,24 +52,21 @@
         }
     }
 
-    local setActionStateBySkillIndex = cls.setActionStateBySkillIndex;
-    cls.setActionStateBySkillIndex = function (index) {
+    q.setActionStateBySkillIndex = @(__original) function (index) {
         local e = this.Tactical.TurnSequenceBar.getActiveEntity(), itemIndex = -1;
         if (e != null && !isInputLocked()) itemIndex = index - e.getSkills().queryActives().len();
         if (itemIndex >= 0) {
             local items = e.querySwitchableItems();
             if(itemIndex < items.len()) swapToItem(e, items[itemIndex]);
         } else {
-            setActionStateBySkillIndex(index);
+            __original(index);
         }
     }
 
-    local isInputLocked = cls.isInputLocked;
-    cls.isInputLocked = function () {
-        return this.m.autopilot_IsInputLocked || isInputLocked()
+    q.isInputLocked = @(__original) function () {
+        return this.m.autopilot_IsInputLocked || __original()
     }
-    local updateCurrentEntity = cls.updateCurrentEntity;
-    cls.updateCurrentEntity = function () {
+    q.updateCurrentEntity = @(__original) function () {
         if (this.m.IsGameFinishable && this.isBattleEnded()) {return;}
         if (this.m.IsGamePaused) {return;}
 
@@ -83,7 +80,7 @@
             local pos = Tactical.TurnSequenceBar.getTurnPosition();
 
             this.m.autopilot_IsInputLocked = true;
-            updateCurrentEntity()
+            __original()
             this.m.autopilot_IsInputLocked = false;
 
             // If not finished turn and should then finish it
@@ -92,27 +89,25 @@
                 Tactical.TurnSequenceBar.initNextTurn();
             }
         } else {
-            updateCurrentEntity()
+            __original()
         }
     }
 
-    local turnsequencebar_onCheckEnemyRetreat = cls.turnsequencebar_onCheckEnemyRetreat;
-    cls.turnsequencebar_onCheckEnemyRetreat = function () {
+    q.turnsequencebar_onCheckEnemyRetreat = @(__original) function () {
         if (Tactical.TurnSequenceBar.m.IsOnAI) {
             // Do not show "run them down" popup if on AI, this flag pevents it.
             // The flag should return to false if enemy not retreating.
             this.m.IsEnemyRetreatDialogShown = true;
-            turnsequencebar_onCheckEnemyRetreat();
+            __original();
             this.m.IsEnemyRetreatDialogShown = Tactical.Entities.isEnemyRetreating();
         } else {
-            turnsequencebar_onCheckEnemyRetreat()
+            __original()
         }
     }
 
     // Breaks when trying to retreat in auto mode otherwise
-    local tactical_flee_screen_onFleePressed = cls.tactical_flee_screen_onFleePressed;
-    cls.tactical_flee_screen_onFleePressed = function () {
+    q.tactical_flee_screen_onFleePressed = @(__original) function () {
         Tactical.TurnSequenceBar.cancelAutoActions()
-        tactical_flee_screen_onFleePressed()
+        __original()
     }
 })
