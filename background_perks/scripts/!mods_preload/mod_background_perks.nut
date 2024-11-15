@@ -99,6 +99,6 @@ function BgPerks::giveFreePerks(_player) {
 
 ::mods_queue(::BgPerks.ID, ">msu", function () {
     if (!("MSU" in getroottable())) return;
-    ::include("background_perks/hack_msu");
+    ::include("scripts/i_background_perks_hack_msu");
     ::HackMSU.setup(::BgPerks, ::BgPerks.Updates);
 });
