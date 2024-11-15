@@ -54,8 +54,8 @@ mod.queue(">mod_reforged", ">mod_sellswords", ">mod_fantasybro" function () {
     ::include("autopilot/better_raise_undead");
     ::include("autopilot/fixes");
     ::include("autopilot/verbose");
-    ::mods_registerJS("autopilot_new.js");
-    ::mods_registerCSS("autopilot_new.css");
+    ::Hooks.registerJS("ui/mods/autopilot_new.js");
+    ::Hooks.registerCSS("ui/mods/autopilot_new.css");
 
     // ::include("autopilot/debug");
 

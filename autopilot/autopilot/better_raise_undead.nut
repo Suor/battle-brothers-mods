@@ -1,4 +1,5 @@
 local debug = true;
+local mod = ::Hooks.getMod("mod_autopilot_new");
 local Table = ::std.Table, Debug = ::std.Debug;
 
 local function tileStr(_tile) {
@@ -8,12 +9,12 @@ local function corpseRepr(_corpse) {
     return Table.merge(_corpse, {Tile = tileStr(_corpse.Tile)})
 }
 
-::mods_hookExactClass("ai/tactical/behaviors/ai_raise_undead", function (cls) {
-    cls.m.PossibleSkills.extend([
+mod.hook("scripts/ai/tactical/behaviors/ai_raise_undead", function (q) {
+    q.m.PossibleSkills.extend([
         "actives.raise_companion" // AC
     ]);
 
-    cls.onEvaluate = function (_entity) {
+    q.onEvaluate = @(__original) function (_entity) {
         // Function is a generator.
         this.m.Skill = null;
         this.m.TargetTile = null;
