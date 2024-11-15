@@ -12,7 +12,8 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", function () {
-    ::Hooks.registerJS("ui/mods/retinue_ups.js");
+    if ("mods_registerJS" in getroottable()) ::mods_registerJS("retinue_ups.js");
+    else ::Hooks.registerLateJS("ui/mods/retinue_ups.js");
 
     mod.hook("scripts/retinue/retinue_manager", function (q) {
         q.setFollower = @(__original) function (_slot, _follower) {
@@ -82,7 +83,7 @@ mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", fu
         }
     });
 
-    mod.hookTree("scripts/retinue/follower", function (q) {
+    mod.hook("scripts/retinue/follower", function (q) {
         q.getName = @(__original) function () {
             return __original() + (::World.Retinue.ru_isPromoted(this) ? " (Promoted)" : "")
         }
@@ -209,7 +210,7 @@ mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", fu
             Effects = ["Finds extra food after combat"]
         }
     })
-    mod.hookTree("scripts/entity/world/world_entity", function (q) {
+    mod.hook("scripts/entity/world/world_entity", function (q) {
         q.dropFood = @(__original) function (_num, _items, _lootTable) {
             if (::World.Retinue.ru_isPromoted("cook_follower")) _num++;
 
