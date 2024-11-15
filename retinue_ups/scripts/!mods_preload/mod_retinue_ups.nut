@@ -339,12 +339,10 @@ mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", fu
     ::include("scripts/i_retinue_ups_levelup_changes");
     ::LevelUpChanges.onLevel(function (_player, _level) {
         if (!::World.Retinue.ru_isPromoted("surgeon_follower")) return;
-        ::logInfo("Promoted Surgeon active " + _player.getName());
 
         local injuries = _player.getSkills().query(::Const.SkillType.PermanentInjury);
         if (injuries.len() == 0) return;
-        ::logInfo("Promoted Surgeon tries to do stuff for " + _player.getName())
-        if (::Math.rand(1, 100) <= 50) return; // TODO: 15% !
+        if (::Math.rand(1, 100) > 15) return;
 
         local index = ::Math.rand(0, injuries.len() - 1);
         local toRemove = injuries[index].get(); // .query() returns weakrefs
