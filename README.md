@@ -35,14 +35,14 @@ A collection of mods to make Battle Brothers more fun and comfy. Written by me o
 
 ## Installation
 
-The easiest way is to go to [NexusMods][nexus-mods] and download a zip release from there. Some of these mods are not there yet, also here you can find the lastest versions (which might be broken, but not usually). Anyway to get the latest version you'll need:
+The easiest way is to go to [NexusMods][nexus-mods] and download a zip release from there. Some of these mods are not there yet, also here you can find the latest versions (which might be broken, but usually not). Anyway to get the latest version you'll need:
 
 1. Get this repo locally - either `git clone` or just [download ZIP][zip] and unpack.
 2. Go to a subdir of a desired mod.
 3. Zip all the dirs there - either manually or execute `make zip`.
 4. Put it to `data` folder as usual, make sure removing older zip of the same mod.
 
-**TODO:** say about deps
+Don't forget to install any required deps, these are usually listed in the mod README.
 
 
 ## Feedback
