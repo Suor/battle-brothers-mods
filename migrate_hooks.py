@@ -13,7 +13,7 @@ import re
 import sys
 
 
-def update_code(file_path, inplace=False):
+def update_code(file_path, inplace=False, mhvar="mod"):
     # Detect newline style, then read converting to \n for easier handling
     with open(file_path, 'rb') as file:
         line = file.readline()
@@ -21,37 +21,51 @@ def update_code(file_path, inplace=False):
     with open(file_path, 'r') as file:
         content = file.read()
 
-    content = replace_word_in_code(content, 'mod', 'def')
+    m = re.search(rf'local {mhvar}\s*=\s*(?:::|{{)(\w+)', content)
+    have_mhvar = m and m[1] != "Hooks"
+    have_def = bool(re.search(r'local def\s*=\s*(::|{)', content))
+    if have_mhvar and not have_def:
+        content = replace_word_in_code(content, mhvar, "def")
+        have_def = True
 
+    # Step 1: Rewrite some calls
     content = re.sub(r'::mods_registerMod\((.*?)\)',
-                      'local mod = def.mh <- ::Hooks.register(\\1)', content)
+                    rf'local {mhvar} = {"def.mh <- " if have_def else ""}::Hooks.register(\1)', content)
     content = re.sub(r'::mods_register(JS|CSS)\((.*?)\)',
         lambda m: rf'::Hooks.register{m[1]}("{"ui/mods/" + ast.literal_eval(m[2])}")', content)
 
-    content = update_queue_calls(content)
+    content = re.sub(r'(if\s*\([^)]*?)::mods_getRegisteredMod\((.*?)\)', r'\1::Hooks.hasMod(\2)', content)
+    content = re.sub(r'::mods_getRegisteredMod\((.*?)\)', r'::Hooks.getMod(\1)', content)
 
-    # Step 1: Update the hook function name and path for both hook types
-    content = re.sub(r'::(mods_hookExactClass|mods_hookNewObject)\("([^"]+)"', r'mod.hook("scripts/\2"', content)
-    content = re.sub(r'::(mods_hookBaseClass)\("([^"]+)"', r'mod.hookTree("scripts/\2"', content)
+    content = update_queue_calls(content)
 
     # Step 2: Replace hook parameter (e.g., cls, obj) with `q` in the function definition and body scope
     def replace_hook(match):
-        typ = match[1] or ""
+        hook = match[1] or ""
         path = match[2]
         func_ws = match[3]
-        param_name = match[4]
+        param = match[4]
         body = match[5]
 
-        if typ == "Tree":
-            body = re.sub(r'{param} = {param}(\[{param}\.SuperName\]|\.\w+);\s*'.format(param=re.escape(param_name)), '', body)
-
         # Replace instances of the parameter name only in the function body
-        updated_body = re.sub(rf'\b{re.escape(param_name)}\b\.', 'q.', body)
+        body = replace_word_in_code(body, param, 'q')
 
-        return f"mod.hook{typ}(\"scripts/{path}\",{func_ws}function (q) {updated_body}"
+        # "key" in q tests do not work, should use q.contains("key")
+        body = re.sub(r'(\(\s*)?("\w+")\s*in\s*q\b(?(1)\s*\)|)', r'q.contains(\2)', body)
+
+        typ = ""
+        if hook in {"Class", "BaseClass"}:
+            old_body = body
+            body = re.sub(rf'^\s*\bq\s*=\s*q(\[q\.SuperName\]|\.\w+);?\s*$',
+                 '', body, flags=re.MULTILINE)
+            if body == old_body:
+                typ = "Tree"
+
+        return f"{mhvar}.hook{typ}(\"scripts/{path}\",{func_ws}function (q) {body}"
 
     content = replace_body(
-        r'mod\.hook(Tree)?\("scripts/([^"]+)",(\s*)function \((\w+)\) {',
+        r'::mods_hook(ExactClass|NewObject(?:Once)|Class|BaseClass)'
+        r'\("([^"]+)",(\s*)function\s*\(\s*(\w+)\s*\)\s*{',
         replace_hook, content, flags=re.DOTALL)
 
     # Step 3: Remove `local funcName = q.funcName;` lines
@@ -64,7 +78,7 @@ def update_code(file_path, inplace=False):
         body = match[3]
 
         # Replace the old function name with __original in the body
-        updated_body = re.sub(rf'\b{re.escape(function_name)}\b', '__original', body)
+        updated_body = re.sub(rf'(?<!\.)\b{re.escape(function_name)}\b', '__original', body)
 
         return f'q.{function_name} = @(__original) function ({args}) {updated_body}'
 
@@ -91,27 +105,45 @@ def update_queue_calls(content):
         mod_id = match.group(1)
         requirements = match.group(2)
 
+        # def translate_req(item):
+
         # Split the requirements into individual items
-        items = requirements.split(", ")
-        require = []
-        queue = []
+        items = requirements.split(",")
+        require, conflict, queue = [], [], []
 
         for item in items:
-            # Extract requirements without > or < for require, others go to queue
-            if item[0] in "<>":
-                queue.append(item.strip())
-            else:
-                require.append(item.replace(",", "").strip())
+            item = item.strip()
+            m = re.search(r"^([!><])?\s*([^ ()]+)(?:\(([><!]=?)\s*([^ )]+)\))?", item)
+
+            if not m:
+                if item: require.append(item)  # This is weird but save it to not loose it
+                continue
+
+            queue_op, mod, op, version = m.groups()
+            if mod == "mod_hooks":
+                continue
+
+            expr = f"{mod} {op} {version}" if op else mod
+            queue_expr = f"{queue_op or '>'}{mod}"
+
+            if queue_op is None:
+                require.append(expr)
+                queue.append(queue_expr)
+            elif queue_op == "!":
+                conflict.append(expr)
+            elif queue_op in "><":
+                queue.append(queue_expr)
 
         def make_args(items):
             return ", ".join(f'"{item}"' for item in items)
 
         # Build the replacement strings
-        require_str = f'mod.require({make_args(require)});\n' if require else ''
-        queue_str = f'mod.queue({make_args(queue) + ", " if queue else ""}function () {{'
+        require_str = f'{mhvar}.require({make_args(require)});\n' if require else ''
+        conflict_str = f'{mhvar}.conflictWith({make_args(conflict)});\n' if conflict else ''
+        queue_str = f'{mhvar}.queue({make_args(queue) + ", " if queue else ""}function () {{'
 
         # Combine require and queue with the function body
-        return f"{require_str}{queue_str}"
+        return f"{require_str}{conflict_str}{queue_str}"
 
     # Replace all matches in the content
     content = pattern.sub(replacement, content)
@@ -169,4 +201,5 @@ def detect_newline_style(content):
         return '\n'    # LF (Unix)
 
 
-update_code(sys.argv[1], inplace="-i" in sys.argv)
+mhvar = next((a[2:] for a in sys.argv if a.startswith("-m")), "mod")
+update_code(sys.argv[1], inplace="-i" in sys.argv, mhvar=mhvar)
