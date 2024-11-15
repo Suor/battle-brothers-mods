@@ -1,4 +1,4 @@
-if (!::mods_getRegisteredMod("mod_hackflows_perks")) return;
+if (!::Hooks.hasMod("mod_hackflows_perks")) return;
 
 local chances = {
     ALL = {"hackflows.flesh_on_the_bones": 1}

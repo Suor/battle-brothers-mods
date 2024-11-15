@@ -1,7 +1,7 @@
 ::BgPerks <- {
     ID = "mod_background_perks"
     Name = "Starting Perks by Background"
-    Version = 2.5
+    Version = "2.5.0"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/661"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/background_perks"
@@ -12,8 +12,8 @@
     WarnOnUnlockFailure = true
 }
 
-::mods_registerMod(::BgPerks.ID, ::BgPerks.Version, ::BgPerks.Name);
-::mods_queue(::BgPerks.ID, "mod_hooks(>=20)", function () {
+local mod = ::Hooks.register(::BgPerks.ID, ::BgPerks.Version, ::BgPerks.Name);
+mod.queue(function () {
     ::include("background_perks/chances");
     ::include("background_perks/hackflows_perks");
 })
@@ -21,7 +21,7 @@
 // Expose this function so that it could be called externally or patched
 function BgPerks::giveFreePerks(_player) {
     local scale = 1.0 + 0.5 * Math.maxf(0, Math.minf(1, World.getTime().Days / 100.0));
-    if (::mods_getRegisteredMod("mod_stupid_game")) scale += 0.5;
+    if (::Hooks.hasMod("mod_stupid_game")) scale += 0.5;
 
     local perkPoints = _player.m.PerkPoints, perkPointsSpent = _player.m.PerkPointsSpent;
     local background_key = _player.m.Background.getID().slice("background.".len());
@@ -72,12 +72,11 @@ function BgPerks::giveFreePerks(_player) {
 }
 
 
-::mods_queue(::BgPerks.ID, "mod_hooks(>=20)", function() {
+mod.queue(function () {
     local starting = false;
-    ::mods_hookNewObject("entity/tactical/player", function ( o ) {
-        local baseSetStartValuesEx = o.setStartValuesEx;
-        o.setStartValuesEx = function (_backgrounds, _addTraits = true) {
-            baseSetStartValuesEx(_backgrounds, _addTraits);
+    mod.hook("scripts/entity/tactical/player", function (q) {
+        q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
+            __original(_backgrounds, _addTraits);
             if (!starting) ::BgPerks.giveFreePerks(this);
         };
     });
@@ -85,11 +84,10 @@ function BgPerks::giveFreePerks(_player) {
     // On setting up a new campaign all sort of things are hard coded,  typical is to  call
     // .setStartValuesEx() and assign LevelUps and call .fillAttributeLevelUpValues() later,
     // which breaks Gifted
-    ::mods_hookExactClass("states/world_state", function (o) {
-        local startNewCampaign = o.startNewCampaign;
-        o.startNewCampaign = function() {
+    mod.hook("scripts/states/world_state", function (q) {
+        q.startNewCampaign = @(__original) function () {
             starting = true;
-            startNewCampaign();
+            __original();
             starting = false;
             local roster = World.getPlayerRoster().getAll();
             foreach (bro in roster) ::BgPerks.giveFreePerks(bro);
@@ -97,7 +95,7 @@ function BgPerks::giveFreePerks(_player) {
     });
 })
 
-::mods_queue(::BgPerks.ID, ">msu", function () {
+mod.queue(">msu", function () {
     if (!("MSU" in getroottable())) return;
     ::include("scripts/i_background_perks_hack_msu");
     ::HackMSU.setup(::BgPerks, ::BgPerks.Updates);
