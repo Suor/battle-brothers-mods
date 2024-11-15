@@ -13,12 +13,13 @@ logInfo("LevelUpChanges " + version + ", prev = " + prev);
 }
 
 // TODO: handle different versions, including different js versions
-::mods_registerJS("i_<mod_name>_levelup_changes.js");
+::Hooks.registerJS("ui/mods/i_<mod_name>_levelup_changes.js");
 
-::mods_hookExactClass("entity/tactical/player", function (cls) {
+local mod = ::Hooks.getMod("mod_<mod_name>");
+mod.hook("scripts/entity/tactical/player", function (q) {
     if (version != ::LevelUpChanges.version) return;
 
-    cls.addLevelUpChanges <- function (_title, _items) {
+    q.addLevelUpChanges <- function (_title, _items) {
         if (_items.len() == 0) return;
         if (!("levelUpChanges" in this)) this.levelUpChanges <- [];
 
@@ -42,27 +43,36 @@ logInfo("LevelUpChanges " + version + ", prev = " + prev);
         this.levelUpChanges.push({title = _title, items = items});
     }
 
-    local updateLevel = cls.updateLevel;
-    cls.updateLevel = function () {
+    q.updateLevel = @(__original) function () {
         local prevLevel = this.m.Level;
-        updateLevel();
+        __original();
 
         for (local level = prevLevel; ++level <= this.m.Level;) {
             foreach (cb in LevelUpChanges.callbacks) cb(this, level);
         }
     }
 })
-::mods_hookExactClass("ui/global/data_helper", function (cls) {
+mod.hook("scripts/ui/global/data_helper", function (q) {
     if (version != ::LevelUpChanges.version) return;
 
-    local convertEntityToUIData = cls.convertEntityToUIData;
-    cls.convertEntityToUIData = function (_entity, _activeEntity) {
-        local ret = convertEntityToUIData(_entity, _activeEntity);
+    // local function joinAnd(_strings) {
+    //     local res = "", last = _strings.len() - 1;
+    //     foreach (i, item in _strings) {
+    //         local sep = i == 0 ? "" : i == last ? " and " : ", ";
+    //         res += sep + item;
+    //     }
+    //     return res;
+    // }
+
+    q.convertEntityToUIData = @(__original) function (_entity, _activeEntity) {
+        local ret = __original(_entity, _activeEntity);
         if (!("levelUpChanges" in _entity) || _entity.levelUpChanges.len() == 0) return ret;
 
-        local title = null, items = [];
-        foreach (line in _entity.levelUpChanges) {
-            title = title ? title + ", " + line.title : line.title;
+
+        local title = "", items = [], last = _entity.levelUpChanges.len() - 1;
+        foreach (i, line in _entity.levelUpChanges) {
+            local sep = i == 0 ? "" : i == last ? " and " : ", ";
+            title += sep + line.title;
             items.extend(line.items);
         }
         ret.levelUpChanges <- {title = title, items = items}
@@ -70,12 +80,11 @@ logInfo("LevelUpChanges " + version + ", prev = " + prev);
         return ret;
     }
 })
-::mods_hookExactClass("ui/screens/tooltip/tooltip_events", function (cls) {
+mod.hook("scripts/ui/screens/tooltip/tooltip_events", function (q) {
     if (version != ::LevelUpChanges.version) return;
 
-    local onQueryStatusEffectTooltipData = cls.onQueryStatusEffectTooltipData;
-    cls.onQueryStatusEffectTooltipData = function (_entityId, _statusEffectId) {
-        local ret = onQueryStatusEffectTooltipData(_entityId, _statusEffectId);
+    q.onQueryStatusEffectTooltipData = @(__original) function (_entityId, _statusEffectId) {
+        local ret = __original(_entityId, _statusEffectId);
         if (ret != null) return ret;
 
         local entity = ::Tactical.getEntityByID(_entityId);
