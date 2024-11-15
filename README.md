@@ -27,6 +27,12 @@ A collection of mods to make Battle Brothers more fun and comfy. Written by me o
 <!-- renamer -->
 
 
+## See Also
+
+- [More Backgrounds and Events (Updated)](https://github.com/Suor/battle-brothers-xbe) - a content and gameplay mod aimed to make hiring brothers fresh and fun
+- [stdlib](https://github.com/Suor/battle-brothers-stdlib) - an assortment of various utils to help coding mods
+
+
 ## Installation
 
 The easiest way is to go to [NexusMods][nexus-mods] and download a zip release from there. Some of these mods are not there yet, also here you can find the lastest versions (which might be broken, but not usually). Anyway to get the latest version you'll need:
