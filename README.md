@@ -88,6 +88,30 @@ The intended workflow is:
 Steps 2-5 might be done on per file or per subdir basis to make it easier.
 
 
+## Migrate Hooks script
+
+Is a python script to convert mods using Adam's hooks to Modern ones.
+
+```
+Usage:
+    python migrate_hooks.py <mod-file> [options]
+
+Arguments:
+    <mod-file>  The path to a mod file to convert
+
+Options:
+    -i      Update file inplace, will create a <mod-file>_new.nut by default
+    -mVAR   Use this var name for whatever ::Hooks.register() returns, defaults to `mod`
+    -h      Show this help
+```
+
+This doesn't do dirs at the moment, instead you may use bash if you have it:
+
+```bash
+find path/to/mod/ -name \*.nut -exec python migrate_hooks.py {} -i \;
+```
+
+
 [nexus-mods]: https://www.nexusmods.com/battlebrothers/users/97435548?tab=user+files
 [zip]: https://github.com/Suor/battle-brothers-mods/archive/refs/heads/master.zip
 
