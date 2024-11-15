@@ -21,11 +21,10 @@ A collection of mods to make Battle Brothers more fun and comfy. Written by me o
 **[Standout Enemies](standout_enemies)** | Randomly adds some quirks to the most common enemies making fighting them less repetitive and more fun.
 [Veteran Attrs and Perks](mod_vap) | Veterans will sometimes get better than just 1 for attributes they have talents in. Also gives extra perks for them at certain levels.
 [More Blood](more_blood) | Makes it more Tarantino style. A compatible variant of older [More Blood][more-blood-old] mod.
-[Necro](necro) | A hirable Necromancer.
+[Proper Necro](necro) | A hirable Necromancer, with custom perks and an origin.
 [Useful Things](useful) | Makes some weaker things more useful, like 2h flails and named goblin weapons.
 
-<!-- [Brogen](brogen) | An alternative to Ultra Bros -->
-<!-- [Useful Things](useful) | Some things made more useful: nets, hand to hand, ... -->
+<!-- renamer -->
 
 
 ## Installation
