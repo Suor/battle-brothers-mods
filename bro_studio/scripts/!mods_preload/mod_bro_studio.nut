@@ -6,9 +6,10 @@ local mod = ::BroStudio <- {
 }
 local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve seeds better
 
-::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "stdlib(>=2.0), mod_hooks(>=20), mod_msu(>=1.2.6), !mod_vap, !mod_ultrabros",
-        function() {
+local mh = ::Hooks.register(mod.ID, mod.Version, mod.Name);
+mh.require("stdlib >= 2.0", "mod_msu >= 1.2.6");
+mh.conflictWith("mod_vap", "mod_ultrabros");
+mh.queue(">stdlib", ">mod_msu", function () {
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
     mod.conf <- function (name) {
         return mod.Mod.ModSettings.getSetting(name).getValue();
@@ -28,7 +29,7 @@ local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve 
     ::include("bro_studio/attrs");
     ::include("bro_studio/perks");
     ::include("bro_studio/traits");
-    ::mods_registerJS("bro_studio.js");
+    ::Hooks.registerJS("ui/mods/bro_studio.js");
 
     local starting = false;
     local function rollTalentsNum() {
@@ -49,56 +50,50 @@ local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve 
         for (local level = _prevLevel; ++level <= _player.m.Level;) {
             _player.m.PerkPoints += mod.extraPerks(level);
             local added = mod.addTraits(_player, mod.extraTraits(level));
-            if (level > 1) _player.addLevelUpChanges("Bro Studio", added)
+            if (level > 1) _player.addLevelUpChanges("Bro Studio adds", added)
         }
     }
 
-    ::mods_hookExactClass("entity/tactical/player", function (cls) {
-        local fillTalentValues = cls.fillTalentValues;
-        if (::mods_getRegisteredMod("mod_legends")) {
-            cls.fillTalentValues = function (_num, _force = false) {
-                fillTalentValues(_num, _force); // Move Math.rand() seed ...
+    mh.hook("scripts/entity/tactical/player", function (q) {
+        if (::Hooks.hasMod("mod_legends")) {
+            q.fillTalentValues = @(__original) function (_num, _force = false) {
+                __original(_num, _force); // Move Math.rand() seed ...
                 if (!starting) {
                     local opts = {force = _force || mod.conf("talentsRandomStart")};
                     mod.fillTalentValues(this, rollTalentsNum(), opts);
                 }
             }
         } else {
-            cls.fillTalentValues = function () {
-                fillTalentValues(); // Move Math.rand() seed the same way as prior this patch
+            q.fillTalentValues = @(__original) function () {
+                __original(); // Move Math.rand() seed the same way as prior this patch
                 if (!starting) mod.fillTalentValues(this, rollTalentsNum());
             }
         }
 
-        local onHired = cls.onHired;
-        cls.onHired = function () {
-            onHired();
+        q.onHired = @(__original) function () {
+            __original();
             mod.addTraits(this, mod.conf("traitsNum"));
             onLevels(this, 1);
         }
 
-        local updateLevel = cls.updateLevel;
-        cls.updateLevel = function () {
+        q.updateLevel = @(__original) function () {
             local level = m.Level;
-            updateLevel();
+            __original();
             onLevels(this, level);
         }
 
-        local getAttributeLevelUpValues = cls.getAttributeLevelUpValues;
-        cls.getAttributeLevelUpValues = function () {
+        q.getAttributeLevelUpValues = @(__original) function () {
             mod.addAttributeLevelUpValues(this);
-            return getAttributeLevelUpValues()
+            return __original()
         }
     })
 
     // On setting up a new campaign all sort of things are hard coded,  typical is to  call
     // .setStartValuesEx() and assign LevelUps, PerkPoints by hand, etc
-    ::mods_hookBaseClass("scenarios/world/starting_scenario", function (cls) {
-        local onSpawnAssets = "onSpawnAssets" in cls
-            ? cls.onSpawnAssets : cls.starting_scenario.onSpawnAssets;
-        cls.onSpawnAssets <- function () {
+    mh.hookTree("scripts/scenarios/world/starting_scenario", function (q) {
+        q.onSpawnAssets = @(__original) function () {
             starting = true;
-            onSpawnAssets();
+            __original();
             starting = false;
 
             // Set up starting bros

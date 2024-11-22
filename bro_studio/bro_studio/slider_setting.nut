@@ -1,4 +1,4 @@
-::mods_registerJS("bro_studio/slider_setting.js");
+::Hooks.registerJS("ui/mods/bro_studio/slider_setting.js");
 
 ::BroStudio.SliderSetting <- class extends ::MSU.Class.RangeSetting {
     Array = null;
