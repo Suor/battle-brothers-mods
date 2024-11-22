@@ -46,6 +46,11 @@ mod.hook("scripts/ai/tactical/behavior", function (q) {
         if (!_tile) return 0.0;
         return __original(_entity, _tile);
     }
+    // Note the reverse params order
+    q.hasNegativeTileEffect = @(__original) function (_tile, _entity) {
+        if (!_tile) return 0.0;
+        return __original(_tile, _entity);
+    }
 
     // For player actors whether somebody is ranged or not is decided by his vision,
     // so a throwing guy in a big hat at night night suddenly becomes not ranged for AI.
