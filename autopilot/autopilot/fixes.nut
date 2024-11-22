@@ -9,6 +9,11 @@ mod.hookTree("scripts/skills/skill", function (q) {
         if (this.m.Container == null ||  this.m.Container.isNull()) return false;
         return __original(_originTile, _targetTile);
     }
+    // Wrap MSU broken weapon bug, i.e. skill loosing container between onEvaluate and onExecute
+    q.use = @(__original) function (_targetTile, _forFree = false) {
+        if (this.m.Container == null ||  this.m.Container.isNull()) return false;
+        return __original(_targetTile, _forFree);
+    }
 })
 
 // Fix crash after ranged actor killing somebody or enemy dying while ranged actor is thinking
