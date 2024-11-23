@@ -1,10 +1,10 @@
 local version = 0.1, prev = null, debug = false;
-logInfo("LevelUpChanges " + version + " (<mod_name>)");
+::logInfo("LevelUpChanges " + version + " (<mod_name>)");
 if ("LevelUpChanges" in getroottable()) {
     if (::LevelUpChanges.version >= version) return;
     prev = ::LevelUpChanges;
 }
-logInfo("LevelUpChanges " + version + ", prev = " + prev);
+::logInfo("LevelUpChanges " + version + ", prev = " + prev);
 ::LevelUpChanges <- {
     version = version // version to not overwrite newer versions of itself
 
@@ -12,7 +12,8 @@ logInfo("LevelUpChanges " + version + ", prev = " + prev);
     function onLevel(_func) {callbacks.push(_func)}
 }
 
-// TODO: handle different versions, including different js versions
+// Drop previous js file, add our file
+::Hooks.JSFiles = ::Hooks.JSFiles.filter(@(_, f) f.find("_levelup_changes.js") == null);
 ::Hooks.registerJS("ui/mods/i_<mod_name>_levelup_changes.js");
 
 local mod = ::Hooks.getMod("mod_<mod_name>");
