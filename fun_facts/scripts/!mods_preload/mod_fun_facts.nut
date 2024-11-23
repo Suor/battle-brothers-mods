@@ -2,6 +2,11 @@ local mod = ::FunFacts <- {
     ID = "mod_fun_facts"
     Name = "Fun Facts"
     Version = "0.5.0"
+    Updates = {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/764"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/fun_facts"
+        tagPrefix = "fun-facts-"
+    }
     LastFallen = null
     BattleId = null
 };
@@ -28,19 +33,13 @@ mod.incrBattleId <- function() {
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.0), mod_msu(>=1.5.0)", function() {
+::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.0), mod_msu(>=1.6.0)", function() {
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
 
-    // mod.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.GitHub, "https://github.com/Suor/battle-brothers-mods");
-    // // mod.Mod.Registry.addModSource(::MSU.System.Registry.ModSourceDomain.NexusMods, "https://www.nexusmods.com/battlebrothers/mods/...");
-    // mod.Mod.Registry.setUpdateSource(::MSU.System.Registry.ModSourceDomain.GitHub);
-
-    ::include("fun_facts/hack_msu");
-    ::HackMSU.setup(mod, {
-        nexus = "https://www.nexusmods.com/battlebrothers/mods/764"
-        github = "https://github.com/Suor/battle-brothers-mods/tree/master/fun_facts"
-        tagPrefix = "fun-facts-"
-    })
+    local msd = ::MSU.System.Registry.ModSourceDomain, upd = mod.Updates;
+    mod.Mod.Registry.addModSource(msd.NexusMods, upd.nexus);
+    mod.Mod.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
+    mod.Mod.Registry.setUpdateSource(msd.GitHubTags);
 
 
     // local currentStatGetter;
