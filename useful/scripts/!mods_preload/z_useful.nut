@@ -78,6 +78,6 @@ local extraDep = ::mods_getRegisteredMod("tnf_refillableNet") ? ", !tnf_refillab
 
 ::mods_queue(mod.ID, ">msu", function () {
      if (!("MSU" in getroottable())) return;
-    ::include("useful/hack_msu");
+    ::include("scripts/i_useful_hack_msu");
     ::HackMSU.setup(mod, mod.Updates)
 });
