@@ -7,7 +7,7 @@ This mod adds some automation and quality-of-life improvements to battles: fast 
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] and [msu][].
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [stdlib][], [Modern Hooks][ModernHooks] and [msu][].
 
 
 ## Configuration
@@ -26,7 +26,7 @@ Tested with:
 - Accessory Companions (including Legends)
 - North Expansion
 - Heroic Scenario Pack
-- Fantasy Brothers
+- Fantasy Brothers (only some custom skills will be used)
 - Proper Necromancer (uses Raise Undead and Possess)
 
 
@@ -74,6 +74,8 @@ Support some skills from third-party mods:
 - use custom active skills from Heroic Scenario Pack
 - beat the barbarian drum from North Expansion
 - unleash companions and tame from AC (Accessory Companions)
+- some skills from Fantasy Brothers
+- many sorts of necromancers will do their thing
 
 Other additions:
 
@@ -86,11 +88,13 @@ Fixes:
 - removed always active "Run them down" / "It's over" in AI mode
 - hide skills and other UI buttons when auto waiting, skipping turn or on AI
 - immediately act after switching to auto, no skipping turn anymore
-- fixed many crashes in combat AI
+- fixed many many crashes in combat AI
 - more compatibility, see above
 
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/675
+[ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
+[stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [msu]: https://www.nexusmods.com/battlebrothers/mods/479
 [original]: https://www.nexusmods.com/battlebrothers/mods/62

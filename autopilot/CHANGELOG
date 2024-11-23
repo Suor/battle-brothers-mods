@@ -1,3 +1,19 @@
+2.5.0
+- work with any necromancers, including AC Tome of Reanimation
+- better Necromancer support melee and ranged engage mults, and other necro improvements
+- tame less when tired
+- added some Fantasy Brothers stuff: Rifle, Fireball, Devastating Blow, Death Book
+- fine tune behaviors with behavior weights, which are not messed up in onUpdate() anymore
+- fixed delayed melee kill bug (!!!)
+- extra fix for broken weapon bug
+- fixed status effects bar not showing sometimes
+- fixed some tricky incompatibility with a new MSU
+- speculative crash fix
+- fixed rare broken tile crash
+Deps:
+- moved to Modern Hooks, so requiers them, but does not require old modhooks anymore
+- now requires stdlib >= 2.2
+
 2.4.0
 - improved and fixed raise undead behavior
 - improved unleash behavior
