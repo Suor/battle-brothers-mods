@@ -75,7 +75,6 @@ mod.hook("scripts/ai/tactical/behaviors/ai_boost_stamina", function (q) {
 
 // Adjust fatigue score mult
 mod.hook("scripts/ai/tactical/behavior", function (q) {
-
     // Lower these behaviors scores more significantly with fatigue cost/left considerations
     local altWeights = {
         ai_adrenaline = 0.5

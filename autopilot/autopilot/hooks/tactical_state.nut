@@ -44,7 +44,7 @@ mod.hook("scripts/states/tactical_state", function (q) {
     q.turnsequencebar_onEntitySkillClicked = @(__original) function (skillId) {
         local activeEntity = this.Tactical.TurnSequenceBar.getActiveEntity();
         if (activeEntity == null || activeEntity.getSkills().getSkillByID(skillId) != null) {
-            onSkillClickedFunc(skillId);
+            __original(skillId);
         }
         else if (!isInputLocked()) {
             local item = activeEntity.getItems().getItemByInstanceID(skillId);
