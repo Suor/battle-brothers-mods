@@ -3,7 +3,7 @@ local mod = ::Hooks.getMod("mod_autopilot_new");
 mod.hook("scripts/ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_bar",
         function (q) {
     q.m.CancelPending <- false;
-    q.m.IsWaitingRound <- false;
+    if (!q.m.contains("IsWaitingRound")) q.m.IsWaitingRound <- false; // Reforged fix
     q.m.IsOnAI <- false;
 
     q.isHumanControlled <- function (_entity = null) {
