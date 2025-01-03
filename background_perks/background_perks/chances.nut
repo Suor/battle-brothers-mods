@@ -545,3 +545,13 @@
     "necro.mind_meld": 3
     "necro.soul_link": 3
 }
+
+// Of Flesh and Faith Plus
+::BgPerks.chances.oathbreaker <- {
+    "hold_out": 5
+    "steel_brow": 25
+    "student": 10
+    "battle_forged": 20
+    "brawny": 20
+    "hackflows.full_force": 15
+}
