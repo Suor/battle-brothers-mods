@@ -180,8 +180,6 @@ Quirk = se.Quirk <- {
         Noun = "Headshot",
         XPMult = 1.3,
         function apply(e) {
-            e.m.Name = split(e.m.Name, " ")[0] + " " + this.Noun;
-
             Mod.offense(e, 10);
             e.m.BaseProperties.RangedDefense += 15;
             e.m.BaseProperties.IsAffectedByNight = false;
@@ -201,8 +199,6 @@ Quirk = se.Quirk <- {
         Noun = "Quickshot",
         XPMult = 1.3,
         function apply(e) {
-            e.m.Name = split(e.m.Name, " ")[0] + " " + this.Noun;
-
             // Do 3 quick shots, never aimed one
             local function patchSkill(_skill) {
                 // .b is an MSU thing, otherwise their skill.softReset() overwrites changes
@@ -809,7 +805,10 @@ Util.extend(se, {
         local type = se.getTroopType(t);
         if (type in plan && plan[type].len()) {
             local quirk = plan[type].remove(0);
-            if (quirk != null) se.applyQuirk(e, quirk);
+            if (quirk != null) {
+                se.applyQuirk(e, quirk);
+                se.quirkName(e, quirk);
+            }
         }
     }
 
@@ -820,8 +819,6 @@ Util.extend(se, {
         // also used to transfer to surviving goblin of goblin wolfrider
         e.m.se_Quirk <- quirk;
 
-        if ("Prefix" in quirk && !e.m.Name.find(quirk.Prefix))
-            e.m.Name = quirk.Prefix + " " + Config.cutName(e.m.Name);
         e.m.XP *= quirk.XPMult;
         if ("ResurrectionValue" in e.m) e.m.ResurrectionValue *= quirk.XPMult; // More valuable
 
@@ -829,6 +826,14 @@ Util.extend(se, {
 
         // Update from base properties to current and e.m.*
         e.m.Skills.update();
+    }
+
+    function quirkName(e, quirk) {
+        local prevName = e.m.Name;
+        if ("Prefix" in quirk) e.m.Name = quirk.Prefix + " " + Config.cutName(e.m.Name);
+        // if ("Noun" in quirk) e.m.Name = ::std.Re.find(e.m.Name, @"^(.+?)\b\w*$") + quirk.Noun;
+        if ("Noun" in quirk) e.m.Name = split(e.m.Name, " -")[0] + " " + quirk.Noun;
+        ::logInfo("se: name " + prevName + " -> " + e.m.Name);
     }
 
     function getTroopType(t) {
