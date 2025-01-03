@@ -48,6 +48,13 @@ Const.Perks <- {
         setStartValuesEx = @() null
     })
 }
-::mods_addHook <- function(name, func) {
+::mods_addHook <- function (name, func) {
     func("some/parent", "some/parent/child", {})
+}
+
+::mods_getMember <- function (_obj, _key) {
+    return ::std.Util.getMember(_obj, _key)
+}
+::mods_override <- function (_obj, _key, _val) {
+    _obj[_key] = _val;
 }
