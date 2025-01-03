@@ -1,7 +1,7 @@
 local mod = ::Useful <- {
     ID = "mod_useful"
     Name = "Useful Things"
-    Version = 0.5
+    Version = 0.6
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/682"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/useful"
