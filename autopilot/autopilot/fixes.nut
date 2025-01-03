@@ -39,6 +39,14 @@ mod.hook("scripts/ai/tactical/behaviors/ai_engage_ranged", function (q) {
     }
 })
 
+// Fix melee target or entity breaking (dying, going out of map) between onEvaluate and onExecute
+mod.hook("scripts/ai/tactical/behaviors/ai_engage_melee", function (q) {
+    q.onExecute = @(__original) function (_entity) {
+        if (!Actor.isAlive(_entity)
+            || this.m.TargetActor != null && !Actor.isValidTarget(this.m.TargetActor)) return true;
+        return __original(_entity);
+    }
+})
 
 mod.hook("scripts/ai/tactical/behavior", function (q) {
     // Sometimes _tile might be 0 ???
