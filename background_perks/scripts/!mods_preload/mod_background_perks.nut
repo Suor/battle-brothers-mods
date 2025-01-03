@@ -13,10 +13,6 @@
 }
 
 local mod = ::Hooks.register(::BgPerks.ID, ::BgPerks.Version, ::BgPerks.Name);
-mod.queue(function () {
-    ::include("background_perks/chances");
-    ::include("background_perks/hackflows_perks");
-})
 
 // Expose this function so that it could be called externally or patched
 function BgPerks::giveFreePerks(_player) {
@@ -73,6 +69,8 @@ function BgPerks::giveFreePerks(_player) {
 
 
 mod.queue(function () {
+    ::include("background_perks/chances");
+
     local starting = false;
     mod.hook("scripts/entity/tactical/player", function (q) {
         q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {

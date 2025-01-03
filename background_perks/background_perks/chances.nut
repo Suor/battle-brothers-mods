@@ -1,6 +1,9 @@
 // Expose these globally so that anyone will be able to add or adjust these
 ::BgPerks.chances <- {
-    ALL = {"gifted": 4}
+    ALL = {
+        "gifted": 4
+        "hackflows.flesh_on_the_bones": 1
+    }
 
     adventurous_noble = {
         "steel_brow": 5
@@ -31,6 +34,7 @@
         "crippling_strikes": 33
         "coup_de_grace": 33
         "head_hunter": 3
+        "hackflows.balance": 15
     }
 
     barbarian = {
@@ -39,6 +43,7 @@
         "colossus": 15
         "pathfinder": 10
         "berserk": 3
+        "hackflows.battle_flow": 10
     }
 
     bastard = {
@@ -67,6 +72,7 @@
         "dodge": 33
         "nimble": 15
         "footwork": 33
+        "hackflows.balance": 15
     }
 
     bowyer = {
@@ -83,12 +89,14 @@
         "underdog": 10
         "mastery.mace": 10
         "dodge": 3
+        "hackflows.balance": 3
     }
 
     butcher = {
         "mastery.cleaver": 50
         "coup_de_grace": 20
         "crippling_strikes": 20
+        "hackflows.bloody_harvest": 10
     }
 
     caravan_hand = {
@@ -113,6 +121,7 @@
         "nine_lives": 50
         "hold_out": 33
         "underdog": 5
+        "hackflows.flesh_on_the_bones": 9
     }
 
     crusader = {
@@ -121,6 +130,7 @@
         "fortified_mind": 20
         "mastery.sword": 15
         "reach_advantage": 10
+        "hackflows.full_force": 10
     }
 
     daytaler = {
@@ -198,6 +208,8 @@
         "reach_advantage": 5
         "nine_lives": 3
         "fast_adaption": 2
+        "hackflows.flesh_on_the_bones": 4
+        "hackflows.battle_flow": 3
     }
 
     gravedigger = {
@@ -215,6 +227,7 @@
         "fearsome": 20
         "battle_forged": 50
         "brawny": 25
+        "hackflows.full_force": 33
     }
 
     historian = {
@@ -319,8 +332,9 @@
         "nine_lives": 10
         "colossus": 5
         "recover": 5
-        "rotation": 15
+        "rotation": 20
         "mastery.cleaver": 3
+        "hackflows.balance": 15
     }
 
     orc_slayer = {
@@ -372,6 +386,7 @@
         "underdog": 4
         "crippling_strikes": 10
         "backstabber": 10
+        "hackflows.stabilized": 10
     }
 
     ratcatcher = {
@@ -418,6 +433,7 @@
         "brawny": 5
         "hold_out": 5
         "steel_brow": 10
+        "hackflows.stabilized": 5
     }
 
     servant = {
@@ -439,6 +455,8 @@
         "quick_hands": 10
         "dodge": 7
         "fast_adaption": 7
+        "hackflows.flesh_on_the_bones": 15
+        "hackflows.balance": 7
     }
 
     squire = {
@@ -478,6 +496,7 @@
         "colossus": 7
         "relentless": 5
         "lone_wolf": 5
+        "hackflows.flesh_on_the_bones": 4
     }
 
     wildman = {
@@ -487,6 +506,8 @@
         "adrenaline": 50
         "relentless": 7
         "colossus": 7
+        "hackflows.flesh_on_the_bones": 4
+        "hackflows.battle_flow": 4
     }
 
     witchhunter = {
