@@ -21,8 +21,8 @@ Is always safe to add or remove. Only uses hooks now, no overwritten files.
 
 Tested with:
 - Swifter
-- Reforged
-- Legends (no need to remove any files from that anymore)
+- Reforged (some active skills won't be used)
+- Legends
 - Accessory Companions (including Legends)
 - North Expansion
 - Heroic Scenario Pack

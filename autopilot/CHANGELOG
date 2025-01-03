@@ -1,3 +1,8 @@
+2.5.2
+- fixed newer Reforged incompatibility
+- fixed another way for a melee target to break
+- remove some debug logs
+
 2.5.1
 - fixed combat skills not working
 
