@@ -1,14 +1,21 @@
+dofile(getenv("STDLIB_DIR") + "load.nut", true);
+
 ::Hooks <- {
     function getMod(_id) {
         return {
-            ID = _id
-            function hook(_path, _func) {}
+            // ID = _id
+            function hook(_filename, _func) {
+                _func({}.setdelegate({_set = @(k,v) null}))
+            }
+            function hookTree(_filename, _func) {
+                _func({}.setdelegate({_set = @(k,v) null}))
+            }
         }
     }
 };
 ::logInfo <- function (_text) {print(_text + "\n")}
 
-dofile("autopilot/debug.nut", true);
+dofile("autopilot/fixes.nut", true);
 
 ::actor <- {
     Name = "Lex"
@@ -16,4 +23,6 @@ dofile("autopilot/debug.nut", true);
     function isAlive() {return true}
 };
 local aref = ActorRef(actor);
-print(aref.isAlive() + "\n");
+assert(aref.isAlive());
+
+print("Tests OK\n");
