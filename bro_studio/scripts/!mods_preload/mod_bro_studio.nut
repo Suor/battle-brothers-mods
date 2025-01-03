@@ -4,7 +4,7 @@ local mod = ::BroStudio <- {
     Version = "1.1.0"
     Debug = false //::std.Debug.with({prefix = "studio: "})
 }
-local Rand = ::std.Rand.using(::rng); // Use non Math rng generator to preserve seeds better
+local Rand = ::std.Rand.using(::std.rng); // Use non Math rng generator to preserve seeds better
 
 local mh = ::Hooks.register(mod.ID, mod.Version, mod.Name);
 mh.require("stdlib >= 2.0", "mod_msu >= 1.2.6");

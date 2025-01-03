@@ -1,6 +1,6 @@
 local mod = ::BroStudio,
       Player = ::std.Player,
-      Rand = ::std.Rand.using(::rng), // Use non-Math rng generator to preserve seeds better
+      Rand = ::std.Rand.using(::std.rng), // Use non-Math rng generator to preserve seeds better
       Array = ::std.Array, Text = ::std.Text, Util = ::std.Util;
 
 // Settings, Talents & Attributes page
@@ -64,7 +64,7 @@ mod.getVeteranTalentValue <- function () {
 
 
 // The meat
-local isBackgroundUntalented = ::mods_getRegisteredMod("mod_legends")
+local isBackgroundUntalented = ::Hooks.hasMod("mod_legends")
     ? @(b) b.isBackgroundType(Const.BackgroundType.Untalented)
     : @(b) b.isUntalented()
 

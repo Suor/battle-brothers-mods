@@ -134,15 +134,15 @@ player.m.LevelUps = 1; // Reset it
 // Veteran Boost
 player.m.Talents = [3 3 3 3 2 2 1 1];
 
-::rng.reset(11);
+::std.rng.reset(11);
 setconf({attrsVeteran = 11, attrsVeteranBoostValue = "classic"})
 assertEq(genAttributes(), [[2], [2], [1], [3], [1], [2], [1], [2]])
 
-::rng.reset(11);
+::std.rng.reset(11);
 setconf({attrsVeteran = 11, attrsVeteranBoostValue = "slight"})
 assertEq(genAttributes(), [[2], [1], [1], [2], [2], [1], [1], [1]])
 
-::rng.reset(11);
+::std.rng.reset(11);
 setconf({attrsVeteran = 11, attrsVeteranBoostValue = "high"})
 assertEq(genAttributes(), [[2], [2], [2], [3], [2], [2], [1], [1]])
 print("Attributes OK\n");

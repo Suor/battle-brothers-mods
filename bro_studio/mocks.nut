@@ -9,51 +9,41 @@ logInfo <- function(s) {
     MaxLevelWithPerkpoints = 11
 }
 
-// Mod hooks mock
-::mods_registerMod <- function (x, y, z = null) {}
-::mods_getRegisteredMod <- function (name) {return false}
-::mods_queue <- function (x, y, func) {
-    func()
+// Modern Hooks mocks
+local mod = {
+    function require(...) {}
+    function conflictWith(...) {}
+    function queue(...) {
+        local func = vargv.top();
+        func();
+    }
+    function hook(_filename, _func) {
+        _func({
+            fillTalentValues = @() null
+            onHired = @() null
+            getAttributeLevelUpValues = @() null
+            // LevelUpChanges
+            updateLevel = @() null
+            onSerialize = @() null
+            onDeserialize = @() null
+            convertEntityToUIData = @() null
+            onQueryStatusEffectTooltipData = @() null
+        })
+    }
+    function hookTree(_filename, _func) {
+        _func({
+            onSpawnAssets = @() null
+        })
+    }
 }
-::mods_hookClass <- function (x, func) {
-    func({});
+::Hooks <- {
+    JSFiles = []
+    function register(_id, _version, _name) {return mod}
+    function getMod(_id) {return mod}
+    function hasMod(_id) {return true}
+    function registerJS(_filename) {}
+    function registerCSS(_filename) {}
 }
-::mods_hookExactClass <- function (x, func) {
-    func({
-        startNewCampaign = @() null
-        setStartValuesEx = @() null
-        fillTalentValues = @() null
-        onHired = @() null
-        updateLevel = @() null
-        getAttributeLevelUpValues = @() null
-    })
-}
-::mods_hookChildren <- function (x, func) {
-    func({})
-}
-::mods_hookBaseClass <- function (x, func) {
-    func({
-        starting_scenario = {
-            function onSpawnAssets() {}
-        }
-    })
-}
-::mods_hookDescendants <- function (x, func) {
-    func({})
-}
-::mods_hookNewObject <- function (x, func) {
-    func({
-        setStartValuesEx = @() null
-    })
-}
-::mods_addHook <- function(name, func) {
-    func("some/parent", "some/parent/child", {})
-}
-::mods_registerJS <- function (name) {}
-
-::rng_new <- ::std.rng_new;
-::rng <- ::rng_new(1);
-
 
 // Mock MSU
 local function makePage(name) {
