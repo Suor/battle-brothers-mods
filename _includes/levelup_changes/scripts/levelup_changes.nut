@@ -1,4 +1,4 @@
-local version = 0.1, prev = null, debug = false;
+local version = 0.2, prev = null, debug = false;
 ::logInfo("LevelUpChanges " + version + " (<mod_name>)");
 if ("LevelUpChanges" in getroottable()) {
     if (::LevelUpChanges.version >= version) return;
@@ -52,18 +52,22 @@ mod.hook("scripts/entity/tactical/player", function (q) {
             foreach (cb in LevelUpChanges.callbacks) cb(this, level);
         }
     }
+
+    if ("std" in getroottable()) {
+        q.onSerialize = @(__original) function(_out) {
+            if ("levelUpChanges" in this)
+                this.getFlags().set("levelUpChanges", ::std.Util.pack(this.levelUpChanges));
+            __original(_out);
+        }
+        q.onDeserialize = @(__original) function (_in) {
+            __original(_in);
+            local packed = this.getFlags().get("levelUpChanges");
+            if (packed) this.levelUpChanges <- ::std.Util.unpack(packed)
+        }
+    }
 })
 mod.hook("scripts/ui/global/data_helper", function (q) {
     if (version != ::LevelUpChanges.version) return;
-
-    // local function joinAnd(_strings) {
-    //     local res = "", last = _strings.len() - 1;
-    //     foreach (i, item in _strings) {
-    //         local sep = i == 0 ? "" : i == last ? " and " : ", ";
-    //         res += sep + item;
-    //     }
-    //     return res;
-    // }
 
     q.convertEntityToUIData = @(__original) function (_entity, _activeEntity) {
         local ret = __original(_entity, _activeEntity);
