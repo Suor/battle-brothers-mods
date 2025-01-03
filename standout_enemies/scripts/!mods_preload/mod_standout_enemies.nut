@@ -968,6 +968,7 @@ Util.extend(Mod, {
 
 ::mods_queue("mod_standout_enemies", "stdlib, mod_hooks(>=20)", function() {
     this.logInfo("se: loading");
+    ::include("scripts/standout_enemies_rosetta_ru");
 
     ::mods_hookClass("entity/tactical/tactical_entity_manager", function(cls) {
         local setupEntity = cls.setupEntity;
