@@ -4,7 +4,7 @@ export
 SHELL := /bin/bash
 
 .ONESHELL:
-zip: check-compile
+zip: include test
 	@set -e;
 # 	grep -r std\\.Debug $(SOURCES) && echo "Debug statements found" && exit;
 	LAST_TAG=$$(git tag | grep $(TAG_NAME) | tail -1);
@@ -16,7 +16,7 @@ zip: check-compile
 clean:
 	@rm -f *_MODIFIED.zip;
 
-install: include check-compile
+install: include test
 	@set -e;
 	FILENAME=${DATA_DIR}mod_$(MOD_NAME)_TMP.zip;
 	zip --filesync -r "$${FILENAME}" $(SOURCES);
@@ -26,8 +26,10 @@ check-compile:
 	find . -name \*.nut -print0 | xargs -0 -n1 squirrel -c && echo "Syntax OK"
 	rm out.cnut
 
-test: check-compile
-	@squirrel test.nut;
+test: include check-compile
+	@if [[ -f "test.nut" ]]; then
+		squirrel test.nut;
+	fi
 
 include:
 	@set -e
@@ -43,4 +45,5 @@ include:
 				# cp $$src $$dst;
 			fi
 		done
+		echo "Include $$i";
 	done
