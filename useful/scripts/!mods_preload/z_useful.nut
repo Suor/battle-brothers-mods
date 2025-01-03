@@ -21,8 +21,8 @@ mod.hookItemClass <- function (cls, values) {
     local setValuesBeforeRandomize = Util.getMember(cls, "setValuesBeforeRandomize");
     if (setValuesBeforeRandomize) {
         cls.setValuesBeforeRandomize <- function (_values) {
-            Util.extend(_values, values);
-            setValuesBeforeRandomize(_values);
+            local overrides = Util.extend(_values || {}, values);
+            setValuesBeforeRandomize(overrides);
         }
         return;
     }
