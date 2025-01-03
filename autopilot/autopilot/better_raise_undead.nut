@@ -1,4 +1,4 @@
-local debug = true;
+local debug = false;
 local mod = ::Hooks.getMod("mod_autopilot_new");
 local Table = ::std.Table, Debug = ::std.Debug;
 

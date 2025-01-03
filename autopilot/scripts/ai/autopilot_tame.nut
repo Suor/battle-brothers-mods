@@ -1,4 +1,4 @@
-local debug = true;
+local debug = false;
 
 this.autopilot_tame <- this.inherit("scripts/ai/tactical/behavior", {
     m = {
