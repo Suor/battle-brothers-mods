@@ -9,6 +9,7 @@ Adds promotions for some retinue followers to make them better for extra one tim
 **Scavenger.** Doubles the spoils. Costs 3000 gold.<br>
 **Trader.** Finds more stuff in shops, including rare named items. Costs 7000 gold.<br>
 **Lookout.** Shows a faction of unscoutable locations and whether its treasury has named items. Costs 3500.<br>
+**Surgeon.** Gives 15% chance to fix permanent injury on level up. Costs 3500.<br>
 
 Also if [Sato's Balance Mod][sato-balance] is installed there will be a promotion for Guide:
 
