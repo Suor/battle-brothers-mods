@@ -1,3 +1,10 @@
+3.5.0
+- stopped sorting artifacts first
+- fixed stacking stamina regen
+- fixed artifact's to say "Artifact"
+- added MSU source link and updater
+- added linebreaker icon
+
 3.4
 - replaced huge ammo artifacts with imbued ammo: flaming, freezing and poisoned arrows and bolts
 - fixed incompatibility with recent Item Spawner mod versions
