@@ -19,7 +19,6 @@ function BgPerks::giveFreePerks(_player) {
     local scale = 1.0 + 0.5 * Math.maxf(0, Math.minf(1, World.getTime().Days / 100.0));
     if (::Hooks.hasMod("mod_stupid_game")) scale += 0.5;
 
-    local perkPoints = _player.m.PerkPoints, perkPointsSpent = _player.m.PerkPointsSpent;
     local background_key = _player.m.Background.getID().slice("background.".len());
 
     // Look up chances and add common ones
@@ -56,28 +55,52 @@ function BgPerks::giveFreePerks(_player) {
         Debug.log("perks", perks);
     }
 
+    local dynPerks = ::Hooks.hasMod("mod_dynamic_perks");
+
+    local perkPoints = _player.m.PerkPoints, perkPointsSpent = _player.m.PerkPointsSpent;
+    local perkTier = dynPerks ? _player.getPerkTier() : null;
+
     // Unlock them
+    local function canAddPerk(_perk) {
+        local id = "perk." + _perk;
+        return (dynPerks && _player.getPerkTree().hasPerk(id) || !dynPerks) && !_player.hasPerk(id)
+    }
+    local function arrayFirst(_array, _test) {
+        foreach (item in _array) if (_test(item)) return item;
+        return null;
+    }
+
     foreach (perk in perks) {
+        local suffix = " \"" + perk + "\" for " + _player.getName();
+        if (!canAddPerk(perk)) {
+            local fallback = null;
+            if (perk in BgPerks.fallbacks) {
+                fallback = arrayFirst(BgPerks.fallbacks[perk], canAddPerk);
+            }
+            if (fallback == null) {
+                if (::BgPerks.Debug)
+                    ::logInfo("bp: skipping missing perk" + suffix);
+                continue;
+            }
+            if (::BgPerks.Debug)
+                ::logInfo("bp: adding perk \"" + fallback + "\" instead of" + suffix);
+            perk = fallback;
+        }
         local ok = _player.unlockPerk("perk." + perk);
         if (!ok && ::BgPerks.WarnOnUnlockFailure)
-            logWarning("Failed to unlock perk \"" + perk + "\" for " + _player.getName())
+            logWarning("bp: failed to unlock perk" + suffix)
     }
 
     _player.m.PerkPointsSpent = perkPointsSpent;
     _player.m.PerkPoints = perkPoints;
+    if (dynPerks) _player.setPerkTier(perkTier);
 }
 
+local starting = false;
 
-mod.queue(function () {
+mod.queue(">mod_reforged", function () {
     ::include("background_perks/chances");
-
-    local starting = false;
-    mod.hook("scripts/entity/tactical/player", function (q) {
-        q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
-            __original(_backgrounds, _addTraits);
-            if (!starting) ::BgPerks.giveFreePerks(this);
-        };
-    });
+    ::include("background_perks/fallbacks");
 
     // On setting up a new campaign all sort of things are hard coded,  typical is to  call
     // .setStartValuesEx() and assign LevelUps and call .fillAttributeLevelUpValues() later,
@@ -92,6 +115,20 @@ mod.queue(function () {
         }
     });
 })
+
+// Need to move it to "very late" because dynamic perk trees are only build there
+mod.queue(">mod_reforged", function() {
+    mod.hook("scripts/entity/tactical/player", function (q) {
+        logInfo("bp: setting setStartValuesEx")
+        q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
+            logInfo("bp: set setStartValuesEx, starting = " + starting);
+            __original(_backgrounds, _addTraits);
+            if (!starting) ::BgPerks.giveFreePerks(this);
+        };
+        logInfo("bp: set setStartValuesEx")
+    });
+    logInfo("bp: set hook")
+}, ::Hooks.QueueBucket.VeryLate)
 
 mod.queue(">msu", function () {
     if (!("MSU" in getroottable())) return;
