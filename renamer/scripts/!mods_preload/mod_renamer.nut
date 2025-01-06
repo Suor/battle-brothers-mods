@@ -18,6 +18,10 @@ mod.Aliases <- {
     "Town Watchman": "Watchman"
     // Chosen
     "Chosen Aspirant": "Aspirant"
+
+    // Russian
+    "Межевой рыцарь": "Рыцарь"
+    "Народный Герой": "Герой"
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
