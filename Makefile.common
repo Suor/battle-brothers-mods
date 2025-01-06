@@ -6,7 +6,7 @@ SHELL := /bin/bash
 .ONESHELL:
 zip: include test
 	@set -e;
-	grep -r "ebug = true" $(SOURCES) && echo "Debug statements found" && exit;
+	grep --color -ri "debug = true" $(SOURCES) && echo "Debug statements found" && exit;
 	LAST_TAG=$$(git tag | grep $(TAG_NAME) | tail -1);
 	MODIFIED=$$( git diff $$LAST_TAG --quiet $(SOURCES) || echo _MODIFIED);
 	NAME=$$(echo $$LAST_TAG | perl -pE 's/^$(TAG_NAME)-/$(MOD_NAME)_/');
