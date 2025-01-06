@@ -104,14 +104,14 @@ local pairs = [
     //     en = "Nimble and Battle Forged"
     //     ru = "Ловкость и Закалка боем"
     // }
-    // {
-    //     en = "Nimble"
-    //     ru = "Ловкость"
-    // }
-    // {
-    //     en = "Battle Forged"
-    //     ru = "Закалка боем"
-    // }
+    {
+        en = "Nimble"
+        ru = "Ловкач"
+    }
+    {
+        en = "Battle Forged"
+        ru = "Закалёный в боях"
+    }
     {
         mode = "pattern"
         en = "Combined with <others:str> you only receive <hp:str_tag> damage to Hitpoints and <armor:str_tag> damage to Armor"

@@ -1,3 +1,8 @@
+1.5
+- support newer Reforged
+- added russian translation (needs Rosetta)
+- made Flesh on the Bones double hitpoints given by Nine Lives
+
 1.4
 - fixed overlay for Battle Flow
 - better feedback about armor weight in Stabilized tooltip
