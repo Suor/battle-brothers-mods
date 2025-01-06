@@ -8,8 +8,16 @@ Changes from the base mod:
 - vary free perks more, chances readjusted
 - scale probability by time, later hires have higher chance to get free perks
 - added a way to extend this, see below
-- integrates with [Hackflow's Perks][hackperks] mod if both are installed, i.e. gives a chance to receive perks from there
 - fixed The Gifted bug
+- integrates nice with:
+    - Reforged
+    - [More Backgrounds and Events (Updated)][xbe]
+    - [Hackflow's Perks][hackperks]
+    - [Proper Necromancer][necro]
+    - [Of Flesh and Faith Plus][ffp]
+    - [Lone Chosen][lone]
+    - [Heroic Scenario Pack][heroic]
+    - [Fantasy Brothers][fantasy]
 
 This is more about fun, but also makes some weaker backgrounds more appealing, might need to hire and fire several times to get a bro with desired perks though.
 
@@ -66,4 +74,11 @@ Note that a key in `::BgPerks.chances` is the background ID with `background.` p
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/661
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [base-mod]: https://www.nexusmods.com/battlebrothers/mods/70
+
+[xbe]: https://www.nexusmods.com/battlebrothers/mods/769
 [hackperks]: https://www.nexusmods.com/battlebrothers/mods/673
+[necro]: https://www.nexusmods.com/battlebrothers/mods/775
+[ffp]: https://github.com/jcsato/of_flesh_and_faith_plus
+[lone]: https://www.nexusmods.com/battlebrothers/mods/493
+[heroic]: https://www.nexusmods.com/battlebrothers/mods/265
+[fantasy]: https://www.nexusmods.com/battlebrothers/mods/473

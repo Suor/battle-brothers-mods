@@ -1,7 +1,7 @@
 ::BgPerks <- {
     ID = "mod_background_perks"
     Name = "Starting Perks by Background"
-    Version = "2.5.0"
+    Version = "2.6.0"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/661"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/background_perks"
