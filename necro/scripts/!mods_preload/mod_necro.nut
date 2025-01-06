@@ -28,7 +28,7 @@ local def = ::Necro <- {
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("mod_msu >= 1.6.0", "stdlib >= 2.1");
-mod.queue(function() {
+mod.queue(">mod_reforged", function() {
     ::include("necro/rosetta_ru");
 
     def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
@@ -43,6 +43,11 @@ mod.queue(function() {
     ::Hooks.registerJS("ui/mods/necro.js");
     ::Hooks.registerCSS("ui/mods/necro.css");
     ::include("necro/tactical_state");
+
+    // // Allow loading from earlier unreleased necro
+    // mod.hook("scripts/skills/racial/unhold_racial", function (q) {
+    //     q.onUpdate = @() function (_props) {}
+    // })
 
     // Allow origin to adjust hiring and tryout cost on per bro basis
     mod.hook("scripts/entity/tactical/player", function (q) {
@@ -142,32 +147,36 @@ mod.queue(function() {
         }
     })
 
-    if (!("DynamicPerks" in getroottable())) ::DynamicPerks <- "placeholder to fool mod_plan_perks";
-    // Add perk tree to bros data
-    mod.hook("scripts/ui/global/data_helper", function (q) {
-        local allowedMasteries = {};
-        foreach (w in ["mace" "cleaver" "sword" "dagger" "polearm" "crossbow" "throwing"])
-            allowedMasteries["perk.mastery." + w] <- true;
+    // If DynamicPerks is installed then we added out perks via a special perk group
+    if (!("DynamicPerks" in getroottable())) {
+        ::DynamicPerks <- "placeholder to fool mod_plan_perks";
 
-        // TODO: harmonize with DynamicPerks
-        q.convertEntityToUIData = @(__original) function(_entity, _activeEntity) {
-            local result = __original(_entity, _activeEntity);
-            logInfo("necro: convertEntityToUIData " + _entity.getName())
-            if (_entity != null && _entity.getSkills().hasSkill("background.necro")) {
-                local perks = ::Const.Perks.Perks.map(@(row) clone row);
-                perks[2] = perks[2].filter(@(_, p) p.ID != "perk.taunt");
-                perks[3] = perks[3].filter(@(_, p) p.ID in allowedMasteries);
-                perks[5] = perks[5].filter(@(_, p) p.ID != "perk.battle_forged");
-                foreach (perk in ::Const.Perks.Necro) {
-                    perks[perk.Row].push(perk);
+        // Add perk tree to bros data
+        mod.hook("scripts/ui/global/data_helper", function (q) {
+            local allowedMasteries = {};
+            foreach (w in ["mace" "cleaver" "sword" "dagger" "polearm" "crossbow" "throwing"])
+                allowedMasteries["perk.mastery." + w] <- true;
+
+            // TODO: harmonize with DynamicPerks
+            q.convertEntityToUIData = @(__original) function(_entity, _activeEntity) {
+                local result = __original(_entity, _activeEntity);
+                logInfo("necro: convertEntityToUIData " + _entity.getName())
+                if (_entity != null && _entity.getSkills().hasSkill("background.necro")) {
+                    local perks = ::Const.Perks.Perks.map(@(row) clone row);
+                    perks[2] = perks[2].filter(@(_, p) p.ID != "perk.taunt");
+                    perks[3] = perks[3].filter(@(_, p) p.ID in allowedMasteries);
+                    perks[5] = perks[5].filter(@(_, p) p.ID != "perk.battle_forged");
+                    foreach (perk in ::Const.Perks.Necro) {
+                        perks[perk.Row].push(perk);
+                    }
+                    result.necro_perkTree <- perks;
+                } else {
+                    result.necro_perkTree <- ::Const.Perks.Perks;
                 }
-                result.necro_perkTree <- perks;
-            } else {
-                result.necro_perkTree <- ::Const.Perks.Perks;
+                return result;
             }
-            return result;
-        }
-    });
+        });
+    }
 
     // If not removed we cannot possess at the start of next battle
     mod.hook("scripts/skills/effects/possessing_undead_effect", function (q) {

@@ -37,6 +37,11 @@ this.necro_background <- this.inherit("scripts/skills/backgrounds/character_back
         this.m.Bodies = ::Const.Bodies.Skinny;
     }
 
+    function onBuildPerkTree() {
+        local perkTree = this.getContainer().getActor().getPerkTree();
+        perkTree.addPerkGroup("pg.necro");
+    }
+
     function getTooltip()
     {
         return [
@@ -77,21 +82,6 @@ this.necro_background <- this.inherit("scripts/skills/backgrounds/character_back
             Initiative = [-10, 0]
         };
         return c;
-    }
-
-    // TODO: remove, won't be needed in newer Autopilot New
-    function onSetupAI(_agent) {
-        _agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_raise_undead"));
-        _agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_possess_undead"));
-        // This adds keep safe distance behavior
-        _agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_engage_ranged"));
-
-        // _agent.removeBehavior(::Const.AI.Behavior.ID.EngageMelee);
-        _agent.removeBehavior(::Const.AI.Behavior.ID.Protect);
-
-        _agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.EngageMelee] = 0.2;
-        _agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.RaiseUndead] = 3.0;
-        // _agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.Disengage] = 5.0;
     }
 
     function onAdded()
