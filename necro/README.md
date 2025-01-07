@@ -19,12 +19,12 @@ Plans:
 
 Is safe to add midgame, can't remove once you have these guys anywhere including city hiring rosters. Compatible with most other mods.
 
-Will play nice with [Autopilot New][autopilot] >= 2.4.0.
+Will play nice with [Autopilot New][autopilot] >= 2.5.0. Will work with Reforged.
 
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHooks][] and [stdlib][] >= 2.1.
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHooks][] and [stdlib][].
 
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/775

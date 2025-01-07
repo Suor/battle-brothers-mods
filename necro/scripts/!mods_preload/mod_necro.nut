@@ -1,8 +1,7 @@
-// ::Hooks.DebugMode = true;
 local def = ::Necro <- {
     ID = "mod_necro"
     Name = "Proper Necro"
-    Version = "0.3.0"
+    Version = "0.4.0"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/775"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/necro"
@@ -157,10 +156,8 @@ mod.queue(">mod_reforged", function() {
             foreach (w in ["mace" "cleaver" "sword" "dagger" "polearm" "crossbow" "throwing"])
                 allowedMasteries["perk.mastery." + w] <- true;
 
-            // TODO: harmonize with DynamicPerks
             q.convertEntityToUIData = @(__original) function(_entity, _activeEntity) {
                 local result = __original(_entity, _activeEntity);
-                logInfo("necro: convertEntityToUIData " + _entity.getName())
                 if (_entity != null && _entity.getSkills().hasSkill("background.necro")) {
                     local perks = ::Const.Perks.Perks.map(@(row) clone row);
                     perks[2] = perks[2].filter(@(_, p) p.ID != "perk.taunt");

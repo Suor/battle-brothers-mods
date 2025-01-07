@@ -1,3 +1,13 @@
+0.4.0
+- support Reforged
+- do not receive loot, which you are not supposed to
+- fill in actives descriptions and set proper order
+- do not Mind Meld armor perks
+- made bg not affected by allies dying
+- added Russian translation (req Rosetta)
+- updated scenario
+- updated perks texts
+
 0.3.0
 - added Necromancer only perks
 - added an origin
