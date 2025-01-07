@@ -5,6 +5,7 @@ local def = {
         this.m.ID = "pg.necro";
         this.m.Name = "Necromancer";
         this.m.Icon = "necro/perk_mastery.png";
+        this.m.Chance = 0;
         this.m.Tree = [[], [], [], [], [], [], []];
         foreach (perk in ::Const.Perks.Necro) {
             this.m.Tree[perk.Row].push(perk.ID);
@@ -13,4 +14,4 @@ local def = {
 }
 
 this.necro_pg <- "DynamicPerks" in getroottable()
-    ? ::inherit(::DynamicPerks.Class.PerkGroup, def) : def;
+    ? ::inherit(::DynamicPerks.Class.SpecialPerkGroup, def) : def;
