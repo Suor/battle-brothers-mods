@@ -35,11 +35,33 @@ this.necro_background <- this.inherit("scripts/skills/backgrounds/character_back
         this.m.HairColors = ::Const.HairColors.Old;
         this.m.Beards = ::Const.Beards.All;
         this.m.Bodies = ::Const.Bodies.Skinny;
-    }
 
-    function onBuildPerkTree() {
-        local perkTree = this.getContainer().getActor().getPerkTree();
-        perkTree.addPerkGroup("pg.necro");
+        if (::Hooks.hasMod("mod_reforged")) {
+            this.m.PerkTreeMultipliers = {
+                "pg.necro": -1
+                "pg.special.rf_student": -1
+                "pg.rf_fast": 1.5,
+                "pg.rf_tough": 0.5,
+                "pg.special.rf_leadership": 1.5
+                "pg.rf_axe": 0
+                "pg.rf_hammer": 0.3
+                "pg.rf_spear": 0.3
+                "pg.rf_cleaver": 1.5
+                "pg.rf_polearm": 2
+                "pg.rf_crossbow": 1.2
+                "pg.special.rf_student": 2
+                "pg.rf_heavy_armor": 0
+            };
+            this.m.PerkTree = ::new(::DynamicPerks.Class.PerkTree).init({
+                DynamicMap = {
+                    "pgc.rf_exclusive_1": [],
+                    "pgc.rf_shared_1": [],
+                    "pgc.rf_weapon": ["pg.rf_dagger"],
+                    "pgc.rf_armor": [],
+                    "pgc.rf_fighting_style": []
+                }
+            });
+        }
     }
 
     function getTooltip()
