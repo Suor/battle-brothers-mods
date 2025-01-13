@@ -1,3 +1,7 @@
+2.5.3
+- added Reforged behaviors
+- fixed load order bug
+
 2.5.2
 - fixed newer Reforged incompatibility
 - fixed another way for a melee target to break
