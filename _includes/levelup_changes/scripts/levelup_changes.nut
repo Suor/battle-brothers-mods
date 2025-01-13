@@ -1,4 +1,4 @@
-local version = 0.2, prev = null, debug = false;
+local version = 0.3, prev = null, debug = false;
 ::logInfo("LevelUpChanges " + version + " (<mod_name>)");
 if ("LevelUpChanges" in getroottable()) {
     if (::LevelUpChanges.version >= version) return;
@@ -43,7 +43,6 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         }
         this.levelUpChanges.push({title = _title, items = items});
     }
-
     q.updateLevel = @(__original) function () {
         local prevLevel = this.m.Level;
         __original();
@@ -51,6 +50,10 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         for (local level = prevLevel; ++level <= this.m.Level;) {
             foreach (cb in LevelUpChanges.callbacks) cb(this, level);
         }
+    }
+    q.setAttributeLevelUpValues = @(__original) function (_v) {
+        this.levelUpChanges <- [];
+        __original(_v);
     }
 
     if ("std" in getroottable()) {
