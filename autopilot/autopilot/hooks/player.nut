@@ -135,6 +135,18 @@ mod.hook("scripts/entity/tactical/player", function (q) {
             agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.EngageRanged] = 0.1;
         }
 
+        // Add Reforged behaviors for bros to use new active skills
+        if (::Hooks.hasMod("mod_reforged")) {
+            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_onslaught"));
+            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_kata_step"));
+            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_hold_steady"));
+            // agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_follow_up")); // not used
+            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_cover_ally"));
+            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_command"));
+            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_blitzkrieg"));
+            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_attack_lunge"));
+        }
+
         agent.finalizeBehaviors();
         agent.setActor(this);
         setAIAgent(agent);

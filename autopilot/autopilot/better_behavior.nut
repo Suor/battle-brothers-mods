@@ -21,7 +21,6 @@ mod.hook("scripts/ai/tactical/behaviors/ai_engage_melee", function (q) {
 
 mod.hook("scripts/ai/tactical/behaviors/ai_attack_default", function (q) {
     q.m.PossibleSkills.extend([
-        "actives.lunge"
         // CleverFool's mod
         "actives.gae_buidhe_thrust"
         "actives.gae_dearg_thrust"
@@ -32,6 +31,9 @@ mod.hook("scripts/ai/tactical/behaviors/ai_attack_default", function (q) {
         // "actives.xx_a" // Cut with Ring blade
         // "actives.xx_b" // Throw Ring blade
     ]);
+    // Reforged has a specialized behavior for lunge
+    if (!::Hooks.hasMod("mod_reforged")) q.m.PossibleSkills.push("actives.lunge");
+
     // Rifle shoot moved to ai_attack_bow
     local pos = q.m.PossibleSkills.find("actives.xxitem_rifleaa_skill");
     if (pos != null) q.m.PossibleSkills.remove(pos)
