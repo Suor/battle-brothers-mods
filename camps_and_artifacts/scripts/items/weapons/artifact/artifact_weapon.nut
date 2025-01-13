@@ -150,6 +150,11 @@ this.artifact_weapon <- this.inherit("scripts/items/weapons/weapon", {
 		_in.readF32();
 		this.weapon.onDeserialize(_in);
 		this.updateVariant();
+
+		// If this chance is negative then it overflows when saving to U8, fix it.
+		// The issue happens with Reforged, which has -25% base chance. Reforged writes it second
+		// time as I8, but that will break savegames unlike a fix here.
+		if (this.m.ChanceToHitHead > 150) this.m.ChanceToHitHead -= 256;
 	}
 
 });
