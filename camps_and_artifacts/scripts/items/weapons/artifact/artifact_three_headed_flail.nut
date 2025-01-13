@@ -24,8 +24,8 @@ this.artifact_three_headed_flail <- this.inherit("scripts/items/weapons/artifact
 		this.m.Condition = 60.0;
 		this.m.ConditionMax = 60.0;
 		this.m.StaminaModifier = -10;
-		this.m.RegularDamage = 21;
-		this.m.RegularDamageMax = 66;
+		this.m.RegularDamage = 30;
+		this.m.RegularDamageMax = 75;
 		this.m.ArmorDamageMult = 1.0;
 		this.m.DirectDamageMult = 0.3;
 		this.m.ChanceToHitHead = 10;
