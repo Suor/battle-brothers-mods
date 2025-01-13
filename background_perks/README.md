@@ -51,8 +51,8 @@ I will summarize my take on all of this into points:
 If you are creating a mod with new backgrounds or even if you want to add this for backgrounds from some other mod you play then it is possible to do so. For this I expose `::BgPerks.chances` table, which might be complemented like this: 
 
 ```squirrel
-::mods_queue("mod_extra_bgs", ">mod_background_perks", function () {
-    if (!::mods_getRegisteredMod("mod_background_perks")) return;
+mod.queue(">mod_extra_bgs", ">mod_background_perks", function () {
+    if (!::Hooks.hasMod("mod_background_perks")) return;
 
     ::BgPerks.chances.skirmisher <- {
         "mastery.axe": 15
