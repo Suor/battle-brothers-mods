@@ -1,32 +1,27 @@
-::mods_registerMod("mod_stupid_game", 0.1, "Stupid Game");
-::mods_queue("mod_stupid_game", null, function()
-{
+local mod = ::Hooks.register("mod_stupid_game", 0.1, "Stupid Game");
+mod.queue(function () {
     this.logInfo("huge_quivers: loading");
 
-    ::mods_hookBaseClass("items/ammo/ammo", function(cls) {
-        local create = cls.create;
-        cls.create = function() {
-            create();
+    mod.hookTree("scripts/items/ammo/ammo", function (q) {
+        q.create = @(__original) function () {
+            __original();
 
             this.m.Ammo *= 3;
             this.m.AmmoMax *= 3;
         }
     })
-
-    ::mods_hookDescendants("items/weapons/weapon", function(cls) {
-        local create = cls.create;
-        cls.create = function() {
-            create();
+    mod.hookTree("scripts/items/weapons/weapon", function (q) {
+        q.create = @(__original) function () {
+            __original();
 
             this.m.Ammo *= 4;
             this.m.AmmoMax *= 4;
         }
     })
 
-    ::mods_hookNewObject("scenarios/world/raiders_scenario", function(cls) {
-        local onSpawnPlayer = cls.onSpawnPlayer;
-        cls.onSpawnPlayer = function() {
-            onSpawnPlayer();
+    mod.hook("scripts/scenarios/world/raiders_scenario", function (q) {
+        q.onSpawnPlayer = @(__original) function () {
+            __original();
 
             // Restore relations
             local nobles = this.World.FactionManager.getFactionsOfType(this.Const.FactionType.NobleHouse);
