@@ -1,9 +1,14 @@
+3.5.1
+- fixed negative chance to hit head
+- fixed artifact 3-headed flail
+
 3.5.0
 - stopped sorting artifacts first
 - fixed stacking stamina regen
 - fixed artifact's to say "Artifact"
 - added MSU source link and updater
 - added linebreaker icon
+- moved to Modern Hooks
 
 3.4
 - replaced huge ammo artifacts with imbued ammo: flaming, freezing and poisoned arrows and bolts

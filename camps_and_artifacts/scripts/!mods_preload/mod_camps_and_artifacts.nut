@@ -1,7 +1,7 @@
 local mod = ::CampsAndArtifacts <- {
     ID = "mod_camps_and_artifacts"
     Name = "Camps and Artifacts (Reworked)"
-    Version = "3.5.0"
+    Version = "3.5.1"
     Mods = {}
 };
 // TODO: add missing artifact versions of named stuff"
