@@ -15,8 +15,11 @@ local Debug = ::std.Debug, Util = std.Util;
     local onSerialize = o.onSerialize;
     o.onSerialize = function( _out ) {
         foreach (i, fallen in this.m.Fallen) {
-            local ffp = "FunFacts" in fallen ? fallen.FunFacts.pack() : null;
-            this.m.Flags.set("FallenFunFacts." + i, ffp);
+            if ("FunFacts" in fallen) {
+                ::std.Flags.pack(this.m.Flags, "FallenFunFacts." + i, fallen.FunFacts.pack());
+            } else {
+                this.m.Flags.set("FallenFunFacts." + i, null);
+            }
         }
         onSerialize(_out);
     }
@@ -26,10 +29,15 @@ local Debug = ::std.Debug, Util = std.Util;
         onDeserialize(_in);
 
         foreach (i, fallen in this.m.Fallen) {
-            local ffp = this.m.Flags.get("FallenFunFacts." + i);
-            if (!ffp) continue;
+            local ffState;
+            try {
+                ffState = ::std.Flags.unpack(this.m.Flags, "FallenFunFacts." + i);
+            } catch (err) {
+                ::logError("Failed to load fallen FunFacts: " + err);
+            }
+            if (!ffState) continue;
             fallen.FunFacts <- ::new("scripts/mods/fun_facts/fun_facts");
-            fallen.FunFacts.unpack(ffp);
+            fallen.FunFacts.unpack(ffState);
             fallen.FunFacts.setName(fallen.Name);
         }
     }
