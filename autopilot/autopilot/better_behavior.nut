@@ -67,6 +67,7 @@ mod.hook("scripts/ai/tactical/behaviors/ai_attack_split", function (q) {
 mod.hook("scripts/ai/tactical/behaviors/ai_defend_rotation", function (q) {
     q.m.PossibleSkills.extend([
         "actives.spin" // Heroic Scenario Pack
+        "actives.rf_dynamic_duo_shuffle" // Reforged
     ]);
 });
 mod.hook("scripts/ai/tactical/behaviors/ai_boost_stamina", function (q) {
