@@ -1,14 +1,24 @@
 local Str = ::std.Str, Text = ::std.Text,
       Array = ::std.Array, Table = ::std.Table, Util = ::std.Util;
 
-local function Prop(_def) {
-    return Util.extend({
-        value = null
-        function get() {
-            if (value == null) value = calc()
-            return value;
+local function makeReducers() {
+    return {
+        bySeq = {}
+        function new(_seq, _start, _func) {
+            local reducer = {
+                value = _start
+                push = _func
+            }
+            foreach (rec in _seq) reducer.push(rec);
+            if (!(_seq in bySeq)) bySeq[_seq] <- [];
+            bySeq[_seq].push(reducer);
+            return reducer;
         }
-    }, _def)
+        function push(_seq, _rec) {
+            _seq.push(_rec)
+            foreach (_, prop in bySeq[_seq]) prop.push(_rec)
+        }
+    }
 }
 
 this.fun_facts <- {
@@ -29,6 +39,7 @@ this.fun_facts <- {
             BattlesSkipped = 0  // Supserseded by CombatsSkipped array
         }
         Props = null
+        Reducers = null
         TmpCombat = null
         // Ranks = {}
         Player = null
@@ -40,66 +51,37 @@ this.fun_facts <- {
         createProps();
     }
     function createProps() {
-        local function countEffectProp(_effect) {
-            return Prop({
-                ref = this.m.Stats.BattlesLog
-                function calc() {
-                    return Array.sum(
-                        ref.map(@(c) "Added" in c && _effect in c.Added ? c.Added[_effect] : 0))
-                }
-                function onCombatEnd(_record) {
-                    value += Table.get(_record.Added, _effect, 0);
-                }
+        local R = this.m.Reducers = makeReducers();
+
+        this.m.Props = {
+            PlayerKills = R.new(this.m.Stats.Kills, [], function (_rec) {
+                if (_rec.IsPlayer && !_rec.Self) value.push(_rec);
+            })
+            KilledByBros = R.new(this.m.Stats.Deaths, 0, function (_rec) {
+                if (_rec.IsPlayer && !_rec.Self) value++;
+            })
+            SkippedDrunk = R.new(this.m.Stats.CombatsSkipped, 0, function (_rec) {
+                if (_rec.Effects.find("effects.drunk") != null
+                    || _rec.Effects.find("effects.hangover") != null) value++;
             })
         }
 
-        // TODO: move props to stdlib?
-        this.m.Props = {
-            PlayerKills = Prop({
-                ref = this.m.Stats.Kills
-                calc = @() ref.filter(@(_, r) r.IsPlayer)
-                function onKill(_record) {if (_record.IsPlayer) value.push(_record)}
-            })
-            SkippedDrunk = Prop({
-                ref = this.m.Stats.CombatsSkipped
-                // calc = @() ref.filter(@(_, c) c.Effects.find("effects.drunk") != null).len()
-                function calc() {
-                    value = 0;
-                    foreach (record in ref) onCombatSkipped(record);
-                    return value;
-                }
-                function onCombatSkipped(_record) {
-                    if (_record.Effects.find("effects.drunk") != null
-                        || _record.Effects.find("effects.hangover") != null) value++
-                }
-            })
-            Charmed = countEffectProp("charmed")
-            Swallowed = countEffectProp("swallowed_whole")
-            Rooted = Prop({
-                ref = this.m.Stats.BattlesLog
-                function calc() {
-                    value = 0;
-                    foreach (record in ref) onCombatEnd(record);
-                    return value;
-                }
-                function onCombatEnd(_record) {
-                    if (!("Added" in _record)) return;
-                    foreach (effect in ["net" "web" "rooted"])
-                        value += Table.get(_record.Added, effect, 0);
-                }
-            })
+        local effectNames = {
+            charmed = "charmed", swallowed_whole = "swallowed",
+            net = "netted", web = "netted", rooted = "netted",
+            stunned = "stunned"
         }
+        this.m.Props.Effects <- R.new(this.m.Stats.BattlesLog, {}, function (_rec) {
+            foreach (effect, cnt in _rec.Added) {
+                if (!(effect in effectNames)) continue;
+                if (effectNames[effect] in value) value[effectNames[effect]] += cnt;
+                else value[effectNames[effect]] <- cnt;
+            }
+        })
+        // TODO: effects out of battle (reducers might need to be extended)
     }
     function getProp(_name) {
-        return this.m.Props[_name].get();
-    }
-    function updateProps(_event, _record) {
-        foreach (_, prop in this.m.Props) {
-            if (_event in prop) {
-                if (prop.value == null) prop.value = prop.calc();
-                prop[_event](_record);
-            }
-        }
+        return this.m.Props[_name].value;
     }
 
     function setPlayer(_player) {
@@ -156,15 +138,13 @@ this.fun_facts <- {
         }
         this.m.TmpCombat = null;
         ::FunFacts.Debug.log("onBattle ", record);
-        this.m.Stats.BattlesLog.push(record);
-        this.updateProps("onCombatEnd", record);
+        this.m.Reducers.push(this.m.Stats.BattlesLog, record);
     }
 
     function onCombatSkipped(_player) {
         this.m.Stats.BattlesSkipped++;
         local record = Table.extend({Id = ::FunFacts.getBattleId()}, this.getEffectsDesc(_player));
-        this.m.Stats.CombatsSkipped.push(record);
-        this.updateProps("onCombatSkipped", record);
+        this.m.Reducers.push(this.m.Stats.CombatsSkipped, record);
         // ::FunFacts.Debug.log("onCombatSkipped ", record);
         this.m.TmpCombat = null;
     }
@@ -188,9 +168,8 @@ this.fun_facts <- {
             // }
         }
         ::FunFacts.Debug.log("onKill record", record);
-        this.m.Stats.Kills.push(record);
+        this.m.Reducers.push(this.m.Stats.Kills, record);
         ::FunFacts.Debug.log("onKill total records", this.m.Stats.Kills.len());
-        this.updateProps("onKill", record);
     }
 
     function onDeath(_killer, _fatalityType) {
@@ -279,7 +258,7 @@ this.fun_facts <- {
         if (deaths > 0) {
             local text = deaths == 1 ? "Died once"
                 : format("Died %s time%s", red(deaths), Text.plural(deaths));
-            local fromBros = this.m.Stats.Deaths.filter(@(_, d) d.IsPlayer).len();
+            local fromBros = this.getProp("KilledByBros");
             if (fromBros) {
                 text += ". " + (fromBros == 1 ? "One" : fromBros) + " of them from a hand of a bro."
             }
@@ -399,23 +378,14 @@ this.fun_facts <- {
             addHint("ui/icons/campfire.png", text)
         }
 
-        // Experimental
-        local swallowed = getProp("Swallowed");
-        local charmed = getProp("Charmed");
-        local rooted = getProp("Rooted");
-        if (charmed > 0 || swallowed > 0 || rooted > 0) {
-            local text = "";
-            if (swallowed >= 3) {
-                text = format("Was swallowed %d time%s", swallowed, Text.plural(swallowed));
-            }
-            if (charmed >= 3 || text && charmed > 0) {
-                text += text.len() ? "," : "Was";
-                text += format(" charmed %d time%s", charmed, Text.plural(charmed));
-            }
-            if (rooted >= 3 || text && rooted > 0) {
-                text += text.len() ? "," : "Was";
-                text += format(" captured %d time%s", rooted, Text.plural(rooted));
-            }
+        // Effect counts
+        local effects = getProp("Effects");
+        if (effects.len() > 0) {
+            local names = ["swallowed" "charmed" "netted" "stunned"];
+            local desc = names.filter(@(_, n) n in effects)
+                              .map(@(n) format("%s %d times", n, effects[n]));
+            local text = "Was " + Str.join(", ", desc);
+            addHint("ui/perks/perk_04.png", text)
         }
     }
 
