@@ -1,4 +1,4 @@
-// ::mods_hookExactClass("skills/special/stats_collector", function (o) {
+::mods_hookExactClass("skills/special/stats_collector", function (o) {
 // 	local onTargetHit = o.onTargetHit;
 // 	o.onTargetHit = function(...) {
 // 		vargv.insert(0, this);
@@ -10,4 +10,9 @@
 
 // 		return ret;
 // 	}
-// });
+    local onNewDay = o.skill.onNewDay;
+    o.skill.onNewDay = function () {
+        onNewDay();
+        ::FunFacts.s2ff(this).onNewDay();
+    }
+});

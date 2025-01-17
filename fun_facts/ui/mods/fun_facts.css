@@ -1,0 +1,9 @@
+.tooltip-module .hint-container .row .text img[src*=fun_facts] {
+    max-height: 16px;
+    position: relative;
+    top: 2px;
+}
+
+/*var styleTag = $('<style>.tooltip-module.is-entity-content .hint-container .row .text img[src*=fun_facts] {position: relative !important; top: 3px !important}</style>')
+$('html > head').append(styleTag);
+*/

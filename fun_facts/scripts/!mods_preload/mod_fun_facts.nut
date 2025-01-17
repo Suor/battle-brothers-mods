@@ -7,9 +7,12 @@ local mod = ::FunFacts <- {
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/fun_facts"
         tagPrefix = "fun-facts-"
     }
-    LastFallen = null
     BattleId = null
-};
+
+    // Switcheroo flags
+    LastFallen = null
+    Hiring = false
+}
 mod.Debug <- ::std.Debug.with({prefix = "ff: "})
 mod.getBattleId <- function() {
     if (this.BattleId) return this.BattleId;
@@ -30,6 +33,10 @@ mod.getBattleId <- function() {
 }
 mod.incrBattleId <- function() {
     if (this.BattleId) this.BattleId++;
+}
+mod.s2ff <- function (_skill) {
+    local actor = _skill.getContainer().getActor();
+     return "FunFacts" in actor.m ? actor.m.FunFacts : {}.setdelegate({_get = @(k) @(...) null});
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
@@ -80,4 +87,5 @@ mod.incrBattleId <- function() {
 
     foreach (file in ::IO.enumerateFiles("fun_facts")) ::include(file);
     ::mods_registerJS("fun_facts/world_obituary_screen.js");
+    ::mods_registerCSS("fun_facts.css");
 });

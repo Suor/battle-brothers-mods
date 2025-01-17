@@ -36,6 +36,15 @@ this.fun_facts <- {
             CombatsSkipped = []
             NineLivesUses = 0
             NineLivesSaves = 0
+            // v3
+            Used = {
+                Hire = 0
+                Wages = 0
+                Food = 0.0
+                Ammo = 0
+                Parts = 0.0
+                Herbs = 0
+            }
 
             // Obsolete
             BattlesSkipped = 0  // Supserseded by CombatsSkipped array
@@ -99,10 +108,28 @@ this.fun_facts <- {
         return "Id" in lastBattle ? lastBattle.Id : null;
     }
 
+    function onHired(_cost) {
+        this.m.Stats.Used.Hire = _cost;
+    }
+    function onNewDay() {
+        this.m.Stats.Used.Wages += this.m.Player.getDailyCost();
+    }
+    function onConsumeFood(_amount) {
+        this.m.Stats.Used.Food += _amount;
+    }
+    function onConsumeAmmo(_amount) {
+        this.m.Stats.Used.Ammo += _amount;
+    }
+    function onUseHerbs(_amount) {
+        this.m.Stats.Used.Herbs += _amount;
+    }
+
     function onCombatStart(_player) {
         this.m.TmpCombat = {
             Start = this.getEffectsDesc(_player)
             Added = {}
+            Items = _player.getItems().getAllItems().map(
+                @(item) {item = ::MSU.asWeakTableRef(item), cond = item.getCondition()})
         }
         ::FunFacts.Debug.log("onCombatStart " + _player.getName(), this.m.TmpCombat.Start);
     }
@@ -137,9 +164,18 @@ this.fun_facts <- {
             Start = this.m.TmpCombat.Start
             Added = this.m.TmpCombat.Added
         }
-        this.m.TmpCombat = null;
         ::FunFacts.Debug.log("onBattle ", record);
         this.m.Reducers.push(this.m.Stats.BattlesLog, record);
+
+        // Look at lost condition
+        foreach (pair in this.m.TmpCombat.Items) {
+            if (pair.item.isNull()) continue;
+
+            local lostCond =  pair.cond - pair.item.getCondition();
+            if (lostCond > 0)
+                this.m.Stats.Used.Parts += lostCond * ::World.Assets.m.ArmorPartsPerArmor;
+        }
+        this.m.TmpCombat = null;
     }
 
     function onCombatSkipped(_player) {
@@ -392,6 +428,39 @@ this.fun_facts <- {
             local text = "Was " + Str.join(", ", desc);
             addHint("ui/perks/perk_04.png", text)
         }
+
+        // Costs
+        local U = this.m.Stats.Used;
+        local moneyImg = "[img]gfx/ui/tooltips/money.png[/img]";
+        local costs = [];
+        if (U.Hire > 0 && U.Wages > 0)
+            costs.push(format("Hired for %s%d, earned %s%d as wages.",
+                              moneyImg, U.Hire, moneyImg, U.Wages))
+        else if (U.Hire > 0) {
+            costs.push(format("Hired for %s%d.", moneyImg, U.Hire))
+        } else if (U.Wages > 0) {
+            costs.push(format("Was payed %s%d as wages.", moneyImg, U.Wages))
+        }
+        local used = [];
+        if (U.Food >= 1) used.push("[img]gfx/fun_facts/food.png[/img]" + Util.round(U.Food));
+        if (U.Parts >= 1) used.push("[img]gfx/fun_facts/supplies.png[/img]" + Util.round(U.Parts));
+        if (U.Ammo >= 1) used.push("[img]gfx/fun_facts/ammo.png[/img]" + Util.round(U.Ammo));
+        if (U.Herbs >= 1) used.push("[img]gfx/fun_facts/medicine.png[/img]" + Util.round(U.Herbs));
+        if (used.len() > 0) costs.push("used " + Str.join("&nbsp;", used)); // used, consumed, wasted
+
+        // TODO: get proper prices
+        local total = U.Hire + U.Wages + U.Food * 4 + U.Parts * 12
+            + U.Ammo * 3 + U.Herbs * 15;
+        if (total >= 1 && used.len() > 0) {
+            local factor = total >= 2000 ? 100 :
+                           total >= 1000 ? 50 :
+                           total >=  200 ? 10 :
+                           total >=  100 ? 5 : 1;
+            total = ::Math.round(total / factor) * factor;
+            costs.push(format("TCO ~ %s%d", moneyImg, total))
+        }
+
+        if (costs.len() > 0) addHint("ui/icons/asset_money.png", Str.join("\n", costs))
     }
 
     // function clearRanks()

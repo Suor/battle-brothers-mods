@@ -83,6 +83,14 @@
         return ret;
     }
 
+    local onHired = o.onHired;
+    o.onHired = function () {
+        onHired();
+        local hiringCost = ::FunFacts.Hiring
+            ? ::Math.ceil(this.getHiringCost() * ::World.Assets.m.HiringCostMult) : 0;
+        this.m.FunFacts.onHired(hiringCost);
+    }
+
     local onSerialize = o.onSerialize;
     o.onSerialize = function(_out) {
         ::std.Flags.pack(this.getFlags(), "FunFacts", this.m.FunFacts.pack());
