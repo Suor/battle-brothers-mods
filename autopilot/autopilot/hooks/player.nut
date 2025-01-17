@@ -147,6 +147,10 @@ mod.hook("scripts/entity/tactical/player", function (q) {
             agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_attack_lunge"));
         }
 
+        if (this.getSkills().hasSkill("perk.legend_mastery_fist")) {
+            agent.removeBehavior(Const.AI.Behavior.ID.PickupWeapon);
+        }
+
         agent.finalizeBehaviors();
         agent.setActor(this);
         setAIAgent(agent);
