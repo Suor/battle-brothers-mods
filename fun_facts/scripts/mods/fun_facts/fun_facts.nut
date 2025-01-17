@@ -23,7 +23,9 @@ local function makeReducers() {
 
 this.fun_facts <- {
     m = {
+        Version = 3
         Stats = {
+            Version = 1 // Actual version would overwrite this
             // TODO: kills in a single hit, single turn
             Kills = []
             Deaths = []
@@ -44,7 +46,6 @@ this.fun_facts <- {
         // Ranks = {}
         Player = null
         Name = "<not-set>"
-        Version = 2
     }
 
     function create() {
@@ -120,7 +121,7 @@ this.fun_facts <- {
             if (skill.isType(::Const.SkillType.TemporaryInjury)) injured = true;
         }
         local hpPct = Math.round(_player.getHitpointsPct() * 100);
-        // NOTE: Drugged and hpPct was added later
+        // NOTE: Drugged and hpPct was added in v2
         return {Effects = ids, Injured = injured, Drugged = drugged, HpPct = hpPct}
     }
 
@@ -132,7 +133,7 @@ this.fun_facts <- {
             XPGained = _player.m.CombatStats.XPGained
             Fled = _player.m.ff_fled
             Returned = _player.m.ff_returned
-            // Added later
+            // Added in v2
             Start = this.m.TmpCombat.Start
             Added = this.m.TmpCombat.Added
         }
@@ -158,13 +159,15 @@ this.fun_facts <- {
             XP = _target.getXPValue()
             Fatality = _fatalityType
             Day = this.World.getTime().Days
-            // Added later
+            // v2
             Faction = _target.getFaction() // This or target player could be charmed or smth
             Skill = _skill ? _skill.getID() : null
+            // v3
+            Self = _target.getID() == this.m.Player.getID()
+            Charmed = this.m.Player.m.Flags.has("Charmed")
             // about this player
             // Self = {
             //     Faction = this.m.Player.getFaction()
-            //     Charmed = this.m.Player.m.Flags.has("Charmed")
             // }
         }
         ::FunFacts.Debug.log("onKill record", record);
@@ -181,6 +184,8 @@ this.fun_facts <- {
             XP = _killer.getXPValue()
             Fatality = _fatalityType
             Day = this.World.getTime().Days
+            // Added later
+            Self = _killer.getID() == this.m.Player.getID()
         }
         ::FunFacts.Debug.log("onDeath record", record);
         this.m.Stats.Deaths.push(record);
@@ -402,6 +407,33 @@ this.fun_facts <- {
     }
     function unpack(_state) {
         Table.deepExtend(this.m.Stats, _state);
+
+        // Fill combat.Start, combat.Added, Drugged, HpPct
+        if (this.m.Stats.Version < 2) {
+            foreach (combat in this.m.Stats.BattlesLog) {
+                if (!("Start" in combat)) {
+                    combat.Start <- {Effects = [], Injured = false, Drugged = false, HpPct = 100};
+                } else {
+                    Table.setDefaults(combat.Start, {Drugged = false, HpPct = 100})
+                }
+                if (!("Added" in combat)) combat.Added <- {};
+            }
+            foreach (combat in this.m.Stats.CombatsSkipped)
+                Table.setDefaults(combat, {Drugged = false, HpPct = 100})
+        }
+
+        // Fill Self & Charmed
+        if (this.m.Stats.Version < 3) {
+            foreach (kill in this.m.Stats.Kills) {
+                if (!("Self" in kill)) kill.Self <- kill.IsPlayer && kill.Name == this.m.Name;
+                if (!("Charmed" in kill)) kill.Charmed <- false;
+            }
+            foreach (death in this.m.Stats.Deaths) {
+                if (!("Self" in death)) death.Self <- death.IsPlayer && death.Name == this.m.Name;
+            }
+        }
+
+        this.m.Stats.Version = this.m.Version;
 
         createProps(); // need to call since ref sequences changed
     }
