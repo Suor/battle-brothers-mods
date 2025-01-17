@@ -428,13 +428,11 @@ this.fun_facts <- {
     // }
 
     function pack() {
-        local ret = Util.pack(this.m.Stats);
-        logInfo("Pack " + this.m.Name + " " + ret.len());
-        return ret;
+        return this.m.Stats;
     }
-    function unpack(packed) {
-        local state = Util.unpack(packed);
-        Util.extend(this.m.Stats, state);
-        createProps(); // need to call since "ref" things changed, may be remove in future
+    function unpack(_state) {
+        Table.deepExtend(this.m.Stats, _state);
+
+        createProps(); // need to call since ref sequences changed
     }
 }

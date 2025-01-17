@@ -85,9 +85,7 @@
 
     local onSerialize = o.onSerialize;
     o.onSerialize = function(_out) {
-        this.getFlags().set("FunFacts", this.m.FunFacts.pack());
-        // Q: do I need a helper to break it into parts?
-        // Tags.pack(this.getFlags(), "FunFacts", this.m.FunFacts);
+        ::std.Flags.pack(this.getFlags(), "FunFacts", this.m.FunFacts.pack());
         return onSerialize(_out);
     }
 
@@ -96,11 +94,7 @@
         onDeserialize(_in);
         this.m.FunFacts.setName(this.getName());
 
-        local packed = this.getFlags().get("FunFacts");
-        if (packed) {
-            this.m.FunFacts.unpack(packed);
-            this.m.FunFacts.setName(this.m.Name);
-            return
-        }
+        local ffState = ::std.Flags.unpack(this.getFlags(), "FunFacts");
+        if (ffState) this.m.FunFacts.unpack(ffState);
     }
 });
