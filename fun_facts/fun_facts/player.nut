@@ -6,21 +6,22 @@
     o.create = function( ... ) {
         vargv.insert(0, this);
         local ret = create.acall(vargv);
-        // this.logInfo("ff: player new fun_facts");
         this.m.FunFacts = ::new("scripts/mods/fun_facts/fun_facts");
         this.m.FunFacts.setPlayer(this);
-        // this.m.FunFacts.setName(this.getName());
-        // this.logInfo("ff: fun_facts.Version "
-        //         + ("Version" in this.m.FunFacts.m ? this.m.FunFacts.m.Version : 0));
         return ret;
     }
 
     local setName = o.setName;
     o.setName = function(_value) {
         setName(_value);
-        this.m.FunFacts.setName(_value);
+        this.m.FunFacts.setName(this.getName());
     }
 
+    local setTitle = o.setTitle;
+    o.setTitle = function(_value) {
+        setTitle(_value);
+        this.m.FunFacts.setName(this.getName());
+    }
 
     local onBeforeCombatResult = o.onBeforeCombatResult;
     o.onBeforeCombatResult = function( ... ) {
@@ -93,6 +94,7 @@
     local onDeserialize = o.onDeserialize;
     o.onDeserialize = function (_in) {
         onDeserialize(_in);
+        this.m.FunFacts.setName(this.getName());
 
         local packed = this.getFlags().get("FunFacts");
         if (packed) {

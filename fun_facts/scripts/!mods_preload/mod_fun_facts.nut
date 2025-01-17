@@ -33,7 +33,7 @@ mod.incrBattleId <- function() {
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.0), mod_msu(>=1.6.0)", function() {
+::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.3), mod_msu(>=1.6.0), >mod_reforged", function() {
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
 
     local msd = ::MSU.System.Registry.ModSourceDomain, upd = mod.Updates;
