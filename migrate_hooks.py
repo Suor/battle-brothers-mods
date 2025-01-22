@@ -46,6 +46,8 @@ def update_code(file_path, inplace=False, mhvar="mod"):
         func_ws = match[3]
         param = match[4]
         body = match[5]
+        # print(match)
+        # import ipdb; ipdb.set_trace()
 
         # Replace instances of the parameter name only in the function body
         body = replace_word_in_code(body, param, 'q')
@@ -60,11 +62,13 @@ def update_code(file_path, inplace=False, mhvar="mod"):
                  '', body, flags=re.MULTILINE)
             if body == old_body:
                 typ = "Tree"
+        elif hook == "Descendants":
+            typ = "Tree"
 
         return f"{mhvar}.hook{typ}(\"scripts/{path}\",{func_ws}function (q) {body}"
 
     content = replace_body(
-        r'::mods_hook(ExactClass|NewObject(?:Once)|Class|BaseClass)'
+        r'::mods_hook(ExactClass|NewObject(?:Once)?|Class|BaseClass|Descendants)'
         r'\("([^"]+)",(\s*)function\s*\(\s*(\w+)\s*\)\s*{',
         replace_hook, content, flags=re.DOTALL)
 
@@ -99,7 +103,7 @@ def update_code(file_path, inplace=False, mhvar="mod"):
 
 def update_queue_calls(content):
     # Pattern to match the ::mods_queue calls
-    pattern = re.compile(r'::mods_queue\(([^,]+),\s*"([^"]+)",\s*function\s*\(\)\s*{')
+    pattern = re.compile(r'::mods_queue\(([^,]+),\s*("[^"]+"|null),\s*function\s*\(\)\s*{')
 
     def replacement(match):
         mod_id = match.group(1)
@@ -108,7 +112,7 @@ def update_queue_calls(content):
         # def translate_req(item):
 
         # Split the requirements into individual items
-        items = requirements.split(",")
+        items = [] if requirements == "null" else requirements.strip('"').split(",")
         require, conflict, queue = [], [], []
 
         for item in items:
