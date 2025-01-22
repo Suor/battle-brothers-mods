@@ -37,7 +37,7 @@ this.fun_facts <- {
             NineLivesUses = 0
             NineLivesSaves = 0
             // v3
-            Used = {
+            Spent = {
                 Hire = 0
                 Wages = 0
                 Food = 0.0
@@ -109,19 +109,20 @@ this.fun_facts <- {
     }
 
     function onHired(_cost) {
-        this.m.Stats.Used.Hire = _cost;
+        this.m.Stats.Spent.Hire = _cost;
     }
     function onNewDay() {
-        this.m.Stats.Used.Wages += this.m.Player.getDailyCost();
+        this.m.Stats.Spent.Wages += this.m.Player.getDailyCost();
     }
     function onConsumeFood(_amount) {
-        this.m.Stats.Used.Food += _amount;
+        this.m.Stats.Spent.Food += _amount;
     }
     function onConsumeAmmo(_amount) {
-        this.m.Stats.Used.Ammo += _amount;
+        // TODO: consider the follower collecting ammo
+        this.m.Stats.Spent.Ammo += _amount;
     }
     function onUseHerbs(_amount) {
-        this.m.Stats.Used.Herbs += _amount;
+        this.m.Stats.Spent.Herbs += _amount;
     }
 
     function onCombatStart(_player) {
@@ -173,7 +174,7 @@ this.fun_facts <- {
 
             local lostCond =  pair.cond - pair.item.getCondition();
             if (lostCond > 0)
-                this.m.Stats.Used.Parts += lostCond * ::World.Assets.m.ArmorPartsPerArmor;
+                this.m.Stats.Spent.Parts += lostCond * ::World.Assets.m.ArmorPartsPerArmor;
         }
         this.m.TmpCombat = null;
     }
@@ -430,28 +431,28 @@ this.fun_facts <- {
         }
 
         // Costs
-        local U = this.m.Stats.Used;
+        local S = this.m.Stats.Spent;
         local moneyImg = "[img]gfx/ui/tooltips/money.png[/img]";
         local costs = [];
-        if (U.Hire > 0 && U.Wages > 0)
+        if (S.Hire > 0 && S.Wages > 0)
             costs.push(format("Hired for %s%d, earned %s%d as wages.",
-                              moneyImg, U.Hire, moneyImg, U.Wages))
-        else if (U.Hire > 0) {
-            costs.push(format("Hired for %s%d.", moneyImg, U.Hire))
-        } else if (U.Wages > 0) {
-            costs.push(format("Was payed %s%d as wages.", moneyImg, U.Wages))
+                              moneyImg, S.Hire, moneyImg, S.Wages))
+        else if (S.Hire > 0) {
+            costs.push(format("Hired for %s%d.", moneyImg, S.Hire))
+        } else if (S.Wages > 0) {
+            costs.push(format("Was payed %s%d as wages.", moneyImg, S.Wages))
         }
-        local used = [];
-        if (U.Food >= 1) used.push("[img]gfx/fun_facts/food.png[/img]" + Util.round(U.Food));
-        if (U.Parts >= 1) used.push("[img]gfx/fun_facts/supplies.png[/img]" + Util.round(U.Parts));
-        if (U.Ammo >= 1) used.push("[img]gfx/fun_facts/ammo.png[/img]" + Util.round(U.Ammo));
-        if (U.Herbs >= 1) used.push("[img]gfx/fun_facts/medicine.png[/img]" + Util.round(U.Herbs));
-        if (used.len() > 0) costs.push("used " + Str.join("&nbsp;", used)); // used, consumed, wasted
+        local spent = [];
+        if (S.Food >= 1) spent.push("[img]gfx/fun_facts/food.png[/img]" + Util.round(S.Food));
+        if (S.Parts >= 1) spent.push("[img]gfx/fun_facts/supplies.png[/img]" + Util.round(S.Parts));
+        if (S.Ammo >= 1) spent.push("[img]gfx/fun_facts/ammo.png[/img]" + Util.round(S.Ammo));
+        if (S.Herbs >= 1) spent.push("[img]gfx/fun_facts/medicine.png[/img]" + Util.round(S.Herbs));
+        if (spent.len() > 0) costs.push("Spent " + Str.join("&nbsp;", spent)); // used, consumed, wasted
 
         // TODO: get proper prices
-        local total = U.Hire + U.Wages + U.Food * 4 + U.Parts * 12
-            + U.Ammo * 3 + U.Herbs * 15;
-        if (total >= 1 && used.len() > 0) {
+        local total = S.Hire + S.Wages + S.Food * 4 + S.Parts * 12
+            + S.Ammo * 3 + S.Herbs * 15;
+        if (total >= 1 && spent.len() > 0) {
             local factor = total >= 2000 ? 100 :
                            total >= 1000 ? 50 :
                            total >=  200 ? 10 :
@@ -475,6 +476,9 @@ this.fun_facts <- {
         return this.m.Stats;
     }
     function unpack(_state) {
+        // TMP
+        // if ("Spent" in _state) _state.Used <- delete _state.Spent;
+
         Table.deepExtend(this.m.Stats, _state);
 
         // Fill combat.Start, combat.Added, Drugged, HpPct
