@@ -7,8 +7,11 @@
 
     local onDeath = o.onDeath;
     o.onDeath = function (_killer, _skill, _tile, _fatalityType) {
-        if (_killer == null && "ff_killer" in this && this.ff_killer.isAlive()) _killer = this.ff_killer.get();
-        if (_killer != null && "FunFacts" in _killer.m) _killer.m.FunFacts.onKill(this, _skill, _fatalityType);
+        local killer = "ff_killer" in this && this.ff_killer.isAlive() ? this.ff_killer.get() : _killer;
+        if (killer != null && "FunFacts" in killer.m)
+            killer.m.FunFacts.onKill(this, _skill, _fatalityType);
+        if ("FunFacts" in this.m)
+            this.m.FunFacts.onDeath(killer, _fatalityType);
         return onDeath(_killer, _skill, _tile, _fatalityType)
     }
 

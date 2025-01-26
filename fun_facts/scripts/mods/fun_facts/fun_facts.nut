@@ -213,16 +213,21 @@ this.fun_facts <- {
     }
 
     function onDeath(_killer, _fatalityType) {
+        // TODO: check how killer is null on reposte???
+        if (!_killer) {
+            ::logError("ff: no killer in FunFacts.onDeath")
+            ::MSU.Log.printStackTrace()
+        }
         local record = {
             BattleId = ::FunFacts.getBattleId()
-            IsPlayer = _killer.isPlayerControlled()
-            Name = _killer.getName()
-            ClassName = _killer.ClassName
-            XP = _killer.getXPValue()
+            IsPlayer = _killer ? _killer.isPlayerControlled() : false
+            Name = _killer ? _killer.getName() : null
+            ClassName = _killer ? _killer.ClassName : null
+            XP = _killer ? _killer.getXPValue() : null
             Fatality = _fatalityType
             Day = this.World.getTime().Days
             // Added later
-            Self = _killer.getID() == this.m.Player.getID()
+            Self = _killer && _killer.getID() == this.m.Player.getID()
         }
         ::FunFacts.Debug.log("onDeath record", record);
         this.m.Stats.Deaths.push(record);
