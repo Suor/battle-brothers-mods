@@ -1,7 +1,7 @@
 local mod = ::FunFacts <- {
     ID = "mod_fun_facts"
     Name = "Fun Facts"
-    Version = "0.5.0"
+    Version = "1.0.0"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/764"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/fun_facts"
