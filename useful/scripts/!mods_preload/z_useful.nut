@@ -17,24 +17,22 @@ mod.hookItem <- function (script, values) {
     ::mods_hookExactClass(script, function (cls) {mod.hookItemClass(cls, values)})
 }
 mod.hookItemClass <- function (cls, values) {
-    // Reforged/MSU thing breaking named items
+    // Reforged/MSU/ModularVanilla thing breaking named items
     local setValuesBeforeRandomize = Util.getMember(cls, "setValuesBeforeRandomize");
     if (setValuesBeforeRandomize) {
         cls.setValuesBeforeRandomize <- function (_values) {
             local overrides = Util.extend(_values || {}, values);
             setValuesBeforeRandomize(overrides);
         }
-        return;
     }
 
     // Named items
     local randomizeValues = Util.getMember(cls, "randomizeValues");
-    if (randomizeValues) {
+    if (!setValuesBeforeRandomize && randomizeValues) {
         cls.randomizeValues <- function () {
             Util.extend(this.m, values);
             randomizeValues();
         }
-        return;
     }
 
     // Normal items
