@@ -470,6 +470,7 @@
         "mastery.sword": 100
         "duelist": 15
         "nimble": 25
+        "hackflows.stabilized": 15
         "footwork": 25
         "rotation": 5
     }
