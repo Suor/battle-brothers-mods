@@ -5,6 +5,9 @@
 logInfo <- function(s) {
     print(s + "\n")
 }
+logError <- function(s) {
+    print("ERROR:" + s + "\n")
+}
 ::Const.XP <- {
     MaxLevelWithPerkpoints = 11
 }
@@ -28,6 +31,7 @@ local mod = {
             onDeserialize = @() null
             convertEntityToUIData = @() null
             onQueryStatusEffectTooltipData = @() null
+            setAttributeLevelUpValues = null
         })
     }
     function hookTree(_filename, _func) {

@@ -101,7 +101,7 @@ local function genAttributes(_clear = true) {
     return player.m.Attributes
 }
 
-setconf({attrsVeteran = 11, attrsVeteranBoostValue = "off"})
+setconf({attrsVeteran = 11, attrsVeteranBoostValue = 0})
 assertEq(genAttributes(), [[2], [2], [2], [2], [2], [2], [2], [2]])
 
 player.m.Level = 12;
@@ -135,15 +135,15 @@ player.m.LevelUps = 1; // Reset it
 player.m.Talents = [3 3 3 3 2 2 1 1];
 
 ::std.rng.reset(11);
-setconf({attrsVeteran = 11, attrsVeteranBoostValue = "classic"})
+setconf({attrsVeteran = 11, attrsVeteranBoostValue = 0.1667})
 assertEq(genAttributes(), [[2], [2], [1], [3], [1], [2], [1], [2]])
 
 ::std.rng.reset(11);
-setconf({attrsVeteran = 11, attrsVeteranBoostValue = "slight"})
+setconf({attrsVeteran = 11, attrsVeteranBoostValue = 0.1})
 assertEq(genAttributes(), [[2], [1], [1], [2], [2], [1], [1], [1]])
 
 ::std.rng.reset(11);
-setconf({attrsVeteran = 11, attrsVeteranBoostValue = "high"})
+setconf({attrsVeteran = 11, attrsVeteranBoostValue = 0.25})
 assertEq(genAttributes(), [[2], [2], [2], [3], [2], [2], [1], [1]])
 print("Attributes OK\n");
 

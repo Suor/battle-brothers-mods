@@ -31,10 +31,6 @@ page.add(::MSU.Class.BooleanSetting("talentsRandomStart", false,
     "Randomize Starting Talents",
     "Some company origins have preset bros. " +
     "If this is checked those will be rolled by Studio instead."));
-// randomStart.Data.NewCampaignOnly <- true;
-// page.add(::MSU.Class.SettingsSpacer("talentsSpacer", "35rem", "8rem"));
-// page.add(::MSU.Class.BooleanSetting("starsWeighted", false, "Weighted Stars",
-//     "Higher chance to get 2 or 3 stars in an attribute favored by background"));
 
 // Attributes
 page.add(::MSU.Class.SettingsDivider("attrsDiv"));
@@ -45,22 +41,13 @@ page.add(::MSU.Class.RangeSetting("attrsUps", 3, 1, 8, 1, "Attribute Ups",
 page.add(::MSU.Class.SettingsSpacer("attrsVeteranSpacer", "35rem", "8rem"));
 
 page.add(::MSU.Class.RangeSetting("attrsVeteran", 11, 11, 21, 1, "Veteran Level for Attributes"));
-page.add(::BroStudio.SliderSetting("attrsVeteranBoostValue", "off", ["off" "slight" "classic" "high"],
-    "Veteran Boost",
-    "Allow veterans to get more than 1 sometimes in talented attributes"));
 // Non-veterans get 0.5 per level per star on average,
 // Veteran Boost allows to get certain fraction of it.
-mod.VeteranBoostValues <- {
-    off = 0
-    slight = 0.5 / 5
-    classic = 0.5 / 3
-    high = 0.5 / 2
-}
-mod.getVeteranTalentValue <- function () {
-    local label = mod.conf("attrsVeteranBoostValue");
-    if (!(label in mod.VeteranBoostValues)) return 0;
-    return mod.VeteranBoostValues[label];
-}
+page.add(::BroStudio.SliderSetting("attrsVeteranBoostValue", 0,
+    [0, 0.1, 0.1667, 0.25],
+    ["off" "slight" "classic" "high"],
+    "Veteran Boost",
+    "Allow veterans to get more than 1 sometimes in talented attributes"));
 
 
 // The meat
@@ -92,7 +79,7 @@ mod.addAttributeLevelUpValues <- function (_player) {
         // only add one row at a time, this works as long as mod.conf("attrsVeteran") >= 11
         _player.fillAttributeLevelUpValues(1);
     } else {
-        local talentValue = mod.getVeteranTalentValue();
+        local talentValue = mod.conf("attrsVeteranBoostValue");
         if (talentValue == 0) return;
 
         _player.m.Attributes = [[], [], [], [], [], [], [], []];

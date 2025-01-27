@@ -1,7 +1,7 @@
 function BroStudio_SliderSetting(_mod, _page, _setting, _parentDiv) {
-    _setting.value = _setting.array.indexOf(_setting.value);
+    _setting.value = _setting.values.indexOf(_setting.value);
     RangeSetting.call(this, _mod, _page, _setting, _parentDiv);
-    _setting.value = _setting.array[_setting.value];
+    _setting.value = _setting.values[_setting.value];
 
     // Only need to set it once
     this.slider.attr({min: this.data.min, max: this.data.max, step: this.data.step});
@@ -13,11 +13,13 @@ function BroStudio_SliderSetting(_mod, _page, _setting, _parentDiv) {
 BroStudio_SliderSetting.prototype.__proto__ = RangeSetting.prototype;
 
 BroStudio_SliderSetting.prototype.updateValue = function () {
-    this.slider.val(this.data.array.indexOf(this.data.value));
-    this.label.text('' + this.data.value);
+    var index = this.data.values.indexOf(this.data.value);
+    this.slider.val(index);
+    this.label.text('' + this.data.labels[index]);
 }
 
 BroStudio_SliderSetting.prototype.onChange = function () {
-    this.data.value = this.data.array[parseInt(this.slider.val())];
-    this.label.text('' + this.data.value);
+    var index = parseInt(this.slider.val());
+    this.data.value = this.data.values[index];
+    this.label.text('' + this.data.labels[index]);
 }
