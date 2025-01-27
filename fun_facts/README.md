@@ -10,6 +10,8 @@ Keeps some history on your brothers shows it in bro's popups. Shows the same inf
 - saves by Nine Lives
 - battles slacked while other bros fighting
 - how many times fleed
+- resources (crowns, food, parts, ...) used
+- interesting effects experienced
 
 If you have ideas for fun stats you are welcome to post here or find me on Discord.
 

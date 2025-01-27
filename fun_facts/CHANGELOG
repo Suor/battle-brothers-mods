@@ -1,7 +1,6 @@
 1.0.0
 - account crowns, food, parts, ammo and herbs spent on bros, plus TCO
 - support tracking kills and deaths in Reforged (was broken there)
-- track slacked battles
 - track webbed, stunned and other interesting effects
 - improved some messages
 - fixed possible SAVE CORRUPTION on very long running campaigns
