@@ -40,7 +40,7 @@ page.add(::MSU.Class.RangeSetting("attrsUps", 3, 1, 8, 1, "Attribute Ups",
     "Amount of attribute bros allowed to raise each level-up"));
 page.add(::MSU.Class.SettingsSpacer("attrsVeteranSpacer", "35rem", "8rem"));
 
-page.add(::MSU.Class.RangeSetting("attrsVeteran", 11, 11, 21, 1, "Veteran Level for Attributes"));
+page.add(::MSU.Class.RangeSetting("attrsVeteran", 11, 11, 31, 1, "Veteran Level for Attributes"));
 // Non-veterans get 0.5 per level per star on average,
 // Veteran Boost allows to get certain fraction of it.
 page.add(::BroStudio.SliderSetting("attrsVeteranBoostValue", 0,
