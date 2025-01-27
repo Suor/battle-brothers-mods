@@ -17,6 +17,7 @@ mod.hookItem("items/weapons/greenskins/orc_flail_2h",
 local function hookFlailSkill(cls, add) {
     local onAfterUpdate = cls.onAfterUpdate;
     cls.onAfterUpdate = function (_properties) {
+        onAfterUpdate(_properties);
         if (!("u_BaseStunChance" in this.m)) this.m.u_BaseStunChance <- this.m.StunChance;
         this.m.StunChance = this.m.u_BaseStunChance + (_properties.IsSpecializedInFlails ? add : 0);
     }
