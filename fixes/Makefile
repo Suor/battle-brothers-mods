@@ -1,5 +1,5 @@
-MOD_NAME = stupid_game
-TAG_NAME = stupid_game
+MOD_NAME = fixes
+TAG_NAME = fixes
 SOURCES = scripts
 
 include ../Makefile.common
