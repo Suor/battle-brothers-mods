@@ -23,6 +23,7 @@ Const.Perks <- {
 }
 ::mods_hookExactClass <- function (x, func) {
     func({
+        ClassName = split(x, "/").top()
         function create() {}
         function getTooltip() {}
         function onUse() {}
