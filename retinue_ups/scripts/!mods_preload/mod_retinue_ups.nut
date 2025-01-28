@@ -15,37 +15,6 @@ mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", fu
     if ("mods_registerJS" in getroottable()) ::mods_registerJS("retinue_ups.js");
     else ::Hooks.registerLateJS("ui/mods/retinue_ups.js");
 
-    mod.hook("scripts/factions/faction", function (q) {
-        q.update = @(__original) function (_ignoreDelay = false, _isNewCampaign = false) {
-            ::logInfo("faction.update ID=" + m.ID + " Name=" + m.Name);
-            foreach( u in this.m.Units ) {
-                if (u.getTroops().len() == 0) continue;
-
-                if (!_ignoreDelay && this.m.Settlements.len() != 0)
-                {
-                    if (u.getFlags().has("IsMercenaries"))
-                    {
-                        continue;
-                    }
-
-                    if (u.isAlive() && !u.getController().hasOrders())
-                    {
-                        local home = this.getNearestSettlement(u.getTile());
-                        if (std.Util.isNull(home)) {
-                            ::logInfo("Bad unit: " + u.getName())
-                            // ::logInfo("Bad unit tile: " + u.getTile())
-                            local despawn = ::new("scripts/ai/world/orders/despawn_order");
-                            u.getController().addOrder(despawn);
-                        }
-                    }
-                }
-            }
-
-            __original(_ignoreDelay, _isNewCampaign);
-        }
-    })
-
-
     mod.hook("scripts/retinue/retinue_manager", function (q) {
         q.setFollower = @(__original) function (_slot, _follower) {
             // When follower is replaced it looses its promotion
