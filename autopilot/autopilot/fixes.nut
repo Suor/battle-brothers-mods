@@ -61,7 +61,7 @@ mod.hook("scripts/ai/tactical/behavior", function (q) {
     }
 
     // For player actors whether somebody is ranged or not is decided by his vision,
-    // so a throwing guy in a big hat at night night suddenly becomes not ranged for AI.
+    // so a throwing guy in a big hat at night suddenly becomes not ranged for AI.
     // This makes 2-tile bros start to hide behind such guy :)
     q.isRangedUnit = @(__original) function (_entity) {
         if (typeof _entity == "instance" && _entity.isNull()) return false;
