@@ -1,12 +1,13 @@
-# Migrates Adam's hooks to Modern ones
-# Shitty script made by ChatGPT, somewhat fixed and complemented by me
-# Usage:
-#
-#   python migrate_hooks.py path/to/file
-#   python migrate_hooks.py path/to/file -i  # do it inplace
-#
-# Requires Python 3.12, no other deps
+#!/usr/bin/env python3
+"""\
+Migrates Adam's hooks to Modern ones. Shitty script made with a help of ChatGPT.
+Usage:
 
+  ./migrate_hooks.py path/to/file
+  ./migrate_hooks.py path/to/file -i  # do it inplace
+
+Requires Python 3.12, no other deps
+"""
 import ast
 import os
 import re
