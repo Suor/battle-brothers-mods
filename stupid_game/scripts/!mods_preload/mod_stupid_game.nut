@@ -1,6 +1,6 @@
-local mod = ::Hooks.register("mod_stupid_game", 0.1, "Stupid Game");
-mod.queue(function () {
-    this.logInfo("huge_quivers: loading");
+local mod = ::Hooks.register("mod_stupid_game", "0.2.0", "Stupid Game");
+mod.queue(">mod_reforged", ">mod_backgrounds_reforged", "<mod_useful", function () {
+    this.logInfo("sg: loading");
 
     mod.hookTree("scripts/items/ammo/ammo", function (q) {
         q.create = @(__original) function () {
@@ -13,9 +13,11 @@ mod.queue(function () {
     mod.hookTree("scripts/items/weapons/weapon", function (q) {
         q.create = @(__original) function () {
             __original();
+            if (this.m.AmmoMax > 1) {
+                this.m.Ammo *= 4;
+                this.m.AmmoMax *= 4;
+            }
 
-            this.m.Ammo *= 4;
-            this.m.AmmoMax *= 4;
         }
     })
 
