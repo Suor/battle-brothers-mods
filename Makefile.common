@@ -33,6 +33,7 @@ test: include check-compile
 
 include:
 	@set -e
+	#find . -name i_* -print -delete  # Delete old included files
 	for i in $(INCLUDES); do
 		for src in `find ../_includes/$$i -type f`; do
 			rel_path="$${src#../_includes/$$i/}"
@@ -41,8 +42,13 @@ include:
 			if [[ ! -f "$$dst" || "$$src" -nt "$$dst" ]]; then
 				echo "COPY $$src -> $$dst";
 				mkdir -p `dirname $$dst`;
-				perl -pE 's/<mod_name>/$(MOD_NAME)/g' $$src > $$dst;
-				# cp $$src $$dst;
+				if [[ "$$src" =~ \.(nut|js|css)$$ ]]; then
+					echo "WITH REPLACE $$src";
+					perl -pE 's/<mod_name>/$(MOD_NAME)/g' $$src > $$dst;
+				else
+					echo "NO REPLACE $$src";
+					cp $$src $$dst;
+				fi
 			fi
 		done
 		echo "Include $$i";
