@@ -11,6 +11,7 @@ local function named(value) {return ::Const.UI.getColorized(value + "", "#1e468f
 local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e")}
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
+mod.require("stdlib >= 2.2");
 mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", function () {
     if ("mods_registerJS" in getroottable()) ::mods_registerJS("retinue_ups.js");
     else ::Hooks.registerLateJS("ui/mods/retinue_ups.js");
