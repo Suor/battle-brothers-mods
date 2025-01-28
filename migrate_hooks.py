@@ -206,5 +206,9 @@ def detect_newline_style(content):
         return '\n'    # LF (Unix)
 
 
+if "-h" in sys.argv or "--help" in sys.argv:
+    print(__doc__)
+    sys.exit()
+
 mhvar = next((a[2:] for a in sys.argv if a.startswith("-m")), "mod")
 update_code(sys.argv[1], inplace="-i" in sys.argv, mhvar=mhvar)
