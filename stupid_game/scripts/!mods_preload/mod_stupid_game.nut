@@ -17,7 +17,25 @@ mod.queue(">mod_reforged", ">mod_backgrounds_reforged", "<mod_useful", function 
                 this.m.Ammo *= 4;
                 this.m.AmmoMax *= 4;
             }
+        }
+    })
 
+    // More Promised Potentials!
+    // if (::Hooks.hasMod("mod_reforged"))
+    mod.hookTree("scripts/skills/backgrounds/character_background", function (q) {
+        // q.create = @(__original) function() {
+        //     __original();
+        //     ::logInfo("FIxing" + this.getName() + " DailyCost=" + this.m.DailyCost);
+        //     if (this.m.DailyCost < 10) this.m.PerkTree.addPerkGroup("pg.rf_pauper");
+        // }
+
+        q.onBuildPerkTree = @(__original) function () {
+            __original();
+            ::logInfo("sg: fixing" + this.getName() + " DailyCost=" + this.m.DailyCost);
+            if (this.m.DailyCost <= 10) { // Already get +1 at this stage
+                local perkTree = this.getContainer().getActor().getPerkTree();
+                perkTree.addPerkGroup("pg.rf_pauper");
+            }
         }
     })
 
@@ -40,5 +58,5 @@ mod.queue(">mod_reforged", ">mod_backgrounds_reforged", "<mod_useful", function 
                 }
             }
         }
-    });
+    })
 })
