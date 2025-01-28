@@ -1,4 +1,4 @@
-local version = 0.3, prev = null, debug = false;
+local version = 0.4, prev = null, debug = false;
 ::logInfo("LevelUpChanges " + version + " (<mod_name>)");
 if ("LevelUpChanges" in getroottable()) {
     if (::LevelUpChanges.version >= version) return;

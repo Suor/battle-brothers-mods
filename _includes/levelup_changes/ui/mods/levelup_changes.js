@@ -14,8 +14,7 @@ CharacterScreenLeftPanelHeaderModule.prototype.createLevelUpDialogContent = func
 
     // TODO: move styles to a css file
     $(".levelup-popup").css({
-        // TODO: get this background to levelup_changes
-        "background-image": 'url("coui://gfx/ui/skin/popup_background_600x458.png")',
+        "background-image": 'url("coui://gfx/ui/luchanges/i_<mod_name>_popup_background_600x458.png")',
         "background-size": "60.0rem 45.8rem",
         "height": "36rem"
         // "height": (30 + 6 * brother.levelUpChanges.length) + "rem"
