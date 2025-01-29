@@ -105,6 +105,8 @@ mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", fu
 
         q.ru_hasPromotion <- function () {return "ru_promotion" in this.m}
         q.ru_onPromote <- function () {
+            if ("ru_base" in this.m) return; // Prevent double lines in effects and wrong cost
+
             this.m.ru_base <- {
                 Cost = this.m.Cost
                 Effects = clone this.m.Effects
