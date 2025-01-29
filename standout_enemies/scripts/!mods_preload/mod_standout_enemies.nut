@@ -1,7 +1,7 @@
 local mod = {
     ID = "mod_standout_enemies"
     Name = "Standout Enemies"
-    Version = 1.2
+    Version = 1.3
 }
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 
