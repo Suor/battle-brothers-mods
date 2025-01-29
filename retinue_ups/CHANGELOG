@@ -1,3 +1,9 @@
+1.2.1
+- prevent double lines in effects
+- include extended levelup popup background image
+- moved out an unrelated fix
+- require stdlib
+
 1.2.0
 - added Promoted Surgeon
 - migrated to Modern Hooks

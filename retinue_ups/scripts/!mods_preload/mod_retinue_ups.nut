@@ -1,7 +1,7 @@
 local def = ::RetinueUps <- {
     ID = "mod_retinue_ups"
     Name = "Retinue Promotions"
-    Version = "1.2.0"
+    Version = "1.2.1"
 }
 
 local function positive(value) {
