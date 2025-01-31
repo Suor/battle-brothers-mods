@@ -1,3 +1,8 @@
+0.7
+- fixed Flail Mastery not affecting fat on 2h flails
+- compat with Reforged net and offhand perks
+- compat with Modular Vanilla (used to break 2h flails attrs update)
+
 0.6
 - fixed Reforged compat for named items
 - fixed named Lindwurm shield hook
