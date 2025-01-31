@@ -81,6 +81,32 @@ local function hookNet(cls) {
     }
 })
 
+// Fix how reusable nets interact with kingfisher perk. I.e. ammo should be spent on auto use.
+// Since it's hard to impossible to detect it, we restore ammo later in .equip()
+// TODO: refactor kingfisher for this to be easier
+if ("Hooks" in getroottable() && ::Hooks.hasMod("mod_reforged")) {
+    local function unconsumeAmmo(_item) {
+        _item.setAmmo(::Math.min(_item.m.AmmoMax, _item.m.Ammo + 1));
+        if (_item.getContainer().getActor().isPlayerControlled()) {
+            ::Tactical.Entities.spendAmmo(_item.m.AmmoCost);
+        }
+    }
+
+    local mod = ::Hooks.getMod(::Useful.ID);
+    mod.hook("scripts/items/item_container", function (q) {
+        q.equip = @(__original) function(_item) {
+            if (_item.ClassName != "throwing_net" && _item.ClassName != "reinforced_throwing_net")
+                return __original(_item);
+
+            local off = getItemAtSlot(::Const.ItemSlot.Offhand);
+            if (!off || off.ClassName != _item.ClassName) return __original(_item);
+
+            unconsumeAmmo(off);
+            return false;
+        }
+    })
+}
+
 // Nets do not prevent double grip anymore, they just hang on a shoulder, common :)
 ::mods_hookExactClass("skills/special/double_grip", function (cls) {
     local canDoubleGrip = cls.canDoubleGrip;
