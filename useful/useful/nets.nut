@@ -83,7 +83,11 @@ local function hookNet(cls) {
 
 // Nets do not prevent double grip anymore, they just hang on a shoulder, common :)
 ::mods_hookExactClass("skills/special/double_grip", function (cls) {
-    cls.canDoubleGrip = function() {
+    local canDoubleGrip = cls.canDoubleGrip;
+    cls.canDoubleGrip = function () {
+        local ret = canDoubleGrip();
+        if (ret) return ret; // Make it compatible with En Garde perk from Reforged and whatever
+
         local items = this.getContainer().getActor().getItems();
         local main = items.getItemAtSlot(this.Const.ItemSlot.Mainhand);
         local off = items.getItemAtSlot(this.Const.ItemSlot.Offhand);
