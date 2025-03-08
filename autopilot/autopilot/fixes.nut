@@ -65,7 +65,9 @@ mod.hook("scripts/ai/tactical/behavior", function (q) {
     // This makes 2-tile bros start to hide behind such guy :)
     q.isRangedUnit = @(__original) function (_entity) {
         if (typeof _entity == "instance" && _entity.isNull()) return false;
-        if ("_autopilot" in _entity.m) return _entity.m._autopilot.ranged;
+        if ("_autopilot" in _entity.m) {
+            return _entity.m._autopilot.ranged || _entity.hasRangedWeapon();
+        }
         return __original(_entity);
     }
 })
