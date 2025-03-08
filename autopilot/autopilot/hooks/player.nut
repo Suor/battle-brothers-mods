@@ -143,6 +143,7 @@ mod.hook("scripts/entity/tactical/player", function (q) {
             agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_attack_lunge"));
         }
 
+        // Do not pick up weapons by unarmed bros
         if (this.getSkills().hasSkill("perk.legend_mastery_fist")) {
             agent.removeBehavior(Const.AI.Behavior.ID.PickupWeapon);
         }
@@ -152,6 +153,8 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         setAIAgent(agent);
     }
 
+    // BUG? this being here and not in actor may break if non-player is added to player faction
+    // Q: Move this and .enableAIControl() to actor? Maybe factor out AI "setup" code
     q.cancelAIControl <- function() {
         if (!::Autopilot.isUnderAIControl(this)) return;
 
