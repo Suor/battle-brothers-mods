@@ -12,12 +12,17 @@ local stdTile = {
         }
     }
 }
+local function mapValues(_table, _func) {
+    local res = {};
+    foreach (k, v in _table) res[k] <- _func(k, v);
+    return res;
+}
 
 
 // This makes AI prefer it more, original value is wrong
 mod.hook("scripts/skills/actives/split_man", function (q) {
     q.getExpectedDamage = @(__original) function (_target) {
-        return ::std.Table.mapValues(__original(_target), @(_, v) v * 1.5);
+        return mapValues(__original(_target), @(_, v) v * 1.5);
     }
 })
 // skills/actives/deathblow_skill
