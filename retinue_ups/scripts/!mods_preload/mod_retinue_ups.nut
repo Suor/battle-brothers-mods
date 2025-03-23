@@ -117,6 +117,7 @@ mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", fu
             if ("Effects" in up) this.m.Effects.extend(up.Effects);
         }
         q.ru_onDemote <- function () {
+            if (!("ru_base" in this.m)) return;
             this.m.Cost = this.m.ru_base.Cost;
             this.m.Effects = this.m.ru_base.Effects;
         }
