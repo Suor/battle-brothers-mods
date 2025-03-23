@@ -1,7 +1,7 @@
-local mod = ::Useful <- {
+local def = ::Useful <- {
     ID = "mod_useful"
     Name = "Useful Things"
-    Version = 0.7
+    Version = "0.7.0"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/682"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/useful"
@@ -9,73 +9,75 @@ local mod = ::Useful <- {
     }
     Debug = ::std.Debug.with({prefix = "u: "})
 }
+
+local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
+mod.require("stdlib >= 2.0");
+// This file is named z_* for this to work
+if (::Hooks.hasMod("tnf_refillableNet")) mod.conflictWith("tnf_refillableNet");
+
 local Util = ::std.Util;
-::mods_registerMod(mod.ID, mod.Version, mod.Name);
 
 // A universal item attrs hook
-mod.hookItem <- function (script, values) {
-    ::mods_hookExactClass(script, function (cls) {mod.hookItemClass(cls, values)})
+def.hookItem <- function (script, values) {
+    mod.hook(script, function (q) {def.hookItemClass(q, values)})
 }
-mod.hookItemClass <- function (cls, values) {
+def.hookItemClass <- function (q, values) {
     // Reforged/MSU/ModularVanilla thing breaking named items
-    local setValuesBeforeRandomize = Util.getMember(cls, "setValuesBeforeRandomize");
-    if (setValuesBeforeRandomize) {
-        cls.setValuesBeforeRandomize <- function (_values) {
+    if (q.contains("setValuesBeforeRandomize")) {
+        q.setValuesBeforeRandomize = @(__original) function (_values) {
             local overrides = Util.extend(_values || {}, values);
-            setValuesBeforeRandomize(overrides);
+            __original(overrides);
         }
-    }
-
-    // Named items
-    local randomizeValues = Util.getMember(cls, "randomizeValues");
-    if (!setValuesBeforeRandomize && randomizeValues) {
-        cls.randomizeValues <- function () {
+    // Named items in vanilla
+    } else if (q.contains("randomizeValues")) {
+        q.randomizeValues = @(__original) function () {
             Util.extend(this.m, values);
-            randomizeValues();
+            __original();
         }
     }
 
-    // Normal items
-    local create = cls.create;
-    cls.create = function () {
-        create();
+    // Normal items, can't else it, because the above are added to all items by ModularVanilla
+    q.create = @(__original) function () {
+        __original();
         Util.extend(this.m, values);
     }
 }
 
-// This file is named z_* for this to work
-local extraDep = ::mods_getRegisteredMod("tnf_refillableNet") ? ", !tnf_refillableNet" : "";
+mod.queue(">mod_msu", ">mod_reforged", ">sato_balance_mod", function () {
+    if (::Hooks.hasMod("mod_msu")) {
+        def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
 
-::mods_queue(mod.ID, "stdlib(>=2.0), >mod_msu, >mod_reforged, >sato_balance_mod" + extraDep, function() {
+        local msd = ::MSU.System.Registry.ModSourceDomain, upd = def.Updates;
+        def.msu.Registry.addModSource(msd.NexusMods, upd.nexus);
+        if ("GitHubTags" in msd) {
+            def.msu.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
+            def.msu.Registry.setUpdateSource(msd.GitHubTags);
+        }
+    }
+
     ::include("useful/flails");
     ::include("useful/goblin");
     ::include("useful/hand_to_hand");
     ::include("useful/nets");
 
-    mod.hookItem("items/shields/special/craftable_lindwurm_shield",
+    def.hookItem("scripts/items/shields/special/craftable_lindwurm_shield",
         {StaminaModifier = -8}); // from -14
     // This is not used in vanilla and thus has worse base props than normal lindwurm shield
-    mod.hookItem("items/shields/named/named_lindwurm_shield",
+    def.hookItem("scripts/items/shields/named/named_lindwurm_shield",
         {StaminaModifier = -8, MeleeDefense = 17, Condition = 64, ConditionMax = 64});
 
     // Give +25 Melee def when fleeing not only retreating
-    ::mods_hookExactClass("skills/traits/weasel_trait", function (cls) {
-        local onUpdate  = ::mods_getMember(cls, "onUpdate");
-        ::mods_override(cls, "onUpdate", function (_properties) {
-            onUpdate(_properties);
+    mod.hook("scripts/skills/traits/weasel_trait", function (q) {
+        // TODO: update tooltip
+        q.onUpdate = @(__original) function (_properties) {
+            __original(_properties);
             local actor = this.getContainer().getActor();
             if (actor.getMoraleState() == ::Const.MoraleState.Fleeing) {
                 _properties.MeleeDefense += 25;
             }
-        });
+        }
     })
 });
 
 // tnf_resistFXResilient messes up with nets otherwise
-::mods_registerMod("tnf_refillableNet", 2.0, "Refillable Nets via Useful Things")
-
-::mods_queue(mod.ID, ">msu", function () {
-     if (!("MSU" in getroottable())) return;
-    ::include("scripts/i_useful_hack_msu");
-    ::HackMSU.setup(mod, mod.Updates)
-});
+::Hooks.__unverifiedRegister("tnf_refillableNet", 2.0, "Refillable Nets via Useful Things");

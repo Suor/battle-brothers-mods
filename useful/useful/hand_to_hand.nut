@@ -1,12 +1,12 @@
-local Text = ::std.Text;
+local mod = ::Useful.mh, Text = ::std.Text;
 
-::mods_hookExactClass("skills/actives/hand_to_hand", function (cls) {
+mod.hook("scripts/skills/actives/hand_to_hand", function (q) {
     local function skillToLevel(_skill) {
         local actor = _skill.getContainer().getActor();
         return actor.ClassName == "player" ? actor.getLevel() : null;
     }
 
-    cls.getTooltip = function () {
+    q.getTooltip = @() function () {
         local ret = this.getDefaultTooltip();
         local props = this.m.Container.buildPropertiesForUse(this, null);
         local baseProps = this.m.Container.m.Actor.getCurrentProperties();
@@ -38,8 +38,7 @@ local Text = ::std.Text;
     // Level 11: 25-30 damage, 20% direct, +5% to hit, 14 fat
     // Level 21: 35-40 damage (cap), 30% direct, +15% to hit, 15 fat (cap)
     // Direct damage and to hit continue to grow 1% per level
-    local onUpdate = cls.onUpdate;
-    cls.onUpdate = function (_properties) {
+    q.onUpdate = @(__original) function (_properties) {
         if (this.isUsable()) {
             local level = skillToLevel(this);
             if (level != null) {
@@ -49,12 +48,13 @@ local Text = ::std.Text;
                 _properties.DamageArmorMult = 0.5;
                 _properties.DamageDirectMult += 0.02 * bonus;
             } else {
-                onUpdate(_properties)
+                __original(_properties) // TODO: always call to be compat
             }
         }
     }
 
-    cls.onAnySkillUsed = function (_skill, _targetEntity, _properties) {
+    q.onAnySkillUsed = @(__original) function (_skill, _targetEntity, _properties) {
+        // TODO: always call original to be compat
         if (_skill == this) {
             local level = skillToLevel(this);
             if (level != null) {
@@ -68,10 +68,9 @@ local Text = ::std.Text;
     }
 })
 
-::mods_hookExactClass("skills/backgrounds/brawler_background", function (cls) {
-    local getTooltip = cls.getTooltip;
-    cls.getTooltip = function () {
-        local ret = getTooltip().filter(@(_, rec) rec.id != 12);
+mod.hook("scripts/skills/backgrounds/brawler_background", function (q) {
+    q.getTooltip = @(__original) function () {
+        local ret = __original().filter(@(_, rec) rec.id != 12);
         ret.push({
             id = 6,
             type = "text",
@@ -88,7 +87,8 @@ local Text = ::std.Text;
     }
 
     // Double damage becomes too large for brawler so we do +5-10 damage and +10 hit chance instead
-    cls.onAnySkillUsed = function ( _skill, _targetEntity, _properties ) {
+    q.onAnySkillUsed = @(__original) function (_skill, _targetEntity, _properties) {
+        // TODO: call original ???
         if (_skill.getID() == "actives.hand_to_hand") {
             _properties.MeleeSkill += 10;
             _properties.DamageRegularMin += 5;

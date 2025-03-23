@@ -21,11 +21,12 @@ Will clash with Reusable Nets from [Tweaks and Fixes][tnf], need to remove that,
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] and [stdlib][].
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHooks][] and [stdlib][].
 
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/682
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
+[ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
 
 [sato-balance]: https://github.com/jcsato/sato_balance_mod

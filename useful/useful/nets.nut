@@ -1,9 +1,8 @@
-local Text = ::std.Text;
+local def = ::Useful, mod = def.mh, Text = ::std.Text;
 
-local function hookNet(cls) {
-    local create = cls.create;
-    cls.create = function () {
-        create();
+local function hookNet(q) {
+    q.create = @(__original) function () {
+        __original();
         this.m.Ammo = 1;
         this.m.AmmoMax = 1;
         this.m.AmmoCost = 6;
@@ -15,9 +14,9 @@ local function hookNet(cls) {
         this.m.useful_Icon <- this.m.Icon;
     }
 
-    local getTooltip = cls.getTooltip;
-    cls.getTooltip = function () {
-        local tooltip = getTooltip().filter(
+    q.getTooltip = @(__original) function () {
+        // TODO: find a better way to filter out this line, now language dependent
+        local tooltip = __original().filter(
             @(_, rec) rec.type != "text" || rec.text != "Is destroyed on use");
 
         local icon = this.m.Ammo > 0 ? "ui/icons/ammo.png" : "ui/tooltips/warning.png";
@@ -27,7 +26,7 @@ local function hookNet(cls) {
         return tooltip;
     }
 
-    cls.setAmmo <- function( _a ) {
+    q.setAmmo <- function (_a) {
         this.m.Ammo = _a;
 
         if (this.m.Ammo > 0) {
@@ -46,22 +45,21 @@ local function hookNet(cls) {
     }
 }
 
-::mods_hookExactClass("items/tools/throwing_net", hookNet);
-::mods_hookExactClass("items/tools/reinforced_throwing_net", hookNet);
+mod.hook("scripts/items/tools/throwing_net", hookNet);
+mod.hook("scripts/items/tools/reinforced_throwing_net", hookNet);
 
-::mods_hookExactClass("skills/actives/throw_net", function (cls) {
-    cls.getAmmo <- function() {
+mod.hook("scripts/skills/actives/throw_net", function (q) {
+    q.getAmmo <- function() {
         local item = this.getContainer().getActor().getItems().getItemAtSlot(this.Const.ItemSlot.Offhand);
         return item ? item.getAmmo() : 0;
     }
 
-    cls.isUsable <- function() {
+    q.isUsable <- function() {
         return this.getAmmo() > 0 && this.skill.isUsable();
     }
 
-    local getTooltip = cls.getTooltip;
-    cls.getTooltip = function () {
-        local tooltip = getTooltip();
+    q.getTooltip = @(__original) function () {
+        local tooltip = __original();
 
         if (this.getAmmo() == 0) tooltip.push({
             id = 8,
@@ -72,11 +70,10 @@ local function hookNet(cls) {
         return tooltip;
     }
 
-    local onUse = cls.onUse;
-    cls.onUse = function (_user, _targetTile) {
+    q.onUse = @(__original) function (_user, _targetTile) {
         local net = _user.getItems().getItemAtSlot(::Const.ItemSlot.Offhand);
         net.consumeAmmo();
-        onUse(_user, _targetTile);
+        __original(_user, _targetTile);
         _user.getItems().equip(net); // Put it back
     }
 })
@@ -84,7 +81,7 @@ local function hookNet(cls) {
 // Fix how reusable nets interact with kingfisher perk. I.e. ammo should be spent on auto use.
 // Since it's hard to impossible to detect it, we restore ammo later in .equip()
 // TODO: refactor kingfisher for this to be easier
-if ("Hooks" in getroottable() && ::Hooks.hasMod("mod_reforged")) {
+if (::Hooks.hasMod("mod_reforged")) {
     local function unconsumeAmmo(_item) {
         _item.setAmmo(::Math.min(_item.m.AmmoMax, _item.m.Ammo + 1));
         if (_item.getContainer().getActor().isPlayerControlled()) {
@@ -108,10 +105,9 @@ if ("Hooks" in getroottable() && ::Hooks.hasMod("mod_reforged")) {
 }
 
 // Nets do not prevent double grip anymore, they just hang on a shoulder, common :)
-::mods_hookExactClass("skills/special/double_grip", function (cls) {
-    local canDoubleGrip = cls.canDoubleGrip;
-    cls.canDoubleGrip = function () {
-        local ret = canDoubleGrip();
+mod.hook("scripts/skills/special/double_grip", function (q) {
+    q.canDoubleGrip = @(__original) function () {
+        local ret = __original();
         if (ret) return ret; // Make it compatible with En Garde perk from Reforged and whatever
 
         local items = this.getContainer().getActor().getItems();
@@ -124,9 +120,8 @@ if ("Hooks" in getroottable() && ::Hooks.hasMod("mod_reforged")) {
 })
 
 // Nachezers can't swallow through net
-::mods_hookExactClass("skills/actives/swallow_whole_skill", function (cls) {
-    local isUsable = cls.isUsable;
-    cls.isUsable = function () {
-        return isUsable() && !this.getContainer().hasSkill("effects.net");
+mod.hook("scripts/skills/actives/swallow_whole_skill", function (q) {
+    q.isUsable = @(__original) function () {
+        return __original() && !this.getContainer().hasSkill("effects.net");
     }
 })
