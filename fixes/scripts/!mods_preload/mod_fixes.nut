@@ -104,3 +104,16 @@ mod.queue(function () {
         }
     })
 })
+
+// Fix gaps and dups in ::Const.ProjectileType, could be done by say Fantasy Brotthers 4.2b
+// This fixes how Reforged adds new projectile types and hence say Flaming Arrows
+local pairs = [];
+foreach (type, index in ::Const.ProjectileType) {
+    if (type != "COUNT") pairs.push([type, index]);
+}
+pairs.sort(@(a, b) a[1] <=> b[1]);
+
+// Restore it
+::Const.ProjectileType.clear();
+foreach (i, p in pairs) ::Const.ProjectileType[p[0]] <- i;
+::Const.ProjectileType.COUNT <- ::Const.ProjectileType.len() - 1;
