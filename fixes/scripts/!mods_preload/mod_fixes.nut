@@ -24,6 +24,13 @@ mod.queue(function () {
         }
     }
 
+    // Includes
+    if (!(::Hooks.hasMod("sato_corpse_loot_fix") || ::Hooks.hasMod("mod_spawn_corpse_fix"))) {
+        ::include("hackflows_fixes/corpse");
+    } else {
+        ::logWarning("Skipping Hackflows's Corpse Fix because some alternative is installed");
+    }
+    // TODO: include heal_repair and events_delayed fixes
 
     local function isNull(_obj) {
         return _obj == null || (_obj instanceof ::WeakTableRef && _obj.isNull());

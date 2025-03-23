@@ -1,5 +1,5 @@
 MOD_NAME = fixes
 TAG_NAME = fixes
-SOURCES = scripts
+SOURCES = hackflows_fixes scripts
 
 include ../Makefile.common
