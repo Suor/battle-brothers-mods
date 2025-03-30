@@ -1,7 +1,7 @@
 local mod = ::BroStudio <- {
     ID = "mod_bro_studio"
     Name = "Bro Studio"
-    Version = "1.1.0"
+    Version = "1.2.0"
     Debug = false //::std.Debug.with({prefix = "studio: "})
 }
 local Rand = ::std.Rand.using(::std.rng); // Use non Math rng generator to preserve seeds better
