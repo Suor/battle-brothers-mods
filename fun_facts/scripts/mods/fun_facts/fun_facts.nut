@@ -16,7 +16,9 @@ local function makeReducers() {
         }
         function push(_seq, _rec) {
             _seq.push(_rec)
-            foreach (_, prop in bySeq[_seq]) prop.push(_rec)
+            if (_seq in bySeq) {
+                foreach (reducer in bySeq[_seq]) reducer.push(_rec)
+            }
         }
     }
 }
@@ -84,8 +86,8 @@ this.fun_facts <- {
         this.m.Props.Effects <- R.new(this.m.Stats.BattlesLog, {}, function (_rec) {
             foreach (effect, cnt in _rec.Added) {
                 if (!(effect in effectNames)) continue;
-                if (effectNames[effect] in value) value[effectNames[effect]] += cnt;
-                else value[effectNames[effect]] <- cnt;
+                local name = effectNames[effect];
+                if (name in value) value[name] += cnt; else value[name] <- cnt;
             }
         })
         // TODO: effects out of battle (reducers might need to be extended)
@@ -230,7 +232,7 @@ this.fun_facts <- {
             Self = _killer && _killer.getID() == this.m.Player.getID()
         }
         ::FunFacts.Debug.log("onDeath record", record);
-        this.m.Stats.Deaths.push(record);
+        this.m.Reducers.push(this.m.Stats.Deaths, record);
         ::FunFacts.Debug.log("onDeath total records", this.m.Stats.Deaths.len());
     }
 
@@ -246,7 +248,7 @@ this.fun_facts <- {
             Day = this.World.getTime().Days
         }
         ::FunFacts.Debug.log("onInjury record", record);
-        this.m.Stats.Injuries.push(record);
+        this.m.Reducers.push(this.m.Stats.Injuries, record);
         ::FunFacts.Debug.log("onInjury total records", this.m.Stats.Injuries.len());
     }
 
@@ -259,7 +261,7 @@ this.fun_facts <- {
             Day = this.World.getTime().Days
         }
         ::FunFacts.Debug.log("onInjuryDealt record", record);
-        this.m.Stats.InjuriesDealt.push(record);
+        this.m.Reducers.push(this.m.Stats.InjuriesDealt, record);
         ::FunFacts.Debug.log("onInjuryDealt total records", this.m.Stats.InjuriesDealt.len());
     }
 
@@ -371,6 +373,7 @@ this.fun_facts <- {
         }
         if (playerKills.len() > 0) {
             local kills = playerKills.map(function(_kill) {
+                // TODO: verb based on skill: shot, chopped up, slashed, ...
                 local tpl = _kill.Fatality in fatalities ? fatalities[_kill.Fatality] : "Killed %s";
                 return format(tpl, Text.ally(_kill.Name));
             })
@@ -481,9 +484,6 @@ this.fun_facts <- {
         return this.m.Stats;
     }
     function unpack(_state) {
-        // TMP
-        // if ("Spent" in _state) _state.Used <- delete _state.Spent;
-
         Table.deepExtend(this.m.Stats, _state);
 
         // Fill combat.Start, combat.Added, Drugged, HpPct
