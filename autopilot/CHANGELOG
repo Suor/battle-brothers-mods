@@ -1,3 +1,14 @@
+2.6.0
+- rewritten attack default behavior fixing several issues
+    - do not skip turns when having several default attacks with different min range
+    - choose skill based on expected value not just random plus AP/fat cost
+    - fix missile diversion expectations for throwing bros
+- make throwing bros more careful about friendly fire
+- use Dynamic Duo Shuffle special rotation (Reforged)
+- do not pickup weapons for unarmed mastery bros (Legends)
+- 2-tile bros do not hide behind throwing bros, which start melee
+- value Split Man more (according to its real expected damage)
+
 2.5.3
 - added Reforged behaviors
 - fixed load order bug

@@ -1,7 +1,7 @@
 local def = ::Autopilot <- {
     ID = "mod_autopilot_new"
     Name = "Autopilot New"
-    Version = "2.5.3"
+    Version = "2.6.0"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/675"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/autopilot"
@@ -11,7 +11,7 @@ local def = ::Autopilot <- {
 }
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
-mod.require("mod_msu >= 1.6.0", "stdlib >= 2.2");
+mod.require("mod_msu >= 1.6.0", "stdlib >= 2.3");
 mod.conflictWith("mod_autopilot");
 // msu patches skill.use() in a way that reintroduces broken weapon bug, wrapping that
 // mod_reforged has a couple of tweaks taken from here, which we need to undo

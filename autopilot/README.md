@@ -40,12 +40,12 @@ So, what auto bros won't do currently (probably, not an exhaustive list):
 - throw grenades, holy water, acid
 - use poison, bandages
 - taunt
-- use any active skills from other mods, unless mentioned lower, i.e. Sprint from Reforged, which are not used by enemy military
+- use any active skills from other mods, unless added to some common behavior by their mod or mentioned lower, i.e. Sprint from Reforged, which are not used by enemy military
 - use custom weapon skills that are not used by enemies, unless added here manually
 
-The last two points might be fixed easy enough if there are behaviors in that mod. So contact me to add those to autopilot agent.
+The last two points might be fixed easy enough if there are behaviors in that mod. So *contact me* to add those to autopilot agent.
 
-Another thing with AI is its evaluation happens in parallel to whatever is shown on the battlefield, i.e. an archer thinks about next move/target, while arrow is still in the air, this may lead to the archer finishing his turn because no AP left, lossing possible +4 AP from Berserk. So enemies dying, zombies raising might not be accounted when a behavior is calculated. It may lead to suprising and funny behavior or on kill effects not used properly as in the archer example. Most often this simply makes game crash, i.e. when that archer tryies to shoot a dead enemy.
+Another thing with AI is its evaluation happens in parallel to whatever is shown on the battlefield, i.e. an archer thinks about next move/target, while arrow is still in the air, this may lead to the archer finishing his turn because no AP left, lossing possible +4 AP from Berserk. So enemies dying, zombies raising might not be accounted when a behavior is calculated. It may lead to suprising and funny behavior or on kill effects not used properly as in the archer example. Most often this simply makes game crash, i.e. when that archer tryies to shoot a dead enemy. Autopilot New fixes the vast majority of such crashes.
 
 There is a `::Const.AI.ParallelizationMode` constant in the game, which might be set to false to make many of such crashes/bugs go away, but the delayed effects of some actions, like ranged attacks, will still go in parallel to some thinking, so the archer above will still try to shoot dead enemies, which crashes. Autopilot fixes some of such crashes but not all. Also, setting that to false makes combat slower, everybody takes their time to think, mostly noticable on ranged units.
 
@@ -54,6 +54,7 @@ There is a `::Const.AI.ParallelizationMode` constant in the game, which might be
 
 Aside from better compatibility my modifications to auto bros behavior include:
 
+- better attack default behavior, especially for weapons with several significantly different skills and throwing bros
 - use rally the troops, adrenalin, line breaker, lunge, deathblow skills
 - pick up a weapon
 - throw nets, unleash dogs, beat the drum
@@ -67,9 +68,11 @@ Aside from better compatibility my modifications to auto bros behavior include:
     - lock into melee less
     - do not be afraid of throwing over the shoulder of an ally
     - do not move next to an ally to protect him, i.e. like a melee bro
+    - account for missile diversion properly
 
 Support some skills from third-party mods:
 
+- many skills from Reforged are used
 - support custom weapons from CleverFool's mod
 - use custom active skills from Heroic Scenario Pack
 - beat the barbarian drum from North Expansion
@@ -84,7 +87,7 @@ Other additions:
 
 Fixes:
 
-- no disappearing buttons anymore
+- no disappearing buttons or status icons anymore
 - removed always active "Run them down" / "It's over" in AI mode
 - hide skills and other UI buttons when auto waiting, skipping turn or on AI
 - immediately act after switching to auto, no skipping turn anymore
