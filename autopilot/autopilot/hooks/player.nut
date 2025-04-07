@@ -131,16 +131,24 @@ mod.hook("scripts/entity/tactical/player", function (q) {
             agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.EngageRanged] = 0.1;
         }
 
+        // Protect from script renames and deletion
+        local function addBehavior(_script, _warn = true) {
+            local b = ::new(_script);
+            if (b) agent.addBehavior(b);
+            else if (_warn) ::logWarning("autopilot: cannot find behavior " + _script);
+        }
+
         // Add Reforged behaviors for bros to use new active skills
         if (::Hooks.hasMod("mod_reforged")) {
-            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_onslaught"));
-            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_kata_step"));
-            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_hold_steady"));
-            // agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_follow_up")); // not used
-            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_cover_ally"));
-            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_command"));
-            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_blitzkrieg"));
-            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rf_attack_lunge"));
+            addBehavior("scripts/ai/tactical/behaviors/ai_rf_onslaught");
+            addBehavior("scripts/ai/tactical/behaviors/ai_rf_kata_step", false); // pre 0.7.0 passing step
+            addBehavior("scripts/ai/tactical/behaviors/ai_rf_passing_step");
+            addBehavior("scripts/ai/tactical/behaviors/ai_rf_hold_steady");
+            // addBehavior("scripts/ai/tactical/behaviors/ai_rf_follow_up")); // not usd
+            addBehavior("scripts/ai/tactical/behaviors/ai_rf_cover_ally");
+            addBehavior("scripts/ai/tactical/behaviors/ai_rf_command");
+            addBehavior("scripts/ai/tactical/behaviors/ai_rf_blitzkrieg");
+            addBehavior("scripts/ai/tactical/behaviors/ai_rf_attack_lunge");
         }
 
         // Do not pick up weapons by unarmed bros
