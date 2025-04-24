@@ -56,7 +56,7 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.legend_aggressive"
             "trait.legend_diurnal"
             "trait.legend_light"
-            "trait.double_tongued"
+            "trait.legend_double_tongued"
         ])
     }
 
