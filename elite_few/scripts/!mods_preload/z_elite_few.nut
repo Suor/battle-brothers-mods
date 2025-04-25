@@ -148,8 +148,13 @@
             onUpdate(_properties);
 
             // No easy access to DailyCost in traits, so we patch this
-            if (this.m.DailyCost != 0 && !this.getContainer().hasSkill("trait.player")
-                                      && this.getContainer().hasSkill("trait.master")) {
+            local cont = this.getContainer(), actor = cont.getActor()
+            if (this.m.DailyCost != 0 && !cont.hasSkill("trait.player")
+                && cont.hasSkill("trait.master")
+                // These three conditions will make extra wage only show after hired or tryout
+                // The lest one is for starting bros )
+                && (actor.m.HireTime > 0 || actor.m.IsTryoutDone || actor.m.PlaceInFormation < 255)
+            ) {
                 _properties.DailyWage += 9;
             }
         }
