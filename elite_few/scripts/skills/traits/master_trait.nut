@@ -43,6 +43,11 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.legend_fear_dark"
             "trait.legend_predictable"
             "trait.legend_slack"
+            // Legends 18-
+            "trait.fear_nobles"
+            "trait.frail"
+            "trait.predictable"
+            "trait.slack"
         ];
         if (::EliteFew.conf("excludeDubious")) this.m.Excluded.extend([
             "trait.drunkard"
@@ -57,6 +62,10 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.legend_diurnal"
             "trait.legend_light"
             "trait.legend_double_tongued"
+            // Legends 18-
+            "trait.aggressive"
+            "trait.light"
+            "trait.double_tongued"
         ])
     }
 
