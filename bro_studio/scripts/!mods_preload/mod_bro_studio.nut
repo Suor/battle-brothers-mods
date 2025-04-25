@@ -2,15 +2,26 @@ local mod = ::BroStudio <- {
     ID = "mod_bro_studio"
     Name = "Bro Studio"
     Version = "1.2.0"
+    Updates = {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/677"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/bro_studio"
+        tagPrefix = "bro-studio-"
+    }
     Debug = false //::std.Debug.with({prefix = "studio: "})
 }
 local Rand = ::std.Rand.using(::std.rng); // Use non Math rng generator to preserve seeds better
 
 local mh = ::Hooks.register(mod.ID, mod.Version, mod.Name);
-mh.require("stdlib >= 2.0", "mod_msu >= 1.2.6");
+mh.require("stdlib >= 2.0", "mod_msu >= 1.6.0");
 mh.conflictWith("mod_vap", "mod_ultrabros");
-mh.queue(">stdlib", ">mod_msu", function () {
+mh.queue(">stdlib", ">mod_msu", ">mod_legends", function () {
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
+
+    local msd = ::MSU.System.Registry.ModSourceDomain, upd = mod.Updates;
+    mod.Mod.Registry.addModSource(msd.NexusMods, upd.nexus);
+    mod.Mod.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
+    mod.Mod.Registry.setUpdateSource(msd.GitHubTags);
+
     mod.conf <- function (name) {
         return mod.Mod.ModSettings.getSetting(name).getValue();
     }
