@@ -14,7 +14,7 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.asthmatic"
             "trait.bleeder"
             // "trait.bloodthirsty" // Very useful to cut heads
-            "trait.brute" // ??? +15% damage to head -5 melee skill
+            // "trait.brute" // ??? +15% damage to head -5 melee skill
             "trait.clubfooted"
             "trait.clumsy"
             "trait.cocky"
@@ -37,12 +37,12 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.short_sighted"
             "trait.superstitious"
             // Legends
-            "trait.fear_nobles"
-            "trait.frail"
+            "trait.legend_fear_nobles"
+            "trait.legend_frail"
             "trait.legend_appetite_donkey"
             "trait.legend_fear_dark"
-            "trait.predictable"
-            "trait.slack"
+            "trait.legend_predictable"
+            "trait.legend_slack"
         ];
         if (::EliteFew.conf("excludeDubious")) this.m.Excluded.extend([
             "trait.drunkard"
@@ -50,12 +50,13 @@ this.master_trait <- this.inherit("scripts/skills/traits/character_trait", {
             "trait.impatient"
             "trait.huge"
             "trait.tiny"
-            "trait.paranoid"
+            "trait.paranoid",
+            "trait.brute", // put it here 
             // Legends
-            "trait.aggressive"
+            "trait.legend_aggressive"
             "trait.legend_diurnal"
-            "trait.light"
-            "trait.double_tongued"
+            "trait.legend_light"
+            "trait.legend_double_tongued"
         ])
     }
 

@@ -1,7 +1,7 @@
 ::EliteFew <- {
     ID = "mod_elite_few"
     Name = "Elite Few - Master Bros"
-    Version = "2.4.1"
+    Version = "2.4.2"
 };
 
 // Replaces the original TheEliteFew and should load after any talent modifying mods
@@ -78,6 +78,10 @@
         })
     }
     ::mods_hookBaseClass("events/event", function (cls) {markInScreen(cls.event)})
+    if (::mods_getRegisteredMod("mod_legends"))
+    {
+        ::mods_hookBaseClass("encounters/encounter", function (cls) {markInScreen(cls.encounter)})
+    }
     ::mods_hookBaseClass("contracts/contract", function (cls) {markInScreen(cls.contract)})
 
     // Master rolling funcs
