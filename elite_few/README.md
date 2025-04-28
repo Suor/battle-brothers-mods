@@ -9,7 +9,7 @@ Makes some bros "masters" with max attribute rolls, an extra talent and no bad t
 - 10-50-40 % probabilities for 1-2-3 star(s) in all talents, up from 60-30-10%
 - no bad traits, like drunkard or clumsy, this indirectly makes good ones more frequent
 - +5 initiative from a special "Master" trait
-- +9 extra daily wage
+- +9 extra daily wage (only visible after tryout or hire)
 
 By default the rate at which a brother is a master is
 
@@ -37,9 +37,10 @@ It is possible to configure chance multplier and other stuff via MSU's Mod Optio
 
 Safe to add midgame, can't remove once you have these masters anywhere including city hiring rosters. Set "Select masters" to "none" in Mod Options instead.
 
-- compatible with mods like Ultra Bros, Weighted Talents, Starting Perks by Background and such
+- compatible with mods like Bro Strudio, Ultra Bros, Weighted Talents, Starting Perks by Background and such
 - should work with any mods changing bro generation by applying its changes on top
-- works with Legends (tested 16.3.3 and 17.0.9)
+- works with Reforged
+- works with Legends
 - works with Accessory Companions (AC) mods
 
 

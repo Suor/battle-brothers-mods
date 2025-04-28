@@ -1,3 +1,9 @@
+2.5.0
+- do not demask Master bros with their daily cost before hired or tryout
+- treat Legends 19 encounters same as events or contracts (BreakyZ)
+- support Legends 19 trait renames (BreakyZ)
+- brute moved to dubious (BreakyZ)
+
 2.4.1
 - added Double Tounged from Legends to dubious list
 - fixed incompatibility with Tutorial contract
