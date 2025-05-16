@@ -88,6 +88,10 @@ local function makePage(name) {
                     return this.inputs[name];
                 }
             }
+            Registry = {
+                function addModSource(_domain, _url, _opts = {}) {}
+                function setUpdateSource(_domain) {}
+            }
         }
     }
     RangeSetting = class extends ::Mocks.Input { Type = "Range" }
@@ -97,4 +101,9 @@ local function makePage(name) {
     SettingsTitle = class extends ::Mocks.Input { Type = "Title" }
     SettingsDivider = class extends ::Mocks.Input { Type = "Divider" }
     SettingsSpacer = class extends ::Mocks.Input { Type = "Spacer" }
+}
+::MSU.System <- {
+    Registry = {
+        ModSourceDomain = {NexusMods = "NexusMods", GitHubTags = "GithubTags"}
+    }
 }
