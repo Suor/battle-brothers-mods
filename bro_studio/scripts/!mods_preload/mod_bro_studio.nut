@@ -9,12 +9,13 @@ local mod = ::BroStudio <- {
     }
     Debug = false //::std.Debug.with({prefix = "studio: "})
 }
-local Rand = ::std.Rand.using(::std.rng); // Use non Math rng generator to preserve seeds better
 
 local mh = ::Hooks.register(mod.ID, mod.Version, mod.Name);
-mh.require("stdlib >= 2.0", "mod_msu >= 1.6.0");
+mh.require("stdlib >= 2.2", "mod_msu >= 1.6.0");
 mh.conflictWith("mod_vap", "mod_ultrabros");
 mh.queue(">stdlib", ">mod_msu", ">mod_legends", function () {
+    local Rand = ::std.Rand.using(::std.rng); // Use non Math rng generator to preserve seeds better
+
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
 
     local msd = ::MSU.System.Registry.ModSourceDomain, upd = mod.Updates;
