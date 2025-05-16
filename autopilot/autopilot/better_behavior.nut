@@ -21,6 +21,8 @@ mod.hook("scripts/ai/tactical/behaviors/ai_engage_melee", function (q) {
 
 mod.hook("scripts/ai/tactical/behaviors/ai_attack_default", function (q) {
     q.m.PossibleSkills.extend([
+        // Vanilla Legendary 1.5.1
+        "actives.censer_strike"
         // CleverFool's mod
         "actives.gae_buidhe_thrust"
         "actives.gae_dearg_thrust"
@@ -62,6 +64,11 @@ mod.hook("scripts/ai/tactical/behaviors/ai_engage_ranged", function (q) {
 mod.hook("scripts/ai/tactical/behaviors/ai_attack_split", function (q) {
     q.m.PossibleSkills.extend([
         "actives.excalibur_split" // CleverFool's mod
+    ]);
+});
+mod.hook("scripts/ai/tactical/behaviors/ai_attack_swing", function (q) {
+    q.m.PossibleSkills.extend([
+        "actives.censer_castigate" // Vanilla Legendary 1.5.1
     ]);
 });
 mod.hook("scripts/ai/tactical/behaviors/ai_defend_rotation", function (q) {
