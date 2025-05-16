@@ -11,6 +11,7 @@ mod.hook("scripts/ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_ba
         return _entity != null && _entity.isPlayerControlled()
             && (_entity.getAIAgent() == null || _entity.getAIAgent().ClassName == "player_agent");
     }
+    // Q: call it shouldAuto()?
     q.canAuto <- function (_entity = null) {
         if (_entity == null) _entity = getActiveEntity();
         return this.isHumanControlled(_entity)
@@ -68,7 +69,7 @@ mod.hook("scripts/ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_ba
                 if (cancelIgnorance) e.m._isIgnored <- false;
                 e.clearAutoSkills();
                 e.setSkipTurn(false);
-                e.cancelAIControl();
+                if (::std.Util.isKindOf(e, "player")) e.cancelAIControl();
             }
         }
 
