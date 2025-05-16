@@ -9,7 +9,10 @@ AutopilotNew.unhook = function (clsName, hooks) {
         cls.prototype[funcName] = hooks[key];
     }
 }
-if (window.Reforged) AutopilotNew.unhook("TacticalScreenTurnSequenceBarModule", Reforged.Hooks);
+if (window.Reforged) {
+    AutopilotNew.unhook("TacticalScreenTurnSequenceBarModule", Reforged.Hooks);
+    TacticalScreenTurnSequenceBarModule.prototype.RF_setWaitTurnAllButtonVisible = function (_visible) {}
+}
 
 
 // Autopilot hooks
