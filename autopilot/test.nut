@@ -25,4 +25,9 @@ dofile("autopilot/fixes.nut", true);
 local aref = ActorRef(actor);
 assert(aref.isAlive());
 
+::logWarning <- function (_text) {}
+::actor <- null;
+for (local i = 0; i < 1; i++) {time()} // Some time for gc
+assert(!aref.isAlive());
+
 print("Tests OK\n");
