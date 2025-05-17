@@ -1,3 +1,10 @@
+1.0.1
+- fixed Deaths, Injuries and InjuriesDealt facts
+- fixed adding to existing campaign
+- fixed Reforged 0.7 minor incompatibility
+- fixed Vala bug
+- minor killed bros test adjustment
+
 1.0.0
 - account crowns, food, parts, ammo and herbs spent on bros, plus TCO
 - support tracking kills and deaths in Reforged (was broken there)
