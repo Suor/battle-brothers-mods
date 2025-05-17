@@ -28,7 +28,12 @@ check-compile:
 
 test: include check-compile
 	@if [[ -f "test.nut" ]]; then
-		squirrel test.nut;
+		TMP_FILE=$$(mktemp);
+		squirrel test.nut 2> >(tee "$$TMP_FILE" >&2);
+		if [ -s "$$TMP_FILE" ]; then
+			rm "$$TMP_FILE"
+			exit 1
+		fi
 	fi
 
 include:
