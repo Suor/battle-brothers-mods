@@ -157,6 +157,15 @@ this.fun_facts <- {
 
     function onCombatEnd(_player) {
         this.m.Stats.Battles++;
+
+        // If for whatever reason onCombatStart was not called
+        local tmpCombat = this.m.TmpCombat || {
+            Start = {Effects = [], Injured = false, Drugged = false, HpPct = 100}
+            Added = {}
+            Items = []
+        }
+        this.m.TmpCombat = null;
+
         local record = {
             Id = ::FunFacts.getBattleId()
             Kills = _player.m.CombatStats.Kills
@@ -164,14 +173,14 @@ this.fun_facts <- {
             Fled = _player.m.ff_fled
             Returned = _player.m.ff_returned
             // Added in v2
-            Start = this.m.TmpCombat.Start
-            Added = this.m.TmpCombat.Added
+            Start = tmpCombat.Start
+            Added = tmpCombat.Added
         }
         ::FunFacts.Debug.log("onBattle ", record);
         this.m.Reducers.push(this.m.Stats.BattlesLog, record);
 
         // Look at lost condition
-        foreach (pair in this.m.TmpCombat.Items) {
+        foreach (pair in tmpCombat.Items) {
             if (pair.item.isNull()) continue;
 
             local lostCond =  pair.cond - pair.item.getCondition();
