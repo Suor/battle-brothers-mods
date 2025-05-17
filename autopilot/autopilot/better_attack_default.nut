@@ -1,31 +1,14 @@
+// local Debug = ::std.Debug.with({prefix = "bad: "});
 local mod = ::Hooks.getMod("mod_autopilot_new");
-
-local stdTile = {
-    function iterAdjacent(_tile) {
-        for (local i = 0; i < ::Const.Direction.COUNT; i++) {
-            if (_tile.hasNextTile(i)) yield _tile.getNextTile(i);
-        }
-    }
-    function iterAdjacentActors(_tile) {
-        foreach (tile in this.iterAdjacent(_tile)) {
-            if (tile.IsOccupiedByActor) yield tile.getEntity();
-        }
-    }
-}
-local function mapValues(_table, _func) {
-    local res = {};
-    foreach (k, v in _table) res[k] <- _func(k, v);
-    return res;
-}
 
 
 // This makes AI prefer it more, original value is wrong
 mod.hook("scripts/skills/actives/split_man", function (q) {
     q.getExpectedDamage = @(__original) function (_target) {
-        return mapValues(__original(_target), @(_, v) v * 1.5);
+        return ::std.Table.mapValues(__original(_target), @(_, v) v * 1.5);
     }
 })
-// skills/actives/deathblow_skill
+
 
 mod.hook("scripts/ai/tactical/behaviors/ai_attack_default", function (q) {
     q.onEvaluate = @(__original) function (_entity) {
@@ -61,14 +44,14 @@ mod.hook("scripts/ai/tactical/behaviors/ai_attack_default", function (q) {
             return ::Const.AI.Behavior.Score.Zero;
         }
 
-        // TODO: move it back to selectBestTargetAndSkill?
+        // TODO: move to selectBestTargetAndSkill?
         score *= this.getFatigueScoreMult(this.m.Skill);
 
         if (this.getAgent().getIntentions().IsChangingWeapons) {
             score *= ::Const.AI.Behavior.AttackAfterSwitchWeaponMult;
         }
 
-        return this.Math.max(0, this.Const.AI.Behavior.Score.Attack * score);
+        return ::Math.max(0, ::Const.AI.Behavior.Score.Attack * score);
     }
 
     q.selectBestTargetAndSkill <- function (_entity) {
@@ -86,24 +69,13 @@ mod.hook("scripts/ai/tactical/behaviors/ai_attack_default", function (q) {
                 s.getMaxLevelDifference(),
                 myTile
             );
-            // Debug.logRepr("skill=" + s.ClassName + " targets", targets);
 
             local best = s.isRanged() ? this.bad_queryBestRangedTarget(_entity, s, targets)
                                       : this.queryBestMeleeTarget(_entity, s, targets);
             if (best.Target == null) continue;
-
-            best.Value <- this.queryTargetValue(_entity, best.Target, s);
-            best.Hitchance <- s.getHitchance(best.Target);
-            best.Damage <- s.getExpectedDamage(best.Target);
-            best.Attract <- best.Target.getCurrentProperties().TargetAttractionMult;
-            best.FatMult <- this.getFatigueScoreMult(s);
-            // Debug.logRepr("best", best);
-
             options.push({target = best.Target, skill = s, score = best.Score});
         }
         if (options.len() == 0) return 0;
-
-        // Debug.logRepr("options", options);
 
         // How we choose a skill is borrowed from ai_attack_bow, we do it for different options
         // though not for different skills inside target.
@@ -116,18 +88,10 @@ mod.hook("scripts/ai/tactical/behaviors/ai_attack_default", function (q) {
         this.m.TargetTile = choice.target.getTile();
         this.m.Skill = choice.skill;
         return choice.score;
-        // return choice.skill.isRanged() ? ::Math.maxf(0.1, choice.score + ::std.Array.max(scores))
-        //                                : choice.score;
     }
 })
 
 mod.hook("scripts/ai/tactical/behavior", function (q) {
-    // q.queryBestRangedTarget = @(__original) function(_entity, _skill, _targets, _maxRange = 0) {
-    //     local ret = __original(_entity, _skill, _targets, _maxRange);
-    //     Debug.logRepr("original queryBestRangedTarget", {ret=ret, s=_skill, r=_maxRange});
-    //     return ret;
-    // }
-
     // Override this to fix "do not throw" other the shoulder bug and for more flexibility
     // q.queryBestRangedTarget = @() function(_entity, _skill, _targets, _maxRange = 0) {
     q.bad_queryBestRangedTarget <- function(_entity, _skill, _targets, _maxRange = 0) {
@@ -149,7 +113,6 @@ mod.hook("scripts/ai/tactical/behavior", function (q) {
             local score = this.scoreRangedTarget(_entity, target, _skill);
             if (score > best.Score) best = {Score = score, Target = target};
         }
-        // Debug.logRepr("my queryBestRangedTarget", best);
         return best;
     }
 
@@ -178,7 +141,7 @@ mod.hook("scripts/ai/tactical/behavior", function (q) {
         //       see skill.divertAttack() and .attackEntity()
         local alliesAdjacent = 0;
         if (myTile.getDistanceTo(targetTile) > 2) {
-            foreach (actor in stdTile.iterAdjacentActors(targetTile)) {
+            foreach (actor in ::std.Tile.iterAdjacentActors(targetTile)) {
                 if (_entity.isAlliedWith(actor)) {
                     if (this.getProperties().TargetPriorityHittingAlliesMult < 1.0) {
                         // TODO: think about these coefficients
