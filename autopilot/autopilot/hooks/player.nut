@@ -139,6 +139,7 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         }
 
         // Add Reforged behaviors for bros to use new active skills
+        // TODO: use AIBehaviorID
         if (::Hooks.hasMod("mod_reforged")) {
             addBehavior("scripts/ai/tactical/behaviors/ai_rf_onslaught");
             addBehavior("scripts/ai/tactical/behaviors/ai_rf_kata_step", false); // pre 0.7.0 passing step
