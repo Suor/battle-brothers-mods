@@ -1,6 +1,11 @@
+2.6.1
+- support Reforged 0.7.x
+- use censer skills from 1.5.1
+- fixed player-controlled non-player actors
+
 2.6.0
 - rewritten attack default behavior fixing several issues
-    - do not skip turns when having several default attacks with different min range
+    - do not skip turns when having several attacks with different range
     - choose skill based on expected value not just random plus AP/fat cost
     - fix missile diversion expectations for throwing bros
 - make throwing bros more careful about friendly fire
