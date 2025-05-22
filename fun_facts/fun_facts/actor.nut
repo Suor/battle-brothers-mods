@@ -29,7 +29,7 @@
 
         foreach (injury in injuries) {
             if ("FunFacts" in this.m) this.m.FunFacts.onInjury(_attacker, injury);
-            if ("FunFacts" in _attacker.m) _attacker.m.FunFacts.onInjuryDealt(this, injury);
+            if (_attacker && "FunFacts" in _attacker.m) _attacker.m.FunFacts.onInjuryDealt(this, injury);
         }
 
         return damage;
