@@ -26,7 +26,7 @@ from difflib import Differ, SequenceMatcher
 from itertools import groupby
 from pprint import pprint, pformat
 
-SCRIPTS = "/home/suor/_downloads/Battle Brothers mods/bbtmp2/scripts-base/";
+SCRIPTS = "/home/suor/projects/bbm/base/scripts-base/";
 # SCRIPTS = "/home/suor/_downloads/Battle Brothers mods/bbtmp2/mod_legends_18.1.0/scripts/";
 
 
