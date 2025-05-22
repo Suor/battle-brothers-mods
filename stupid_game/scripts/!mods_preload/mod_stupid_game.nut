@@ -31,7 +31,7 @@ mod.queue(">mod_reforged", ">mod_backgrounds_reforged", "<mod_useful", function 
 
         q.onBuildPerkTree = @(__original) function () {
             __original();
-            ::logInfo("sg: fixing" + this.getName() + " DailyCost=" + this.m.DailyCost);
+            ::logInfo("sg: fixing " + this.getName() + " DailyCost=" + this.m.DailyCost);
             if (this.m.DailyCost <= 10) { // Already get +1 at this stage
                 local perkTree = this.getContainer().getActor().getPerkTree();
                 perkTree.addPerkGroup("pg.rf_pauper");
