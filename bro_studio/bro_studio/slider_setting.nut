@@ -12,18 +12,9 @@
         }
         if (_labels == null) {
             _labels = _values;
-        } else if (typeof _labels != "array") {
-            if (_description != null) throw "SliderSetting: too many arguments";
-            _description = _name;
-            _name = _labels;
-            _labels = _values;
-        } else if (_labels.len() != _values.len()) {
-            throw "SliderSetting: values and labels lens must match";
         }
-        ::std.Debug.log("slider", {
-            id = _id, value = _value, values = _values, labels = _labels,
-            name = _name, description = _description
-        })
+        assert(_values.len() == _labels.len());
+
         base.constructor(_id, _value, 0, _values.len() - 1, 1, _name, _description);
         this.Values = _values;
         this.Labels = _labels;

@@ -19,7 +19,7 @@ page.add(::MSU.Class.BooleanSetting("traitsStupid", false, "Stupid Mode",
 page.add(::MSU.Class.SettingsDivider("traitsDiv"));
 // page.add(::MSU.Class.SettingsTitle("traitsTitle", "Repeat"));
 
-page.add(::BroStudio.SliderSetting("traitsNth", "off", ["off", 10, 5, 4, 3],
+page.add(::BroStudio.SliderSetting("traitsNth", "off", ["off", 10, 5, 4, 3], null,
     "Repeat each N-th level",
     "Starting from but not including the level 1"));
 page.add(::MSU.Class.RangeSetting("traitsNthNum", 1, 0, 5, 1, "Number",
