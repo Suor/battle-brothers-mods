@@ -395,7 +395,7 @@ this.fun_facts <- {
         }
         if (this.m.Stats.InjuriesDealt.len() > 0) {
             addHint("ui/icons/damage_dealt.png",
-                format("Delivered %s injuries", red(this.m.Stats.InjuriesDealt.len())))
+                format("Inflicted %s injuries", red(this.m.Stats.InjuriesDealt.len())))
         }
 
         if (this.m.Stats.NineLivesSaves > 0 || this.m.Stats.NineLivesUses > 0) {
