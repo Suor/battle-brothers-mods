@@ -577,3 +577,12 @@
     "brawny": 20
     "hackflows.full_force": 15
 }
+
+// Cultist Origin
+::BgPerks.chances.cultist_commander <- clone ::BgPerks.chances.cultist;
+::BgPerks.chances.cultist_commander.fortified_mind <- 33;
+::BgPerks.chances.cultist_commander.rally_the_troops <- 33;
+::BgPerks.chances.cultist_commander.reach_advantage <- 20;
+::BgPerks.chances.cultist_commander.berserk <- 10;
+
+// TODO: Lone Bladedancer

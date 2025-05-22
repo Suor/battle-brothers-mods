@@ -10,7 +10,7 @@ Changes from the base mod:
 - added a way to extend this, see below
 - fixed The Gifted bug
 - integrates nice with:
-    - Reforged
+    - [Reforged](reforged)
     - [More Backgrounds and Events (Updated)][xbe]
     - [Hackflow's Perks][hackperks]
     - [Proper Necromancer][necro]
@@ -18,6 +18,7 @@ Changes from the base mod:
     - [Lone Chosen][lone]
     - [Heroic Scenario Pack][heroic]
     - [Fantasy Brothers][fantasy]
+    - and other mods
 
 This is more about fun, but also makes some weaker backgrounds more appealing, might need to hire and fire several times to get a bro with desired perks though.
 
@@ -75,6 +76,7 @@ Note that a key in `::BgPerks.chances` is the background ID with `background.` p
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [base-mod]: https://www.nexusmods.com/battlebrothers/mods/70
 
+[reforged]: https://www.nexusmods.com/battlebrothers/mods/765
 [xbe]: https://www.nexusmods.com/battlebrothers/mods/769
 [hackperks]: https://www.nexusmods.com/battlebrothers/mods/673
 [necro]: https://www.nexusmods.com/battlebrothers/mods/775
