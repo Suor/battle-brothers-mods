@@ -3,7 +3,7 @@
 Following the idea of [Recrutable Necromancer](old) this adds a Necromancer background, who can raise undead and possess them.
 
 - gradually tap into the craft of controlling the undead via special perks
-- pure mage or mage/fighter hybrid necromancer builds
+- pure mage or mage/fighter or mage/bannerman necromancer builds
 - a dedicated origin
 - loot and XP not lost anymore when zombie kills
 
