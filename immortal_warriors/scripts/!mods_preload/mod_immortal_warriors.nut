@@ -73,17 +73,13 @@ local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
         local onSerialize = cls.onSerialize;
         cls.onSerialize = function(_out) {
             local packed = Util.pack(mod._ImmortalInfo);
-            Debug.log("ImmortalInfo", mod._ImmortalInfo);
-            Debug.log("ImmortalInfo packed", packed);
             this.m.Flags.set("ImmortalWarriors", packed);
             return onSerialize(_out);
         }
 
         local onDeserialize = cls.onDeserialize;
         cls.onDeserialize = function (_in) {
-            ::logInfo("world_state onDeserialize 1");
             onDeserialize(_in);
-            ::logInfo("world_state onDeserialize 2");
 
             local packed = this.m.Flags.get("ImmortalWarriors");
             mod._ImmortalInfo <- packed ? Util.unpack(packed) : {};
@@ -167,7 +163,7 @@ mod.boostTalents <- function (_player, _num) {
     Debug.log("boostTalents after", _player.m.Attributes);
 }
 
-
+// TODO: get rid of this
 ::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.0), mod_msu(>=1.5.0)", function () {
     ::include("scripts/immortal_warriors_hack_msu");
     ::HackMSU.setup(mod, {
