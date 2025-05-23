@@ -7,7 +7,7 @@ local Rand = ::std.Rand.using(::rng), Util = ::std.Util, Table = ::std.Table;
 local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.0), mod_msu(>=1.5.0)", function () {
+::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.5), mod_msu(>=1.5.0)", function () {
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
 
     local page = mod.Mod.ModSettings.addPage("General");
@@ -106,6 +106,23 @@ local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
             if (this.m.immortal_extraALUV > 0) this.m.immortal_extraALUV--;
         }
     });
+
+    ::include("scripts/i_immortal_warriors_levelup_changes");
+    ::LevelUpChanges.onLevel(function (_player, _level) {
+        if (!_player.getSkills().hasSkill("trait.immortal_warrior")) return;
+        if (::Math.rand(1, 100) > 33) return;
+
+        local injury = ::std.Player.removePermanentInjury(_player);
+        if (!injury) return;
+
+        _player.addLevelUpChanges("Immortal overcomes", [{
+            id = injury.getID()
+            icon = injury.getIcon()
+            removed = true
+            tooltip = injury.getTooltip()
+        }])
+    })
+
 });
 
 
