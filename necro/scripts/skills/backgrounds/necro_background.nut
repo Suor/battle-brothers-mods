@@ -121,6 +121,7 @@ this.necro_background <- this.inherit("scripts/skills/backgrounds/character_back
 
     function onUpdate( _properties )
     {
+        this.character_background.onUpdate(_properties);
         _properties.IsAffectedByDyingAllies = false;
     }
 
