@@ -182,7 +182,7 @@ mod.boostTalents <- function (_player, _num) {
 
 // TODO: get rid of this
 ::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.0), mod_msu(>=1.5.0)", function () {
-    ::include("scripts/immortal_warriors_hack_msu");
+    ::include("scripts/i_immortal_warriors_hack_msu");
     ::HackMSU.setup(mod, {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/763"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/immortal_warriors"
