@@ -11,7 +11,7 @@ local function named(value) {return ::Const.UI.getColorized(value + "", "#1e468f
 local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e")}
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
-mod.require("stdlib >= 2.2");
+mod.require("stdlib >= 2.5");
 mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", function () {
     if ("mods_registerJS" in getroottable()) ::mods_registerJS("retinue_ups.js");
     else ::Hooks.registerLateJS("ui/mods/retinue_ups.js");
@@ -343,35 +343,21 @@ mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", fu
     ::include("scripts/i_retinue_ups_levelup_changes");
     ::LevelUpChanges.onLevel(function (_player, _level) {
         if (!::World.Retinue.ru_isPromoted("surgeon_follower")) return;
-
-        local injuries = _player.getSkills().query(::Const.SkillType.PermanentInjury);
-        if (injuries.len() == 0) return;
         if (::Math.rand(1, 100) > 15) return;
 
-        local index = ::Math.rand(0, injuries.len() - 1);
-        local toRemove = injuries[index].get(); // .query() returns weakrefs
-        ::logInfo("Promoted Surgeon fixes " + toRemove.getName() + " on " + _player.getName());
-        _player.getSkills().remove(toRemove);
+        local injury = ::std.Player.removePermanentInjury(_player);
+        if (!injury) return;
 
         _player.addLevelUpChanges("Promoted Surgeon fixes", [{
-            id = toRemove.getID()
-            icon = toRemove.getIcon()
+            id = injury.getID()
+            icon = injury.getIcon()
             removed = true
-            tooltip = toRemove.getTooltip() // TODO: do not save tooltip and icon?
+            tooltip = injury.getTooltip() // TODO: do not save tooltip and icon?
         }])
-
-        _player.getSprite("permanent_injury_1").Visible = false;
-        _player.getSprite("permanent_injury_2").Visible = false;
-        _player.getSprite("permanent_injury_3").Visible = false;
-        _player.getSprite("permanent_injury_4").Visible = false;
-        _player.getSprite("permanent_injury_1").resetBrush();
-        _player.getSprite("permanent_injury_2").resetBrush();
-        _player.getSprite("permanent_injury_3").resetBrush();
-        _player.getSprite("permanent_injury_4").resetBrush();
-        _player.updateInjuryVisuals()
     })
 })
 
+// TODO: stop using this
 // hack for updates
 mod.queue(">msu", function () {
     if (!("MSU" in getroottable())) return;
