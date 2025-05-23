@@ -13,5 +13,5 @@ local def = {
     }
 }
 
-this.necro_pg <- "DynamicPerks" in getroottable()
+this.necro_pg <- ::DynamicPerks != "necro_placeholder"
     ? ::inherit(::DynamicPerks.Class.SpecialPerkGroup, def) : def;

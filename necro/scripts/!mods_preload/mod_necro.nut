@@ -146,9 +146,9 @@ mod.queue(">mod_reforged", function() {
         }
     })
 
-    // If DynamicPerks is installed then we added out perks via a special perk group
+    // If DynamicPerks is installed then we'll add our perks via a special perk group
     if (!("DynamicPerks" in getroottable())) {
-        ::DynamicPerks <- "placeholder to fool mod_plan_perks";
+        ::DynamicPerks <- "necro_placeholder"; // needed to fool mod_plan_perks
 
         // Add perk tree to bros data
         mod.hook("scripts/ui/global/data_helper", function (q) {

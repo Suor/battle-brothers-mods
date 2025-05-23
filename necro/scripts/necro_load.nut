@@ -1,1 +1,1 @@
-if ("DynamicPerks" in getroottable()) ::DynamicPerks.PerkGroups.add(::new("scripts/necro_pg"));
+if (::DynamicPerks != "necro_placeholder") ::DynamicPerks.PerkGroups.add(::new("scripts/necro_pg"));
