@@ -100,8 +100,10 @@ local Str = ::std.Str, Text = ::std.Text;
             if (!mod.fleshOnBonesActive(this.getContainer().getActor())) return;
 
             foreach (line in _tooltip) {
-                if (Str.endswith(line.text, "Iron Will effect"))
-                    line.text = Str.replace(line.text, "Iron Will effect", "Flesh on the Bones")
+                if (line.id == 7 && line.type == "text" && line.icon == "ui/icons/warning.png") {
+                    line.text = "Will take effect only after combat ends due to the Flesh on the Bones effect";
+                    break;
+                }
             }
         }
     })
