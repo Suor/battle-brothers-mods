@@ -61,6 +61,20 @@ local Str = ::std.Str, Text = ::std.Text;
     })
 
     ::mods_hookExactClass("entity/tactical/player", function (cls) {
+        // These are not calculated correcly if Flesh on the Bones is in effect
+        local getDaysWounded = cls.getDaysWounded;
+        cls.getDaysWounded = function () {
+            if (!mod.fleshOnBonesActive(this)) getDaysWounded();
+
+            local mult = ::World.Assets.m.HitpointsPerHourMult;
+            ::World.Assets.m.HitpointsPerHourMult *= 2;
+            local days = getDaysWounded();
+            ::World.Assets.m.HitpointsPerHourMult = mult;
+
+            return days;
+        }
+
+        // This does not use .getDaysWounded() in vanilla code, so need to hook it too
         local getRosterTooltip = cls.getRosterTooltip;
         cls.getRosterTooltip = function () {
             local tooltip = getRosterTooltip();
@@ -68,15 +82,10 @@ local Str = ::std.Str, Text = ::std.Text;
             if (!mod.fleshOnBonesActive(this)) return tooltip;
 
             foreach (line in tooltip) {
-                if (!Str.startswith(line.text, "Light Wounds")) continue;
-
-                local rate = ::Const.World.Assets.HitpointsPerHour * 2; // This perk doubles it
-                if (("State" in ::World) && ::World.State != null)
-                    rate *= ::World.Assets.m.HitpointsPerHourMult;
-
-                local toHeal = this.getHitpointsMax() - this.getHitpoints();
-                local days = ::Math.ceil(toHeal * 1.0 / rate / 24);
-                line.text = format("Light Wounds (%i day%s)", days, Text.plural(days));
+                if ("icon" in line && line.icon == "ui/icons/days_wounded.png") {
+                    local days = getDaysWounded();
+                    line.text = format("Light Wounds (%i day%s)", days, Text.plural(days));
+                }
             }
             return tooltip;
         }
