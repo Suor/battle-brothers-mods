@@ -1,3 +1,6 @@
+2.6.2
+- fix future Modern Hooks/MSU breaking things
+
 2.6.1
 - support Reforged 0.7.x
 - use censer skills from 1.5.1
