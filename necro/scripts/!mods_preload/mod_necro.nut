@@ -118,10 +118,11 @@ mod.queue(">mod_reforged", function() {
 
     // Want to get loot when zombies raised by us, so that necromancer won't be a loot destroyer
     mod.hook("scripts/items/item_container", function (q) {
+        // This is needed for 1.5.0 and whatever places with old style dropAll(), or not.
         q.dropAll = @(__original) function(_tile, _killer, _flip = false) {
             ::logInfo("necro: in hooked dropAll");
             if (this.m.Actor.necro_hasMaster()) {
-                ::logInfo("necro: drop");
+                ::logInfo("necro: dropAll " + m.Actor.getName());
 
                 // They dropped already once so rolls had their say,
                 // use Player/Blacksmith and whatnot to maximize chance to save them
@@ -142,6 +143,20 @@ mod.queue(">mod_reforged", function() {
                 }
             } else {
                 __original(_tile, _killer, _flip);
+            }
+        }
+
+        if (q.contains("canDropItems")) {
+            q.canDropItems = @(__original) function (_killer) {
+                if (!this.m.Actor.necro_hasMaster()) return __original(_killer);
+
+                ::logInfo("necro: canDropItems " + m.Actor.getName());
+
+                // They dropped already once so rolls had their say,
+                // use Player/Blacksmith and whatnot to maximize chance to save them
+                this.onFactionChanged(::Const.Faction.Player)
+
+                return true;
             }
         }
     })
