@@ -9,7 +9,7 @@ this.necro_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
     {
         this.m.ID = "scenario.necro";
         this.m.Name = "Proper Necromancer";
-        this.m.Description = "[p=c][img]gfx/ui/events/event_76.png[/img][/p][p]Having death always around you found a way to revert it. Somewhat.\n\n[color=#bcad8c]Player Character:[/color] This necromancer is you. Don't die, there is noone to raise you.\n[color=#bcad8c]An outcast:[/color] People wary about your craft. Starting relations are cold and people joining you expect better pay.\n[color=#bcad8c]Cannon Fodder:[/color] You have your ways of finding lots of cripples, various misfits and other corpse material for a handful of crowns. Proper mercenaries are willing to join you less. Have 25 roster slots.[/p]";
+        this.m.Description = "[p=c][img]gfx/ui/events/event_76.png[/img][/p][p]Having death always around you found a way to revert it. Somewhat.\n\n[color=#bcad8c]Player Character:[/color] This necromancer is you. Don't die, there is noone to raise you.\n[color=#bcad8c]An outcast:[/color] People wary about your craft. Starting relations are cold and people joining you expect better pay.\n[color=#bcad8c]Cannon Fodder:[/color] You have your ways of finding lots of cripples, various misfits and other corpse material for a handful of crowns. Proper mercenaries are willing to join you less. Have 25 roster slots, 16 combat ones.[/p]";
         this.m.Difficulty = 2;
         this.m.Order = 49;
         this.m.IsFixedLook = true;
@@ -154,9 +154,12 @@ this.necro_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
 
         // More bros in total, but not in battle (some space for meat)
         this.World.Assets.m.BrothersMax = 25;
+        this.World.Assets.m.BrothersMaxInCombat = 16;
+        this.World.Assets.m.BrothersScaleMax = 16;
     }
 
     // This hook was added in this mod
+    // TODO: also adjust daily pay
     function getBroCostMult(_bro) {
         local isMeat = this.m.MeatClassNames.find(_bro.m.Background.ClassName) != null;
         return isMeat ? 0.5 : 1;
