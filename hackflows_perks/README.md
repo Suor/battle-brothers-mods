@@ -16,12 +16,14 @@ So here we have:
 
 **Battle Flow:** The first kill each turn does not accumulate fatigue.
 
+**Promised Potential:** *(Reforged only)* A more granular and balanced Promised Potential perk for Reforged. Upgrades at levels 5, 8 and 11 progressively.
+
 
 ## Compatibility
 
 Safe to add and remove midgame. However, if you remove it when having bros with any of these perks, they will simply disappear, perk points won't be refunded.
 
-Compatible with Reforged (all perks but Stabilized are added to appropriate perk trees), most probably no-op with Legends.
+Compatible with Reforged (Flesh on the Bones, Balance and Full Force are added to appropriate perk trees), most probably no-op with Legends.
 
 
 ## Install

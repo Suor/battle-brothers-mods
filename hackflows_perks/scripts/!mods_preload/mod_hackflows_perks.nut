@@ -135,6 +135,8 @@ local Str = ::std.Str, Text = ::std.Text;
                 }
             }
         }
+
+        ::include("scripts/hackflows_perks/potential");
     }
 })
 
