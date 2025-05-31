@@ -1,5 +1,5 @@
 0.4.2
-- fixed raised zombie drop under 1.5.1
+- fixed loot lost by zombie raise in 1.5.1
 - allow 16 bros in battle in Necro origin, fixes bug when hiring many bros
 
 0.4.1
