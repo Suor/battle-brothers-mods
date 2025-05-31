@@ -14,7 +14,8 @@ check-compile:
 
 cl:
 	@set -e;
-	ignore=("__pycache__/" "_includes/" "tmp/" "hook_check/" "fix_reforged/" "mod_vap/" "stupid_game/" "camps_LPE/")
+	ignore=("__pycache__/" "_includes/" "tmp/" "hook_check/" "fix_reforged/"
+			"mod_vap/" "stupid_game/" "camps_LPE/" "more_blood/" "renamer/")
 	changed=""
 	for d in */ ; do
 		d=$${d%/} # Remove trailing slash from directory name
