@@ -3,7 +3,7 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
         Stage = 0
         WillSucceed = false
         Failed = false
-        Chance = 75
+        BaseChance = 75
     },
     Stages = [
         {
@@ -55,6 +55,16 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
         m.Description = perk.Tooltip;
         m.Icon = perk.Icon;
         m.IconDisabled = perk.IconDisabled;
+    }
+
+    function getChance() {
+        local chance = m.BaseChance;
+        local skills = getContainer().getActor().getSkills();
+        if (skills.hasSkill("trait.player")) chance += 10;
+        if (skills.hasSkill("trait.lucky")) chance += 10;
+        if (skills.hasSkill("trait.master")) chance += 10; // Elite Few - Master Bros mod
+        if (skills.hasSkill("trait.immortal_warrior")) chance += 10; // Immortal Warriors mod
+        return chance;
     }
 
     function getBonus() {
@@ -112,7 +122,7 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
     function onAdded() {
         if (!m.IsNew) return;
 
-        m.WillSucceed = ::Math.rand(1, 100) <= m.Chance;
+        m.WillSucceed = ::Math.rand(1, 100) <= getChance();
 
          // Catch up for previous levels, in case we migrate or otherwise not add on level 1
         _syncLevel();
@@ -139,7 +149,7 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
         if (_level == stage.Level || isSlave && _level == stage.SlaveLevel) {
             if (m.WillSucceed) {
                 m.Stage++;
-                m.WillSucceed = ::Math.rand(1, 100) <= m.Chance;
+                m.WillSucceed = ::Math.rand(1, 100) <= getChance();
                 stage.up(this, actor);
             } else {
                 m.Failed = true;
@@ -200,4 +210,4 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
         m.Failed = _in.readBool();
         setup();
     }
-});
+})
