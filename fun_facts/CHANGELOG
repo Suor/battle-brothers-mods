@@ -1,3 +1,7 @@
+1.0.2
+- fixed injuries from no attacker (some 1.5.1 and Reforged stuff)
+- better wording Delivered -> Inflicted
+
 1.0.1
 - fixed Deaths, Injuries and InjuriesDealt facts
 - fixed adding to existing campaign
