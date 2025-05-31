@@ -29,7 +29,6 @@ this.necro_regeneration <- this.inherit("scripts/skills/skill", {
         local healthAdded = ::Math.min(healthMissing, 10);
         // if (healthAdded <= 0) return;
 
-        ::logInfo("necro: healthAdded " + healthAdded);
         if (healthAdded > 0) actor.setHitpoints(actor.getHitpoints() + healthAdded);
 
         local head = false, body = false;
@@ -38,8 +37,6 @@ this.necro_regeneration <- this.inherit("scripts/skills/skill", {
             body = ::Necro.restoreArmorPct(actor, "body", 0.07);
             actor.getSkills().update();
         }
-        ::logInfo("necro: restored head " + head);
-        ::logInfo("necro: restored body " + body);
         local restoredArmor = head || body;
         if (!restoredArmor && healthAdded <= 0) return
 

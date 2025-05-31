@@ -43,11 +43,6 @@ mod.queue(">mod_reforged", function() {
     ::Hooks.registerCSS("ui/mods/necro.css");
     ::include("necro/tactical_state");
 
-    // // Allow loading from earlier unreleased necro
-    // mod.hook("scripts/skills/racial/unhold_racial", function (q) {
-    //     q.onUpdate = @() function (_props) {}
-    // })
-
     // Allow origin to adjust hiring and tryout cost on per bro basis
     mod.hook("scripts/entity/tactical/player", function (q) {
         q.getHiringCost = q.getTryoutCost = @(__original) function () {
