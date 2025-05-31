@@ -1,3 +1,7 @@
+0.4.2
+- fixed raised zombie drop under 1.5.1
+- allow 16 bros in battle in Necro origin, fixes bug when hiring many bros
+
 0.4.1
 - support Reforged 0.7.x
 - fixed 0 pay
