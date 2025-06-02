@@ -23,8 +23,9 @@ install: include test
 
 check-compile:
 	@set -e
-	find . -name \*.nut -print0 | xargs -0 -n1 squirrel -c && echo "Syntax OK"
-	rm out.cnut
+	find . -name \*.nut -print0 | xargs -0 -n1 squirrel -c || exit 1;
+	echo "Syntax OK";
+	rm -f out.cnut;
 
 test: include check-compile
 	@if [[ -f "test.nut" ]]; then
