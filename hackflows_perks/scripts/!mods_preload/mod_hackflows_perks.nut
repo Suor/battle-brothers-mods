@@ -67,7 +67,7 @@ local Str = ::std.Str, Text = ::std.Text;
         // These are not calculated correcly if Flesh on the Bones is in effect
         local getDaysWounded = cls.getDaysWounded;
         cls.getDaysWounded = function () {
-            if (!mod.fleshOnBonesActive(this)) getDaysWounded();
+            if (!mod.fleshOnBonesActive(this)) return getDaysWounded();
 
             local mult = ::World.Assets.m.HitpointsPerHourMult;
             ::World.Assets.m.HitpointsPerHourMult *= 2;
@@ -86,7 +86,7 @@ local Str = ::std.Str, Text = ::std.Text;
 
             foreach (line in tooltip) {
                 if ("icon" in line && line.icon == "ui/icons/days_wounded.png") {
-                    local days = getDaysWounded();
+                    local days = this.getDaysWounded();
                     line.text = format("Light Wounds (%i day%s)", days, Text.plural(days));
                 }
             }
