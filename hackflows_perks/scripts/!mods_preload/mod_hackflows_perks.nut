@@ -36,29 +36,32 @@ local Str = ::std.Str, Text = ::std.Text;
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 ::mods_queue(mod.ID, "stdlib, >mod_heal_repair_fix, >mod_reforged", function() {
-
     // Hooks for Flesh on the Bones perk
     ::mods_hookExactClass("entity/tactical/actor", function (cls) {
         local setHitpoints = cls.setHitpoints;
         cls.setHitpoints = function (_h) {
             if (_h > this.m.Hitpoints && mod.fleshOnBonesActive(this)) {
-                _h += _h - this.m.Hitpoints; // Double the addition
+                local hp = this.m.Hitpoints, h = _h;
+                _h += _h - ::Math.max(0, this.m.Hitpoints); // Double the addition
             }
             setHitpoints(_h);
         }
     })
 
-    // Double Nine Lives too, it uses direct hitpoints assignment so the above won't work
-    ::mods_hookExactClass("skills/perks/perk_nine_lives", function (cls) {
-        local setSpent = cls.setSpent;
-        cls.setSpent = function (_f) {
-            if (!_f || !mod.fleshOnBonesActive(this.getContainer().getActor())) return setSpent(_f);
+    // Double Nine Lives too, it sets hitpoints directly so the above won't work.
+    // Modular Vanilla changes that to .setHitpoints()
+    if (!::mods_getRegisteredMod("mod_modular_vanilla")) {
+        ::mods_hookExactClass("skills/perks/perk_nine_lives", function (cls) {
+            local setSpent = cls.setSpent;
+            cls.setSpent = function (_f) {
+                if (!_f || !mod.fleshOnBonesActive(this.getContainer().getActor())) return setSpent(_f);
 
-            local actor = this.getContainer().getActor();
-            actor.m.Hitpoints = ::Math.min(actor.m.Hitpoints * 2, actor.getHitpointsMax());
-            return setSpent(_f);
-        }
-    })
+                local actor = this.getContainer().getActor();
+                actor.m.Hitpoints = ::Math.min(actor.m.Hitpoints * 2, actor.getHitpointsMax());
+                return setSpent(_f);
+            }
+        })
+    }
 
     ::mods_hookExactClass("entity/tactical/player", function (cls) {
         // These are not calculated correcly if Flesh on the Bones is in effect
