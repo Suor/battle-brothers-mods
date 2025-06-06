@@ -27,7 +27,6 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
             function up(_this, _actor) {
                 _actor.resetPerks();
                 _actor.m.PerkPoints++;
-                // _actor.getSkills().add(this); // Add it back
                 _this.addPerkTrees(["pgc.rf_shared_1", "pgc.rf_weapon"], ["pg.rf_tactician"]);
                 _actor.improveMood(1.0, "Realized Potential");
             }
@@ -39,7 +38,7 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
 
         m.Type = ::Const.SkillType.Perk | this.Const.SkillType.StatusEffect;
         m.Order = ::Const.SkillOrder.Perk;
-        if ("IsRefundable" in m) m.IsRefundable = false;
+        if (::std.Util.isIn("IsRefundable", m)) m.IsRefundable = false;
     }
 
     function isHidden() {
@@ -120,6 +119,9 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
     }
 
     function onAdded() {
+        // Patch old saves, TODO: remove in next release
+        if (::std.Util.isIn("IsRefundable", m)) m.IsRefundable = false;
+
         if (!m.IsNew) return;
 
         m.WillSucceed = ::Math.rand(1, 100) <= getChance();
@@ -150,7 +152,6 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
             if (m.WillSucceed) {
                 m.Stage++;
                 m.WillSucceed = ::Math.rand(1, 100) <= getChance();
-                stage.up(this, actor);
             } else {
                 m.Failed = true;
             }
@@ -159,6 +160,8 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
             actor.getPerkTree().removePerk(getID());
             setup();
             actor.getPerkTree().addPerk(getID(), 1);
+
+            if (!m.Failed) stage.up(this, actor);
         }
     }
 
