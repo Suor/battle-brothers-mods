@@ -1,3 +1,11 @@
+1.6
+- added special Promised Potential (only with Reforged)
+- made Flesh on the Bones heal non-bone injuries faster
+- fixed 4x Nine Lives Healing under Modular Vanilla
+- fixed various Light Wounds tooltips
+- fixed perk translations under UPD (Reforged)
+- updated russian translation (req. Rosetta 0.2.0)
+
 1.5
 - support newer Reforged
 - added russian translation (needs Rosetta)
