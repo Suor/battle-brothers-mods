@@ -65,9 +65,10 @@ addPerk(2, "perk.taunt", {
     ID = "perk.hackflows.flesh_on_the_bones",
     Script = "scripts/skills/perks/perk_hackflows_flesh_on_the_bones",
     Name = "Flesh on the Bones"
-    Tooltip = "If the bones are there the flesh will grow. Restores hitpoints at "
+    Tooltip = "If the bones are there the flesh will grow.\n\nRestores hitpoints at "
         + green("double rate") + " and doesn't feel any new injuries until combat ends."
-        + "\n\nBoth will only work as long as no bones are broken. Permanent injuries are fine."
+        + " Both will only work as long as no bones are broken. Permanent injuries are fine."
+        + "\n\nNon-bone injuries heal one day faster."
     Icon = "ui/perks/perk_32.png",
     IconDisabled = "ui/perks/perk_32_sw.png"
 })

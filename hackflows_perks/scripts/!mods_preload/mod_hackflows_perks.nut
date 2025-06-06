@@ -109,6 +109,16 @@ local Str = ::std.Str, Text = ::std.Text;
                 }
             }
         }
+
+        local onAdded = cls.onAdded;
+        cls.onAdded = function () {
+            onAdded();
+            // All non-bone injuries heal 1 day faster with Flesh on the Bones
+            if (m.IsNew && mod.BoneInjuries.find(m.ID) == null
+                    && getContainer().hasSkill("perk.hackflows.flesh_on_the_bones")) {
+                addHealingTime(-1);
+            }
+        }
     })
 
     // Add these perks to Reforged perk trees.
@@ -130,13 +140,13 @@ local Str = ::std.Str, Text = ::std.Text;
 
         local add = ::DynamicPerks.PerkGroups.add;
         ::DynamicPerks.PerkGroups.add = function (_perkGroup) {
-            add(_perkGroup);
             if (_perkGroup.getID() in groupToPerks) {
                 local tree = _perkGroup.m.Tree;
                 foreach (pair in groupToPerks[_perkGroup.getID()]) {
                     tree[pair[0]].push(pair[1])
                 }
             }
+            add(_perkGroup);
         }
 
         ::include("scripts/hackflows_perks/potential");
