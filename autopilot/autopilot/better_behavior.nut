@@ -82,6 +82,11 @@ mod.hook("scripts/ai/tactical/behaviors/ai_boost_stamina", function (q) {
         "actives.nem_barbarian_drum" // North Expansion Mod
     ]);
 });
+mod.hook("scripts/ai/tactical/behaviors/ai_recover", function (q) {
+    q.m.PossibleSkills.extend([
+        "actives.rf_bestial_vigor" // Reforged
+    ]);
+});
 
 // Adjust fatigue score mult
 mod.hook("scripts/ai/tactical/behavior", function (q) {
