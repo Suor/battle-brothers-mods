@@ -51,7 +51,7 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
 
         local perk = ::Const.Perks.LookupMap[m.ID];
         m.Name = perk.Name;
-        m.Description = perk.Tooltip;
+        m.Description = perk.Fluff;
         m.Icon = perk.Icon;
         m.IconDisabled = perk.IconDisabled;
     }
@@ -67,9 +67,9 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
     }
 
     function getBonus() {
-        return m.Stage == 3 ? 10 :
-               m.Stage == 2 ? 5 :
-               m.Stage == 1 ? 2 : 0;
+        return m.Stage == 3 ? 12 :
+               m.Stage == 2 ? 7 :
+               m.Stage == 1 ? 3 : 0;
     }
     function getExtraWagePercent() {
         return m.Stage == 3 ? 100 :
