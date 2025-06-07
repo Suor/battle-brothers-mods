@@ -141,7 +141,7 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
     }
 
     function _onUpdateLevel(_level) {
-        if (!(m.Stage in Stages)) return;
+        if (!(m.Stage in Stages) || m.Failed) return;
         local stage = Stages[m.Stage];
 
         local actor = getContainer().getActor();

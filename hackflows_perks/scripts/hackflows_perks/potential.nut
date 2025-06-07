@@ -146,7 +146,7 @@ setupPerk("perk.hackflows.potential_3", null, p3);
 //       with proper migration
 ::mods_hookExactClass("skills/perks/perk_rf_promised_potential", function (cls) {
     // local onAdded = "onAdded" in cls ? cls.onAdded : cls.skill.onAdded;
-    cls.onAdded = function () {
+    cls.onAdded <- function () {
         local actor = getContainer().getActor();
         local skills = actor.getSkills();
 
