@@ -22,6 +22,7 @@ foreach (stage in [0 1 2 3]) {
     }
 }
 
+// TODO: support vanilla
 local pp = ::Const.Perks.LookupMap["perk.rf_promised_potential"];
 pp.Icon = "hackflows_perks/potential_0.png"
 pp.IconDisabled = "hackflows_perks/potential_sw.png"
@@ -144,9 +145,8 @@ setupPerk("perk.hackflows.potential_3", null, p3);
 // Replace Promised Potential with our thing
 // NOTE: we keep failed and realised potentials as well as graded stuff as is to not mess
 //       with proper migration
-::mods_hookExactClass("skills/perks/perk_rf_promised_potential", function (cls) {
-    // local onAdded = "onAdded" in cls ? cls.onAdded : cls.skill.onAdded;
-    cls.onAdded <- function () {
+::HackflowsPerks.mh.hook("scripts/skills/perks/perk_rf_promised_potential", function (q) {
+    q.onAdded = @() function () {
         local actor = getContainer().getActor();
         local skills = actor.getSkills();
 

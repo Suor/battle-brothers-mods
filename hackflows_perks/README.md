@@ -28,12 +28,14 @@ Compatible with Reforged (Flesh on the Bones, Balance and Full Force are added t
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] and [stdlib][].
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [Modern Hooks][ModernHooks] and [stdlib][].
 
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/673
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
+[ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
+[msu]: https://www.nexusmods.com/battlebrothers/mods/479
 
 [More Perks]: https://www.nexusmods.com/battlebrothers/mods/44
 [True Balance]: https://www.nexusmods.com/battlebrothers/mods/333

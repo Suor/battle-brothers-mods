@@ -1,4 +1,4 @@
-local mod = ::HackflowsPerks <- {
+local def = ::HackflowsPerks <- {
     ID = "mod_hackflows_perks"
     Name = "Hackflow's Perks"
     Version = 1.6
@@ -34,55 +34,52 @@ local Str = ::std.Str, Text = ::std.Text;
 
 ::include("scripts/hp_rosetta_ru");
 
-::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "stdlib, >mod_heal_repair_fix, >mod_reforged", function() {
+local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
+mod.require("stdlib");
+mod.queue(">stdlib", ">mod_heal_repair_fix", ">mod_reforged", function () {
     // Hooks for Flesh on the Bones perk
-    ::mods_hookExactClass("entity/tactical/actor", function (cls) {
-        local setHitpoints = cls.setHitpoints;
-        cls.setHitpoints = function (_h) {
-            if (_h > this.m.Hitpoints && mod.fleshOnBonesActive(this)) {
+    mod.hook("scripts/entity/tactical/actor", function (q) {
+        q.setHitpoints = @(__original) function (_h) {
+            if (_h > this.m.Hitpoints && def.fleshOnBonesActive(this)) {
                 local hp = this.m.Hitpoints, h = _h;
                 _h += _h - ::Math.max(0, this.m.Hitpoints); // Double the addition
             }
-            setHitpoints(_h);
+            __original(_h);
         }
     })
 
     // Double Nine Lives too, it sets hitpoints directly so the above won't work.
     // Modular Vanilla changes that to .setHitpoints()
-    if (!::mods_getRegisteredMod("mod_modular_vanilla")) {
-        ::mods_hookExactClass("skills/perks/perk_nine_lives", function (cls) {
-            local setSpent = cls.setSpent;
-            cls.setSpent = function (_f) {
-                if (!_f || !mod.fleshOnBonesActive(this.getContainer().getActor())) return setSpent(_f);
+    if (!::Hooks.hasMod("mod_modular_vanilla")) {
+        mod.hook("scripts/skills/perks/perk_nine_lives", function (q) {
+            q.setSpent = @(__original) function (_f) {
+                if (!_f || !def.fleshOnBonesActive(this.getContainer().getActor())) return __original(_f);
 
                 local actor = this.getContainer().getActor();
                 actor.m.Hitpoints = ::Math.min(actor.m.Hitpoints * 2, actor.getHitpointsMax());
-                return setSpent(_f);
+                return __original(_f);
             }
         })
     }
 
-    ::mods_hookExactClass("entity/tactical/player", function (cls) {
+    mod.hook("scripts/entity/tactical/player", function (q) {
         // These are not calculated correcly if Flesh on the Bones is in effect
-        local getDaysWounded = cls.getDaysWounded;
-        cls.getDaysWounded = function () {
-            if (!mod.fleshOnBonesActive(this)) return getDaysWounded();
+        q.getDaysWounded = @(__original) function () {
+            if (!def.fleshOnBonesActive(this)) return __original();
 
             local mult = ::World.Assets.m.HitpointsPerHourMult;
             ::World.Assets.m.HitpointsPerHourMult *= 2;
-            local days = getDaysWounded();
+            local days = __original();
             ::World.Assets.m.HitpointsPerHourMult = mult;
 
             return days;
         }
 
         // This does not use .getDaysWounded() in vanilla code, so need to hook it too
-        local getRosterTooltip = cls.getRosterTooltip;
-        cls.getRosterTooltip = function () {
-            local tooltip = getRosterTooltip();
+        q.getRosterTooltip = @(__original) function () {
+            local tooltip = __original();
             if (this.getHitpoints() >= this.getHitpointsMax()) return tooltip;
-            if (!mod.fleshOnBonesActive(this)) return tooltip;
+            if (!def.fleshOnBonesActive(this)) return tooltip;
 
             foreach (line in tooltip) {
                 if ("icon" in line && line.icon == "ui/icons/days_wounded.png") {
@@ -96,11 +93,10 @@ local Str = ::std.Str, Text = ::std.Text;
 
     // Injury hint thinks there is only one reason to ignore injuries.
     // This is not true even without this mod. Cultist prophet also ignores them.
-    ::mods_hookExactClass("skills/injury/injury", function (cls) {
-        local addTooltipHint = cls.addTooltipHint;
-        cls.addTooltipHint = function (_tooltip) {
-            addTooltipHint(_tooltip);
-            if (!mod.fleshOnBonesActive(this.getContainer().getActor())) return;
+    mod.hook("scripts/skills/injury/injury", function (q) {
+        q.addTooltipHint = @(__original) function (_tooltip) {
+            __original(_tooltip);
+            if (!def.fleshOnBonesActive(this.getContainer().getActor())) return;
 
             foreach (line in _tooltip) {
                 if (line.id == 7 && line.type == "text" && line.icon == "ui/icons/warning.png") {
@@ -110,11 +106,10 @@ local Str = ::std.Str, Text = ::std.Text;
             }
         }
 
-        local onAdded = cls.onAdded;
-        cls.onAdded = function () {
-            onAdded();
+        q.onAdded = @(__original) function () {
+            __original();
             // All non-bone injuries heal 1 day faster with Flesh on the Bones
-            if (m.IsNew && mod.BoneInjuries.find(m.ID) == null
+            if (m.IsNew && def.BoneInjuries.find(m.ID) == null
                     && getContainer().hasSkill("perk.hackflows.flesh_on_the_bones")) {
                 addHealingTime(-1);
             }
@@ -125,7 +120,7 @@ local Str = ::std.Str, Text = ::std.Text;
     // Do not use Stabilized: Reforged has its own medium armor perk.
     // Bloody Harvest is kind of superseded with Death Dealer, doesn't work with ranged though.
     // And Reforged has an unpolished version of Battle Flow.
-    if (::mods_getRegisteredMod("mod_reforged")) {
+    if (::Hooks.hasMod("mod_reforged")) {
         local groupToPerks = {
             "pg.rf_soldier":  [[0, "perk.hackflows.flesh_on_the_bones"]]
             "pg.rf_militia": [[0, "perk.hackflows.flesh_on_the_bones"]]
@@ -153,8 +148,8 @@ local Str = ::std.Str, Text = ::std.Text;
     }
 })
 
-::mods_queue(mod.ID, ">msu", function () {
+mod.queue(">msu", function () {
      if (!("MSU" in getroottable())) return;
     ::include("scripts/i_hackflows_perks_hack_msu");
-    ::HackMSU.setup(mod, mod.Updates)
+    ::HackMSU.setup(def, def.Updates)
 });
