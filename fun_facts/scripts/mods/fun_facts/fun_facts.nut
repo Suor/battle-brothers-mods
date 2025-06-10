@@ -322,7 +322,9 @@ this.fun_facts <- {
             local text = deaths == 1 ? "Died once"
                 : format("Died %s time%s", red(deaths), Text.plural(deaths));
             local fromBros = this.getProp("KilledByBros");
-            if (fromBros) {
+            if (fromBros == deaths) {
+                text += fromBros == 1 ? " from a hand of a bro" : " with some help from his bros"
+            } else if (fromBros) {
                 text += ". " + (fromBros == 1 ? "One" : fromBros) + " of them from a hand of a bro."
             }
             addHint("ui/icons/obituary.png", text);

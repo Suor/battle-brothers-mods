@@ -19,11 +19,6 @@ local pairs = [
     }
     // FILE: scripts/mods/fun_facts/fun_facts.nut
     {
-        // Name = "<not-set>"
-        en = "<not-set>"
-        ru = ""
-    }
-    {
         en = "charmed"
         ru = "зачарован"
     }
@@ -40,20 +35,41 @@ local pairs = [
         ru = "оглушён"
     }
     {
-        en = "Died once"
-        ru = "Помер разок"
+        // local text = deaths == 1 ? "Died once"
+        //     : format("Died %s time%s", red(deaths), Text.plural(deaths));
+        mode = "pattern"
+        en = "Died once<end:str>"
+        ru = "Помер разок<end:t>"
     }
     {
+        // local text = deaths == 1 ? "Died once"
         // : format("Died %s time%s", red(deaths), Text.plural(deaths));
         plural = "deaths"
-        en = "Died <deaths:int_tag> time<s:str>"
-        n1 = "Умер <deaths> раз"
-        n2 = "Умер <deaths> раза"
-        n5 = "Умер <deaths> раз"
+        en = "Died <deaths:int_tag> time<s:word><end:str>"
+        n1 = "Умер <deaths> раз<end:t>"
+        n2 = "Умер <deaths> раза<end:t>"
+        n5 = "Умер <deaths> раз<end:t>"
     }
     {
-        en = "One of them from a hand of a bro."
-        ru = "Один из них от руки товарища."
+        // text += fromBros == 1 ? " from a hand of a bro" : " from his bros hands."
+        en = " from a hand of a bro"
+        ru = " от руки товарища"
+    }
+    {
+        // text += fromBros == 1 ? " from a hand of a bro" : " from his bros hands."
+        en = " with some help from his bros"
+        ru = " c братской помощью"
+    }
+    {
+        // text += ". " + (fromBros == 1 ? "One" : fromBros) + " of them from a hand of a bro."
+        en = ". One of them from a hand of a bro."
+        ru = ". Один из них от руки товарища."
+    }
+    {
+        // text += ". " + (fromBros == 1 ? "One" : fromBros) + " of them from a hand of a bro."
+        mode = "pattern"
+        en = ". <from:int> of them from a hand of a bro."
+        ru = ". <from> из них от руки товарища."
     }
     {
         // text = format("Chopped %s heads", red(chopped));
@@ -159,10 +175,12 @@ local pairs = [
         ru = "Однажды использовал 'Девять жизней'<end:t>"
     }
     {
+        // text += uses > 1 ? ", died every time" : ", died anyway"
         en = ", died every time"
         ru = ", помирал каждый раз"
     }
     {
+        // text += uses > 1 ? ", died every time" : ", died anyway"
         en = ", died anyway"
         ru = ", всё равно подох"
     }
@@ -217,10 +235,7 @@ local pairs = [
         en = ". <n:int> of them being drunk or hangover."
         ru = ". <n> из них валялся пьяным или с похмелья."
     }
-    // {
-    //     en = "Effects"
-    //     ru = ""
-    // }
+        // en = "Effects"
     {
         // .map(@(n) format("%s %d times", n, effects[n]));
         plural = "n"
@@ -233,14 +248,10 @@ local pairs = [
         // local text = "Was " + Str.join(", ", desc);
         mode = "pattern"
         en = "Was <middle:str> times"
-        function use(_str, _parts) {
-            return "Был " + ::Rosetta.useSplit(this, ", ", _parts[0] + " times")
+        function use(_str, _m) {
+            return "Был " + ::Rosetta.useSplit(this, ", ", _m.middle + " times")
         }
     }
-    // {
-    //     en = "[img]gfx/ui/tooltips/money.png[/img]"
-    //     ru = ""
-    // }
     {
         // costs.push(format("Hired for %s%d, earned %s%d as wages.",
         //                   moneyImg, S.Hire, moneyImg, S.Wages))
@@ -259,31 +270,8 @@ local pairs = [
         mode = "pattern"
         en = "Was payed <money:img><wages:int> as wages."
         ru = "Уплачено <money><wages> зарплаты."
+
     }
-    // {
-    //     // if (S.Food >= 1) spent.push("[img]gfx/fun_facts/food.png[/img]" + Util.round(S.Food));
-    //     mode = "pattern"
-    //     en = "[img]gfx/fun_facts/food.png[/img]<Util.round(S.Food)>"
-    //     ru = ""
-    // }
-    // {
-    //     // if (S.Parts >= 1) spent.push("[img]gfx/fun_facts/supplies.png[/img]" + Util.round(S.Parts));
-    //     mode = "pattern"
-    //     en = "[img]gfx/fun_facts/supplies.png[/img]<Util.round(S.Parts)>"
-    //     ru = ""
-    // }
-    // {
-    //     // if (S.Ammo >= 1) spent.push("[img]gfx/fun_facts/ammo.png[/img]" + Util.round(S.Ammo));
-    //     mode = "pattern"
-    //     en = "[img]gfx/fun_facts/ammo.png[/img]<Util.round(S.Ammo)>"
-    //     ru = ""
-    // }
-    // {
-    //     // if (S.Herbs >= 1) spent.push("[img]gfx/fun_facts/medicine.png[/img]" + Util.round(S.Herbs));
-    //     mode = "pattern"
-    //     en = "[img]gfx/fun_facts/medicine.png[/img]<Util.round(S.Herbs)>"
-    //     ru = ""
-    // }
     {
         // if (spent.len() > 0) costs.push("Spent " + Str.join("&nbsp;", spent)); // used, consumed, wasted
         mode = "pattern"
