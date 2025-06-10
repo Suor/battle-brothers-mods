@@ -46,6 +46,7 @@ this.fun_facts <- {
                 Ammo = 0
                 Parts = 0.0
                 Herbs = 0
+                Temple = []
             }
 
             // Obsolete
@@ -125,6 +126,10 @@ this.fun_facts <- {
     }
     function onUseHerbs(_amount) {
         this.m.Stats.Spent.Herbs += _amount;
+    }
+    // TODO: training, drinking
+    function onTempleUsed(_cost) {
+        this.m.Stats.Spent.Temple.push(_cost);
     }
 
     function onCombatStart(_player) {
