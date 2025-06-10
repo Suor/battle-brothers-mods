@@ -11,21 +11,12 @@
                 type = "description",
                 text = this.getDescription()
             },
-            // {
-            //     id = 7,
-            //     type = "text",
-            //     icon = "ui/icons/melee_skill.png",
-            //     text = "[color=" + this.Const.UI.Color.NegativeValue + "]-5%[/color] Melee Skill"
-            // },
-            // {
-            //     id = 7,
-            //     type = "text",
-            //     icon = "ui/icons/ranged_skill.png",
-            //     text = "[color=" + this.Const.UI.Color.NegativeValue + "]-5%[/color] Ranged Skill"
-            // }
-    // START NEW CODE
-
-    // END NEW CODE
+            {
+                id = 7,
+                type = "text",
+                icon = "ui/injury/injury_permanent_icon_02.png",
+                text = "May drop shield or weapon on shield hit"
+            }
         ];
         this.addTooltipHint(ret);
         return ret;
