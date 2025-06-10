@@ -13,13 +13,10 @@ local def = ::Necro <- {
     function restoreArmorPct(_actor, _part, _pct) {
         local slot = _part == "head" ? ::Const.ItemSlot.Head : ::Const.ItemSlot.Body;
         local piece = _actor.m.Items.getItemAtSlot(slot);
-        ::logInfo("necro: restore piece " + piece);
         if (!piece) return false;
 
-        ::logInfo("necro: restore " + _part);
         local armor = piece.getArmor(), armorMax = piece.getArmorMax();
         if (armor >= armorMax) return false;
-        ::logInfo("necro: restore setArmor");
         piece.setArmor(::Math.min(armorMax,  armor + armorMax * _pct));
         return true;
     }
@@ -27,7 +24,7 @@ local def = ::Necro <- {
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("mod_msu >= 1.6.0", "stdlib >= 2.1");
-mod.queue(">mod_reforged", function() {
+mod.queue(">mod_reforged", function () {
     ::include("necro/rosetta_ru");
 
     def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
