@@ -19,6 +19,7 @@ this.immortal_soul_jar <- this.inherit("scripts/items/item", {
         this.m.IsAllowedInBag = false;
         this.m.IsUsable = true;
         this.m.Value = 1;
+        if (::std.Util.isIn("IsSellable", this.m)) this.m.IsSellable = false;
     }
 
     function getDescription()
