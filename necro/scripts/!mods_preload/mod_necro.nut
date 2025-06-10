@@ -81,39 +81,49 @@ mod.queue(">mod_reforged", function () {
         }
     })
     mod.hook("scripts/entity/tactical/actor", function (q) {
+        q.m.necro_RaisedByPlayer <- false;
+        q.necro_master <- function () {
+            if ("necro_master" in m && !m.necro_master.isNull()) return m.necro_master;
+            return null;
+        }
+
         q.onActorKilled = @(__original) function(_actor, _tile, _skill) {
-            if ("necro_master" in this.m && !this.m.necro_master.isNull()) {
+            if (this.necro_master()) {
                 def.FakeKill = true;
                 this.m.necro_master.onActorKilled(_actor, _tile, _skill);
                 def.FakeKill = false;
             }
             __original(_actor, _tile, _skill);
         }
-
         q.onResurrected = @(__original) function (_info) {
-            if (!("necro_master" in _info)) return __original(_info);
-
-            // Do not receive loot, which you are not supposed to receive
-            foreach (slot in [::Const.ItemSlot.Head, ::Const.ItemSlot.Body]) {
-                local piece = _info.Items.getItemAtSlot(slot);
-                if (piece) piece.m.IsDroppedAsLoot = piece.isDroppedAsLoot();
+            if (_info.Faction == ::Const.Faction.PlayerAnimals) {
+                m.necro_RaisedByPlayer = true
+                // Since later we always drop for player animals we need to calc IsDroppedAsLoot here
+                foreach (slot in [::Const.ItemSlot.Head, ::Const.ItemSlot.Body]) {
+                    local piece = _info.Items.getItemAtSlot(slot);
+                    if (piece) piece.m.IsDroppedAsLoot = piece.isDroppedAsLoot();
+                }
             }
-
+            if ("necro_master" in _info) {
+                m.necro_master <- _info.necro_master; // Track necro
+                if (::std.Actor.isAlive(m.necro_master))
+                    m.necro_master.getSkills().onRaiseUndead(this);
+            }
             __original(_info);
+        }
 
-            this.m.necro_master <- _info.necro_master; // Track necro
-            this.m.necro_master.getSkills().onRaiseUndead(this);
         }
 
         q.necro_hasMaster <- function () {return "necro_master" in this.m}
     })
 
+    // TODO: move this thing to fixes? will need to gather zombie loot instead of chopping them.
     // Want to get loot when zombies raised by us, so that necromancer won't be a loot destroyer
     mod.hook("scripts/items/item_container", function (q) {
         // This is needed for 1.5.0 and whatever places with old style dropAll(), or not.
         q.dropAll = @(__original) function(_tile, _killer, _flip = false) {
             ::logInfo("necro: in hooked dropAll");
-            if (this.m.Actor.necro_hasMaster()) {
+            if (this.m.Actor.m.necro_RaisedByPlayer) {
                 ::logInfo("necro: dropAll " + m.Actor.getName());
 
                 // They dropped already once so rolls had their say,
@@ -137,10 +147,9 @@ mod.queue(">mod_reforged", function () {
                 __original(_tile, _killer, _flip);
             }
         }
-
         if (q.contains("canDropItems")) {
             q.canDropItems = @(__original) function (_killer) {
-                if (!this.m.Actor.necro_hasMaster()) return __original(_killer);
+                if (!this.m.Actor.m.necro_RaisedByPlayer) return __original(_killer);
 
                 ::logInfo("necro: canDropItems " + m.Actor.getName());
 

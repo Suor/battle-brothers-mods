@@ -13,7 +13,7 @@ hmod.hook("scripts/states/tactical_state", function (q) {
         local toKill = 0;
         ::logInfo("necro: has " + actors.len() + " animals");
         foreach (actor in actors) {
-            if (!actor.necro_hasMaster()) continue;
+            if (!actor.m.necro_RaisedByPlayer) continue;
             if (!actor.isAlive() || actor.isDying()) continue;
 
             if (!actor.isPlacedOnMap()) {
