@@ -1,5 +1,5 @@
 MOD_NAME = perma_rework
 TAG_NAME = perma-rework
-SOURCES = scripts
+SOURCES = perma_rework scripts
 
 include ../Makefile.common

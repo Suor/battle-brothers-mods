@@ -1,8 +1,5 @@
-//
-::mods_hookExactClass("skills/injury_permanent/missing_nose_injury", function(cls) {
-
-    local getTooltip = cls.getTooltip;
-    cls.getTooltip = function () {
+::PermaRework.mh.hook("scripts/skills/injury_permanent/missing_nose_injury", function (q) {
+    q.getTooltip = @(__original) function () {
         local ret = [
             {
                 id = 1,
@@ -26,8 +23,7 @@
         return ret;
     }
 
-    local onUpdate = cls.onUpdate;
-    cls.onUpdate = function (_properties) {
+    q.onUpdate = @(__original) function (_properties) {
         // _properties.StaminaMult *= 0.9;
         _properties.StaminaMult *= 0.95;
     }

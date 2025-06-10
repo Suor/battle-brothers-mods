@@ -1,8 +1,6 @@
-//
-::mods_hookExactClass("skills/injury_permanent/missing_eye_injury", function(cls) {
+::PermaRework.mh.hook("scripts/skills/injury_permanent/missing_eye_injury", function (q) {
 
-    local getTooltip = cls.getTooltip;
-    cls.getTooltip = function () {
+    q.getTooltip = @(__original) function () {
         local ret = [
             {
                 id = 1,
@@ -33,8 +31,7 @@
         return ret;
     }
 
-    local onUpdate = cls.onUpdate;
-    cls.onUpdate = function (_properties) {
+    q.onUpdate = @(__original) function (_properties) {
         // _properties.RangedSkillMult *= 0.5;
         // _properties.Vision -= 2;
         // START NEW CODE

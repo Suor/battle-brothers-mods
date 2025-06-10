@@ -1,8 +1,6 @@
-//
-::mods_hookExactClass("skills/injury_permanent/weakened_heart_injury", function(cls) {
+::PermaRework.mh.hook("scripts/skills/injury_permanent/weakened_heart_injury", function (q) {
 
-    local getTooltip = cls.getTooltip;
-    cls.getTooltip = function () {
+    q.getTooltip = @(__original) function () {
         local ret = [
             {
                 id = 1,
@@ -32,8 +30,7 @@
         return ret;
     }
 
-    local onUpdate = cls.onUpdate;
-    cls.onUpdate = function (_properties) {
+    q.onUpdate = @(__original) function (_properties) {
         // _properties.HitpointsMult *= 0.7;
         _properties.HitpointsMult *= 0.85;
         _properties.IsContentWithBeingInReserve = true;

@@ -1,9 +1,5 @@
-//
-::mods_hookExactClass("skills/injury_permanent/missing_ear_injury", function(cls) {
-    delete cls.onUpdate;
-
-    local getTooltip = cls.getTooltip;
-    cls.getTooltip = function () {
+::PermaRework.mh.hook("scripts/skills/injury_permanent/missing_ear_injury", function (q) {
+    q.getTooltip = @(__original) function () {
         local ret = [
             {
                 id = 1,
@@ -28,4 +24,6 @@
         this.addTooltipHint(ret);
         return ret;
     }
+
+    q.onUpdate = @() function (_properties) {}
 })

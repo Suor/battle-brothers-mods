@@ -1,8 +1,5 @@
-//
-::mods_hookExactClass("skills/injury_permanent/broken_knee_injury", function(cls) {
-
-    local getTooltip = cls.getTooltip;
-    cls.getTooltip = function () {
+::PermaRework.mh.hook("scripts/skills/injury_permanent/broken_knee_injury", function (q) {
+    q.getTooltip = @(__original) function () {
         local ret = [
             {
                 id = 1,
@@ -46,8 +43,7 @@
         return ret;
     }
 
-    local onUpdate = cls.onUpdate;
-    cls.onUpdate = function (_properties) {
+    q.onUpdate = @(__original) function (_properties) {
         // _properties.MeleeDefenseMult *= 0.6;
         // _properties.RangedDefenseMult *= 0.6;
         // _properties.InitiativeMult *= 0.6;

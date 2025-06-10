@@ -1,8 +1,5 @@
-//
-::mods_hookExactClass("skills/injury_permanent/maimed_foot_injury", function(cls) {
-
-    local getTooltip = cls.getTooltip;
-    cls.getTooltip = function () {
+::PermaRework.mh.hook("scripts/skills/injury_permanent/maimed_foot_injury", function (q) {
+    q.getTooltip = @(__original) function () {
         local ret = [
             {
                 id = 1,
@@ -38,8 +35,7 @@
         return ret;
     }
 
-    local onUpdate = cls.onUpdate;
-    cls.onUpdate = function (_properties) {
+    q.onUpdate = @(__original) function (_properties) {
         // _properties.MovementAPCostAdditional += 1;
         _properties.MovementFatigueCostAdditional += 3;
         _properties.InitiativeMult *= 0.8;

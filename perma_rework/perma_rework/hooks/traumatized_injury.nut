@@ -1,8 +1,6 @@
-//
-::mods_hookExactClass("skills/injury_permanent/traumatized_injury", function(cls) {
+::PermaRework.mh.hook("scripts/skills/injury_permanent/traumatized_injury", function (q) {
 
-    local getTooltip = cls.getTooltip;
-    cls.getTooltip = function () {
+    q.getTooltip = @(__original) function () {
         local ret = [
             {
                 id = 1,
@@ -39,8 +37,7 @@
         return ret;
     }
 
-    local onUpdate = cls.onUpdate;
-    cls.onUpdate = function (_properties) {
+    q.onUpdate = @(__original) function (_properties) {
         // _properties.BraveryMult *= 0.6;
         // _properties.InitiativeMult *= 0.7;
         // START NEW CODE
