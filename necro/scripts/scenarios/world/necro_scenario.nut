@@ -14,9 +14,17 @@ this.necro_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
         this.m.Order = 49;
         this.m.IsFixedLook = true;
 
-        this.m.MeatBackgrounds = ["cripple_background" "beggar_background" "refugee_background"];
+        this.m.MeatBackgrounds = [
+            "cripple_background"
+            "beggar_background"
+            "refugee_background"
+            "vagabond_background"
+        ];
         if (::Hooks.hasMod("mod_backgrounds_and_events")) {
-            this.m.MeatBackgrounds.extend(["hackflows/leper_background" "hackflows/drifter_background"]);
+            this.m.MeatBackgrounds.extend([
+                "hackflows/leper_background"
+                "hackflows/drifter_background"
+            ]);
         }
         this.m.MeatClassNames = this.m.MeatBackgrounds.map(@(s) ::std.Str.cutprefix(s, "hackflows/"));
     }
