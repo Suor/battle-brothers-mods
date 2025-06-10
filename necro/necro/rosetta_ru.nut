@@ -7,8 +7,10 @@ local rosetta = {
 }
 local pairs = [
     // FILE: necro/scripts/!mods_preload/mod_necro.nut
-        // en = "necro-"
-        // en = "placeholder to fool mod_plan_perks"
+    {
+        en = "Proper Necro"
+        ru = "Годный Некромант"
+    }
         // en = "mace"
         // en = "cleaver"
         // en = "sword"
@@ -16,10 +18,6 @@ local pairs = [
         // en = "polearm"
         // en = "crossbow"
         // en = "throwing"
-    {
-        en = "Proper Necro"
-        ru = "Годный Некромант"
-    }
     {
         en = "Possess an undead giving it extra speed, skill, defense and damage tolerance."
         ru = "Вселяется в нежить, повышая её скорость, навыки, защиту и сопротивление урону."
@@ -39,6 +37,8 @@ local pairs = [
         ru = "Некромастерство"
     }
     {
+        // Tooltip = "Master raising undead. Use "
+        //         + green("4 AP") + " and " + green("25%") + " less fatigue to raise."
         mode = "pattern"
         en = "Master raising undead. Use <open:tag><ap:int> AP<close:tag> and <fat:str_tag> less fatigue to raise."
         ru = "Мастер поднятия нежити. Тратит только <open><ap> ОД<close> и на <fat> меньше выносливости для поднятия мертвецов."
@@ -112,7 +112,7 @@ local pairs = [
         ru = "Ваше ремесло не приветствуется"
     }
     {
-        en = "Disgrunted by undead"
+        en = "Disgruntled by undead"
         ru = "Недоволен нежитью"
     }
     // FILE: necro/scripts/skills/actives/necro_raise_undead.nut
@@ -168,9 +168,6 @@ local pairs = [
         ru = "Связь душ была активирована!"
     }
     // FILE: necro/scripts/skills/racial/necro_regeneration.nut
-        // en = "Undead Regeneration"
-        // en = "head"
-        // en = "body"
     {
         mode = "pattern"
         en = "<actor:str_tag> heals for <hp:int> points and restores some armor"
