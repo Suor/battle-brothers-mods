@@ -40,13 +40,22 @@ mod.queue(">mod_reforged", function () {
     ::Hooks.registerCSS("ui/mods/necro.css");
     ::include("necro/tactical_state");
 
-    // Allow origin to adjust hiring and tryout cost on per bro basis
+    // Allow origin to adjust hiring and tryout cost and wage on per bro basis
     mod.hook("scripts/entity/tactical/player", function (q) {
+        // If we set it in scenario.onUpdateHiringRoster() then it's overwritten in
+        // player.onDeserialize by m.Background.adjustHiringCostBasedOnEquipment() call.
         q.getHiringCost = q.getTryoutCost = @(__original) function () {
             local cost = __original();
             local origin = ::World.Assets.getOrigin();
             return "getBroCostMult" in origin
                 ? ::Math.floor(cost * origin.getBroCostMult(this)) : cost;
+        }
+        // There is a DailyWageMult but that is not serialized
+        q.getDailyCost = @(__original) function () {
+            local wage = __original();
+            local origin = ::World.Assets.getOrigin();
+            return "getBroWageMult" in origin
+                ? ::Math.floor(wage * origin.getBroWageMult(this)) : wage;
         }
     })
 

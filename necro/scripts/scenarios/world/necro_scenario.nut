@@ -159,10 +159,13 @@ this.necro_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
     }
 
     // This hook was added in this mod
-    // TODO: also adjust daily pay
     function getBroCostMult(_bro) {
         local isMeat = this.m.MeatClassNames.find(_bro.m.Background.ClassName) != null;
-        return isMeat ? 0.5 : 1;
+        return isMeat ? 0.6 : 1.2;
+    }
+    function getBroWageMult(_bro) {
+        local isMeat = this.m.MeatClassNames.find(_bro.m.Background.ClassName) != null;
+        return isMeat ? 0.5 : 1.5;
     }
 
     function onHired(_bro) {
