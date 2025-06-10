@@ -9,7 +9,7 @@ local def = ::PermaRework <- {
     }
 }
 
-// ::include("perma_rework/rosetta_ru");
+::include("perma_rework/rosetta_ru");
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.queue(function () {
