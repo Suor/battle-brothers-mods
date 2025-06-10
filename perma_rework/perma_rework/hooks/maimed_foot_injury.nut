@@ -14,9 +14,9 @@
             {
                 id = 7,
                 type = "text",
-                icon = "ui/icons/action_points.png",
+                icon = "ui/icons/fatigue.png",
                 // text = "[color=" + this.Const.UI.Color.NegativeValue + "]1[/color] Additional Action Point per tile moved"
-                text = "[color=" + this.Const.UI.Color.NegativeValue + "]3[/color] Additional fatigue for each tile travelled"
+                text = "Builds up [color=" + this.Const.UI.Color.NegativeValue + "]3[/color] more Fatigue for each tile travelled"
             },
             {
                 id = 7,

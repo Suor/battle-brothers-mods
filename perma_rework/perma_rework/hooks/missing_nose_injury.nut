@@ -14,9 +14,8 @@
             {
                 id = 7,
                 type = "text",
-                icon = "ui/icons/fatigue.png",
-                // text = "[color=" + this.Const.UI.Color.NegativeValue + "]-10%[/color] Max Fatigue"
-                text = "[color=" + this.Const.UI.Color.NegativeValue + "]-5%[/color] Max Fatigue"
+                icon = "ui/icons/special.png",
+                text = "Reduces the Resolve of any opponent engaged in melee by [color=" + this.Const.UI.Color.NegativeValue + "]-5[/color]"
             }
         ];
         this.addTooltipHint(ret);
@@ -25,6 +24,7 @@
 
     q.onUpdate = @(__original) function (_properties) {
         // _properties.StaminaMult *= 0.9;
-        _properties.StaminaMult *= 0.95;
+        // _properties.StaminaMult *= 0.95;
+        _properties.Threat += 5;
     }
 })
