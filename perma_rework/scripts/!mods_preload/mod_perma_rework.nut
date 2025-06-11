@@ -13,7 +13,7 @@ local def = ::PermaRework <- {
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.queue(function () {
-    foreach (file in ::IO.enumerateFiles("perma_rework")) ::include(file);
+    foreach (file in ::IO.enumerateFiles("perma_rework/hooks")) ::include(file);
 
     for (local i = 0; i < 8; i++) // TODO: remove after debugging
     Const.Injury.Permanent.push({
