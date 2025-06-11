@@ -1,4 +1,4 @@
-::BgPerks <- {
+local def = ::BgPerks <- {
     ID = "mod_background_perks"
     Name = "Starting Perks by Background"
     Version = "2.6.1"
@@ -98,7 +98,18 @@ function BgPerks::giveFreePerks(_player) {
 
 local starting = false;
 
-mod.queue(">mod_reforged", function () {
+mod.queue(">mod_msu", ">mod_reforged", function () {
+    if (::Hooks.hasMod("mod_msu")) {
+        def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
+
+        local msd = ::MSU.System.Registry.ModSourceDomain, upd = def.Updates;
+        def.msu.Registry.addModSource(msd.NexusMods, upd.nexus);
+        if ("GitHubTags" in msd) {
+            def.msu.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
+            def.msu.Registry.setUpdateSource(msd.GitHubTags);
+        }
+    }
+
     ::include("background_perks/chances");
     ::include("background_perks/fallbacks");
 
@@ -129,9 +140,3 @@ mod.queue(">mod_reforged", function() {
     });
     logInfo("bp: set hook")
 }, ::Hooks.QueueBucket.VeryLate)
-
-mod.queue(">msu", function () {
-    if (!("MSU" in getroottable())) return;
-    ::include("scripts/i_background_perks_hack_msu");
-    ::HackMSU.setup(::BgPerks, ::BgPerks.Updates);
-});
