@@ -7,16 +7,21 @@ local Rand = ::std.Rand.using(::rng), Util = ::std.Util, Table = ::std.Table;
 local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.5), mod_msu(>=1.5.0)", function () {
-    mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
+::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.5), mod_msu(>=1.6.0)", function () {
+    mod.msu <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
 
-    local page = mod.Mod.ModSettings.addPage("General");
+    local msd = ::MSU.System.Registry.ModSourceDomain, upd = def.Updates;
+    def.msu.Registry.addModSource(msd.NexusMods, upd.nexus);
+    def.msu.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
+    def.msu.Registry.setUpdateSource(msd.GitHubTags);
+
+    local page = mod.msu.ModSettings.addPage("General");
     local function add(elem) {
         page.addElement(elem);
         elem.Data.NewCampaign <- true;
     }
     mod.conf <- function(name) {
-        return mod.Mod.ModSettings.getSetting(name).getValue();
+        return mod.msu.ModSettings.getSetting(name).getValue();
     }
 
     add(::MSU.Class.RangeSetting("number", 3, 0, 7, 1, "Number of Immortals",
@@ -179,13 +184,3 @@ mod.boostTalents <- function (_player, _num) {
     }
     Debug.log("boostTalents after", _player.m.Attributes);
 }
-
-// TODO: get rid of this
-::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.0), mod_msu(>=1.5.0)", function () {
-    ::include("scripts/i_immortal_warriors_hack_msu");
-    ::HackMSU.setup(mod, {
-        nexus = "https://www.nexusmods.com/battlebrothers/mods/763"
-        github = "https://github.com/Suor/battle-brothers-mods/tree/master/immortal_warriors"
-        tagPrefix = "immortal-"
-    })
-})
