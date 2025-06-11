@@ -2,6 +2,11 @@ local def = ::RetinueUps <- {
     ID = "mod_retinue_ups"
     Name = "Retinue Promotions"
     Version = "1.2.2"
+    Updates = {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/681"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/retinue_ups"
+        tagPrefix = "retinue-ups-"
+    }
 }
 
 local function positive(value) {
@@ -12,7 +17,18 @@ local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("stdlib >= 2.5");
-mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", function () {
+mod.queue(">msu", ">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", function () {
+    if (::Hooks.hasMod("mod_msu")) {
+        def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
+
+        local msd = ::MSU.System.Registry.ModSourceDomain, upd = def.Updates;
+        def.msu.Registry.addModSource(msd.NexusMods, upd.nexus);
+        if ("GitHubTags" in msd) {
+            def.msu.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
+            def.msu.Registry.setUpdateSource(msd.GitHubTags);
+        }
+    }
+
     if ("mods_registerJS" in getroottable()) ::mods_registerJS("retinue_ups.js");
     else ::Hooks.registerLateJS("ui/mods/retinue_ups.js");
 
@@ -354,17 +370,5 @@ mod.queue(">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", fu
             removed = true
             tooltip = injury.getTooltip() // TODO: do not save tooltip and icon?
         }])
-    })
-})
-
-// TODO: stop using this
-// hack for updates
-mod.queue(">msu", function () {
-    if (!("MSU" in getroottable())) return;
-    ::include("scripts/i_retinue_ups_hack_msu");
-    ::HackMSU.setup(def, {
-        nexus = "https://www.nexusmods.com/battlebrothers/mods/681"
-        github = "https://github.com/Suor/battle-brothers-mods/tree/master/retinue_ups"
-        tagPrefix = "retinue-ups-"
     })
 })
