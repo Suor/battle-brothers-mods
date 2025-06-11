@@ -14,7 +14,9 @@ zip: include test
 	zip --filesync -r "$${FILENAME}" $(SOURCES);
 
 clean:
-	@rm -f *_MODIFIED.zip;
+	@set -e;
+	rm -f *_MODIFIED.zip;
+	find . -name i_* -delete;  # Delete old included files
 
 install: include test
 	@set -e;
