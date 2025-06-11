@@ -1,7 +1,7 @@
 local def = ::HackflowsPerks <- {
     ID = "mod_hackflows_perks"
     Name = "Hackflow's Perks"
-    Version = 1.6
+    Version = "1.6.1"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/673"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/hackflows_perks"

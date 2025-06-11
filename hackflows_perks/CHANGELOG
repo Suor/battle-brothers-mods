@@ -1,3 +1,7 @@
+1.6.1
+- fixed a bug with replacing Promised Potential
+- moved to Modern Hooks
+
 1.6
 - added special Promised Potential (only with Reforged)
 - made Flesh on the Bones heal non-bone injuries faster
