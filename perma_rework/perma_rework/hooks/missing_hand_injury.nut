@@ -2,19 +2,25 @@
     q.onAdded = @() function () {
         local items = getContainer().getActor().getItems();
 
+        // Allow adding in and out of combat
+        local function dropItem(_item) {
+            items.unequip(_item);
+            if ("State" in this.Tactical) {_item.drop()}
+            else {
+                ::World.Assets.getStash().add(_item);
+            }
+        }
+
         if (items.getItemAtSlot(Const.ItemSlot.Mainhand)
             && items.getItemAtSlot(Const.ItemSlot.Mainhand).getBlockedSlotType() == Const.ItemSlot.Offhand)
         {
             local item = items.getItemAtSlot(Const.ItemSlot.Mainhand);
-            items.unequip(item);
-            item.drop();
+            dropItem(item);
         }
 
-        if (items.getItemAtSlot(Const.ItemSlot.Offhand))
-        {
+        if (items.getItemAtSlot(Const.ItemSlot.Offhand)) {
             local item = items.getItemAtSlot(Const.ItemSlot.Offhand);
-            items.unequip(item);
-            item.drop();
+            dropItem(item);
         }
 
         // Block left hand
