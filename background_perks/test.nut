@@ -1,5 +1,4 @@
-dofile(getenv("STDLIB_DIR") + "load.nut", true); // Also have loads some mocks, like Math
-dofile("mocks.nut", true);
+dofile("../mocks.nut", true);
 dofile("scripts/!mods_preload/mod_background_perks.nut", true);
 
 local background = {
