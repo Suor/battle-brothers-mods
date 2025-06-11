@@ -36,7 +36,18 @@ local Str = ::std.Str, Text = ::std.Text;
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("stdlib");
-mod.queue(">stdlib", ">mod_heal_repair_fix", ">mod_reforged", function () {
+mod.queue(">msu", ">mod_heal_repair_fix", ">mod_reforged", function () {
+    if (::Hooks.hasMod("mod_msu")) {
+        def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
+
+        local msd = ::MSU.System.Registry.ModSourceDomain, upd = def.Updates;
+        def.msu.Registry.addModSource(msd.NexusMods, upd.nexus);
+        if ("GitHubTags" in msd) {
+            def.msu.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
+            def.msu.Registry.setUpdateSource(msd.GitHubTags);
+        }
+    }
+
     // Hooks for Flesh on the Bones perk
     mod.hook("scripts/entity/tactical/actor", function (q) {
         q.setHitpoints = @(__original) function (_h) {
@@ -147,9 +158,3 @@ mod.queue(">stdlib", ">mod_heal_repair_fix", ">mod_reforged", function () {
         ::include("scripts/hackflows_perks/potential");
     }
 })
-
-mod.queue(">msu", function () {
-     if (!("MSU" in getroottable())) return;
-    ::include("scripts/i_hackflows_perks_hack_msu");
-    ::HackMSU.setup(def, def.Updates)
-});
