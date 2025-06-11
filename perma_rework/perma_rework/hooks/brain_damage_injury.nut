@@ -5,7 +5,7 @@
             id = 7
             type = "text"
             icon = "ui/icons/asset_daily_money.png"
-            text = "[color=" + Const.UI.Color.NegativeValue + "]-3[/color] Daily wage"
+            text = "[color=" + Const.UI.Color.PositiveValue + "]-3[/color] Daily wage"
         })
         return ret;
     }
