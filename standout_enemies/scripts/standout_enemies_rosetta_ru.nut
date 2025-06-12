@@ -87,6 +87,8 @@ local pairs = [
     //     en = "Ancient "
     //     ru = "Древний "
     // }
+    // Q: do I need priorities for this to not be used unintendedly by chance?
+    //    Or some measure of specificity to prioritize automatically?
     {
         mode = "pattern"
         en = "Agile <s:str>"
@@ -114,13 +116,13 @@ local pairs = [
     }
     {
         mode = "pattern"
-        en = "<s:str>Headshot"
-        ru = "<s>Меткач"
+        en = "<s:str> Headshot"
+        ru = "<s> Меткач"
     }
     {
         mode = "pattern"
-        en = "<s:str>Quickshot"
-        ru = "<s>Быстрострел"
+        en = "<s:str> Quickshot"
+        ru = "<s> Быстрострел"
     }
     {
         mode = "pattern"
@@ -166,26 +168,6 @@ local pairs = [
         n5 = "Этот персонаж проклят. Его способность атаковать и защищаться снижена. Эффект выветриться в течение <turns> ходов."
     }
     // TODO: move this to common pack
-    {
-        mode = "pattern"
-        en = "<bonus:str_tag> Melee Skill"
-        ru = "<bonus> к навыку ближнего боя"
-    }
-    {
-        mode = "pattern"
-        en = "<bonus:str_tag> Ranged Skill"
-        ru = "<bonus> к навыку дальнего боя"
-    }
-    {
-        mode = "pattern"
-        en = "<bonus:str_tag> Melee Defense"
-        ru = "<bonus> к защите в ближнем бою"
-    }
-    {
-        mode = "pattern"
-        en = "<bonus:str_tag> Ranged Defense"
-        ru = "<bonus> к защите в дальнем бою"
-    }
     {
         mode = "pattern"
         en = "<actor:str_tag> is unaffected by the curse thanks to his unnatural physiology"
