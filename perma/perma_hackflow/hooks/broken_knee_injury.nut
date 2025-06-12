@@ -1,4 +1,4 @@
-::PermaRework.mh.hook("scripts/skills/injury_permanent/broken_knee_injury", function (q) {
+::PermaHackflow.mh.hook("scripts/skills/injury_permanent/broken_knee_injury", function (q) {
     q.getTooltip = @(__original) function () {
         local ret = [
             {

@@ -1,6 +1,14 @@
-# Permanent Injuries Rework
+# Hackflow's Permanent Injuries
 
-...
+Aim for both fun and balance. Vanilla makes most permanent injuries an automatic kick out for a bro, now you may continue using him, maybe in a new manner.
+
+Changes:
+
+- add Missing Hand - can't use shields nor two-handed weapons
+- make Missing Finger and Nose more interesing
+- Brain Damage lowers pay a little, but otherwise unchanged
+- cut most other penalties by half
+
 
 ## Compatibility
 

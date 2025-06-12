@@ -1,4 +1,4 @@
-::PermaRework.mh.hook("scripts/skills/injury_permanent/missing_hand_injury", function (q) {
+::PermaHackflow.mh.hook("scripts/skills/injury_permanent/missing_hand_injury", function (q) {
     q.onAdded = @() function () {
         local items = getContainer().getActor().getItems();
 

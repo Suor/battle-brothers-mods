@@ -1,4 +1,4 @@
-::PermaRework.mh.hook("scripts/skills/injury_permanent/missing_ear_injury", function (q) {
+::PermaHackflow.mh.hook("scripts/skills/injury_permanent/missing_finger_injury", function (q) {
     q.getTooltip = @(__original) function () {
         local ret = [
             {
@@ -11,15 +11,12 @@
                 type = "description",
                 text = this.getDescription()
             },
-            // {
-            //     id = 7,
-            //     type = "text",
-            //     icon = "ui/icons/initiative.png",
-            //     text = "[color=" + this.Const.UI.Color.NegativeValue + "]-10%[/color] Initiative"
-            // }
-    // START NEW CODE
-
-    // END NEW CODE
+            {
+                id = 7,
+                type = "text",
+                icon = "ui/injury/injury_permanent_icon_02.png",
+                text = "May drop shield or weapon on shield hit"
+            }
         ];
         this.addTooltipHint(ret);
         return ret;

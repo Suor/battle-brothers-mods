@@ -1,19 +1,19 @@
-local def = ::PermaRework <- {
-    ID = "mod_perma_rework"
-    Name = "Permanent Injuries Rework"
+local def = ::PermaHackflow <- {
+    ID = "mod_perma_hackflow"
+    Name = "Hackflows's Permanent Injuries"
     Version = "2.0.0"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/..."
-        github = "https://github.com/Suor/battle-brothers-mods/tree/master/perma-rework"
-        tagPrefix = "perma-rework-"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/perma"
+        tagPrefix = "perma-"
     }
 }
 
-::include("perma_rework/rosetta_ru");
+::include("perma_hackflow/rosetta_ru");
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.queue(function () {
-    foreach (file in ::IO.enumerateFiles("perma_rework/hooks")) ::include(file);
+    foreach (file in ::IO.enumerateFiles("perma_hackflow/hooks")) ::include(file);
 
     Const.Injury.Permanent.push({
         ID = "injury.missing_hand",

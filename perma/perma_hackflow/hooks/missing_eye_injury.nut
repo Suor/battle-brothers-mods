@@ -1,5 +1,4 @@
-::PermaRework.mh.hook("scripts/skills/injury_permanent/missing_eye_injury", function (q) {
-
+::PermaHackflow.mh.hook("scripts/skills/injury_permanent/missing_eye_injury", function (q) {
     q.getTooltip = @(__original) function () {
         local ret = [
             {
