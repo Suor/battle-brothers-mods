@@ -14,20 +14,20 @@ local pairs = [
     }
     // FILE: scripts/!mods_preload/mod_perma_hackflow.nut
     {
-        en = "Permanent Injuries Rework"
-        ru = "Переделанные Увечья"
+        en = "Hackflows's Permanent Injuries"
+        ru = "Увечья от Hackflow"
     }
     {
         // ::Const.UI.getColorizedEntityName(_attacker) + "'s weapon slips from his fingers");
         mode = "pattern"
         en = "<name:str_tag>'s weapon slips from his fingers"
-        ru = "Оружие <name> выскользнуло из его пальцев"
+        ru = "<name> роняет оружие, оно выскользнуло из его пальцев"
     }
     {
         // ::Const.UI.getColorizedEntityName(actor) + "'s shield slips from his fingers");
         mode = "pattern"
         en = "<name:str_tag>'s shield slips from his fingers"
-        ru = "Щит <name> выскользнул из его пальцев"
+        ru = "<name> роняет щит, он выскользнул из его пальцев"
     }
 ]
 ::Rosetta.add(rosetta, pairs);
