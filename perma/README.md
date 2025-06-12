@@ -5,7 +5,7 @@ Aim for both fun and balance. Vanilla makes most permanent injuries an automatic
 Changes:
 
 - add Missing Hand - can't use shields nor two-handed weapons
-- make Missing Finger and Nose more interesing
+- make Missing Finger and Nose more interesting
 - Brain Damage lowers pay a little, but otherwise unchanged
 - cut most other penalties by half
 
@@ -20,7 +20,7 @@ Is safe to add and remove midgame. Compatible with most other mods.
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHooks][].
 
 
-[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/...
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/855
 [ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
