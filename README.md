@@ -14,7 +14,8 @@ A collection of mods to make Battle Brothers more fun and comfy. Written by me o
 **[Elite Few - Master Bros](elite_few)** | A rewrite of the old [The Elite Few - Master Bros][elite-few-old], aimed at better compatibility with other mods and newer DLCs. Plus some fixes.
 [Events and Ambitions Delayed Fix](events_delayed_fix) | Removes unpredicatably long delays before events and ambitions are fired.
 [Fun Facts](fun_facts) | Collects and shows some fun facts about your bros.
-**[Hackflow's Perks](hackflows_perks)** | Adds several perks either collected or newly crafted. 
+**[Hackflow's Permanent Injuries](perma)** | Less severe, more balanced and more fun permanent injuries.
+**[Hackflow's Perks](hackflows_perks)** | Adds several perks either collected or newly crafted.
 [Immortal Warriors](immortal_warriors) | Get several warriors who are reborn after death.
 [Retinue Promotions](retinue_ups) | Allows promoting followers to make them extra useful.
 [Starting Perks by Background](background_perks) | Gives brothers a chance to have certain perks unlocked from start depending on their background. A rewrite of the [old mod][background-perks-old] by CleverFool.
