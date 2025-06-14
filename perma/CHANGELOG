@@ -1,2 +1,7 @@
+2.0.1
+- better Legends compat
+- drop items more carefully when Missing Hand is added
+- fill in NexusMods link
+
 2.0.0
 Initial version, start from 2 as spiritual successor of Less severe Permanent Injuries

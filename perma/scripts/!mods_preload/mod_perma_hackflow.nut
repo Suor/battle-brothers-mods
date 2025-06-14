@@ -1,7 +1,7 @@
 local def = ::PermaHackflow <- {
     ID = "mod_perma_hackflow"
     Name = "Hackflows's Permanent Injuries"
-    Version = "2.0.0"
+    Version = "2.0.1"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/855"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/perma"

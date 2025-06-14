@@ -4,15 +4,16 @@ Aim for both fun and balance. Vanilla makes most permanent injuries an automatic
 
 Changes:
 
+- cut most penalties by half
 - add Missing Hand - can't use shields nor two-handed weapons
 - make Missing Finger and Nose more interesting
-- Brain Damage lowers pay a little, but otherwise unchanged
-- cut most other penalties by half
+- make Missing ear do nothing
+- Brain Damage lowers pay a little, but otherwise unchanged (flavor and fun change)
 
 
 ## Compatibility
 
-Is safe to add and remove midgame. Compatible with most other mods.
+Is safe to add midgame, cannot remove if any of your bros have missing hand. Compatible with most other mods including Legends and Reforged.
 
 
 ## Install
