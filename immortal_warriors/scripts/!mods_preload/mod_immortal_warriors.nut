@@ -1,27 +1,32 @@
-local mod = ::ImmortalWarriors <- {
+local def = ::ImmortalWarriors <- {
     ID = "mod_immortal_warriors"
     Name = "Immortal Warriors"
     Version = "0.1.1"
+    Updates = {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/763"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/immortal_warriors"
+        tagPrefix = "immortal-"
+    }
 };
 local Rand = ::std.Rand.using(::rng), Util = ::std.Util, Table = ::std.Table;
 local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
 
-::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.5), mod_msu(>=1.6.0)", function () {
-    mod.msu <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
+::mods_registerMod(def.ID, def.Version, def.Name);
+::mods_queue(def.ID, "mod_hooks(>=20), stdlib(>=2.5), mod_msu(>=1.6.0)", function () {
+    def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
 
     local msd = ::MSU.System.Registry.ModSourceDomain, upd = def.Updates;
     def.msu.Registry.addModSource(msd.NexusMods, upd.nexus);
     def.msu.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
     def.msu.Registry.setUpdateSource(msd.GitHubTags);
 
-    local page = mod.msu.ModSettings.addPage("General");
+    local page = def.msu.ModSettings.addPage("General");
     local function add(elem) {
         page.addElement(elem);
         elem.Data.NewCampaign <- true;
     }
-    mod.conf <- function(name) {
-        return mod.msu.ModSettings.getSetting(name).getValue();
+    def.conf <- function(name) {
+        return def.msu.ModSettings.getSetting(name).getValue();
     }
 
     add(::MSU.Class.RangeSetting("number", 3, 0, 7, 1, "Number of Immortals",
@@ -60,7 +65,7 @@ local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
             onSpawnAssets();
 
             local stash = this.World.Assets.getStash();
-            for (local i = 0; i < mod.conf("number"); i++) {
+            for (local i = 0; i < def.conf("number"); i++) {
                 local jar = ::new("scripts/items/special/immortal_soul_jar");
                 jar.m.immortal_Index = i;
                 stash.add(jar);
@@ -72,12 +77,12 @@ local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
         local startNewCampaign = cls.startNewCampaign;
         cls.startNewCampaign = function() {
             startNewCampaign();
-            mod._ImmortalInfo <- {};
+            def._ImmortalInfo <- {};
         }
 
         local onSerialize = cls.onSerialize;
         cls.onSerialize = function(_out) {
-            local packed = Util.pack(mod._ImmortalInfo);
+            local packed = Util.pack(def._ImmortalInfo);
             this.m.Flags.set("ImmortalWarriors", packed);
             return onSerialize(_out);
         }
@@ -87,10 +92,10 @@ local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
             onDeserialize(_in);
 
             local packed = this.m.Flags.get("ImmortalWarriors");
-            mod._ImmortalInfo <- packed ? Util.unpack(packed) : {};
+            def._ImmortalInfo <- packed ? Util.unpack(packed) : {};
             // We copy all non-filled fields here in case new ones appear
-            foreach (_, info in mod._ImmortalInfo) {
-                Table.setDefaults(info, mod.DefaultInfo);
+            foreach (_, info in def._ImmortalInfo) {
+                Table.setDefaults(info, def.DefaultInfo);
             }
         }
     });
@@ -132,7 +137,7 @@ local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
 
 
 // The meat
-mod.DefaultInfo <- {
+def.DefaultInfo <- {
     Name = null
     Title = null
     Level = 0
@@ -140,16 +145,16 @@ mod.DefaultInfo <- {
     Kills = 0
     Deaths = 0
 }
-mod.getImmortalInfo <- function (_i) {
+def.getImmortalInfo <- function (_i) {
     // if ("_ImmortalInfo" in mod) return null;
-    local n = mod.conf("number");
+    local n = def.conf("number");
     if (_i >= n) throw "No info for immortal numero " + _i + ", only have " + n + " of them";
 
     if (!(_i in this._ImmortalInfo)) this._ImmortalInfo[_i] <- clone this.DefaultInfo;
     return this._ImmortalInfo[_i];
 }
 
-mod.boostTalents <- function (_player, _num) {
+def.boostTalents <- function (_player, _num) {
     if (_num <= 0) return;
 
     Debug.log("talents before", _player.m.Talents);
