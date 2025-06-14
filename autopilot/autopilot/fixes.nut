@@ -117,22 +117,7 @@ mod.hook("scripts/ai/tactical/agent", function (q) {
     }
 })
 
-// local debugSkills = [
-//     "actives.xxitem_leftsaa_skill"
-//     "actives.cascade"
-// ]
-
 mod.hook("scripts/ai/tactical/behavior", function (q) {
-    // q.selectSkill = @(__original) function (_potentialSkills) {
-    //     local entity = this.getAgent().getActor();
-    //     foreach (sid in debugSkills) {
-    //         if (_potentialSkills.find(sid) == null) continue;
-
-    //         local skill = entity.getSkills().getSkillByID(sid);
-    //         if (skill != null && skill.isUsable() && skill.isAffordable()) return skill;
-    //     }
-    //     return __original(_potentialSkills);
-    // }
     q.queryTargetValue = @(__original) function (_entity, _target, _skill = null) {
         if (!Actor.isValidTarget(_target)) return 0;
         return __original(_entity, _target, _skill);
@@ -148,7 +133,6 @@ mod.hook("scripts/ai/tactical/behavior", function (q) {
     }
 })
 
-// local r_LastId = 0;
 local function getBound(_actor, _index) {
     local result = _actor[_index];
     if (typeof result == "function") result = result.bindenv(_actor);
@@ -164,8 +148,7 @@ local function getBound(_actor, _index) {
         if (_obj != null && typeof _obj != "table") throw "Passed something unexpected here";
         if (_obj != null) {
             this.WeakTable = _obj.weakref();
-            // if (!("r_Id" in _obj)) _obj.r_Id <- ++r_LastId;
-            this.r_Suffix = " of " + _obj.getName();// + " " + _obj.r_Id;
+            this.r_Suffix = " of " + _obj.getName();
         }
     }
 
@@ -189,6 +172,7 @@ local function getBound(_actor, _index) {
     }
 }
 ::ActorFake <- {
+    function getID() {return "<no-id>"}
     function getTile() {return ::Tactical.getTileSquare(0, 0)}
     function isAlive() {return false}
     function isDying() {return true}
