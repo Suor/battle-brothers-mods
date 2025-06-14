@@ -322,7 +322,7 @@ mod.queue(">msu", ">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_follow
 
 
     // Guide promotion for Sato's Balance mod
-    if (::mods_getRegisteredMod("sato_balance_mod")) {
+    if (::Hooks.hasMod("sato_balance_mod")) {
         mod.hook("scripts/retinue/followers/scout_follower", function (q) {
             q.m.ru_promotion <- {
                 Cost = 9000

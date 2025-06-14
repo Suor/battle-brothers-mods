@@ -29,11 +29,12 @@ Plays nice with Expanded Retinue mod from [Tweaks and Fixes][tnf] and [More Reti
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][].
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [Modern Hooks][].
 
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/681
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
+[ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
 [msu]: https://www.nexusmods.com/battlebrothers/mods/479
 
