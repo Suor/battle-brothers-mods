@@ -1,3 +1,9 @@
+1.0.3
+- track temple payments
+- updated some phrasing and translation
+- fixed translation compat with Rosetta 0.2.0
+
+
 1.0.2
 - fixed injuries from no attacker (some 1.5.1 and Reforged stuff)
 - better wording Delivered -> Inflicted
