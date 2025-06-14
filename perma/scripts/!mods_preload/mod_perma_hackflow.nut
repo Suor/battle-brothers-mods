@@ -15,10 +15,13 @@ local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.queue(function () {
     foreach (file in ::IO.enumerateFiles("perma_hackflow/hooks")) ::include(file);
 
-    Const.Injury.Permanent.push({
-        ID = "injury.missing_hand",
-        Script = "injury_permanent/missing_hand_injury"
-    })
+    // Legends have this already
+    if (!::Hooks.hasMod("mod_legends")) {
+        ::Const.Injury.Permanent.push({
+            ID = "injury.missing_hand",
+            Script = "injury_permanent/missing_hand_injury"
+        })
+    }
 
     mod.hook("scripts/items/item_container", function (q) {
         q.onShieldHit = @(__original) function (_attacker, _skill) {
