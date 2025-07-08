@@ -837,16 +837,22 @@ Util.extend(se, {
     }
 
     function getTroopType(t) {
+        if (t.Strength < 15) return "garbage";  // Skip weakest enemies
         if (t.Variant != 0) return "champion";  // Skip champions
 
         local nameParts = split(t.Script, "/");
         local name = nameParts[nameParts.len() - 1];
+        // name = Str.cutprefix(name, "rf_"); // Reforged
 
         if (name == "zombie") return "zombie";
         if (Str.startswith(name, "zombie") && name != "zombie_boss") return "zombie_good";
-        if (Str.startswith(name, "skeleton_medium")) return "skeleton_medium";
-        if (Str.startswith(name, "skeleton_heavy")) return "skeleton_heavy";
-        if (name == "bandit_raider" || name == "bandit_leader") return "bandit";
+        if (Str.startswith(name, "skeleton_medium") || Str.startswith(name, "rf_skeleton_medium"))
+            return "skeleton_medium";
+        if (Str.startswith(name, "skeleton_heavy") || Str.startswith(name, "rf_skeleton_heavy"))
+            return "skeleton_heavy";
+        if (name == "rf_bandit_hunter" || name == "rf_bandit_sharpshooter") return "bandit_marksman";
+        if (name == "bandit_raider" || name == "bandit_leader" || Str.startswith(name, "rf_bandit"))
+            return "bandit";
         if (name == "nomad_outlaw" || name == "nomad_leader") return "nomad";
         if (name == "barbarian_thrall" || name == "barbarian_marauder") return "barbarian";
         // For whatever reason exp name == "goblin_figther" returns false here ???
