@@ -995,7 +995,7 @@ Util.extend(Mod, {
         cls.onDeath <- function (_killer, _skill, _tile, _fatalityType) {
             onDeath(_killer, _skill, _tile, _fatalityType);
             if (_tile && "se_Quirk" in this.m) {
-                logInfo("Died " + this.getName() + " quirk = " + this.m.se_Quirk.pp);
+                logInfo("se: Died " + this.getName() + " quirk = " + this.m.se_Quirk.pp);
                 local corpse = _tile.Properties.get("Corpse");
                 corpse.se_Quirk <- this.m.se_Quirk;
                 corpse.Value *= corpse.se_Quirk.XPMult;
@@ -1005,7 +1005,11 @@ Util.extend(Mod, {
         local onResurrected = "onResurrected" in cls ? cls.onResurrected : cls.actor.onResurrected;
         cls.onResurrected <- function (_info) {
             onResurrected(_info);
-            if ("se_Quirk" in _info) se.applyQuirk(this, _info.se_Quirk);
+            if ("se_Quirk" in _info) {
+                logInfo("se: resurrect " + this.getName() + " quirk = " + _info.se_Quirk.pp);
+                se.applyQuirk(this, _info.se_Quirk);
+                if (_info.Name == "") se.quirkName(this, _info.se_Quirk);
+            }
         }
     })
 
