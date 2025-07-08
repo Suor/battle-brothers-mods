@@ -11,7 +11,7 @@ local def = ::Autopilot <- {
 }
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
-mod.require("mod_msu >= 1.6.0", "stdlib >= 2.4");
+mod.require("mod_msu >= 1.6.0", "stdlib >= 2.5");
 mod.conflictWith("mod_autopilot");
 // msu patches skill.use() in a way that reintroduces broken weapon bug, wrapping that
 // mod_reforged has a couple of tweaks taken from here, which we need to undo
