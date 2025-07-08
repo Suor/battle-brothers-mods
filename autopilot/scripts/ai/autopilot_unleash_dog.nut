@@ -42,7 +42,7 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
 
         // Find tile and count allies and enemies
         local myTile = _entity.getTile();
-        local us = 0, enemies = 0;
+        local us = 1, enemies = 0;
         for (local i = 0; i < ::Const.Direction.COUNT; i++) {
             if (!myTile.hasNextTile(i)) continue;
 
@@ -56,10 +56,10 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         }
         if (this.m.TargetTile == null) return this.Const.AI.Behavior.Score.Zero;
 
-        if (enemies > us + 1) {
+        if (enemies > us) {
             ::logInfo("Defending with dog")
             // TODO: adjust score if having backstabber/underdog
-            score *= enemies / (us + 1);
+            score *= enemies / us;
             return score;
         }
         if (enemies > 0 && (_entity.getHitpointsPct() < 0.5
@@ -109,7 +109,7 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         if (type == ::Const.EntityType.Ghost
             || type == ::Const.EntityType.Alp
             || type == ::Const.EntityType.Spider
-            || type == ::Const.EntityType.Ghoul && _actor.getSize() == 1
+            // || type == ::Const.EntityType.Ghoul && _actor.getSize() == 1
             || _actor.m.Flags.has("goblin")
             || _actor.getMoraleState() == ::Const.MoraleState.Fleeing
             || _tag.Self.isRangedUnit(_actor)
