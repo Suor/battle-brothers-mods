@@ -1,19 +1,5 @@
 var AutopilotNew = {};
 
-// Undo reforged changes
-AutopilotNew.unhook = function (clsName, hooks) {
-    var cls = window[clsName], prefix = clsName + '_';
-    for (var key in hooks) {
-        if (key.slice(0, prefix.length) != prefix) continue; // no .startsWith() in there
-        var funcName = key.split('_')[1];
-        cls.prototype[funcName] = hooks[key];
-    }
-}
-if (window.Reforged) {
-    AutopilotNew.unhook("TacticalScreenTurnSequenceBarModule", Reforged.Hooks);
-    TacticalScreenTurnSequenceBarModule.prototype.RF_setWaitTurnAllButtonVisible = function (_visible) {}
-}
-
 
 // Autopilot hooks
 AutopilotNew.TacticalScreenTurnSequenceBarModule_createDIV
@@ -21,6 +7,9 @@ AutopilotNew.TacticalScreenTurnSequenceBarModule_createDIV
 TacticalScreenTurnSequenceBarModule.prototype.createDIV = function (_parentDiv)
 {
     AutopilotNew.TacticalScreenTurnSequenceBarModule_createDIV.call(this, _parentDiv);
+
+    // Disable Reforged copy of Wait All button
+    if (this.mWaitTurnAllButtonContainer) this.mWaitTurnAllButtonContainer.css("display", "none");
 
     // Need to move active skills left to make space for autopilot buttons
     this.mSkillsContainer.css("position", "relative").css("left", "-18.3rem")
