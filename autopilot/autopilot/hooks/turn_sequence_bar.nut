@@ -135,7 +135,8 @@ mod.hook("scripts/ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_ba
 
     q.convertEntitySkillsToUIData = @(__original) function (_entity) {
         local ret = __original(_entity);
-        if (ret == null || !("querySwitchableItems" in _entity)) return ret;
+        if (!::Autopilot.quickSwitch || ret == null || !("querySwitchableItems" in _entity))
+            return ret;
 
         foreach (item in _entity.querySwitchableItems())
             ret.push({

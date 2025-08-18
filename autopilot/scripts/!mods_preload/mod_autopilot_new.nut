@@ -8,6 +8,7 @@ local def = ::Autopilot <- {
         tagPrefix = "autopilot-new-"
     }
     function isUnderAIControl(_actor) {return "_autopilot" in _actor.m}
+    quickSwitch = true
 }
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
@@ -73,4 +74,12 @@ mod.queue(">mod_msu", ">mod_reforged", ">mod_sellswords", ">mod_fantasybro", fun
             return ret;
         }
     })
+
+    // Prevent dup quick switch buttons
+    // Do not need to schedule after legends for this because compat defs are included at load time
+    if ("Legends" in getroottable() && "Compat" in ::Legends && "Integrated" in ::Legends.Compat
+            && ::Legends.Compat.Integrated.find("mod_quickly_swap_items") != null) {
+        def.quickSwitch = false;
+    }
+    if (::Hooks.hasMod("mod_quickly_swap_items")) def.quickSwitch = false;
 })
