@@ -14,7 +14,9 @@ this.autopilot_tame <- this.inherit("scripts/ai/tactical/behavior", {
     {
         this.m.ID = ::Const.AI.Behavior.ID.AP_Tame;
         this.m.Order = ::Const.AI.Behavior.Order.AP_Tame;
-        if ("Companions" in ::Const) this.m.DefaultChance = ::Const.Companions.TameChance.Default / 10;
+        // Legends AC don't have this and some refactoring may break it
+        if ("Companions" in ::Const && "TameChance" in ::Const.Companions)
+            this.m.DefaultChance = ::Const.Companions.TameChance.Default / 10;
         this.behavior.create();
     }
 
