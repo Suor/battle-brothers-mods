@@ -15,8 +15,9 @@ this.necro_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
         this.m.IsFixedLook = true;
 
         this.m.MeatBackgrounds = [
-            "cripple_background"
             "beggar_background"
+            "cripple_background"
+            "ratcatcher_background"
             "refugee_background"
             "vagabond_background"
         ];
