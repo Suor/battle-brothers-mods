@@ -94,8 +94,10 @@ this.immortal_warrior_trait <- this.inherit("scripts/skills/traits/character_tra
 
         local added = ::World.Assets.getStash().add(jar);
         if (!added) added = ::Tactical.CombatResultLoot && ::Tactical.CombatResultLoot.add(jar);
-        // Should be recreated with an event later
-        if (!added) ::logWarning("iw: Immortal Soul Jar " + this.m.immortal_Index + " is lost!");
+        if (!added) {
+            ::World.Assets.getStash().makeEmptySlots(1);
+            ::World.Assets.getStash().add(jar)
+        }
     }
 
     function onSerialize( _out )
