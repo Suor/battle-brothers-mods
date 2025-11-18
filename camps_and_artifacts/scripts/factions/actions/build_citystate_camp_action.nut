@@ -26,7 +26,8 @@ this.build_citystate_camp_action <- this.inherit("scripts/factions/faction_actio
 			"scripts/entity/world/locations/citystate_stronghold_location"
 		]
 		local script = scripts[Math.rand(0, scripts.len() - 1)]
-		local tile = this.getTileToSpawnLocation(100, [], 1, 9, 9, 2, 2, null, minY, maxY);
+		local isBig = script == "scripts/entity/world/locations/citystate_stronghold_location";
+		local tile = this.getTileToSpawnLocation(100, [], 1, 9, 12, 2, isBig ? 7 : 2, null, minY, maxY);
 		if (tile != null) {
 			camp = this.World.spawnLocation(script, tile.Coords);
 		}

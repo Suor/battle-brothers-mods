@@ -28,7 +28,7 @@
         local tile = this.getTileToSpawnLocation(this.Const.Factions.BuildCampTries, [
             this.Const.World.TerrainType.Mountains,
             this.Const.World.TerrainType.Snow
-        ], 10, 20, 1000, 7, 7, null, minY, maxY);
+        ], 10, 25, 1000, 7, 7, null, minY, maxY);
 
         if (tile != null) {
             camp = this.World.spawnLocation(
