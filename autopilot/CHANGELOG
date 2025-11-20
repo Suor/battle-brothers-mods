@@ -1,3 +1,14 @@
+2.7.0
+- don't use dogs against ghouls
+- do not tame when more enemies around
+Compatibility:
+- better compat with Reforged UI changes
+- use Bestial Vigor from Reforged
+- no dup quick switch buttons in newest Legends/quickly_swap_items
+- AC Legends
+- use AIBehaviorID to add behaviors for future compatibility (mostly Reforged)
+- requires stdlib >= 2.5
+
 2.6.2
 - fix future Modern Hooks/MSU breaking things
 
