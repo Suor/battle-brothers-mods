@@ -19,26 +19,9 @@ local BaseAttrRanges = {
     Initiative = [100, 110]
 };
 
-// Weapon nicknames by weapon type constant (filled in mod.queue once game constants are available)
-def.WeaponNicknames <- {};
-
-mod.queue(function () {
+mod.queue(">mod_bro_studio", function () {
     ::include("nicknames/rosetta_ru");
 
-    // Helpers on def so they're accessible from nicknames/nicknames.nut
-    def.hasTrait <- @(bro, id) bro.getSkills().hasSkill(id);
-    def.isEliteBg <- @(bro) bro.getBackground().m.DailyCost >= 20;
-    def.hasWeaponType <- function(bro, wtype) {
-        local weapon = bro.getItems().getItemAtSlot(::Const.ItemSlot.Mainhand);
-        return weapon != null && weapon.isWeaponType(wtype);
-    };
-    def.bgKey <- function(bro) {
-        local id = bro.getBackground().getID();
-        local prefix = "background.";
-        if (id.find(prefix) == 0) return id.slice(prefix.len());
-        return id;
-    };
-    def.hasBg <- @(bro, suffix) def.bgKey(bro) == suffix;
     # FIX: calc ranges for all attrs first
     def.isAttrHigh <- function(bro, attrName) {
         local br = BaseAttrRanges[attrName];
@@ -50,8 +33,41 @@ mod.queue(function () {
         local c = bro.getBackground().onChangeAttributes();
         return bro.getBaseProperties()[attrName] <= br[0] + c[attrName][0];
     };
-
     ::include("nicknames/nicknames");
+
+    local WeaponTypeConst = ::Const.Items.WeaponType;
+    local W = def.Weights;
+
+    local function checkFactor(bro, f) {
+        if (f.find("trait.") == 0 || f.find("background.") == 0)
+            return bro.getSkills().hasSkill(f);
+        if (f.find("cost.") == 0)
+            return bro.getBackground().m.DailyCost >= f.slice("cost.".len()).tointeger();
+        if (f.find("weapon.") == 0) {
+            local weapon = bro.getItems().getItemAtSlot(::Const.ItemSlot.Mainhand);
+            return weapon != null && weapon.isWeaponType(WeaponTypeConst[f.slice("weapon.".len())]);
+        }
+        if (f.find("talent.") == 0) {
+            local idx = f.slice("talent.".len()).tointeger();
+            return bro.m.Talents[idx] == 3;
+        }
+        // attr condition: "AttrName.high" or "AttrName.low"
+        local dotPos = f.find(".");
+        if (dotPos != null) {
+            local dir = f.slice(dotPos + 1);
+            if (dir == "high") return def.isAttrHigh(bro, f.slice(0, dotPos));
+            if (dir == "low")  return def.isAttrLow(bro, f.slice(0, dotPos));
+        }
+        return false;
+    }
+    local function factorWeight(f) {
+        if (f.find("trait.") == 0)      return W.Trait;
+        if (f.find("background.") == 0) return W.Background;
+        if (f.find("cost.") == 0)       return W.Background;
+        if (f.find("weapon.") == 0)     return W.Weapon;
+        if (f.find("talent.") == 0)     return W.Talent;
+        return W.Attr;
+    }
 
     // Weighted random pick from array of {title, weight} items
     local function weightedRandPick(items) {
@@ -76,8 +92,8 @@ mod.queue(function () {
     }
 
     mod.hook("scripts/entity/tactical/player", function (q) {
-        q.onHired = @(__original) function () {
-            __original(); // vanilla runs, may set title at 25%/10% chance
+        q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
+            __original(_backgrounds, _addTraits);
 
             if (this.getTitle() != "") return; // already has a title
 
@@ -95,57 +111,31 @@ mod.queue(function () {
             // 2. Collect candidates with weights
             local candidates = [];
 
-            // 2a. Combos (weight 3)
-            local W = def.Weights;
-            foreach (combo in def.ComboNicknames)
-                if (combo.check(this))
-                    foreach (n in combo.nicknames)
-                        candidates.push({title = n, weight = W.Combo});
+            // 2a. Custom nicknames from def.Nicknames; weight = product of per-factor weights
+            foreach (entry in def.Nicknames) {
+                local ok = true;
+                foreach (f in entry.factors) if (!checkFactor(this, f)) { ok = false; break; }
+                if (!ok) continue;
+                local weight = 1;
+                foreach (f in entry.factors) weight *= factorWeight(f);
+                foreach (n in entry.nicknames)
+                    candidates.push({title = n, weight = weight});
+            }
 
-            // 2b. Trait-based (weight 2): vanilla .m.Titles + custom
+            // 2b. Vanilla trait .m.Titles
             foreach (skill in this.getSkills().getAllSkillsOfType(::Const.SkillType.Trait)) {
-                std.debug(skill)
-                std.debug(skill.getID())
-                foreach (t in skill.m.Titles)
+                if (!("Titles" in skill.b)) {
+                    std.debug(skill)
+                    continue;
+                }
+                # NOTE: using .b insead of .m - an MSU bug
+                foreach (t in skill.b.Titles)
                     candidates.push({title = t, weight = W.Trait});
-                local id = skill.getID();
-                if (id in def.TraitNicknames)
-                    foreach (n in def.TraitNicknames[id])
-                        candidates.push({title = n, weight = W.Trait});
             }
 
-            // 2c. Talent-based (weight 2): 3-star talents
-            for (local i = 0; i < ::Const.Attributes.COUNT; i++)
-                if (this.m.Talents[i] == 3 && i < def.TalentNicknames.len())
-                    foreach (n in def.TalentNicknames[i])
-                        candidates.push({title = n, weight = W.Talent});
-
-            // 2d. Background-based (weight 1): vanilla .m.Titles + custom
-            local bg = this.getBackground();
-            foreach (t in bg.m.Titles)
+            // 2c. Vanilla background .m.Titles
+            foreach (t in this.getBackground().m.Titles)
                 candidates.push({title = t, weight = W.Background});
-            local _bgKey = def.bgKey(this);
-            if (_bgKey in def.BackgroundNicknames)
-                foreach (n in def.BackgroundNicknames[_bgKey])
-                    candidates.push({title = n, weight = W.Background});
-
-            // 2e. Weapon-based (weight 1)
-            local weapon = this.getItems().getItemAtSlot(::Const.ItemSlot.Mainhand);
-            if (weapon != null)
-                foreach (wtype, nicks in def.WeaponNicknames)
-                    if (weapon.isWeaponType(wtype))
-                        foreach (n in nicks)
-                            candidates.push({title = n, weight = W.Weapon});
-
-            // 2f. Attribute-based (weight 1): extreme values relative to background range
-            foreach (ac in def.AttrNicknames) {
-                if (ac.high.len() > 0 && def.isAttrHigh(this, ac.attr))
-                    foreach (n in ac.high)
-                        candidates.push({title = n, weight = W.Attr});
-                if (ac.low.len() > 0 && def.isAttrLow(this, ac.attr))
-                    foreach (n in ac.low)
-                        candidates.push({title = n, weight = W.Attr});
-            }
 
             if (candidates.len() == 0) return; // shouldn't happen
 
@@ -154,6 +144,8 @@ mod.queue(function () {
                 !(c.title in usedTitles) && !isTitleUsedByFallen(c.title, fallenNames)
             );
             if (filtered.len() == 0) filtered = candidates; // allow reuse if all taken
+
+            std.Debug.log("cands for " + this.getName(), candidates)
 
             // 4. Weighted random pick
             this.setTitle(weightedRandPick(filtered).title);

@@ -22,11 +22,11 @@ local captured_onHired = null;
 
 local mod_obj = {
     function conflictWith(...) {}
-    function queue(func) {func()}
+    function queue(...) {vargv[vargv.len()-1]()}
     function hook(_filename, func) {
-        local q = {onHired = null}
+        local q = {setStartValuesEx = null}
         func(q);
-        captured_onHired = q.onHired;
+        captured_onHired = q.setStartValuesEx;
     }
 }
 ::Hooks <- {
@@ -70,15 +70,19 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
         _bgId     = bgId
         _traits   = traits
         function getID()    {return "bro_test"}
+        function getName()    {return "Test Bro"}
         function getTitle() {return title}
         function setTitle(t) {title = t}
         m = {
             Talents = talents != null ? talents : [0, 0, 0, 0, 0, 0, 0, 0]
         }
+        b = {}
         function getSkills() {
             local traitList = _traits;
+            local bgId = _bgId;
             return {
                 function hasSkill(id) {
+                    if (id == bgId) return true;
                     foreach (t in traitList) {
                         local tid = typeof t == "string" ? t : t.id;
                         if (tid == id) return true;
@@ -91,6 +95,7 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
                         local _titles = typeof t == "string" ? [] : t.titles;
                         return {
                             m = {Titles = _titles}
+                            b = {Titles = _titles}
                             function getID() {return _id}
                         };
                     });
@@ -104,6 +109,7 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
             local _bgTitles  = bgTitles;
             return {
                 m = {Titles = _bgTitles, DailyCost = _dailyCost}
+                b = {Titles = _bgTitles, DailyCost = _dailyCost}
                 function getID() {return _bgId}
                 function onChangeAttributes() {return _attrs}
             }

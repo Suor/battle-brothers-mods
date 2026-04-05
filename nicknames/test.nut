@@ -1,3 +1,4 @@
+dofile(getenv("STDLIB_DIR") + "load.nut", true);
 dofile(getenv("STDLIB_DIR") + "tests/mocks.nut", true);
 dofile("mocks.nut", true);
 dofile("scripts/!mods_preload/mod_nicknames.nut", true);
@@ -11,22 +12,29 @@ function assertIn(val, arr) {
     throw "assertIn failed: '" + val + "' not in [" + arr.reduce(@(a, b) a + ", " + b) + "]";
 }
 
+function nicknamesFor(factor) {
+    foreach (entry in def.Nicknames)
+        if (entry.factors.len() == 1 && entry.factors[0] == factor)
+            return entry.nicknames;
+    throw "No Nicknames entry for factor: " + factor;
+}
+
 function hire(bro) {
-    local impl = onHired(@() null); // bind no-op __original, get inner function
-    impl.call(bro);                 // call with bro as "this"
+    local impl = onHired(@(_bg, _add) null); // bind no-op __original, get inner function
+    impl.call(bro, null, true);              // call with bro as "this", _addTraits = true
 }
 
 // Background: vanilla gravedigger
 local bro = makeBro("background.gravedigger");
 hire(bro);
-assertIn(bro.getTitle(), def.BackgroundNicknames["gravedigger"]);
+assertIn(bro.getTitle(), nicknamesFor("background.gravedigger"));
 print("vanilla background OK\n");
 
 // Background: XBE hackflows falconer (ID uses underscores, not slashes)
 // Real ID set explicitly in hackflows/falconer_background.nut: m.ID = "background.hackflows_falconer"
 local bro2 = makeBro("background.hackflows_falconer");
 hire(bro2);
-assertIn(bro2.getTitle(), def.BackgroundNicknames["hackflows_falconer"]);
+assertIn(bro2.getTitle(), nicknamesFor("background.hackflows_falconer"));
 print("XBE hackflows background OK\n");
 
 // Attr-based: bro with high RangedSkill for falconer (at or above range max = 42+10 = 52)
@@ -45,13 +53,13 @@ print("attr-based (high RangedSkill) OK\n");
 // Trait-based title
 local bro3 = makeBro("background.farmhand", null, ["trait.strong"]);
 hire(bro3);
-if (bro3.getTitle() == "") throw "Expected title for bro with trait.strong";
+assertIn(bro3.getTitle(), nicknamesFor("trait.strong"));
 print("trait nickname OK\n");
 
 // Combo: strong + brave (highest weight, picked first)
 local bro4 = makeBro("background.farmhand", null, ["trait.strong", "trait.brave"]);
 hire(bro4);
-assertIn(bro4.getTitle(), def.ComboNicknames[0].nicknames); // first combo is strong+brave
+assertIn(bro4.getTitle(), def.Nicknames[0].nicknames); // first entry is strong+brave combo
 print("combo nickname OK\n");
 
 // Elite background + 3-star MeleeSkill talent → "Born Mercenary" / "Natural Killer"
