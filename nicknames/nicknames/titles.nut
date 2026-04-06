@@ -23,6 +23,8 @@
 //   5. Ambiguity is a feature — "Мясник" works for the ex-butcher AND the guy who
 //      hacks limbs off in battle. Same with "Бродяга", "Лис", "Трус". The player
 //      can't always tell why he got the name. That's a good thing. Let them wonder.
+//   6. Evocative, not descriptive — "Таракан" says survivor without saying it. "Зелёный враг"
+//      just describes a fact. If the nickname could be a tooltip, it's too literal.
 //
 // AVAILABLE FACTORS
 // ─────────────────
@@ -299,6 +301,17 @@ def.Titles <- [
     {ru = "Иуда", en = "Judas", factors = [
         ["trait.greedy", "trait.disloyal"],  // жадный предатель
     ]}
+    {ru = "Гадюка", en = "the Viper", factors = [
+        ["trait.weasel"],
+        ["background.thief"],
+        ["trait.disloyal"],
+        ["trait.weasel", "trait.disloyal"],  // хитрый и ненадёжный — змея в траве
+    ]}
+    {ru = "Мятежник", en = "Rebel", factors = [
+        ["trait.disloyal"],
+        ["trait.disloyal", "trait.cocky"],    // наглый и нелояльный
+        ["trait.disloyal", "trait.impatient"],
+    ]}
     {ru = "Лиходей", en = "Villain", factors = [
         ["background.killer_on_the_run"],
         ["trait.bloodthirsty"],
@@ -319,8 +332,10 @@ def.Titles <- [
 
     // ── Боевые ───────────────────────────────────────────────────────────
     {ru = "Мясник", en = "Butcher", factors = [
-        ["background.butcher"],                  // literal: бывший мясник
-        ["weapon.Axe", "attr.MeleeSkill.high"],  // эффективно рубит
+        ["background.butcher"],                      // literal: бывший мясник
+        ["weapon.Axe", "attr.MeleeSkill.high"],      // эффективно рубит
+        ["weapon.Cleaver", "attr.MeleeSkill.high"],  // эффективно рубит
+        ["weapon.Cleaver", "trait.bloodthirsty"],    // эффектно рубит
     ]}
     {ru = "Кувалда", en = "Sledgehammer", factors = [
         ["weapon.Hammer"],
@@ -340,6 +355,12 @@ def.Titles <- [
         ["trait.huge", "trait.strong"],
         ["trait.brute"],
     ]}
+    {ru = "Валун", en = "the Boulder", factors = [
+        ["trait.huge", "trait.tough"],
+        ["trait.huge", "attr.Hitpoints.high"],
+        ["trait.tough", "attr.Hitpoints.high"],
+        ["trait.huge", "trait.strong", "trait.tough"],
+    ]}
     {ru = "Молот", en = "Hammer", factors = [
         ["weapon.Hammer"],
         ["weapon.Mace"],
@@ -354,6 +375,12 @@ def.Titles <- [
         ["weapon.Dagger"],
         ["background.hackflows_hangman"],
         ["trait.bloodthirsty"],
+    ]}
+    {ru = "Жало", en = "Stinger", factors = [
+        ["weapon.Dagger"],
+        ["weapon.Dagger", "trait.bloodthirsty"],
+        ["weapon.Dagger", "attr.MeleeSkill.high"],  // бьёт точно и быстро
+        ["weapon.Dagger", "attr.Initiative.high"],  // бьёт точно и быстро
     ]}
     {ru = "Живодёр", en = "Flayer", factors = [
         ["background.butcher"],
@@ -371,15 +398,15 @@ def.Titles <- [
         ["background.killer_on_the_run"],
         ["background.hackflows_hangman"],
     ]}
+    {ru = "Маньяк", en = "the Maniac", factors = [
+        ["trait.bloodthirsty", "trait.irrational"],
+        ["weapon.Cleaver", "trait.irrational"],  // вовсе потерял связь с реальностью
+    ]}
     {ru = "Молния", en = "Lightning", factors = [
         ["trait.swift", "attr.Initiative.high"],  // стремительный в бою
         ["trait.swift", "talent.Initiative"],
         ["trait.impatient", "attr.Initiative.high"],
         ["talent.Initiative", "attr.Initiative.high"],
-    ]}
-    {ru = "Неломаемый", en = "Unbreakable", factors = [
-        ["trait.iron_jaw"],                   // буквально: не сломать
-        ["trait.iron_jaw", "trait.tough"],    // и всё остальное тоже
     ]}
     {ru = "Соколиный глаз", en = "Hawkeye", factors = [
         ["trait.eagle_eyes"],
@@ -388,9 +415,6 @@ def.Titles <- [
     // Ненависть к конкретному врагу
     {ru = "Экзорцист", en = "the Exorcist", factors = [
         ["trait.hate_undead"],
-    ]}
-    {ru = "Зелёный враг", en = "Greenskin Bane", factors = [
-        ["trait.hate_greenskins"],
     ]}
 
     // Boris the Bullet Dodger — Snatch (2000)
@@ -409,6 +433,14 @@ def.Titles <- [
     ]}
     {ru = "Горемыка", en = "Wretch", factors = [
         ["attr.Hitpoints.low", "attr.Bravery.low"],  // слабый и пугливый — вечно мается
+    ]}
+    {ru = "Обречённый", en = "Doomed", factors = [
+        ["trait.fragile", "trait.craven"],
+        ["trait.ailing", "attr.Hitpoints.low"],
+        ["attr.Hitpoints.low", "attr.Bravery.low", "attr.MeleeSkill.low"],  // плохой по всему
+        ["trait.fragile", "attr.Hitpoints.low", "attr.Bravery.low"],
+        ["trait.pessimist", "attr.Hitpoints.low"],
+        ["trait.pessimist", "attr.Bravery.low"],
     ]}
     {ru = "Живучий", en = "Hard to Kill", factors = [
         ["trait.tough"],
@@ -487,6 +519,12 @@ def.Titles <- [
     ]}
     {ru = "Тролль", en = "the Troll", factors = [
         ["trait.huge", "trait.dumb"],  // ironic: большой и тупой
+    ]}
+    {ru = "Йети", en = "the Yeti", factors = [
+        ["background.wildman", "trait.huge"],
+        ["trait.huge", "trait.brute"],
+        ["background.wildman", "trait.strong"],
+        ["background.wildman", "trait.huge", "trait.strong"],  // лесной здоровяк во всей красе
     ]}
     {ru = "Овчарка", en = "the Sheepdog", factors = [
         ["background.shepherd"],                      // пас овец — теперь пасёт отряд
@@ -593,5 +631,35 @@ def.Titles <- [
     ]}
     {ru = "Пёрышко", en = "Featherweight", factors = [
         ["trait.legend_light"],
+    ]}
+    {ru = "Фантом", en = "the Phantom", factors = [
+        ["trait.night_owl", "background.thief"],
+        ["trait.night_owl", "trait.weasel"],
+    ]}
+    {ru = "Отмычка", en = "Picklock", factors = [
+        ["background.thief"],
+        ["background.hackflows_locksmith"],
+        ["background.thief", "trait.dexterous"],  // ловкие руки — дело мастера
+        ["background.thief", "perk.quick_hands"],
+    ]}
+    {ru = "Безымянный", en = "No Name", factors = [
+        ["background.vagabond"],
+        ["background.refugee"],
+        ["background.hackflows_drifter"],
+    ]}
+    {ru = "Лесоруб", en = "the Woodcutter", factors = [
+        ["background.lumberjack"],
+        ["background.lumberjack", "weapon.Axe"],
+        ["background.wildman", "weapon.Axe"],  // дикарь с топором — та же работа
+    ]}
+    {ru = "Мясной щит", en = "Meatshield", setting = false, factors = [
+        ["attr.Hitpoints.high", "attr.MeleeDefense.high"],  // стоит впереди и держит удар
+        ["attr.Hitpoints.high", "trait.tough"],
+        ["talent.Hitpoints", "attr.MeleeDefense.high"],
+    ]}
+    {ru = "Без башни", en = "Wildcard", setting = false, factors = [
+        ["trait.irrational"],
+        ["trait.irrational", "trait.impatient"],
+        ["trait.bloodthirsty", "trait.irrational"],  // никогда не знаешь чего ждать
     ]}
 ];

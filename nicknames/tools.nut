@@ -248,6 +248,14 @@ function cmdUsage(doSort) {
     foreach (f in unused) print("  " + f + "\n");
 }
 
+function cmdStats() {
+    local numTitles = titles.len();
+    local numFactorArrays = 0;
+    foreach (title in titles) numFactorArrays += title.factors.len();
+    print("titles: " + numTitles + "\n");
+    print("factor arrays: " + numFactorArrays + "\n");
+}
+
 // ── Dispatch ──────────────────────────────────────────────────────────────────
 
 local cmd = vargv.len() > 0 ? vargv[0] : "";
@@ -255,9 +263,11 @@ local doSort = vargv.len() > 1 && vargv[1] == "--sort";
 switch (cmd) {
     case "check": cmdCheck(); break;
     case "usage": cmdUsage(doSort); break;
+    case "stats": cmdStats(); break;
     default:
         print("Usage: squirrel tools.nut <command>\n");
         print("Commands:\n");
         print("  check   show errors and warnings\n");
         print("  usage   show factor combo usage stats\n");
+        print("  stats   show title and factor array counts\n");
 }
