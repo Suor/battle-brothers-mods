@@ -27,6 +27,8 @@ mod.require("mod_msu >= 1.6.0", "stdlib >= 2.1");
 mod.queue(">mod_reforged", function () {
     ::include("necro/rosetta_ru");
 
+    local Util = ::std.Util, Debug = ::std.Debug.with({prefix = "necro: "});
+
     def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
 
     local msd = ::MSU.System.Registry.ModSourceDomain, upd = def.Updates;
@@ -121,9 +123,30 @@ mod.queue(">mod_reforged", function () {
             __original(_info);
         }
 
+        local function masterCheckMorale(_actor, _difficulty) {
+            if (::Tactical.Entities.isCombatFinished()) return;
+
+            local possessed_effect = this.getSkills().getSkillByID("effects.possessed_undead");
+            if (!possessed_effect) return;
+            local master = possessed_effect.m.Possessor;
+            // We do not check here whether the possessor is a necro, so any player capable of
+            // possess will suffer - only players though, not enemies
+            if (Util.isKindOf(master, "player")) {
+                master.checkMorale(-1, _difficulty, ::Const.MoraleCheckType.Default, "", true);
+            }
         }
 
-        q.necro_hasMaster <- function () {return "necro_master" in this.m}
+        q.onDamageReceived = @(__original) function(_attacker, _skill, _hitInfo) {
+            local damage = __original(_attacker, _skill, _hitInfo);
+            if (damage >= ::Const.Morale.OnHitMinDamage) {
+                masterCheckMorale(this, ::Const.Morale.OnHitBaseDifficulty * 0.5)
+            }
+            return damage;
+        }
+        q.onDeath = @(__original) function (_killer, _skill, _tile, _fatalityType) {
+            masterCheckMorale(this, ::Const.Morale.OnHitBaseDifficulty);
+            __original(_killer, _skill, _tile, _fatalityType);
+        }
     })
 
     // TODO: move this thing to fixes? will need to gather zombie loot instead of chopping them.
