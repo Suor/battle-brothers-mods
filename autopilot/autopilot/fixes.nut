@@ -101,6 +101,22 @@ mod.hook("scripts/ai/tactical/behaviors/ai_attack_knock_out", function (q) {
 })
 
 
+// Fix hang when pickup weapon is selected but entity can't actually equip it (e.g. animals)
+mod.hook("scripts/ai/tactical/behaviors/ai_pickup_weapon", function (q) {
+    q.onEvaluate = @(__original) function (_entity) {
+        if ("_apSkipPickup" in _entity.m) return this.Const.AI.Behavior.Score.Zero;
+        return __original(_entity);
+    }
+    q.onExecute = @(__original) function (_entity) {
+        local ret = __original(_entity);
+        if (ret && !_entity.isArmed()) {
+            ::logWarning("autopilot: " + _entity.getName() + " failed to pick up weapon, disabling");
+            _entity.m._apSkipPickup <- true;
+        }
+        return ret;
+    }
+})
+
 // The great delayed melee kill fix.
 // Same problem as with ranged kill, but the fix is more complicated - we wrap all the known
 // opponents and allies into special WeakTableRef descendant, which will save the day when
