@@ -130,13 +130,9 @@ mod.queue(">mod_msu", ">mod_reforged", function () {
 // Need to move it to "very late" because dynamic perk trees are only build there
 mod.queue(">mod_reforged", function() {
     mod.hook("scripts/entity/tactical/player", function (q) {
-        logInfo("bp: setting setStartValuesEx")
         q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
-            logInfo("bp: set setStartValuesEx, starting = " + starting);
             __original(_backgrounds, _addTraits);
             if (!starting) ::BgPerks.giveFreePerks(this);
         };
-        logInfo("bp: set setStartValuesEx")
     });
-    logInfo("bp: set hook")
 }, ::Hooks.QueueBucket.VeryLate)
