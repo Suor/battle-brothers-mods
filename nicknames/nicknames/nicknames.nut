@@ -1,15 +1,37 @@
 local def = ::Nicknames;
 
 // Per-factor-type weights; entry weight = product of each factor's weight
-// factors: "trait.*", "background.*", "weapon.*" (WT name), "talent.*" (index, 3-star),
-//          "AttrName.high" / "AttrName.low"
+// factors: "trait.*", "background.*", "weapon.*" (WT name), "talent.*" (3-star),
+//          "attr.Name.high" / "attr.Name.low", "cost.high/low"
 def.Weights <- {
-    Attr       = 7
-    Trait      = 10
-    Talent     = 5
-    Background = 2
-    Weapon     = 3
+    background = 1.5
+    trait      = 1.5
+    attr       = 4.0
+    talent     = 2.5
+    cost       = 2.0
+    weapon     = 1.5
 };
+
+// TODO: add more fun nicknames, start from russian, translate, get some factors. Examples:
+//
+//       Хрен попадёшь -> как там звали его Большом Куше на англ
+//                     -> attr.MeleeDefense.high + attr.RangedDefense.high
+//       Балбес -> ... -> trait.dumb
+//
+//       Also might look for funny combos, i.e. attr.Initiative.high + attr.Stamina.low
+//
+// TODO: shorten, replace or remove nicknames too long both in english and russian,
+//       add a test on max len first
+// TODO: stylistic and setting cleanup, i.e. wtf Bulletproof, Paperman or Спортсмен?
+//       - no such things in middle ages
+//       And stylistic - this is mercenary company in middle age low fantasy game,
+//       these are simply guys, with crude humor, what nicknames will they give
+//       BTW: some might be misleading a huge guy can get "Shorty" or another "small" nickname
+//       Should start from writing all these considerations into "docstring" of this "module".
+//       Using the same nickname for different things might trick the player, which is a good thing.
+//
+// TODO: move some talent or attr to talent + attr, or make factors for 2+ stars and no stars,
+//       other option simply calc 5 for each star.
 
 def.Nicknames <- [
     // ── Multi-factor combos ──────────────────────────────────────────────
@@ -20,9 +42,9 @@ def.Nicknames <- [
     {factors = ["trait.strong", "trait.huge"],
      nicknames = ["the Titan", "Goliath", "the Colossus"]}
     {factors = ["trait.strong", "trait.dumb"],
-     nicknames = ["the Oaf", "Dumb Muscle", "Gentle Giant"]}
+     nicknames = ["the Oaf", "Dumb Muscle", "Gentle Giant"]} // Gentle Giant -> the Muscle
     {factors = ["trait.brave", "trait.deathwish"],
-     nicknames = ["Glory Chaser", "Daredevil", "the Reckless"]}
+     nicknames = ["Glory Chaser", "Daredevil", "the Reckless", "Breakneck"]}
     {factors = ["trait.tiny", "trait.swift"],
      nicknames = ["the Gnat", "Little Lightning", "Ankle Biter"]}
     {factors = ["trait.fat", "trait.tough"],
@@ -95,66 +117,66 @@ def.Nicknames <- [
      nicknames = ["the Escaped", "Born Runner", "Fleet Foot"]}
 
     // Weapon + attr or trait
-    {factors = ["weapon.Bow",      "RangedSkill.high"],
+    {factors = ["weapon.Bow",      "attr.RangedSkill.high"],
      nicknames = ["the Sharpshooter", "Eagle's Arrow", "Bullseye"]}
-    {factors = ["weapon.Crossbow", "RangedSkill.high"],
+    {factors = ["weapon.Crossbow", "attr.RangedSkill.high"],
      nicknames = ["the Sniper", "Bolt of Death", "One Shot"]}
-    {factors = ["weapon.Sword",    "MeleeSkill.high"],
+    {factors = ["weapon.Sword",    "attr.MeleeSkill.high"],
      nicknames = ["Surecut", "Deathstroke", "the Duelist"]}
     {factors = ["weapon.Axe",      "trait.strong"],
      nicknames = ["Skull Splitter", "the Woodcutter", "Axe Storm"]}
-    {factors = ["weapon.Spear",    "Initiative.high"],
+    {factors = ["weapon.Spear",    "attr.Initiative.high"],
      nicknames = ["First Blood", "the Viper", "Quick Jab"]}
     {factors = ["weapon.Hammer",   "trait.strong"],
      nicknames = ["Earthshaker", "the Crusher", "Plate Buster"]}
     {factors = ["weapon.Dagger",   "trait.tiny"],
      nicknames = ["Little Sting", "Flea Bite", "Pin Prick"]}
-    {factors = ["weapon.Polearm",  "MeleeSkill.high"],
+    {factors = ["weapon.Polearm",  "attr.MeleeSkill.high"],
      nicknames = ["the Reaper", "Long Arm of Death"]}
     {factors = ["weapon.Flail",    "trait.brute"],
      nicknames = ["Whirlwind of Pain", "Chain Fury"]}
-    {factors = ["weapon.Mace",     "MeleeSkill.high"],
+    {factors = ["weapon.Mace",     "attr.MeleeSkill.high"],
      nicknames = ["Skull Denter", "the Concussor"]}
 
     // Talent + background/trait
-    {factors = ["talent.2", "cost.20"],
+    {factors = ["talent.MeleeSkill", "cost.high"],
      nicknames = ["Born Mercenary", "Natural Killer"]}
-    {factors = ["talent.4", "background.hunter"],
+    {factors = ["talent.RangedSkill", "background.hunter"],
      nicknames = ["the Deadeye", "Hawk", "Nature's Archer"]}
-    {factors = ["talent.0", "trait.strong"],
+    {factors = ["talent.Hitpoints", "trait.strong"],
      nicknames = ["Doom Blade", "the Annihilator", "Wrecking Ball"]}
-    {factors = ["talent.4", "trait.eagle_eyes"],
+    {factors = ["talent.RangedSkill", "trait.eagle_eyes"],
      nicknames = ["Telescopic", "the Sharpshooter"]}
-    {factors = ["talent.2", "background.squire"],
+    {factors = ["talent.MeleeSkill", "background.squire"],
      nicknames = ["Future Knight", "the Promising"]}
-    {factors = ["talent.5", "background.monk"],
+    {factors = ["talent.Bravery", "background.monk"],
      nicknames = ["the Abbot", "Voice of God"]}
 
     // ── Single-factor: talents (3-star) ──────────────────────────────────
-    {factors = ["talent.0"], nicknames = ["Tank", "Thick Hide", "Meatbox"]}
-    {factors = ["talent.1"], nicknames = ["the Machine", "Never Tired", "Stamina Freak"]}
-    {factors = ["talent.2"], nicknames = ["Swordguy", "Blade Master", "Choppy"]}
-    {factors = ["talent.3"], nicknames = ["Quick Feet", "Twitchy", "Fastdraw"]}
-    {factors = ["talent.4"], nicknames = ["Arrow Wizard", "Shots On Point", "Bullseye"]}
-    {factors = ["talent.5"], nicknames = ["Fearless", "No Doubts", "Guts"]}
-    {factors = ["talent.6"], nicknames = ["Slippy", "Evasive", "Never Touched"]}
-    {factors = ["talent.7"], nicknames = ["Dodgy", "Untouchable Ranged", "Bulletproof"]}
+    {factors = ["talent.Hitpoints"],   nicknames = ["Tank", "Thick Hide", "Meatbox"]}
+    {factors = ["talent.Stamina"],     nicknames = ["the Machine", "Never Tired", "Stamina Freak"]}
+    {factors = ["talent.MeleeSkill"],  nicknames = ["Swordguy", "Blade Master", "Choppy"]}
+    {factors = ["talent.Initiative"],  nicknames = ["Quick Feet", "Twitchy", "Fastdraw"]}
+    {factors = ["talent.RangedSkill"], nicknames = ["Arrow Wizard", "Shots On Point", "Bullseye"]}
+    {factors = ["talent.Bravery"],     nicknames = ["Fearless", "No Doubts", "Guts"]}
+    {factors = ["talent.MeleeDefense"],nicknames = ["Slippy", "Evasive", "Never Touched"]}
+    {factors = ["talent.RangedDefense"],nicknames = ["Dodgy", "Untouchable Ranged", "Bulletproof"]}
 
     // ── Single-factor: attrs ─────────────────────────────────────────────
-    {factors = ["Hitpoints.high"],     nicknames = ["Tank", "Chunky"]}
-    {factors = ["Hitpoints.low"],      nicknames = ["Squishy", "Paperman"]}
-    {factors = ["MeleeSkill.high"],    nicknames = ["Swordguy", "Choppy"]}
-    {factors = ["MeleeSkill.low"],     nicknames = ["Butterfingers", "Miss-a-lot"]}
-    {factors = ["RangedSkill.high"],   nicknames = ["Sharpshot", "Bullseye"]}
-    {factors = ["RangedSkill.low"],    nicknames = ["Blind Archer", "Off-Target"]}
-    {factors = ["MeleeDefense.high"],  nicknames = ["Dodgy", "Untouchable"]}
-    {factors = ["RangedDefense.high"], nicknames = ["Ranged Dodger", "Stray Proof"]}
-    {factors = ["Bravery.high"],       nicknames = ["Fearless", "Guts"]}
-    {factors = ["Bravery.low"],        nicknames = ["Scaredy Cat", "Jelly Legs"]}
-    {factors = ["Stamina.high"],       nicknames = ["Tireless", "Energizer"]}
-    {factors = ["Stamina.low"],        nicknames = ["Huffpuff", "the Winded"]}
-    {factors = ["Initiative.high"],    nicknames = ["Zippy", "Speedster"]}
-    {factors = ["Initiative.low"],     nicknames = ["Slowpoke", "Sluggish"]}
+    {factors = ["attr.Hitpoints.high"],     nicknames = ["Tank", "Chunky"]}
+    {factors = ["attr.Hitpoints.low"],      nicknames = ["Squishy", "Paperman"]}
+    {factors = ["attr.MeleeSkill.high"],    nicknames = ["Swordguy", "Choppy"]}
+    {factors = ["attr.MeleeSkill.low"],     nicknames = ["Butterfingers", "Miss-a-lot"]}
+    {factors = ["attr.RangedSkill.high"],   nicknames = ["Sharpshot", "Bullseye"]}
+    {factors = ["attr.RangedSkill.low"],    nicknames = ["Blind Archer", "Off-Target"]}
+    {factors = ["attr.MeleeDefense.high"],  nicknames = ["Dodgy", "Untouchable"]}
+    {factors = ["attr.RangedDefense.high"], nicknames = ["Ranged Dodger", "Stray Proof"]}
+    {factors = ["attr.Bravery.high"],       nicknames = ["Fearless", "Guts"]}
+    {factors = ["attr.Bravery.low"],        nicknames = ["Scaredy Cat", "Jelly Legs"]}
+    {factors = ["attr.Stamina.high"],       nicknames = ["Tireless", "Energizer"]} // Energizer is wtf
+    {factors = ["attr.Stamina.low"],        nicknames = ["Huffpuff", "the Winded"]}
+    {factors = ["attr.Initiative.high"],    nicknames = ["Zippy", "Speedster"]} // both wtf
+    {factors = ["attr.Initiative.low"],     nicknames = ["Slowpoke", "Sluggish"]}
 
     // ── Single-factor: traits ────────────────────────────────────────────
     {factors = ["trait.strong"],        nicknames = ["Bonebreaker", "Strongarm", "Irongrip"]}

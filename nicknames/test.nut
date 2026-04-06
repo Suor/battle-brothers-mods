@@ -3,6 +3,7 @@ dofile(getenv("STDLIB_DIR") + "tests/mocks.nut", true);
 dofile("mocks.nut", true);
 dofile("scripts/!mods_preload/mod_nicknames.nut", true);
 
+// TODO: redo tests to assert candidates list, i.e. move randomness out
 local onHired = getNicknamesOnHired();
 local def = ::Nicknames;
 
@@ -63,15 +64,15 @@ assertIn(bro4.getTitle(), def.Nicknames[0].nicknames); // first entry is strong+
 print("combo nickname OK\n");
 
 // Elite background + 3-star MeleeSkill talent → "Born Mercenary" / "Natural Killer"
-// sellsword DailyCost = 35 → isEliteBg triggers (threshold >= 25)
-local eliteTalents = [0, 0, 3, 0, 0, 0, 0, 0]; // index 2 = MeleeSkill = 3 stars
+// sellsword DailyCost = 35 → cost.high triggers (threshold >= 20)
+local eliteTalents = [0, 0, 3, 0, 0, 0, 0, 0]; // index 2 = MeleeSkill talent = 3 stars → talent.MeleeSkill
 local broElite = makeBro("background.sellsword", null, [], eliteTalents, null, 35);
 hire(broElite);
 assertIn(broElite.getTitle(), ["Born Mercenary", "Natural Killer"]);
 print("elite background combo OK\n");
 
 // Non-elite background + 3-star MeleeSkill should NOT trigger Born Mercenary
-// farmhand DailyCost = 4 → isEliteBg does not trigger
+// farmhand DailyCost = 4 → cost.high does not trigger
 local broNonElite = makeBro("background.farmhand", null, [], eliteTalents, null, 4);
 hire(broNonElite);
 if (broNonElite.getTitle() == "Born Mercenary" || broNonElite.getTitle() == "Natural Killer")

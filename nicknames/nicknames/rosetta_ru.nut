@@ -56,8 +56,8 @@ local pairs = [
         ru = "Толстяк"
     }
     {
-        en = "Bigfoot"
-        ru = "Большеног"
+        en = "Bigfoot" // so-so
+        ru = "Бигфут"
     }
     {
         en = "the Colossus"
@@ -493,7 +493,7 @@ local pairs = [
     }
     {
         en = "Butterfingers"
-        ru = "Руки-сливки"
+        ru = "Руки-крюки" // curated
     }
     {
         en = "Fumbles"
@@ -1265,7 +1265,7 @@ local pairs = [
     }
     {
         en = "Miss-a-lot"
-        ru = "Частый мах"
+        ru = "Частый мах" // wtf?
     }
     {
         en = "Blind Archer"
@@ -1284,12 +1284,12 @@ local pairs = [
         ru = "Неуязвим"
     }
     {
-        en = "Ranged Dodger"
+        en = "Ranged Dodger" // boring
         ru = "Уклоняющийся от стрел"
     }
     {
         en = "Stray Proof"
-        ru = "Устойчив к ошибкам"
+        ru = "Устойчив к ошибкам" // wtf?
     }
     {
         en = "Scaredy Cat"
@@ -1309,7 +1309,7 @@ local pairs = [
     }
     {
         en = "Slowpoke"
-        ru = "Копуша"
+        ru = "Копуша" // Слоупок is also fun, may find another enlish name for "Копуша"
     }
     {
         en = "Sluggish"

@@ -21,63 +21,67 @@ local BaseAttrRanges = {
 
 mod.queue(">mod_bro_studio", function () {
     ::include("nicknames/rosetta_ru");
-
-    # FIX: calc ranges for all attrs first
-    def.isAttrHigh <- function(bro, attrName) {
-        local br = BaseAttrRanges[attrName];
-        local c = bro.getBackground().onChangeAttributes();
-        return bro.getBaseProperties()[attrName] >= br[1] + c[attrName][1];
-    };
-    def.isAttrLow <- function(bro, attrName) {
-        local br = BaseAttrRanges[attrName];
-        local c = bro.getBackground().onChangeAttributes();
-        return bro.getBaseProperties()[attrName] <= br[0] + c[attrName][0];
-    };
     ::include("nicknames/nicknames");
 
     local WeaponTypeConst = ::Const.Items.WeaponType;
     local W = def.Weights;
 
-    local function checkFactor(bro, f) {
-        if (f.find("trait.") == 0 || f.find("background.") == 0)
-            return bro.getSkills().hasSkill(f);
-        if (f.find("cost.") == 0)
-            return bro.getBackground().m.DailyCost >= f.slice("cost.".len()).tointeger();
-        if (f.find("weapon.") == 0) {
-            local weapon = bro.getItems().getItemAtSlot(::Const.ItemSlot.Mainhand);
-            return weapon != null && weapon.isWeaponType(WeaponTypeConst[f.slice("weapon.".len())]);
+    // Collect weapon factor names used in def.Nicknames to know what to check
+    local weaponFactors = {};
+    foreach (entry in def.Nicknames)
+        foreach (f in entry.factors)
+            if (f.find("weapon.") == 0) weaponFactors[f] <- true;
+
+    local function buildFactorSet(bro) {
+        local set = {};
+
+        // background and traits
+        set[bro.getBackground().getID()] <- true;
+        foreach (skill in bro.getSkills().getAllSkillsOfType(::Const.SkillType.Trait))
+            if (skill.getID().find("trait.") == 0) set[skill.getID()] <- true;
+
+        // talents
+        foreach (name, idx in ::Const.Attributes)
+            if (name != "COUNT" && bro.m.Talents[idx] == 3)
+                set["talent." + name] <- true;
+
+        // attrs
+        local bgAttrs = bro.getBackground().onChangeAttributes();
+        local baseProps = bro.getBaseProperties();
+        local props = bro.getCurrentProperties();
+        foreach (attr, br in BaseAttrRanges) {
+            local low = br[0] + bgAttrs[attr][0], high =  br[1] + bgAttrs[attr][1];
+            if (baseProps[attr] >= high && props[attr] >= high || props[attr] > high)
+                set["attr." + attr + ".high"] <- true;
+            if (baseProps[attr] <= low && props[attr] <= low || props[attr] < low)
+                set["attr." + attr + ".low"] <- true;
         }
-        if (f.find("talent.") == 0) {
-            local idx = f.slice("talent.".len()).tointeger();
-            return bro.m.Talents[idx] == 3;
-        }
-        // attr condition: "AttrName.high" or "AttrName.low"
-        local dotPos = f.find(".");
-        if (dotPos != null) {
-            local dir = f.slice(dotPos + 1);
-            if (dir == "high") return def.isAttrHigh(bro, f.slice(0, dotPos));
-            if (dir == "low")  return def.isAttrLow(bro, f.slice(0, dotPos));
-        }
-        return false;
+
+        // elite or cheap
+        if (bro.getBackground().m.DailyCost >= 20) set["cost.high"] <- true;
+        if (bro.getBackground().m.DailyCost <= 10) set["cost.low"] <- true;
+
+        local weapon = bro.getItems().getItemAtSlot(::Const.ItemSlot.Mainhand);
+        if (weapon != null)
+            foreach (f, _ in weaponFactors)
+                if (weapon.isWeaponType(WeaponTypeConst[f.slice("weapon.".len())]))
+                    set[f] <- true;
+        return set;
     }
     local function factorWeight(f) {
-        if (f.find("trait.") == 0)      return W.Trait;
-        if (f.find("background.") == 0) return W.Background;
-        if (f.find("cost.") == 0)       return W.Background;
-        if (f.find("weapon.") == 0)     return W.Weapon;
-        if (f.find("talent.") == 0)     return W.Talent;
-        return W.Attr;
+        local dot = f.find(".");
+        local prefix = dot != null ? f.slice(0, dot) : f;
+        return W[prefix];
     }
 
     // Weighted random pick from array of {title, weight} items
     local function weightedRandPick(items) {
         local totalWeight = 0;
         foreach (c in items) totalWeight += c.weight;
-        local roll = ::Math.rand(1, totalWeight);
-        local cumulative = 0;
+        local roll = ::std.Rand.float(0, totalWeight);
         foreach (c in items) {
-            cumulative += c.weight;
-            if (roll <= cumulative) return c;
+            roll -= c.weight;
+            if (roll <= 0) return c;
         }
         return items[items.len() - 1];
     }
@@ -95,7 +99,7 @@ mod.queue(">mod_bro_studio", function () {
         q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
             __original(_backgrounds, _addTraits);
 
-            if (this.getTitle() != "") return; // already has a title
+            // if (this.getTitle() != "") return; // already has a title
 
             // 1. Build used titles set
             local usedTitles = {};
@@ -110,13 +114,17 @@ mod.queue(">mod_bro_studio", function () {
 
             // 2. Collect candidates with weights
             local candidates = [];
+            local factorSet = buildFactorSet(this);
+            std.Debug.log("factors for " + this.getName(), factorSet);
 
             // 2a. Custom nicknames from def.Nicknames; weight = product of per-factor weights
             foreach (entry in def.Nicknames) {
                 local ok = true;
-                foreach (f in entry.factors) if (!checkFactor(this, f)) { ok = false; break; }
+                foreach (f in entry.factors) if (!(f in factorSet)) { ok = false; break; }
                 if (!ok) continue;
-                local weight = 1;
+                local weight = 1.0 / entry.nicknames.len();
+                // if (entry.factors.len() == 1 && entry.factors[0].find("background.") == 0)
+                //     weight *= 0.5;
                 foreach (f in entry.factors) weight *= factorWeight(f);
                 foreach (n in entry.nicknames)
                     candidates.push({title = n, weight = weight});
@@ -124,18 +132,17 @@ mod.queue(">mod_bro_studio", function () {
 
             // 2b. Vanilla trait .m.Titles
             foreach (skill in this.getSkills().getAllSkillsOfType(::Const.SkillType.Trait)) {
-                if (!("Titles" in skill.b)) {
-                    std.debug(skill)
-                    continue;
-                }
+                if (skill.getID().find("trait.") != 0) continue;
                 # NOTE: using .b insead of .m - an MSU bug
+                if (!("Titles" in skill.b)) continue;
                 foreach (t in skill.b.Titles)
-                    candidates.push({title = t, weight = W.Trait});
+                    candidates.push({title = t, weight = W.trait / skill.b.Titles.len()});
             }
 
             // 2c. Vanilla background .m.Titles
-            foreach (t in this.getBackground().m.Titles)
-                candidates.push({title = t, weight = W.Background});
+            local bgTitles = this.getBackground().m.Titles;
+            foreach (t in bgTitles)
+                candidates.push({title = t, weight = W.background / bgTitles.len()});
 
             if (candidates.len() == 0) return; // shouldn't happen
 

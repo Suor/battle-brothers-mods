@@ -1,6 +1,11 @@
 // Mocks for nicknames test runner.
 // Load stdlib mocks first, then this file.
 
+::Const.Attributes <- {
+    Hitpoints = 0, Stamina = 1, MeleeSkill = 2, Initiative = 3,
+    RangedSkill = 4, Bravery = 5, MeleeDefense = 6, RangedDefense = 7,
+    COUNT = 8
+}
 ::Const.SkillType <- {Trait = 1}
 ::Const.ItemSlot  <- {Mainhand = 0}
 ::Const.Items <- {
@@ -118,5 +123,6 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
             return {function getItemAtSlot(_slot) {return null}}
         }
         function getBaseProperties() {return props}
+        function getCurrentProperties() {return props}
     }
 }
