@@ -23,10 +23,12 @@ mod.queue(">mod_bro_studio", function () {
     ::include("nicknames/rosetta_ru");
     ::include("nicknames/nicknames");
 
+    // FIX: this requires MSU, gate it properly, and don't need this alias
     local WeaponTypeConst = ::Const.Items.WeaponType;
     local W = def.Weights;
 
     // Collect weapon factor names used in def.Nicknames to know what to check
+    // FIX: don't need this, can cycle through the enum
     local weaponFactors = {};
     foreach (entry in def.Nicknames)
         foreach (f in entry.factors)

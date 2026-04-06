@@ -16,8 +16,8 @@
 ::Nicknames <- {};
 dofile("nicknames/titles.nut", true);
 
-::ExternalTitles <- {};
-try { dofile("external.nut", true); } catch(e) {}
+::BuiltInTitles <- {};
+try { dofile("built-in.nut", true); } catch(e) {}
 
 local titles = ::Nicknames.Titles;
 
@@ -72,7 +72,7 @@ local KNOWN = {
     no_talent = ["Hitpoints", "Stamina", "MeleeSkill", "RangedSkill",
                  "MeleeDefense", "RangedDefense", "Bravery", "Initiative"]
     weapon = ["Sword", "Axe", "Hammer", "Spear", "Dagger", "Mace",
-              "Polearm", "Bow", "Crossbow", "Flail"]
+              "Polearm", "Bow", "Crossbow", "Flail", "Cleaver"]
     type   = ["melee", "ranged"]
     cost   = ["high", "low"]
     // perm and perk are [NOT IMPLEMENTED], validated separately
@@ -122,6 +122,7 @@ function checkFactor(factor) {
 
 function cmdCheck() {
     local errors = [], warnings = [];
+    local seenEn = {}, seenRu = {};
     foreach (title in titles) {
         local label = titleLabel(title);
         foreach (combo in title.factors) {
@@ -134,6 +135,10 @@ function cmdCheck() {
         local ruLen = unicodeLen(title.ru), enLen = title.en.len();
         if (ruLen > 16) errors.push(label + ": ru too long (" + ruLen + " chars)");
         if (enLen > 16) errors.push(label + ": en too long (" + enLen + " chars)");
+        if (title.en in seenEn) errors.push(label + ": duplicate en='" + title.en + "' (first: " + titleLabel(seenEn[title.en]) + ")");
+        else seenEn[title.en] <- title;
+        if (title.ru in seenRu) errors.push(label + ": duplicate ru='" + title.ru + "' (first: " + titleLabel(seenRu[title.ru]) + ")");
+        else seenRu[title.ru] <- title;
     }
 
     if (errors.len() > 0) {
@@ -162,20 +167,6 @@ function cmdUsage(doSort) {
         }
     }
 
-    local factors = [];
-    foreach (f, _ in stats) factors.push(f);
-
-    if (doSort) {
-        factors.sort(function(a, b) {
-            local ta = 0, tb = 0;
-            foreach (_, n in stats[a]) ta += n;
-            foreach (_, n in stats[b]) tb += n;
-            return tb <=> ta;
-        });
-    } else {
-        factors.sort(@(a, b) a <=> b);
-    }
-
     // Collect all combo lengths used across all factors
     local allLens = {};
     foreach (_, fstats in stats) foreach (len, _ in fstats) allLens[len] <- true;
@@ -183,7 +174,23 @@ function cmdUsage(doSort) {
     foreach (len, _ in allLens) lens.push(len);
     lens.sort(@(a, b) a <=> b);
 
-    local hasExternal = ::ExternalTitles.len() > 0;
+    function factorTotal(f) {
+        local t = 0;
+        if (f in stats) foreach (_, n in stats[f]) t += n;
+        if (f in ::BuiltInTitles && typeof ::BuiltInTitles[f] == "integer") t += ::BuiltInTitles[f];
+        return t;
+    }
+
+    local factors = [];
+    foreach (f, _ in stats) factors.push(f);
+
+    if (doSort) {
+        factors.sort(@(a, b) factorTotal(b) <=> factorTotal(a));
+    } else {
+        factors.sort(@(a, b) a <=> b);
+    }
+
+    local hasExternal = ::BuiltInTitles.len() > 0;
 
     function colHeader(len) { return len == 1 ? "exclusive" : (len + "-combo"); }
     function padR(s, w) { while (s.len() < w) s = " " + s; return s; }
@@ -192,7 +199,7 @@ function cmdUsage(doSort) {
     // Column widths
     local factorW = 6; // "factor"
     local allFactors = clone factors;
-    if (hasExternal) foreach (f, _ in ::ExternalTitles) if (!hasVal(allFactors, f)) allFactors.push(f);
+    if (hasExternal) foreach (f, n in ::BuiltInTitles) if (n != 0 && !hasVal(allFactors, f)) allFactors.push(f);
     foreach (f in allFactors) if (f.len() > factorW) factorW = f.len();
 
     local colW = [];
@@ -203,45 +210,46 @@ function cmdUsage(doSort) {
                 w = (stats[f][len] + "").len();
         colW.push(w);
     }
-    local extW = hasExternal ? 8 : 0; // "external"
+    local extW = hasExternal ? 8 : 0; // "built-in"
     if (hasExternal)
-        foreach (f, n in ::ExternalTitles)
+        foreach (f, n in ::BuiltInTitles)
             if ((n + "").len() > extW) extW = (n + "").len();
+
+    local totalW = 5; // "total"
+    foreach (f in allFactors) if ((factorTotal(f) + "").len() > totalW) totalW = (factorTotal(f) + "").len();
 
     // Header
     local header = padL("factor", factorW);
     foreach (i, len in lens) header += "  " + padR(colHeader(len), colW[i]);
-    if (hasExternal) header += "  " + padR("external", extW);
+    if (hasExternal) header += "  " + padR("built-in", extW);
+    header += "  " + padR("total", totalW);
     print(header + "\n");
 
-    // Rows: union of titles.nut factors and external factors, sorted
+    // Rows: union of titles.nut factors and built-in factors, sorted
     local allSorted = clone allFactors;
     allSorted.sort(doSort
-        ? function(a, b) {
-            local ta = 0, tb = 0;
-            foreach (_, n in (a in stats ? stats[a] : {})) ta += n;
-            foreach (_, n in (b in stats ? stats[b] : {})) tb += n;
-            return tb <=> ta;
-          }
+        ? @(a, b) factorTotal(b) <=> factorTotal(a)
         : @(a, b) a <=> b);
 
     foreach (factor in allSorted) {
         local row = padL(factor, factorW);
         foreach (i, len in lens)
             row += "  " + padR((factor in stats) && (len in stats[factor]) ? (stats[factor][len] + "") : "-", colW[i]);
+        local total = factorTotal(factor);
         if (hasExternal) {
-            local ext = factor in ::ExternalTitles ? (::ExternalTitles[factor] + "") : "-";
-            row += "  " + padR(ext, extW);
+            local ext = factor in ::BuiltInTitles ? ::BuiltInTitles[factor] : null;
+            row += "  " + padR(ext != null && ext != 0 ? (ext + "") : "-", extW);
         }
+        row += "  " + padR(total > 0 ? (total + "") : "-", totalW);
         print(row + "\n");
     }
 
-    // Unused: exclude factors covered by external titles
+    // Unused: exclude factors covered by built-in titles
     local unused = [];
     foreach (ns, vals in KNOWN)
         foreach (val in vals) {
             local f = ns + "." + val;
-            if (!(f in stats) && !(f in ::ExternalTitles)) unused.push(f);
+            if (!(f in stats) && (!(f in ::BuiltInTitles) || ::BuiltInTitles[f] == 0)) unused.push(f);
         }
     unused.sort(@(a, b) a <=> b);
     print("\nUnused (" + unused.len() + "):\n");
