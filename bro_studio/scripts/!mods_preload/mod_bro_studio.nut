@@ -82,9 +82,13 @@ mh.queue(">stdlib", ">mod_msu", ">mod_legends", function () {
             }
         }
 
+        q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
+            __original(_backgrounds, _addTraits);
+            if (!starting && _addTraits) mod.addTraits(this, mod.conf("traitsNum"));
+        }
+
         q.onHired = @(__original) function () {
             __original();
-            mod.addTraits(this, mod.conf("traitsNum"));
             onLevels(this, 1);
         }
 

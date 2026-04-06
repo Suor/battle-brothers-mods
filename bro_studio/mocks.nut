@@ -23,6 +23,7 @@ local mod = {
     function hook(_filename, _func) {
         _func({
             fillTalentValues = @() null
+            setStartValuesEx = @() null
             onHired = @() null
             getAttributeLevelUpValues = @() null
             // LevelUpChanges
