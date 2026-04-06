@@ -94,4 +94,34 @@ hire(broVanillaTrait);
 assertIn(broVanillaTrait.getTitle(), ["VanillaTraitTitle"]);
 print("vanilla trait m.Titles OK\n");
 
+// TODO: check nicknames/titles.nut instead
+// // ── Nickname length checks ────────────────────────────────────────────────
+
+// function unicodeLen(s) {
+//     local count = 0;
+//     for (local i = 0; i < s.len(); i++)
+//         if ((s[i] & 0xC0) != 0x80) count++;
+//     return count;
+// }
+
+// // English: no nickname longer than 16 chars
+// local longEn = [];
+// foreach (entry in def.Nicknames)
+//     foreach (n in entry.nicknames)
+//         if (n.len() > 16) longEn.push(n);
+// if (longEn.len() > 0)
+//     throw "English nicknames > 16 chars: " + longEn.reduce(@(a, b) a + ", " + b);
+// print("all English nicknames <= 16 chars OK\n");
+
+// // Russian: no nickname longer than 16 unicode chars
+// local ruNicknames = [];
+// ::Rosetta <- {function add(_meta, pairs) {foreach (p in pairs) ruNicknames.push(p.ru)}}
+// dofile("nicknames/rosetta_ru.nut", true);
+// local longRu = [];
+// foreach (n in ruNicknames)
+//     if (unicodeLen(n) > 16) longRu.push(n);
+// if (longRu.len() > 0)
+//     throw "Russian nicknames > 16 chars: " + longRu.reduce(@(a, b) a + ", " + b);
+// print("all Russian nicknames <= 16 chars OK\n");
+
 print("Tests OK\n");

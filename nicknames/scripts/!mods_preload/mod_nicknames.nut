@@ -115,7 +115,7 @@ mod.queue(">mod_bro_studio", function () {
             // 2. Collect candidates with weights
             local candidates = [];
             local factorSet = buildFactorSet(this);
-            std.Debug.log("factors for " + this.getName(), factorSet);
+            // std.Debug.log("factors for " + this.getName(), factorSet);
 
             // 2a. Custom nicknames from def.Nicknames; weight = product of per-factor weights
             foreach (entry in def.Nicknames) {
@@ -152,7 +152,7 @@ mod.queue(">mod_bro_studio", function () {
             );
             if (filtered.len() == 0) filtered = candidates; // allow reuse if all taken
 
-            std.Debug.log("cands for " + this.getName(), candidates)
+            // std.Debug.log("cands for " + this.getName(), candidates)
 
             // 4. Weighted random pick
             this.setTitle(weightedRandPick(filtered).title);
