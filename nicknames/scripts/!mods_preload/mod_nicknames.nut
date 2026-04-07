@@ -20,21 +20,12 @@ local BaseAttrRanges = {
 };
 
 mod.queue(">mod_bro_studio", function () {
-    ::include("nicknames/rosetta_ru");
-    ::include("nicknames/nicknames");
+    ::include("nicknames/titles");
+    ::include("nicknames/rosetta_auto");
 
-    // FIX: this requires MSU, gate it properly, and don't need this alias
-    local WeaponTypeConst = ::Const.Items.WeaponType;
     local W = def.Weights;
 
-    // Collect weapon factor names used in def.Nicknames to know what to check
-    // FIX: don't need this, can cycle through the enum
-    local weaponFactors = {};
-    foreach (entry in def.Nicknames)
-        foreach (f in entry.factors)
-            if (f.find("weapon.") == 0) weaponFactors[f] <- true;
-
-    local function buildFactorSet(bro) {
+    def.buildFactorSet <- function(bro) {
         local set = {};
 
         // background and traits
@@ -59,18 +50,23 @@ mod.queue(">mod_bro_studio", function () {
                 set["attr." + attr + ".low"] <- true;
         }
 
+        // type: melee or ranged background
+        local bgMelee = bgAttrs.MeleeSkill[0], bgRanged = bgAttrs.RangedSkill[0];
+        if (bgRanged > 0 && bgRanged - bgMelee >= 10) set["type.ranged"] <- true;
+        else set["type.melee"] <- true;
+
         // elite or cheap
         if (bro.getBackground().m.DailyCost >= 20) set["cost.high"] <- true;
         if (bro.getBackground().m.DailyCost <= 10) set["cost.low"] <- true;
 
         local weapon = bro.getItems().getItemAtSlot(::Const.ItemSlot.Mainhand);
-        if (weapon != null)
-            foreach (f, _ in weaponFactors)
-                if (weapon.isWeaponType(WeaponTypeConst[f.slice("weapon.".len())]))
-                    set[f] <- true;
+        if (weapon != null && "MSU" in getroottable())
+            foreach (name, val in ::Const.Items.WeaponType)
+                if (weapon.isWeaponType(val))
+                    set["weapon." + name] <- true;
         return set;
     }
-    local function factorWeight(f) {
+    def.factorWeight <- function(f) {
         local dot = f.find(".");
         local prefix = dot != null ? f.slice(0, dot) : f;
         return W[prefix];
@@ -97,6 +93,44 @@ mod.queue(">mod_bro_studio", function () {
         return false;
     }
 
+    // Build candidates list for a bro: [{title, weight}, ...]
+    def.buildCandidates <- function(bro) {
+        local candidates = [];
+        local factorSet = def.buildFactorSet(bro);
+        std.Debug.log("factors for " + bro.getName(), factorSet);
+
+        // 1. Titles from def.Titles; weight = sum of matched factor-set weights
+        foreach (entry in def.Titles) {
+            local w = 0.0;
+            foreach (fset in entry.factors) {
+                local ok = true;
+                foreach (f in fset) if (!(f in factorSet)) { ok = false; break; }
+                if (!ok) continue;
+                local fw = 1.0;
+                foreach (f in fset) fw *= def.factorWeight(f);
+                w += fw;
+            }
+            if (w > 0)
+                candidates.push({title = entry.en, weight = w});
+        }
+
+        // 2. Vanilla trait .m.Titles
+        foreach (skill in bro.getSkills().getAllSkillsOfType(::Const.SkillType.Trait)) {
+            if (skill.getID().find("trait.") != 0) continue;
+            # NOTE: using .b insead of .m - an MSU bug
+            if (!("Titles" in skill.b)) continue;
+            foreach (t in skill.b.Titles)
+                candidates.push({title = t, weight = W.trait / skill.b.Titles.len()});
+        }
+
+        // 3. Vanilla background .m.Titles
+        local bgTitles = bro.getBackground().m.Titles;
+        foreach (t in bgTitles)
+            candidates.push({title = t, weight = W.background / bgTitles.len()});
+
+        return candidates;
+    }
+
     mod.hook("scripts/entity/tactical/player", function (q) {
         q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
             __original(_backgrounds, _addTraits);
@@ -114,38 +148,8 @@ mod.queue(">mod_bro_studio", function () {
             foreach (fallen in ::World.Statistics.getFallen())
                 fallenNames.push(fallen.Name);
 
-            // 2. Collect candidates with weights
-            local candidates = [];
-            local factorSet = buildFactorSet(this);
-            // std.Debug.log("factors for " + this.getName(), factorSet);
-
-            // 2a. Custom nicknames from def.Nicknames; weight = product of per-factor weights
-            foreach (entry in def.Nicknames) {
-                local ok = true;
-                foreach (f in entry.factors) if (!(f in factorSet)) { ok = false; break; }
-                if (!ok) continue;
-                local weight = 1.0 / entry.nicknames.len();
-                // if (entry.factors.len() == 1 && entry.factors[0].find("background.") == 0)
-                //     weight *= 0.5;
-                foreach (f in entry.factors) weight *= factorWeight(f);
-                foreach (n in entry.nicknames)
-                    candidates.push({title = n, weight = weight});
-            }
-
-            // 2b. Vanilla trait .m.Titles
-            foreach (skill in this.getSkills().getAllSkillsOfType(::Const.SkillType.Trait)) {
-                if (skill.getID().find("trait.") != 0) continue;
-                # NOTE: using .b insead of .m - an MSU bug
-                if (!("Titles" in skill.b)) continue;
-                foreach (t in skill.b.Titles)
-                    candidates.push({title = t, weight = W.trait / skill.b.Titles.len()});
-            }
-
-            // 2c. Vanilla background .m.Titles
-            local bgTitles = this.getBackground().m.Titles;
-            foreach (t in bgTitles)
-                candidates.push({title = t, weight = W.background / bgTitles.len()});
-
+            // 2. Collect candidates
+            local candidates = def.buildCandidates(this);
             if (candidates.len() == 0) return; // shouldn't happen
 
             // 3. Filter out used titles
@@ -154,7 +158,7 @@ mod.queue(">mod_bro_studio", function () {
             );
             if (filtered.len() == 0) filtered = candidates; // allow reuse if all taken
 
-            // std.Debug.log("cands for " + this.getName(), candidates)
+            std.Debug.log("cands for " + this.getName(), candidates)
 
             // 4. Weighted random pick
             this.setTitle(weightedRandPick(filtered).title);

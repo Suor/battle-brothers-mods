@@ -1,5 +1,6 @@
 dofile(getenv("STDLIB_DIR") + "load.nut", true);
 dofile(getenv("STDLIB_DIR") + "tests/mocks.nut", true);
+dofile(getenv("STDLIB_DIR") + "tests/helpers.nut", true);
 dofile("mocks.nut", true);
 dofile("scripts/!mods_preload/mod_nicknames.nut", true);
 
@@ -13,71 +14,14 @@ function assertIn(val, arr) {
     throw "assertIn failed: '" + val + "' not in [" + arr.reduce(@(a, b) a + ", " + b) + "]";
 }
 
-function nicknamesFor(factor) {
-    foreach (entry in def.Nicknames)
-        if (entry.factors.len() == 1 && entry.factors[0] == factor)
-            return entry.nicknames;
-    throw "No Nicknames entry for factor: " + factor;
+function candidateTitles(bro) {
+    return def.buildCandidates(bro).map(@(c) c.title);
 }
 
 function hire(bro) {
     local impl = onHired(@(_bg, _add) null); // bind no-op __original, get inner function
     impl.call(bro, null, true);              // call with bro as "this", _addTraits = true
 }
-
-// Background: vanilla gravedigger
-local bro = makeBro("background.gravedigger");
-hire(bro);
-assertIn(bro.getTitle(), nicknamesFor("background.gravedigger"));
-print("vanilla background OK\n");
-
-// Background: XBE hackflows falconer (ID uses underscores, not slashes)
-// Real ID set explicitly in hackflows/falconer_background.nut: m.ID = "background.hackflows_falconer"
-local bro2 = makeBro("background.hackflows_falconer");
-hire(bro2);
-assertIn(bro2.getTitle(), nicknamesFor("background.hackflows_falconer"));
-print("XBE hackflows background OK\n");
-
-// Attr-based: bro with high RangedSkill for falconer (at or above range max = 42+10 = 52)
-local falconerAttrs = {
-    Hitpoints = [-3, -3], Bravery = [0, 0], Stamina = [0, 0],
-    MeleeSkill = [0, 0], RangedSkill = [8, 10],
-    MeleeDefense = [-5, 0], RangedDefense = [4, 4], Initiative = [14, 20]
-};
-local falconerHighRS = makeBro("background.hackflows_falconer", falconerAttrs, [], null,
-    {Hitpoints=47, Bravery=35, Stamina=95, MeleeSkill=52, RangedSkill=52,
-     MeleeDefense=2, RangedDefense=6, Initiative=120});
-hire(falconerHighRS);
-if (falconerHighRS.getTitle() == "") throw "Expected title for high RangedSkill bro";
-print("attr-based (high RangedSkill) OK\n");
-
-// Trait-based title
-local bro3 = makeBro("background.farmhand", null, ["trait.strong"]);
-hire(bro3);
-assertIn(bro3.getTitle(), nicknamesFor("trait.strong"));
-print("trait nickname OK\n");
-
-// Combo: strong + brave (highest weight, picked first)
-local bro4 = makeBro("background.farmhand", null, ["trait.strong", "trait.brave"]);
-hire(bro4);
-assertIn(bro4.getTitle(), def.Nicknames[0].nicknames); // first entry is strong+brave combo
-print("combo nickname OK\n");
-
-// Elite background + 3-star MeleeSkill talent → "Born Mercenary" / "Natural Killer"
-// sellsword DailyCost = 35 → cost.high triggers (threshold >= 20)
-local eliteTalents = [0, 0, 3, 0, 0, 0, 0, 0]; // index 2 = MeleeSkill talent = 3 stars → talent.MeleeSkill
-local broElite = makeBro("background.sellsword", null, [], eliteTalents, null, 35);
-hire(broElite);
-assertIn(broElite.getTitle(), ["Born Mercenary", "Natural Killer"]);
-print("elite background combo OK\n");
-
-// Non-elite background + 3-star MeleeSkill should NOT trigger Born Mercenary
-// farmhand DailyCost = 4 → cost.high does not trigger
-local broNonElite = makeBro("background.farmhand", null, [], eliteTalents, null, 4);
-hire(broNonElite);
-if (broNonElite.getTitle() == "Born Mercenary" || broNonElite.getTitle() == "Natural Killer")
-    throw "Non-elite bro should not get mercenary nickname, got: " + broNonElite.getTitle();
-print("non-elite background combo skipped OK\n");
 
 // Vanilla background .m.Titles are used
 // Use an unknown background (not in BackgroundNicknames) so only m.Titles contribute
@@ -123,5 +67,46 @@ print("vanilla trait m.Titles OK\n");
 // if (longRu.len() > 0)
 //     throw "Russian nicknames > 16 chars: " + longRu.reduce(@(a, b) a + ", " + b);
 // print("all Russian nicknames <= 16 chars OK\n");
+
+// ── def.Titles tests ─────────────────────────────────────────────────────────
+
+// Single-factor title: trait.tiny should produce Shorty, Little, Ant, etc.
+local broTiny = makeBro("background.farmhand", null, ["trait.tiny"]);
+local tinyTitles = candidateTitles(broTiny);
+foreach (expected in ["Shorty", "Little", "Ant"])
+    assertIn(expected, tinyTitles);
+print("titles: single factor (trait.tiny) OK\n");
+
+// Multi-factor title: trait.tiny + trait.bright → Imp
+local broImp = makeBro("background.farmhand", null, ["trait.tiny", "trait.bright"]);
+local impTitles = candidateTitles(broImp);
+assertIn("Imp", impTitles);
+// Should also have single-factor titles
+assertIn("Shorty", impTitles);
+print("titles: multi-factor combo OK\n");
+
+// Title NOT matched when factors are missing
+local broBrave = makeBro("background.farmhand", null, ["trait.brave"]);
+local braveTitles = candidateTitles(broBrave);
+if (braveTitles.find("Shorty") != null) throw "Shorty should not appear for trait.brave";
+print("titles: no false matches OK\n");
+
+// Titles weight: combo should weigh more than single factor
+local W = def.Weights;
+local weightCands = def.buildCandidates(broImp);
+assertEq(weightCands.filter(@(_, c) c.title == "Shorty"), [{title = "Shorty", weight = W.trait}]);
+assertEq(weightCands.filter(@(_, c) c.title == "Imp"), [{title = "Imp", weight = W.trait * W.trait}]);
+print("titles: combo weight > single weight OK\n");
+
+// Built-in vanilla background .m.Titles appear in candidates
+local broBuiltinBg = makeBro("background.unknown_bg", null, [], null, null, 5, ["VanillaBgTitle"]);
+assertIn("VanillaBgTitle", candidateTitles(broBuiltinBg));
+print("titles: built-in background titles in candidates OK\n");
+
+// Built-in vanilla trait .m.Titles appear in candidates
+local broBuiltinTrait = makeBro("background.unknown_bg", null,
+    [{id = "trait.unknown", titles = ["VanillaTraitTitle"]}]);
+assertIn("VanillaTraitTitle", candidateTitles(broBuiltinTrait));
+print("titles: built-in trait titles in candidates OK\n");
 
 print("Tests OK\n");

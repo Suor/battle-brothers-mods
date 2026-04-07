@@ -89,8 +89,8 @@
 //   Stamina.high/low, Initiative.high/low, MeleeDefense.high, RangedDefense.high
 //
 // type.*  (weapon category)
-//   melee   — bro uses a melee weapon
-//   ranged  — bro uses a ranged weapon (Bow, Crossbow, etc.)
+//   melee   — bro has a melee background
+//   ranged  — bro has a ranged background
 //
 // weapon.*  (main-hand weapon type)
 //   Sword, Axe, Hammer, Spear, Dagger, Mace, Polearm, Bow, Crossbow, Flail, Cleaver, Firearm, Throwing
@@ -126,6 +126,17 @@
 //       Reforged have 2 backgrounds, which could be aliased
 
 local def = ::Nicknames;
+
+// Per-factor-type weights; entry weight = product of each factor's weight
+def.Weights <- {
+    background = 1.5
+    trait      = 1.5
+    attr       = 3.0
+    talent     = 2.5
+    cost       = 2.0
+    type       = 1.0
+    weapon     = 1.5
+};
 
 def.Titles <- [
     // ── Внешность ────────────────────────────────────────────────────────
@@ -491,8 +502,8 @@ def.Titles <- [
         ["type.ranged", "talent.Initiative"],
     ]}
     {ru = "Мастер клинка", en = "Blade Master", factors = [
-        ["attr.MeleeSkill.high", "cost.high"],          // дорогой — значит, умеет
-        ["talent.MeleeSkill", "attr.MeleeSkill.high"],
+        ["type.melee", "attr.MeleeSkill.high", "talent.MeleeSkill"],
+        ["type.melee", "attr.MeleeSkill.high", "cost.high"],          // дорогой — значит, умеет
         ["background.swordmaster"],
     ]}
     {ru = "Костелом", en = "Bonebreaker", factors = [
@@ -925,7 +936,7 @@ def.Titles <- [
     {ru = "Мясной щит", en = "Meatshield", setting = false, factors = [
         ["attr.Hitpoints.high", "attr.MeleeDefense.high"],  // стоит впереди и держит удар
         ["attr.Hitpoints.high", "trait.tough"],
-        ["talent.Hitpoints", "attr.MeleeDefense.high"],
+        ["attr.Hitpoints.high", "talent.Hitpoints"],
     ]}
     {ru = "Валящий дубы", en = "Oak Feller", factors = [
         ["background.lumberjack"],
