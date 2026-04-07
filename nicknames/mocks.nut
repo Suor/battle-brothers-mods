@@ -2,7 +2,7 @@
 // Load stdlib mocks first, then this file.
 
 ::Const.Attributes <- {
-    Hitpoints = 0, Stamina = 1, MeleeSkill = 2, Initiative = 3,
+    Hitpoints = 0, Fatigue = 1, MeleeSkill = 2, Initiative = 3,
     RangedSkill = 4, Bravery = 5, MeleeDefense = 6, RangedDefense = 7,
     COUNT = 8
 }
@@ -57,9 +57,9 @@ function getNicknamesOnHired() {
 // bgTitles: vanilla .m.Titles for the background
 function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = null, bgDailyCost = 5, bgTitles = []) {
     local defaultAttrs = {
-        Hitpoints = [0, 0], Bravery = [0, 0], Stamina = [0, 0],
-        MeleeSkill = [0, 0], RangedSkill = [0, 0],
-        MeleeDefense = [0, 0], RangedDefense = [0, 0], Initiative = [0, 0]
+        Hitpoints = [0, 10], Bravery = [0, 10], Stamina = [0, 10],
+        MeleeSkill = [0, 10], RangedSkill = [0, 10],
+        MeleeDefense = [0, 10], RangedDefense = [0, 10], Initiative = [0, 10]
     };
     local attrs = bgAttrs != null ? bgAttrs : defaultAttrs;
 

@@ -11,7 +11,7 @@
 // TODO:
 // 1. starting permanent or normal injuries
 // 2. starting perks as factors
-// 3. add simple existing factors like no_talent, weapon by category (MSU?), armor, offhand
+// 3. add simple existing factors like armor, offhand
 
 ::Nicknames <- {};
 dofile("nicknames/titles.nut", true);
@@ -67,10 +67,6 @@ local KNOWN = {
         "Stamina.high", "Stamina.low", "Initiative.high", "Initiative.low",
         "MeleeDefense.high", "RangedDefense.high"
     ]
-    talent = ["Hitpoints", "Stamina", "MeleeSkill", "RangedSkill",
-              "MeleeDefense", "RangedDefense", "Bravery", "Initiative"]
-    no_talent = ["Hitpoints", "Stamina", "MeleeSkill", "RangedSkill",
-                 "MeleeDefense", "RangedDefense", "Bravery", "Initiative"]
     weapon = ["Sword", "Axe", "Hammer", "Spear", "Dagger", "Mace",
               "Polearm", "Bow", "Crossbow", "Flail", "Cleaver"]
     type   = ["melee", "ranged"]

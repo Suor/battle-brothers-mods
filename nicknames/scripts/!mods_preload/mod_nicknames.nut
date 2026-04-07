@@ -33,25 +33,20 @@ mod.queue(">mod_bro_studio", function () {
         foreach (skill in bro.getSkills().getAllSkillsOfType(::Const.SkillType.Trait))
             if (skill.getID().find("trait.") == 0) set[skill.getID()] <- true;
 
-        // talents
-        foreach (name, idx in ::Const.Attributes)
-            if (name != "COUNT" && bro.m.Talents[idx] == 3)
-                set["talent." + name] <- true;
-
         // attrs
-        local bgAttrs = bro.getBackground().onChangeAttributes();
-        local baseProps = bro.getBaseProperties();
+        local changeAttrs = bro.getBackground().onChangeAttributes();
         local props = bro.getCurrentProperties();
         foreach (attr, br in BaseAttrRanges) {
-            local low = br[0] + bgAttrs[attr][0], high =  br[1] + bgAttrs[attr][1];
-            if (baseProps[attr] >= high && props[attr] >= high || props[attr] > high)
+            local low = br[0] + changeAttrs[attr][0], high =  br[1] + changeAttrs[attr][1];
+            local stars = bro.m.Talents[::Const.Attributes[attr == "Stamina" ? "Fatigue" : attr]];
+            if (stars > 0 && props[attr] >= high - stars)
                 set["attr." + attr + ".high"] <- true;
-            if (baseProps[attr] <= low && props[attr] <= low || props[attr] < low)
+            if (stars == 0 && props[attr] <= low)
                 set["attr." + attr + ".low"] <- true;
         }
 
         // type: melee or ranged background
-        local bgMelee = bgAttrs.MeleeSkill[0], bgRanged = bgAttrs.RangedSkill[0];
+        local bgMelee = changeAttrs.MeleeSkill[0], bgRanged = changeAttrs.RangedSkill[0];
         if (bgRanged > 0 && bgRanged - bgMelee >= 10) set["type.ranged"] <- true;
         else set["type.melee"] <- true;
 
@@ -117,21 +112,25 @@ mod.queue(">mod_bro_studio", function () {
         // 2. Vanilla trait .m.Titles
         foreach (skill in bro.getSkills().getAllSkillsOfType(::Const.SkillType.Trait)) {
             if (skill.getID().find("trait.") != 0) continue;
-            # NOTE: using .b insead of .m - an MSU bug
+            // NOTE: using .b insead of .m - an MSU bug
             if (!("Titles" in skill.b)) continue;
+            // TODO: remove the 0.5 factor once we have more our titles
             foreach (t in skill.b.Titles)
-                candidates.push({title = t, weight = W.trait / skill.b.Titles.len()});
+                candidates.push({title = t, weight = W.trait * 0.5});
         }
 
         // 3. Vanilla background .m.Titles
         local bgTitles = bro.getBackground().m.Titles;
         foreach (t in bgTitles)
-            candidates.push({title = t, weight = W.background / bgTitles.len()});
+            candidates.push({title = t, weight = W.background * 0.5});
 
         return candidates;
     }
 
     mod.hook("scripts/entity/tactical/player", function (q) {
+        // TODO: for starting guys talents and traits might be rewritten after setStartValuesEx()
+        //       should only set a title in onSpawnAssets like mod_bro_studio does
+        //       also might have titles assigned in scenario, should not overwrite those
         q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
             __original(_backgrounds, _addTraits);
 
