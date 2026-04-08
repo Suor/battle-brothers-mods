@@ -114,11 +114,11 @@ local def = ::Nicknames;
 def.Weights <- {
     background = 1.5
     trait      = 1.5
-    attr       = 3.0
-    cost       = 2.0
+    attr       = 2.0
+    cost       = 1.0
     type       = 1.0
     weapon     = 1.5
-    perk       = 2.0
+    perk       = 2.5
 };
 
 // Factor aliases: if a bro has the key factor, the value factor is also added to their factor set
