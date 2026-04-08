@@ -18,15 +18,10 @@ function candidateTitles(bro) {
     return def.buildCandidates(bro).map(@(c) c.title);
 }
 
-function hire(bro) {
-    local impl = onHired(@(_bg, _add) null); // bind no-op __original, get inner function
-    impl.call(bro, null, true);              // call with bro as "this", _addTraits = true
-}
-
 // Vanilla background .m.Titles are used
 // Use an unknown background (not in BackgroundNicknames) so only m.Titles contribute
 local broVanillaBg = makeBro("background.unknown_bg", null, [], null, null, 5, ["VanillaBgTitle"]);
-hire(broVanillaBg);
+def.fillTitle(broVanillaBg)
 assertIn(broVanillaBg.getTitle(), ["VanillaBgTitle"]);
 print("vanilla background m.Titles OK\n");
 
@@ -34,7 +29,7 @@ print("vanilla background m.Titles OK\n");
 // Use an unknown trait ID (not in TraitNicknames) so only m.Titles contribute
 local broVanillaTrait = makeBro("background.unknown_bg", null,
     [{id = "trait.unknown", titles = ["VanillaTraitTitle"]}]);
-hire(broVanillaTrait);
+def.fillTitle(broVanillaTrait)
 assertIn(broVanillaTrait.getTitle(), ["VanillaTraitTitle"]);
 print("vanilla trait m.Titles OK\n");
 

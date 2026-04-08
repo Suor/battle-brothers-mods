@@ -38,10 +38,11 @@ local mod_obj = {
         if (typeof func == "integer") func = vargv.pop();
         func();
     }
-    function hook(_filename, func) {
-        local q = {setStartValuesEx = null}
-        func(q);
-        captured_onHired = q.setStartValuesEx;
+    function hook(_filename, _func) {
+        _func({}.setdelegate({_set = @(k,v) null}))
+    }
+    function hookTree(_filename, _func) {
+        _func({}.setdelegate({_set = @(k,v) null}))
     }
 }
 ::Hooks <- {

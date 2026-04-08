@@ -163,21 +163,33 @@ def.fillTitle <- function (_bro) {
 }
 
 
+// Hooks
+local starting = false;
+
 mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ultrabros", function () {
     ::include("nicknames/titles");
     ::include("nicknames/rosetta_auto");
 
-    mod.hook("scripts/entity/tactical/player", function (q) {
-        // TODO: for starting guys talents and traits might be rewritten after setStartValuesEx()
-        //       should only set a title in onSpawnAssets like mod_bro_studio does
-        //       also might have titles assigned in scenario, should not overwrite those
-        q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
-            __original(_backgrounds, _addTraits);
-
-            // if (this.getTitle() != "") return; // already has a title
-
-            def.fillTitle(this);
+    // Need to handle that separately to not overwrite the scenario based title
+    mod.hook("scripts/states/world_state", function (q) {
+        q.startNewCampaign = @(__original) function () {
+            starting = true;
+            __original();
+            starting = false;
+            local roster = World.getPlayerRoster().getAll();
+            foreach (bro in roster)
+                if (bro.getTitle() == "") def.fillTitle(bro);
         }
     });
-    // Need to move it to "very late" because mod_background_perks hooks very late
+})
+
+// Need to move it to "very late" because mod_background_perks hooks very late
+mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ultrabros", function () {
+    mod.hook("scripts/entity/tactical/player", function (q) {
+        q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
+            __original(_backgrounds, _addTraits);
+            // Overwriting title set by setStartValuesEx() for better distribution
+            if (!starting) def.fillTitle(this);
+        }
+    });
 }, ::Hooks.QueueBucket.VeryLate);
