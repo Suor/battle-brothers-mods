@@ -277,6 +277,7 @@ def.Titles <- [
     {ru = "Хитрец", en = "Sly", factors = [
         ["trait.weasel"],
         ["background.thief"],
+        ["background.assassin"],
         ["trait.bright"],  // умный = хитрый
     ]}
     {ru = "Пройдоха", en = "Schemer", factors = [
@@ -1239,3 +1240,11 @@ def.Titles <- [
         ["trait.disloyal", "background.thief"],       // скользкий тип
     ]}
 ];
+
+// Extra titles from Legends hooks — add when Legends is absent
+if (!::Hooks.hasMod("mod_legends")) {
+    def.Titles.extend([
+        {ru = "Тихий", en = "the Silent", factors = [["background.assassin"]]}
+        {ru = "Плут", en = "the Rogue", factors = [["background.assassin"]]}
+    ]);
+}
