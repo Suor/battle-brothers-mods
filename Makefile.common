@@ -4,7 +4,7 @@ export
 SHELL := /bin/bash
 
 .ONESHELL:
-zip: include test
+zip: include check
 	@set -e;
 	grep --color -ri "debug = true" $(SOURCES) && echo "Debug statements found" && exit;
 	LAST_TAG=$$(git tag | grep $(TAG_NAME) | tail -1);
@@ -18,7 +18,7 @@ clean:
 	rm -f *_MODIFIED.zip;
 	find . -name i_* -delete;  # Delete old included files
 
-install: include test
+install: include check
 	@set -e;
 	FILENAME=${DATA_DIR}mod_$(MOD_NAME)_TMP.zip;
 	zip --filesync -r "$${FILENAME}" $(SOURCES);
@@ -38,6 +38,8 @@ test: include check-compile
 			exit 1
 		fi
 	fi
+
+check: test
 
 include:
 	@set -e

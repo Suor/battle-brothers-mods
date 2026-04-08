@@ -40,7 +40,7 @@ local KNOWN = {
     ]
     background = [
         // vanilla
-        "farmhand", "daytaler", "sellsword", "militia", "servant", "mason", "miller",
+        "assassin", "farmhand", "daytaler", "sellsword", "militia", "servant", "mason", "miller",
         "poacher", "ratcatcher", "peddler", "brawler", "bowyer", "messenger", "tailor",
         "squire", "houndmaster", "vagabond", "gravedigger", "bastard", "graverobber",
         "adventurous_noble", "disowned_noble", "retired_soldier", "caravan_hand",
@@ -59,7 +59,7 @@ local KNOWN = {
         "hackflows_skirmisher", "hackflows_cartographer", "hackflows_dissenter", "hackflows_leper",
         "hackflows_atilliator",
         // other mods
-        "chosen", "aspirant", "shaman", "necro", "oathbreaker"
+        "aspirant", "shaman", "necro", "oathbreaker"
     ]
     attr = [
         "Hitpoints.high", "Hitpoints.low", "MeleeSkill.high", "MeleeSkill.low",
@@ -71,10 +71,28 @@ local KNOWN = {
               "Polearm", "Bow", "Crossbow", "Flail", "Cleaver"]
     type   = ["melee", "ranged"]
     cost   = ["high", "low"]
-    // perm and perk are [NOT IMPLEMENTED], validated separately
+    perk = [
+        "adrenaline", "anticipation", "bags_and_belts", "backstabber", "battle_forged",
+        "berserk", "brawny", "bullseye", "colossus", "coup_de_grace", "crippling_strikes",
+        "dodge", "duelist", "fast_adaption", "fearsome", "footwork", "fortified_mind",
+        "gifted", "head_hunter", "hold_out", "indomitable", "killing_frenzy", "lone_wolf",
+        "nine_lives", "nimble", "overwhelm", "pathfinder", "quick_hands", "reach_advantage",
+        "rally_the_troops", "recover", "relentless", "rotation", "shield_expert", "steel_brow",
+        "student", "taunt", "underdog",
+        // weapon masteries
+        "mastery.axe", "mastery.bow", "mastery.cleaver", "mastery.crossbow", "mastery.dagger",
+        "mastery.flail", "mastery.hammer", "mastery.mace", "mastery.polearm", "mastery.spear",
+        "mastery.sword", "mastery.throwing",
+        // hackflows perks
+        "hackflows.balance", "hackflows.battle_flow", "hackflows.bloody_harvest",
+        "hackflows.flesh_on_the_bones", "hackflows.full_force", "hackflows.stabilized",
+        // necro perks
+        "necro.blood_sucking", "necro.mind_meld", "necro.regeneration", "necro.soul_link"
+    ]
+    // perm is [NOT IMPLEMENTED], validated separately
 };
 
-local NOT_IMPLEMENTED = ["perm", "perk"];
+local NOT_IMPLEMENTED = ["perm"];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -104,6 +122,9 @@ function checkFactor(factor) {
 
     if (hasVal(NOT_IMPLEMENTED, ns))
         return {errors = [], warnings = ["[NOT IMPLEMENTED] factor: '" + factor + "'"]};
+
+    if (factor in ::Nicknames.Aliases)
+        return {errors = ["uses alias '" + factor + "', use '" + ::Nicknames.Aliases[factor] + "' instead"], warnings = []};
 
     if (!(ns in KNOWN))
         return {errors = ["unknown namespace '" + ns + "' in: '" + factor + "'"], warnings = []};
@@ -140,6 +161,7 @@ function cmdCheck() {
     if (errors.len() > 0) {
         print("ERRORS (" + errors.len() + "):\n");
         foreach (e in errors) print("  " + e + "\n");
+        throw "check failed with " + errors.len() + " error(s)";
     } else {
         print("No errors.\n");
     }
@@ -240,12 +262,16 @@ function cmdUsage(doSort) {
         print(row + "\n");
     }
 
-    // Unused: exclude factors covered by built-in titles
+    // Unused: exclude factors covered by built-in titles or reachable via aliases
+    local aliasTargets = {};
+    foreach (_, target in ::Nicknames.Aliases) aliasTargets[target] <- true;
+
     local unused = [];
     foreach (ns, vals in KNOWN)
         foreach (val in vals) {
             local f = ns + "." + val;
-            if (!(f in stats) && (!(f in ::BuiltInTitles) || ::BuiltInTitles[f] == 0)) unused.push(f);
+            if (!(f in stats) && (!(f in ::BuiltInTitles) || ::BuiltInTitles[f] == 0)
+                    && !(f in aliasTargets)) unused.push(f);
         }
     unused.sort(@(a, b) a <=> b);
     print("\nUnused (" + unused.len() + "):\n");

@@ -5,13 +5,22 @@ write built-in.nut for use by tools.nut."""
 import re
 import os
 
-BBM = "/home/suor/projects/bbm"
+# Read ../.env
+env = {}
+with open(os.path.join(os.path.dirname(__file__), "../.env")) as f:
+    for line in f:
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, v = line.split("=", 1)
+            env[k] = v.replace("\\ ", " ")
+
 SOURCES = [
-    (f"{BBM}/base/__data_014/scripts/skills/backgrounds", f"{BBM}/legends/mod_legends/hooks/skills/backgrounds"),
-    (f"{BBM}/base/__data_014/scripts/skills/traits",      f"{BBM}/legends/mod_legends/hooks/skills/traits"),
-    (f"{BBM}/xbe/scripts/skills/backgrounds/hackflows",   None),
-    (f"{BBM}/mods/necro/scripts/skills/backgrounds",      None),
+    env["SCRIPTS_DIR"],
+    env["LEGENDS_DIR"],
+    env["XBE_DIR"],
+    os.path.join(os.path.dirname(__file__), "../necro/scripts"),
 ]
+SUBDIRS = ["skills/backgrounds", "skills/traits"]
 
 
 def extract(path):
@@ -36,17 +45,19 @@ def extract(path):
 
 results = {}  # factor -> count
 
-for directory, override_dir in SOURCES:
-    if not os.path.isdir(directory):
-        continue
-    for filename in os.listdir(directory):
-        if not filename.endswith(".nut"):
+for base_dir in SOURCES:
+    for subdir in SUBDIRS:
+        directory = os.path.join(base_dir, subdir)
+        if not os.path.isdir(directory):
             continue
-        result = (override_dir and extract(f"{override_dir}/{filename}")) \
-              or extract(f"{directory}/{filename}")
-        if result:
-            factor, count = result
-            results[factor] = count
+        for root, dirs, files in os.walk(directory):
+            for filename in files:
+                if not filename.endswith(".nut"):
+                    continue
+                result = extract(os.path.join(root, filename))
+                if result:
+                    factor, count = result
+                    results[factor] = count
 
 # Write built-in.nut
 with open("built-in.nut", "w") as f:

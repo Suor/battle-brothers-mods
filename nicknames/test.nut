@@ -38,38 +38,6 @@ hire(broVanillaTrait);
 assertIn(broVanillaTrait.getTitle(), ["VanillaTraitTitle"]);
 print("vanilla trait m.Titles OK\n");
 
-// TODO: check nicknames/titles.nut instead
-// // ── Nickname length checks ────────────────────────────────────────────────
-
-// function unicodeLen(s) {
-//     local count = 0;
-//     for (local i = 0; i < s.len(); i++)
-//         if ((s[i] & 0xC0) != 0x80) count++;
-//     return count;
-// }
-
-// // English: no nickname longer than 16 chars
-// local longEn = [];
-// foreach (entry in def.Nicknames)
-//     foreach (n in entry.nicknames)
-//         if (n.len() > 16) longEn.push(n);
-// if (longEn.len() > 0)
-//     throw "English nicknames > 16 chars: " + longEn.reduce(@(a, b) a + ", " + b);
-// print("all English nicknames <= 16 chars OK\n");
-
-// // Russian: no nickname longer than 16 unicode chars
-// local ruNicknames = [];
-// ::Rosetta <- {function add(_meta, pairs) {foreach (p in pairs) ruNicknames.push(p.ru)}}
-// dofile("nicknames/rosetta_ru.nut", true);
-// local longRu = [];
-// foreach (n in ruNicknames)
-//     if (unicodeLen(n) > 16) longRu.push(n);
-// if (longRu.len() > 0)
-//     throw "Russian nicknames > 16 chars: " + longRu.reduce(@(a, b) a + ", " + b);
-// print("all Russian nicknames <= 16 chars OK\n");
-
-// ── def.Titles tests ─────────────────────────────────────────────────────────
-
 // Single-factor title: trait.tiny should produce Shorty, Little, Ant, etc.
 local broTiny = makeBro("background.farmhand", null, ["trait.tiny"]);
 local tinyTitles = candidateTitles(broTiny);
@@ -108,6 +76,16 @@ local broBuiltinTrait = makeBro("background.unknown_bg", null,
     [{id = "trait.unknown", titles = ["VanillaTraitTitle"]}]);
 assertIn("VanillaTraitTitle", candidateTitles(broBuiltinTrait));
 print("titles: built-in trait titles in candidates OK\n");
+
+// perk.* factor: perk.student should unlock Pedant
+local broPerkStudent = makeBro("background.farmhand", null, [], null, null, 5, [], ["perk.student"]);
+assertIn("Pedant", candidateTitles(broPerkStudent));
+print("titles: perk factor (perk.student) OK\n");
+
+// perk factor NOT matched when bro lacks the perk
+local broNoPerk = makeBro("background.farmhand");
+if (candidateTitles(broNoPerk).find("Pedant") != null) throw "Pedant should not appear without perk.student";
+print("titles: perk factor absent → no match OK\n");
 
 // ── attr.high / attr.low tests ───────────────────────────────────────────────
 
@@ -166,5 +144,33 @@ local broLowHPWithTalent = makeBro("background.farmhand", null, [], [1, 0, 0, 0,
 if (candidateTitles(broLowHPWithTalent).find("Runt") != null)
     throw "Runt should not appear when bro has hitpoints talent";
 print("attr.Hitpoints.low: has talent → no trigger OK\n");
+
+// ── BgPerks.fallbacks → perk aliases ─────────────────────────────────────────
+
+// perk.rf_promised_potential is a fallback for perk.student → should match Pedant
+local broFallbackPerk = makeBro("background.farmhand", null, [], null, null, 5, [], ["perk.rf_promised_potential"]);
+assertIn("Pedant", candidateTitles(broFallbackPerk));
+print("aliases: BgPerks fallback perk matches canonical perk titles OK\n");
+
+// ── def.Aliases tests ────────────────────────────────────────────────────────
+
+// background.cultist_commander should match titles for background.cultist
+local broCultistCmd = makeBro("background.cultist_commander");
+local cultistCandidates = candidateTitles(broCultistCmd);
+// Find a title that uses background.cultist factor
+local cultistBro = makeBro("background.cultist");
+local cultistDirectCandidates = candidateTitles(cultistBro);
+foreach (t in cultistDirectCandidates)
+    assertIn(t, cultistCandidates);
+print("aliases: cultist_commander matches cultist titles OK\n");
+
+// background.xxherosp should match titles for background.adventurous_noble
+local broXXherosp = makeBro("background.xxherosp");
+local nobleBro = makeBro("background.adventurous_noble");
+local nobleCandidates = candidateTitles(nobleBro);
+local xxheroCandidates = candidateTitles(broXXherosp);
+foreach (t in nobleCandidates)
+    assertIn(t, xxheroCandidates);
+print("aliases: xxherosp matches adventurous_noble titles OK\n");
 
 print("Tests OK\n");

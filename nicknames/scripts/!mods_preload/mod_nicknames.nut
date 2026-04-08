@@ -19,7 +19,7 @@ local BaseAttrRanges = {
     Initiative = [100, 110]
 };
 
-mod.queue(">mod_bro_studio", function () {
+mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ultrabros", function () {
     ::include("nicknames/titles");
     ::include("nicknames/rosetta_auto");
 
@@ -28,10 +28,12 @@ mod.queue(">mod_bro_studio", function () {
     def.buildFactorSet <- function(bro) {
         local set = {};
 
-        // background and traits
+        // background, traits and perks
         set[bro.getBackground().getID()] <- true;
         foreach (skill in bro.getSkills().getAllSkillsOfType(::Const.SkillType.Trait))
             if (skill.getID().find("trait.") == 0) set[skill.getID()] <- true;
+        foreach (skill in bro.getSkills().getAllSkillsOfType(::Const.SkillType.Perk))
+            if (skill.getID().find("perk.") == 0) set[skill.getID()] <- true;
 
         // attrs
         local changeAttrs = bro.getBackground().onChangeAttributes();
@@ -59,6 +61,11 @@ mod.queue(">mod_bro_studio", function () {
             foreach (name, val in ::Const.Items.WeaponType)
                 if (weapon.isWeaponType(val))
                     set["weapon." + name] <- true;
+
+        local extra = {};
+        foreach (factor, _ in set)
+            if (factor in def.Aliases) extra[def.Aliases[factor]] <- true;
+        foreach (canonical, _ in extra) set[canonical] <- true;
         return set;
     }
     def.factorWeight <- function(f) {

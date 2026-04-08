@@ -6,13 +6,19 @@
     RangedSkill = 4, Bravery = 5, MeleeDefense = 6, RangedDefense = 7,
     COUNT = 8
 }
-::Const.SkillType <- {Trait = 1}
+::Const.SkillType <- {Trait = 1, Perk = 4}
 ::Const.ItemSlot  <- {Mainhand = 0}
 ::Const.Items <- {
     WeaponType = {
         Sword = 0, Axe = 1, Mace = 2, Hammer = 3, Spear = 4,
         Polearm = 5, Bow = 6, Crossbow = 7, Dagger = 8,
         Cleaver = 9, Flail = 10, Throwing = 11
+    }
+}
+::BgPerks <- {
+    fallbacks = {
+        "student": ["rf_promised_potential"]
+        "fast_adaption": ["rf_pattern_recognition"]
     }
 }
 ::Math.rand <- function (mn, mx) {
@@ -55,7 +61,7 @@ function getNicknamesOnHired() {
 // baseProps: override base properties
 // bgDailyCost: background DailyCost (default 5 = cheap/common)
 // bgTitles: vanilla .m.Titles for the background
-function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = null, bgDailyCost = 5, bgTitles = []) {
+function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = null, bgDailyCost = 5, bgTitles = [], perks = []) {
     local defaultAttrs = {
         Hitpoints = [0, 10], Bravery = [0, 10], Stamina = [0, 10],
         MeleeSkill = [0, 10], RangedSkill = [0, 10],
@@ -74,6 +80,7 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
     return {
         _bgId     = bgId
         _traits   = traits
+        _perks    = perks
         function getID()    {return "bro_test"}
         function getName()    {return "Test Bro"}
         function getTitle() {return title}
@@ -84,6 +91,7 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
         b = {}
         function getSkills() {
             local traitList = _traits;
+            local perkList  = _perks;
             local bgId = _bgId;
             return {
                 function hasSkill(id) {
@@ -92,9 +100,15 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
                         local tid = typeof t == "string" ? t : t.id;
                         if (tid == id) return true;
                     }
+                    foreach (p in perkList) if (p == id) return true;
                     return false;
                 }
                 function getAllSkillsOfType(_type) {
+                    if (_type == ::Const.SkillType.Perk) {
+                        return perkList.map(function(p) {
+                            return {m = {Titles = []} b = {Titles = []} function getID() {return p}};
+                        });
+                    }
                     return traitList.map(function(t) {
                         local _id     = typeof t == "string" ? t : t.id;
                         local _titles = typeof t == "string" ? [] : t.titles;
