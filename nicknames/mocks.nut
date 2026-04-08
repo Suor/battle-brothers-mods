@@ -33,7 +33,11 @@ local captured_onHired = null;
 
 local mod_obj = {
     function conflictWith(...) {}
-    function queue(...) {vargv[vargv.len()-1]()}
+    function queue(...) {
+        local func = vargv.pop();
+        if (typeof func == "integer") func = vargv.pop();
+        func();
+    }
     function hook(_filename, func) {
         local q = {setStartValuesEx = null}
         func(q);
@@ -41,7 +45,9 @@ local mod_obj = {
     }
 }
 ::Hooks <- {
+    QueueBucket = {VeryLate = 4}
     function register(_id, _ver, _name) {return mod_obj}
+    function hasMod(_id) {return false}
 }
 ::include <- function(path) {
     if (path == "nicknames/rosetta_ru") return; // no-op in tests

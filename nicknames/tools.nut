@@ -14,6 +14,7 @@
 // 3. add simple existing factors like armor, offhand
 
 ::Nicknames <- {};
+if (!("Hooks" in getroottable())) ::Hooks <- {function hasMod(_id) {return false}};
 dofile("nicknames/titles.nut", true);
 
 ::BuiltInTitles <- {};
