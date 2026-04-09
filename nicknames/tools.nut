@@ -69,7 +69,8 @@ local KNOWN = {
         "MeleeDefense.high", "RangedDefense.high"
     ]
     weapon = ["Sword", "Axe", "Hammer", "Spear", "Dagger", "Mace",
-              "Polearm", "Bow", "Crossbow", "Flail", "Cleaver"]
+              "Polearm", "Bow", "Crossbow", "Flail", "Cleaver",
+              "Firearm", "Throwing", "Sling", "Staff", "Musical"]
     type   = ["melee", "ranged"]
     cost   = ["high", "low"]
     perk = [
@@ -80,10 +81,7 @@ local KNOWN = {
         "nine_lives", "nimble", "overwhelm", "pathfinder", "quick_hands", "reach_advantage",
         "rally_the_troops", "recover", "relentless", "rotation", "shield_expert", "steel_brow",
         "student", "taunt", "underdog",
-        // weapon masteries
-        "mastery.axe", "mastery.bow", "mastery.cleaver", "mastery.crossbow", "mastery.dagger",
-        "mastery.flail", "mastery.hammer", "mastery.mace", "mastery.polearm", "mastery.spear",
-        "mastery.sword", "mastery.throwing",
+        // NOTE: mastery perks are converted to weapon.* factors in buildFactorSet
         // hackflows perks
         "hackflows.balance", "hackflows.battle_flow", "hackflows.bloody_harvest",
         "hackflows.flesh_on_the_bones", "hackflows.full_force", "hackflows.stabilized",

@@ -27,8 +27,16 @@ def.buildFactorSet <- function(_bro) {
     // FIX: use _bro.getSkills().query(::Const.SkillType.All)
     foreach (skill in _bro.getSkills().getAllSkillsOfType(::Const.SkillType.Trait))
         if (skill.getID().find("trait.") == 0) set[skill.getID()] <- true;
-    foreach (skill in _bro.getSkills().getAllSkillsOfType(::Const.SkillType.Perk))
-        if (skill.getID().find("perk.") == 0) set[skill.getID()] <- true;
+    local masteryPrefix = "perk.mastery.";
+    foreach (skill in _bro.getSkills().getAllSkillsOfType(::Const.SkillType.Perk)) {
+        local id = skill.getID();
+        if (id.find(masteryPrefix) == 0) {
+            local name = id.slice(masteryPrefix.len());
+            set["weapon." + name.slice(0, 1).toupper() + name.slice(1)] <- true;
+        } else if (id.find("perk.") == 0) {
+            set[id] <- true;
+        }
+    }
 
     // attrs
     local changeAttrs = _bro.getBackground().onChangeAttributes();
