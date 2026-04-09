@@ -1,6 +1,6 @@
 # Nicknames for Everyone
 
-Gives every hired brother a nickname (title) that fits who he is. A brute gets "Crusher", a tiny quick-witted fellow gets "Imp", a gutsy veteran gets "Boulder". No random fluff — each nickname is earned by background, traits, attributes, or perks.
+Gives every brother a nickname (title) that fits who he is. A disloyal one gets "Rat", a tiny quick-witted fellow gets "Imp", someone good with dagger gets "Stinger" and so on. No random fluff — each nickname is earned by background, traits, attributes, perks or their combination. It is not always straightforward though, some nicknames can be literal or ironic or metaphoric, they also can be all of the above on different occasions, so it may be used as hint for hiring but an unreliable one. 
 
 - large pool of nicknames, each tied to specific factors
 - weighted system: combos of matching factors raise the chance of a more fitting title
