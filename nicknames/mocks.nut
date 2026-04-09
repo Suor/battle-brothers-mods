@@ -68,7 +68,7 @@ function getNicknamesOnHired() {
 // baseProps: override base properties
 // bgDailyCost: background DailyCost (default 5 = cheap/common)
 // bgTitles: vanilla .m.Titles for the background
-function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = null, bgDailyCost = 5, bgTitles = [], perks = []) {
+function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = null, bgDailyCost = 5, bgTitles = [], perks = [], bgProps = null) {
     local defaultAttrs = {
         Hitpoints = [0, 10], Bravery = [0, 10], Stamina = [0, 10],
         MeleeSkill = [0, 10], RangedSkill = [0, 10],
@@ -133,12 +133,21 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
             local _bgId      = bgId;
             local _dailyCost = bgDailyCost;
             local _bgTitles  = bgTitles;
-            return {
-                m = {Titles = _bgTitles, DailyCost = _dailyCost}
-                b = {Titles = _bgTitles, DailyCost = _dailyCost}
+            local _bgProps   = bgProps;
+            local bg = {
+                m = {
+                    Titles = _bgTitles,
+                    DailyCost = _dailyCost,
+                    IsNoble = false,
+                    IsCombatBackground = false,
+                    IsLowborn = false,
+                    IsOffendedByViolence = false,
+                }
                 function getID() {return _bgId}
                 function onChangeAttributes() {return _attrs}
-            }
+            };
+            if (_bgProps != null) foreach (k, v in _bgProps) bg.m[k] <- v;
+            return bg;
         }
         function getItems() {
             return {function getItemAtSlot(_slot) {return null}}

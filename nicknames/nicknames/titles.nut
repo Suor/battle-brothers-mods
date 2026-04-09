@@ -48,8 +48,10 @@
 //   peddler, brawler, bowyer, messenger, tailor, squire, houndmaster, vagabond,
 //   gravedigger, bastard, graverobber, adventurous_noble, disowned_noble, retired_soldier,
 //   caravan_hand, flagellant, wildman, witchhunter, hedge_knight, swordmaster, apprentice,
-//   refugee, thief, monk, butcher, shepherd, beggar, cultist, minstrel, gambler,
-//   lumberjack, miner, fisherman, killer_on_the_run, deserter, hunter
+//   refugee, thief, monk, butcher, shepherd, beggar, cultist, minstrel, juggler, gambler,
+//   lumberjack, miner, fisherman, killer_on_the_run, deserter, hunter, nomad, raider, slave,
+//   gladiator, beast_slayer, anatomist, bladedancer, converted_cultist, cripple, eunuch,
+//   historian, manhunter, paladin
 //
 // background.*  (hackflows/XBE)
 //   hackflows_falconer, hackflows_hangman, hackflows_pirate, hackflows_berserker,
@@ -60,7 +62,7 @@
 //   hackflows_outlander, hackflows_arbalester, hackflows_druid, hackflows_fletcher,
 //   hackflows_gardener, hackflows_locksmith, hackflows_myrmidon, hackflows_painter,
 //   hackflows_skirmisher, hackflows_cartographer, hackflows_dissenter, hackflows_leper,
-//   hackflows_atilliator
+//   hackflows_atilliator, hackflows_champion, hackflows_folk_hero, hackflows_paladin_commander
 //
 // background.* (other mods)
 // Lone Chosen: aspirant (also barbaric), shaman
@@ -74,6 +76,8 @@
 // type.*  (weapon category)
 //   melee   — bro has a melee background
 //   ranged  — bro has a ranged background
+//
+// group.* - groups of backgrounds: peaceful, combat, noble, lowborn, pauper
 //
 // weapon.*  (main-hand weapon type)
 //   Sword, Axe, Hammer, Spear, Dagger, Mace, Polearm, Bow, Crossbow, Flail, Cleaver, Firearm, Throwing
@@ -118,6 +122,7 @@ def.Weights <- {
     type       = 1.0
     weapon     = 1.5
     perk       = 2.5
+    group      = 1.2
 };
 
 // Factor aliases: if a bro has the key factor, the value factor is also added to their factor set
@@ -202,8 +207,7 @@ def.Titles <- [
     ]}
     {ru = "Косматый", en = "Shaggy", factors = [
         ["background.wildman"],
-        ["background.vagabond"],
-        ["background.beggar"],
+        ["group.pauper"],
     ]}
     {ru = "Чумазый", en = "Grimy", factors = [
         ["background.gravedigger"],
@@ -969,7 +973,7 @@ def.Titles <- [
     {ru = "Курица", en = "Chicken", factors = [
         ["trait.night_blind"],  // куриная слепота — буквально
     ]}
-    {ru = "Шершень", en = "Hornet", factors = [
+    {ru = "Шмель", en = "Hornet", factors = [
         ["trait.tiny", "trait.brute"],
         ["trait.tiny", "trait.impatient"],
     ]}
@@ -1130,9 +1134,7 @@ def.Titles <- [
         ["trait.asthmatic", "attr.Stamina.low"],
     ]}
     {ru = "Тряпки", en = "Rags", factors = [
-        ["background.hackflows_leper"],
-        ["background.beggar"],
-        ["background.refugee"],
+        ["group.pauper"],
     ]}
     {ru = "Дно", en = "Rock Bottom", factors = [
         ["trait.drunkard"],
@@ -1353,6 +1355,8 @@ def.Titles <- [
         ["background.poacher"],            // жил тихо — расставлял ловушки
     ]}
     {ru = "Инквизитор", en = "Inquisitor", factors = [
+        ["trait.hate_undead"],
+        ["background.monk", "trait.hate_undead"],
         ["background.witchhunter"],
     ]}
     {ru = "Паж", en = "Page", factors = [

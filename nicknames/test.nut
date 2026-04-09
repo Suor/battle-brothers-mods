@@ -147,6 +147,37 @@ local broFallbackPerk = makeBro("background.farmhand", null, [], null, null, 5, 
 assertIn("Pedant", candidateTitles(broFallbackPerk));
 print("aliases: BgPerks fallback perk matches canonical perk titles OK\n");
 
+// ── group.* tests ────────────────────────────────────────────────────────────
+
+// group.pauper: beggar is in the pauper list
+local broPauper = makeBro("background.beggar");
+assert("group.pauper" in def.buildFactorSet(broPauper));
+local broNotPauper = makeBro("background.sellsword");
+assert(!("group.pauper" in def.buildFactorSet(broNotPauper)));
+print("group.pauper OK\n");
+
+// group.noble: set via bgProps
+local broNoble = makeBro("background.adventurous_noble", null, [], null, null, 5, [], [], {IsNoble = true});
+assert("group.noble" in def.buildFactorSet(broNoble));
+local broNotNoble = makeBro("background.adventurous_noble");
+assert(!("group.noble" in def.buildFactorSet(broNotNoble)));
+print("group.noble OK\n");
+
+// group.combat: set via bgProps
+local broCombat = makeBro("background.sellsword", null, [], null, null, 5, [], [], {IsCombatBackground = true});
+assert("group.combat" in def.buildFactorSet(broCombat));
+local broNotCombat = makeBro("background.farmhand");
+assert(!("group.combat" in def.buildFactorSet(broNotCombat)));
+print("group.combat OK\n");
+
+// group.lowborn: set via bgProps
+local broLowborn = makeBro("background.farmhand", null, [], null, null, 5, [], [], {IsLowborn = true});
+assert("group.lowborn" in def.buildFactorSet(broLowborn));
+local broNotLowborn = makeBro("background.farmhand");
+assert(!("group.lowborn" in def.buildFactorSet(broNotLowborn)));
+print("group.lowborn OK\n");
+
+
 // ── def.Aliases tests ────────────────────────────────────────────────────────
 
 // background.cultist_commander should match titles for background.cultist

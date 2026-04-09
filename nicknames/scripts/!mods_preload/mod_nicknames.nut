@@ -7,6 +7,16 @@ local def = ::Nicknames <- {
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.conflictWith("mod_renamer");
 
+def.PauperBackgrounds <- {
+    "background.beggar": true
+    "background.cripple": true
+    "background.ratcatcher": true
+    "background.refugee": true
+    "background.vagabond": true
+    "background.hackflows_leper": true
+    "background.hackflows_drifter": true
+};
+
 // Base attribute ranges before background modifiers
 local BaseAttrRanges = {
     Hitpoints = [50, 60],
@@ -56,8 +66,16 @@ def.buildFactorSet <- function(_bro) {
     else set["type.melee"] <- true;
 
     // elite or cheap
-    if (_bro.getBackground().m.DailyCost >= 20) set["cost.high"] <- true;
-    if (_bro.getBackground().m.DailyCost <= 10) set["cost.low"] <- true;
+    local bg = _bro.getBackground();
+    if (bg.m.DailyCost >= 20) set["cost.high"] <- true;
+    if (bg.m.DailyCost <= 10) set["cost.low"] <- true;
+
+    // group.* - groups of background
+    if (bg.m.IsOffendedByViolence) set["group.peaceful"] <- true;
+    if (bg.m.IsCombatBackground) set["group.combat"] <- true;
+    if (bg.m.IsNoble) set["group.noble"] <- true;
+    if (bg.m.IsLowborn) set["group.lowborn"] <- true;
+    if (bg.getID() in def.PauperBackgrounds) set["group.pauper"] <- true;
 
     local weapon = _bro.getItems().getItemAtSlot(::Const.ItemSlot.Mainhand);
     if (weapon != null && "MSU" in getroottable())

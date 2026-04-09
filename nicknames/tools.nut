@@ -47,8 +47,10 @@ local KNOWN = {
         "adventurous_noble", "disowned_noble", "retired_soldier", "caravan_hand",
         "flagellant", "wildman", "witchhunter", "hedge_knight", "swordmaster",
         "apprentice", "refugee", "thief", "monk", "butcher", "shepherd", "beggar",
-        "cultist", "minstrel", "gambler", "lumberjack", "miner", "fisherman",
-        "killer_on_the_run", "deserter", "hunter",
+        "cultist", "minstrel", "juggler", "gambler", "lumberjack", "miner", "fisherman",
+        "killer_on_the_run", "deserter", "hunter", "nomad", "raider", "slave",
+        "gladiator", "beast_slayer", "anatomist", "bladedancer", "converted_cultist",
+        "cripple", "eunuch", "historian", "manhunter", "paladin",
         // hackflows/XBE
         "hackflows_falconer", "hackflows_hangman", "hackflows_pirate", "hackflows_berserker",
         "hackflows_carpenter", "hackflows_barkeep", "hackflows_herbalist", "hackflows_con_artist",
@@ -58,7 +60,7 @@ local KNOWN = {
         "hackflows_outlander", "hackflows_arbalester", "hackflows_druid", "hackflows_fletcher",
         "hackflows_gardener", "hackflows_locksmith", "hackflows_myrmidon", "hackflows_painter",
         "hackflows_skirmisher", "hackflows_cartographer", "hackflows_dissenter", "hackflows_leper",
-        "hackflows_atilliator",
+        "hackflows_atilliator", "hackflows_champion", "hackflows_folk_hero", "hackflows_paladin_commander",
         // other mods
         "aspirant", "shaman", "necro", "oathbreaker"
     ]
@@ -73,6 +75,7 @@ local KNOWN = {
               "Firearm", "Throwing", "Sling", "Staff", "Musical"]
     type   = ["melee", "ranged"]
     cost   = ["high", "low"]
+    group  = ["peaceful", "combat", "noble", "lowborn", "pauper"]
     perk = [
         "adrenaline", "anticipation", "bags_and_belts", "backstabber", "battle_forged",
         "berserk", "brawny", "bullseye", "colossus", "coup_de_grace", "crippling_strikes",
