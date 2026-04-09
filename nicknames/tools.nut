@@ -90,10 +90,14 @@ local KNOWN = {
         // necro perks
         "necro.blood_sucking", "necro.mind_meld", "necro.regeneration", "necro.soul_link"
     ]
-    // perm is [NOT IMPLEMENTED], validated separately
+    perm = [
+        "brain_damage_injury", "broken_elbow_joint_injury", "broken_knee_injury",
+        "collapsed_lung_part_injury", "maimed_foot_injury", "missing_ear_injury",
+        "missing_eye_injury", "missing_finger_injury", "missing_hand_injury",
+        "missing_nose_injury", "permanent_injury", "traumatized_injury",
+        "weakened_heart_injury"
+    ]
 };
-
-local NOT_IMPLEMENTED = ["perm"];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -111,6 +115,14 @@ function unicodeLen(s) {
 
 function titleLabel(t) { return "'" + t.ru + "' / '" + t.en + "'"; }
 
+function sortedKey(arr, sep) {
+    local sorted = clone arr;
+    sorted.sort(@(a, b) a <=> b);
+    local s = "";
+    foreach (i, v in sorted) { if (i > 0) s += sep; s += v; }
+    return s;
+}
+
 // ── Factor validation ─────────────────────────────────────────────────────────
 
 // Returns {errors, warnings} for a single factor string.
@@ -120,9 +132,6 @@ function checkFactor(factor) {
 
     local ns  = factor.slice(0, dot);
     local val = factor.slice(dot + 1);
-
-    if (hasVal(NOT_IMPLEMENTED, ns))
-        return {errors = [], warnings = ["[NOT IMPLEMENTED] factor: '" + factor + "'"]};
 
     if (factor in ::Nicknames.Aliases)
         return {errors = ["uses alias '" + factor + "', use '" + ::Nicknames.Aliases[factor] + "' instead"], warnings = []};
@@ -157,6 +166,18 @@ function cmdCheck() {
         else seenEn[title.en] <- title;
         if (title.ru in seenRu) errors.push(label + ": duplicate ru='" + title.ru + "' (first: " + titleLabel(seenRu[title.ru]) + ")");
         else seenRu[title.ru] <- title;
+    }
+
+    // Check for titles with identical factor sets
+    local seenFactors = {};
+    foreach (title in titles) {
+        local combos = title.factors.map(@(combo) sortedKey(combo, "+"));
+        local key = sortedKey(combos, "|");
+
+        if (key in seenFactors)
+            warnings.push(titleLabel(title) + ": same factors as " + titleLabel(seenFactors[key]));
+        else
+            seenFactors[key] <- title;
     }
 
     if (errors.len() > 0) {

@@ -29,15 +29,14 @@ check-compile:
 	echo "Syntax OK";
 	rm -f out.cnut;
 
+define run_squirrel
+TMP_FILE=$$(mktemp)
+squirrel $1 2> >(tee "$$TMP_FILE" >&2)
+if [ -s "$$TMP_FILE" ]; then rm "$$TMP_FILE"; exit 1; fi
+endef
+
 test: include check-compile
-	@if [[ -f "test.nut" ]]; then
-		TMP_FILE=$$(mktemp);
-		squirrel test.nut 2> >(tee "$$TMP_FILE" >&2);
-		if [ -s "$$TMP_FILE" ]; then
-			rm "$$TMP_FILE"
-			exit 1
-		fi
-	fi
+	@if [[ -f "test.nut" ]]; then $(call run_squirrel,test.nut); fi
 
 check: test
 

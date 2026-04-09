@@ -5,5 +5,5 @@ SOURCES = nicknames scripts
 include ../Makefile.common
 
 check: test
-	echo ""; \
-	squirrel tools.nut check
+	@echo ""
+	$(call run_squirrel,tools.nut check)
