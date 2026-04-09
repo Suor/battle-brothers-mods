@@ -13,8 +13,7 @@ Sister repos (often referenced): `../stdlib` and `../rosetta`.
 All commands run from within a specific mod's directory (e.g. `cd nicknames && make test`).
 
 ```bash
-make test           # Check syntax + run test.nut (if it exists)
-make check-compile  # Syntax-check all .nut files via squirrel -c
+make check          # Run all the checks: syntax, tests, custom check
 make zip            # Create release ZIP (checks for debug statements, uses git tag for name)
 make install        # Install to DATA_DIR (from .env)
 make include        # Copy shared files from ../_includes/ with variable substitution
@@ -29,10 +28,11 @@ Each mod follows this layout:
 ```
 mod_name/
   scripts/!mods_preload/mod_<name>.nut   # Entry point, loaded by the game
-  mod_name/                              # Mod logic
-    *.nut                                # Config, data, helpers
+  <name>/                                # Mod logic
+    *.nut                                # Config, data, helpers, custom logic
     hooks/                               # Hook implementations
       *.nut
+  README.md
   Makefile                               # Defines MOD_NAME, TAG_NAME, SOURCES, INCLUDES
   test.nut                               # (optional) unit tests
   mocks.nut                              # (optional) test mocks
@@ -82,7 +82,7 @@ Tests pass if no stderr output. `mocks.nut` provides fake `::Hooks`, `::Const`, 
 
 Mods include translation files like `mod_name/rosetta_ru.nut` in SOURCES if they support localization. The rosetta framework intercepts strings at the Squirrel/JS boundary.
 
-### _includes Directory
+### `_includes` Directory
 
 Shared boilerplate (MSU settings, common hooks) lives in `_includes/`. The `<mod_name>` placeholder in included files is replaced with `MOD_NAME` at copy time.
 
