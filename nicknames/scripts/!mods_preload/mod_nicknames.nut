@@ -24,6 +24,7 @@ def.buildFactorSet <- function(_bro) {
 
     // background, traits and perks
     set[_bro.getBackground().getID()] <- true;
+    // FIX: use _bro.getSkills().query(::Const.SkillType.All)
     foreach (skill in _bro.getSkills().getAllSkillsOfType(::Const.SkillType.Trait))
         if (skill.getID().find("trait.") == 0) set[skill.getID()] <- true;
     foreach (skill in _bro.getSkills().getAllSkillsOfType(::Const.SkillType.Perk))
@@ -56,6 +57,7 @@ def.buildFactorSet <- function(_bro) {
             if (weapon.isWeaponType(val))
                 set["weapon." + name] <- true;
 
+    // add aliases
     local extra = {};
     foreach (factor, _ in set)
         if (factor in def.Aliases) extra[def.Aliases[factor]] <- true;
@@ -100,11 +102,11 @@ def.buildCandidates <- function (_bro) {
     foreach (entry in def.Titles) {
         local w = 0.0;
         foreach (fset in entry.factors) {
-            local ok = true;
-            foreach (f in fset) if (!(f in factorSet)) { ok = false; break; }
-            if (!ok) continue;
             local fw = 1.0;
-            foreach (f in fset) fw *= def.factorWeight(f);
+            foreach (f in fset) {
+                if (!(f in factorSet)) { fw = 0.0; break; }
+                fw *= def.factorWeight(f)
+            }
             w += fw;
         }
         if (w > 0)
@@ -114,15 +116,8 @@ def.buildCandidates <- function (_bro) {
     // 2. Vanilla trait .m.Titles
     foreach (skill in _bro.getSkills().getAllSkillsOfType(::Const.SkillType.Trait)) {
         if (skill.getID().find("trait.") != 0) continue;
-        // NOTE: using .b insead of .m - an MSU bug
-        // logInfo("Trait " + skill.getID())
-        // std.Debug.log("m.Titles", "Titles" in skill.m ? skill.m.Titles : null)
-        // std.Debug.log("b.Titles", "Titles" in skill.b ? skill.b.Titles : null)
-        local titles = "b" in skill && "Titles" in skill.b ? skill.b.Titles :
-                                       "Titles" in skill.m ? skill.m.Titles : null;
-        if (!titles) continue;
         // TODO: remove the 0.5 factor once we have more our titles
-        foreach (t in titles)
+        foreach (t in skill.m.Titles)
             candidates.push({title = t, weight = def.Weights.trait * 0.5});
     }
 
