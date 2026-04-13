@@ -561,7 +561,7 @@
     "mastery.dagger": 5
     "fearsome": 2
     "lone_wolf": 7
-    "hacflows.bloody_harvest": 1
+    "hackflows.bloody_harvest": 1
     "necro.regeneration": 5
     "necro.blood_sucking": 5
     "necro.mind_meld": 3

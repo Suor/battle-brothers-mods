@@ -22,7 +22,7 @@
     "fortified_mind": ["rf_decisive", "rf_bulwark"]
     // "rotation": 50
     // "rally_the_troops": 10
-    "head_hunter": ["rf_small_target", "perk.rf_nailed_it", "perk.rf_between_the_eyes"] // +
+    "head_hunter": ["rf_small_target", "rf_nailed_it", "rf_between_the_eyes"] // +
     "relentless": ["rf_skirmisher"]
     "berserk": ["rf_unstoppable", "rf_vanquisher"] // ? bloodlust
     "underdog": ["rf_survival_instinct", "hackflows.flesh_on_the_bones", "nine_lives"] // +
@@ -31,9 +31,9 @@
     "lone_wolf": ["underdog"] //? rf_survival_instinct
     // "nimble": 15 medium armor ??
     "footwork": ["rf_tempo"]
-    "taunt": ["perk.rf_bully"]
+    "taunt": ["rf_bully"]
     "overwhelm": ["rf_sweeping_strikes"]
-    "fearsome": ["perk.rf_menacing"]
+    "fearsome": ["rf_menacing"]
     "duelist": ["rf_rebuke"]
     "killing_frenzy": ["rf_feral_rage", "rf_double_strike"]
     // "indomitable": 5
