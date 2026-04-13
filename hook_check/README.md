@@ -1,3 +1,0 @@
-# Hook Checker
-
-...
