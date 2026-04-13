@@ -68,7 +68,7 @@ local KNOWN = {
         "Hitpoints.high", "Hitpoints.low", "MeleeSkill.high", "MeleeSkill.low",
         "RangedSkill.high", "RangedSkill.low", "Bravery.high", "Bravery.low",
         "Stamina.high", "Stamina.low", "Initiative.high", "Initiative.low",
-        "MeleeDefense.high", "RangedDefense.high"
+        "MeleeDefense.high", "MeleeDefense.low", "RangedDefense.high", "RangedDefense.low"
     ]
     weapon = ["Sword", "Axe", "Hammer", "Spear", "Dagger", "Mace",
               "Polearm", "Bow", "Crossbow", "Flail", "Cleaver",
