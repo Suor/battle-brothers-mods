@@ -2,6 +2,10 @@ local def = ::Nicknames <- {
     ID = "mod_nicknames"
     Name = "Nicknames for Everyone"
     Version = "0.1"
+
+    Debug = true
+    FlagPrefix = "nicknames."
+    Logs = {factors = {idx = null, items = []}, candidates = {idx = null, items = []}}
 }
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
@@ -122,7 +126,7 @@ local function isTitleUsedByFallen(_title, _fallenNames) {
 def.buildCandidates <- function (_bro) {
     local candidates = [];
     local factorSet = def.buildFactorSet(_bro);
-    std.Debug.log("factors for " + _bro.getName(), factorSet);
+    def.log("factors", "factors for " + _bro.getName(), factorSet);
 
     // 1. Titles from def.Titles; weight = sum of matched factor-set weights
     foreach (entry in def.Titles) {
@@ -142,15 +146,15 @@ def.buildCandidates <- function (_bro) {
     // 2. Vanilla trait .m.Titles
     foreach (skill in _bro.getSkills().getAllSkillsOfType(::Const.SkillType.Trait)) {
         if (skill.getID().find("trait.") != 0) continue;
-        // TODO: remove the 0.5 factor once we have more our titles
+        // TODO: remove the 0.8 factor once we have more our titles
         foreach (t in skill.m.Titles)
-            candidates.push({title = t, weight = def.Weights.trait * 0.5});
+            candidates.push({title = t, weight = def.Weights.trait * 0.8});
     }
 
     // 3. Vanilla background .m.Titles
     local bgTitles = _bro.getBackground().m.Titles;
     foreach (t in bgTitles)
-        candidates.push({title = t, weight = def.Weights.background * 0.5});
+        candidates.push({title = t, weight = def.Weights.background * 0.8});
 
     return candidates;
 }
@@ -160,12 +164,13 @@ def.fillTitle <- function (_bro) {
     local candidates = def.buildCandidates(_bro);
     if (candidates.len() == 0) return; // shouldn't happen
 
+    def.log("candidates", "full candidates for " + _bro.getName(), candidates)
+
     // 2. Build used titles set
-    local usedTitles = {};
+    local inUse = {};
     foreach (bro in ::World.getPlayerRoster().getAll()) {
-        if (bro.getID() == _bro.getID()) continue;
-        local t = bro.getTitle();
-        if (t != "") usedTitles[t] <- true;
+        inUse[bro.m.Title] <- true;
+        inUse[bro.getTitle()] <- true; // Rosetta translated
     }
     local fallenNames = [];
     foreach (fallen in ::World.Statistics.getFallen())
@@ -173,14 +178,40 @@ def.fillTitle <- function (_bro) {
 
     // 3. Filter out used titles
     local filtered = candidates.filter(@(_, c)
-        !(c.title in usedTitles) && !isTitleUsedByFallen(c.title, fallenNames)
+        !(c.title in inUse) && !isTitleUsedByFallen(c.title, fallenNames)
     );
     if (filtered.len() == 0) filtered = candidates; // allow reuse if all taken
 
-    std.Debug.log("cands for " + _bro.getName(), candidates)
-
     // 4. Weighted random pick
     _bro.setTitle(weightedRandPick(filtered).title);
+}
+
+def.log <- function (_key, _label, _value) {
+    if (!def.Debug) return;
+    ::std.Debug.log(_label, _value);
+
+    local rec = def.Logs[_key];
+    if (rec.idx == null) rec.idx = ::World.Flags.getAsInt(def.FlagPrefix + _key)
+
+    rec.idx++;
+    rec.items.push({idx = rec.idx, label = _label, value = _value})
+    ::std.Flags.pack(::World.Flags, def.FlagPrefix + _key + "." + (rec.idx - 1) / 100, rec.items)
+    ::World.Flags.set(def.FlagPrefix + _key, rec.idx)
+    if (rec.items.len() >= 100) rec.items = [];
+}
+def.logOut <- function () {
+    foreach (key, _ in def.Logs) {
+        for (local batchIdx = 0;; batchIdx++) {
+            local batch = ::std.Flags.unpack(::World.Flags, def.FlagPrefix + key + "." + batchIdx);
+            if (batch == null) break;
+
+            foreach (item in batch) ::std.Debug.log("OUT: " + item.label, item.value)
+            ::World.Flags.remove(def.FlagPrefix + key + "." + batchIdx);
+        }
+        // Start from scratch
+        ::World.Flags.remove(def.FlagPrefix + _key)
+        def.Logs[key] = {idx = null, items = []};
+    }
 }
 
 

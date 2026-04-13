@@ -27,6 +27,10 @@
 ::World <- {
     function getPlayerRoster() {return {function getAll() {return []}}}
     Statistics = {function getFallen() {return []}}
+    Flags = {
+        function set(_key, _vale) {}
+        function getAsInt(_key) {return 0}
+    }
 }
 
 local captured_onHired = null;
