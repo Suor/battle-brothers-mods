@@ -1,10 +1,8 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This repo is a collection of Battle Brothers game mods written in Squirrel (`.nut` files). Each mod lives in its own subdirectory and uses the **Modern Hooks** framework to non-invasively patch game classes.
 
-## Overview
-
-A collection of Battle Brothers game mods written in Squirrel (`.nut` files). Each mod lives in its own subdirectory and uses the **Modern Hooks** framework to non-invasively patch game classes.
+Battle Brothers is a tactical rogue-like game, set in middle age Europe, it also has some fantasy elements like witches, weidegangers and greenskins.
 
 Sister repos (often referenced): `../stdlib` and `../rosetta`.
 
@@ -80,7 +78,9 @@ Tests pass if no stderr output. `mocks.nut` provides fake `::Hooks`, `::Const`, 
 
 ### Rosetta (Translations)
 
-Mods include translation files like `mod_name/rosetta_ru.nut` in SOURCES if they support localization. The rosetta framework intercepts strings at the Squirrel/JS boundary.
+Mods include translation files like `mod_name/rosetta_ru.nut` in SOURCES if they support localization. The rosetta framework intercepts strings at the Squirrel/JS boundary. See [`../rosetta/AGENTS_TRANSLATING.md`](../rosetta/AGENTS_TRANSLATING.md) for a detailed guide on creating and updating translations.
+
+IMPORTNANT: Follow game setting. Prefer more fun and concise translation options.
 
 ### `_includes` Directory
 
