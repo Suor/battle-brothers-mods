@@ -82,6 +82,13 @@ Mods include translation files like `mod_name/rosetta_ru.nut` in SOURCES if they
 
 IMPORTNANT: Follow game setting. Prefer more fun and concise translation options.
 
+To verify a rosetta translation file, run:
+
+```bash
+rosetta -c <path/to/translation.nut> <path/to/mod/dir>
+```
+
+
 ### `_includes` Directory
 
 Shared boilerplate (MSU settings, common hooks) lives in `_includes/`. The `<mod_name>` placeholder in included files is replaced with `MOD_NAME` at copy time.
