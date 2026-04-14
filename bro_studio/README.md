@@ -1,12 +1,13 @@
 # Bro Studio
 
-Allows to customize all sort of things during bro generation and level up:
+Allows to set up all sort of things during bro generation and level up:
 - talents
 - perk points
 - traits
 - attribute gain
+- permanent injuries on new bros (for a discount;)
 
-Both for new bros and veterans.
+All things are optional and highly customizable.
 
 
 ## Compatibility

@@ -41,6 +41,7 @@ mh.queue(">stdlib", ">mod_msu", ">mod_legends", function () {
     ::include("bro_studio/attrs");
     ::include("bro_studio/perks");
     ::include("bro_studio/traits");
+    ::include("bro_studio/injuries");
     ::Hooks.registerJS("ui/mods/bro_studio.js");
 
     local starting = false;
@@ -84,7 +85,16 @@ mh.queue(">stdlib", ">mod_msu", ">mod_legends", function () {
 
         q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
             __original(_backgrounds, _addTraits);
-            if (!starting && _addTraits) mod.addTraits(this, mod.conf("traitsNum"));
+            if (!starting && _addTraits) {
+                mod.addTraits(this, mod.conf("traitsNum"));
+                mod.addInjury(this);
+            }
+        }
+
+        q.getHiringCost = @(__original) function () {
+            local cost = __original();
+            if (!this.getSkills().hasSkillOfType(::Const.SkillType.PermanentInjury)) return cost;
+            return ::Math.ceil(cost * 0.1); // debug, will be 0.7 eventually
         }
 
         q.onHired = @(__original) function () {

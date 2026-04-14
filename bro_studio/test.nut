@@ -195,4 +195,30 @@ assertEq(mod.extraPerks(12), 1)
 assertEq(mod.extraPerks(13), 0)
 print("Perks OK\n");
 
+
+// Injuries
+local function makeInjPlayer() {
+    return {
+        m = {Skills = {
+            Skills = []
+            function hasSkill(id) {return false}
+            function add(item) {this.Skills.push(item)}
+        }}
+        function getSkills() {return this.m.Skills}
+    }
+}
+
+setconf({injuriesNth = "off"})
+local p = makeInjPlayer();
+assertEq(mod.addInjury(p), false);
+assertEq(p.m.Skills.Skills.len(), 0);
+
+// nth = 1 means int(1, 1) == 1, so always injured
+setconf({injuriesNth = 1})
+local p = makeInjPlayer();
+assertEq(mod.addInjury(p), true);
+assertEq(p.m.Skills.Skills.len(), 1);
+print("Injuries OK\n");
+
+
 print("Tests OK\n");

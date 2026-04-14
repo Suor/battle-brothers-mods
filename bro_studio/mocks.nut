@@ -11,6 +11,14 @@ logError <- function(s) {
 ::Const.XP <- {
     MaxLevelWithPerkpoints = 11
 }
+::Const.Injury <- {
+    Permanent = [
+        {ID = "injury.missing_eye",   Script = "injury_permanent/missing_eye_injury"}
+        {ID = "injury.missing_ear",   Script = "injury_permanent/missing_ear_injury"}
+        {ID = "injury.broken_knee",   Script = "injury_permanent/broken_knee_injury"}
+        {ID = "injury.missing_finger", Script = "injury_permanent/missing_finger_injury"}
+    ]
+}
 
 // Modern Hooks mocks
 local mod = {
@@ -25,6 +33,8 @@ local mod = {
             fillTalentValues = @() null
             setStartValuesEx = @() null
             onHired = @() null
+            getHiringCost = @() null
+            getDailyCost = @() null
             getAttributeLevelUpValues = @() null
             // LevelUpChanges
             updateLevel = @() null
