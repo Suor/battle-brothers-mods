@@ -70,9 +70,9 @@ local KNOWN = {
         "Stamina.high", "Stamina.low", "Initiative.high", "Initiative.low",
         "MeleeDefense.high", "MeleeDefense.low", "RangedDefense.high", "RangedDefense.low"
     ]
-    weapon = ["Sword", "Axe", "Hammer", "Spear", "Dagger", "Mace",
-              "Polearm", "Bow", "Crossbow", "Flail", "Cleaver",
-              "Firearm", "Throwing", "Sling", "Staff", "Musical"]
+    weapon = ["sword", "axe", "hammer", "spear", "dagger", "mace",
+              "polearm", "bow", "crossbow", "flail", "cleaver",
+              "firearm", "throwing", "sling", "staff", "musical"]
     type   = ["melee", "ranged"]
     cost   = ["high", "low"]
     group  = ["peaceful", "combat", "noble", "lowborn", "pauper"]

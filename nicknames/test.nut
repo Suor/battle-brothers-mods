@@ -18,6 +18,13 @@ function candidateTitles(bro) {
     return def.buildCandidates(bro).map(@(c) c.title);
 }
 
+function attrLimit(bro, attr, isHigh) {
+    local br = def.BaseAttrRanges[attr];
+    local changeAttrs = bro.getBackground().onChangeAttributes();
+    local stars = bro.m.Talents[::Const.Attributes[attr == "Stamina" ? "Fatigue" : attr]];
+    return isHigh ? br[1] + changeAttrs[attr][1] - stars : br[0] + changeAttrs[attr][0];
+}
+
 // Vanilla background .m.Titles are used
 // Use an unknown background (not in BackgroundNicknames) so only m.Titles contribute
 local broVanillaBg = makeBro("background.unknown_bg", null, [], null, null, 5, ["VanillaBgTitle"]);
@@ -99,7 +106,7 @@ function withProp(overrides) {
 // talents index: Hitpoints=0, Stamina=1
 local broHighStamina = makeBro("background.farmhand", null, [], [0, 1, 0, 0, 0, 0, 0, 0],
     withProp({Stamina = 109}));
-assert(broHighStamina.getCurrentProperties().Stamina == 109, "expect 1 less than no-talent high limit (100+bG)");
+assertEq(attrLimit(broHighStamina, "Stamina", true), 109);
 assertIn("Workhorse", candidateTitles(broHighStamina));
 print("attr.Stamina.high triggers OK\n");
 
@@ -114,8 +121,7 @@ print("attr.Stamina.high: no talent → no trigger OK\n");
 // talents index: Initiative=3
 local broLowInit = makeBro("background.farmhand", null, [], null,
     withProp({Initiative = 100}));
-// FIX: do not assert the Initiative value, assert the limit, here it is low limit. Apply to all such checks here
-// assertEq(broLowInit.getCurrentProperties().Initiative, 110);
+assertEq(attrLimit(broLowInit, "Initiative", false), 100);
 assertIn("Lazybones", candidateTitles(broLowInit));
 print("attr.Initiative.low triggers OK\n");
 
@@ -129,7 +135,7 @@ print("attr.Initiative.low: stat above limit → no trigger OK\n");
 // attr.Hitpoints.low: stars=0, limit = base_low(50) + bgChange
 local broLowHP = makeBro("background.farmhand", null, [], null,
     withProp({Hitpoints = 50}));
-// assertEq(broLowHP.getCurrentProperties().Hitpoints, 60);
+assertEq(attrLimit(broLowHP, "Hitpoints", false), 50);
 assertIn("Runt", candidateTitles(broLowHP));
 print("attr.Hitpoints.low triggers OK\n");
 

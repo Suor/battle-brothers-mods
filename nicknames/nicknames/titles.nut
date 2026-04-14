@@ -80,7 +80,7 @@
 // group.* - groups of backgrounds: peaceful, combat, noble, lowborn, pauper
 //
 // weapon.*  (main-hand weapon type)
-//   Sword, Axe, Hammer, Spear, Dagger, Mace, Polearm, Bow, Crossbow, Flail, Cleaver, Firearm, Throwing
+//   sword, axe, hammer, spear, dagger, mace, polearm, bow, crossbow, flail, cleaver, firearm, throwing
 //
 // [NOT IMPLEMENTED] offhand.Shield, offhand.Net  — bro uses a shield or throwing net
 // [NOT IMPLEMENTED] armor.heavy, armor.light  — bro's body armor tier
@@ -562,24 +562,28 @@ def.Titles <- [
     {ru = "Атаман", en = "Chieftain", factors = [
         ["perk.rally_the_troops", "trait.cocky"],  // бывший рейдер, сохранивший замашки
     ]}
+    {ru = "Кидала", en = "Bunco", factors = [
+        ["background.hackflows_con_artist"],
+        ["weapon.sling"],
+    ]}
 
     // ── Боевые ───────────────────────────────────────────────────────────
     {ru = "Мясник", en = "Butcher", factors = [
         ["background.butcher"],                      // literal: бывший мясник
-        ["weapon.Axe", "attr.MeleeSkill.high"],      // эффективно рубит
-        ["weapon.Cleaver", "attr.MeleeSkill.high"],  // эффективно рубит
-        ["weapon.Cleaver", "trait.bloodthirsty"],    // эффектно рубит
+        ["weapon.axe", "attr.MeleeSkill.high"],      // эффективно рубит
+        ["weapon.cleaver", "attr.MeleeSkill.high"],  // эффективно рубит
+        ["weapon.cleaver", "trait.bloodthirsty"],    // эффектно рубит
         ["perk.crippling_strikes"],           // maims like a butcher
         ["perk.coup_de_grace"],               // finishes off the helpless
     ]}
     {ru = "Кувалда", en = "Sledgehammer", factors = [
-        ["weapon.Hammer"],
-        ["weapon.Mace", "trait.strong"],
+        ["weapon.hammer"],
+        ["weapon.mace", "trait.strong"],
         ["trait.brute"],  // бьёт в голову со всей дури, без затей
         ["perk.brawny"],  // strong enough to swing heavy weapons
     ]}
     {ru = "Рубака", en = "Slasher", factors = [
-        ["group.combat", "weapon.Sword"],
+        ["group.combat", "weapon.sword"],
         ["group.combat", "attr.MeleeSkill.high"],  // просто хорошо машет
         ["background.hackflows_cook", "attr.MeleeSkill.high"],  // ironic
     ]}
@@ -605,31 +609,31 @@ def.Titles <- [
         ["perk.colossus"],  // massive HP pool
     ]}
     {ru = "Молот", en = "Hammer", factors = [
-        ["weapon.Hammer"],
-        ["weapon.Mace"],
+        ["weapon.hammer"],
+        ["weapon.mace"],
     ]}
     {ru = "Топор", en = "Axe", factors = [
-        ["weapon.Axe"],
+        ["weapon.axe"],
     ]}
     {ru = "Коса", en = "Scythe", factors = [
-        ["weapon.Polearm"],  // косящий замах алебарды/глефы
+        ["weapon.polearm"],  // косящий замах алебарды/глефы
         ["perk.reach_advantage"],    // keeps enemies in the scythe zone
-        ["weapon.Spear"],
+        ["weapon.spear"],
     ]}
     {ru = "Цепь", en = "the Chain", factors = [
-        ["weapon.Flail"],
+        ["weapon.flail"],
     ]}
     {ru = "Горлохват", en = "Throat-grabber", factors = [
-        ["weapon.Dagger"],
+        ["weapon.dagger"],
         ["background.hackflows_hangman"],
         ["trait.bloodthirsty"],
         ["perk.backstabber"],  // attacks from behind
     ]}
     {ru = "Жало", en = "Stinger", factors = [
-        ["weapon.Dagger"],
-        ["weapon.Dagger", "trait.bloodthirsty"],
-        ["weapon.Dagger", "attr.MeleeSkill.high"],  // бьёт точно и быстро
-        ["weapon.Dagger", "attr.Initiative.high"],  // бьёт точно и быстро
+        ["weapon.dagger"],
+        ["weapon.dagger", "trait.bloodthirsty"],
+        ["weapon.dagger", "attr.MeleeSkill.high"],  // бьёт точно и быстро
+        ["weapon.dagger", "attr.Initiative.high"],  // бьёт точно и быстро
         ["perk.backstabber"],     // stabs from behind
     ]}
     {ru = "Живодёр", en = "Flayer", factors = [
@@ -647,7 +651,7 @@ def.Titles <- [
         ["perk.coup_de_grace"],  // добивает
     ]}
     {ru = "Головорез", en = "Cutthroat", factors = [
-        ["weapon.Axe", "trait.bloodthirsty"],
+        ["weapon.axe", "trait.bloodthirsty"],
         ["background.killer_on_the_run"],
         ["background.hackflows_hangman"],
         ["perk.head_hunter"],  // literally goes for the head
@@ -655,7 +659,7 @@ def.Titles <- [
     ]}
     {ru = "Маньяк", en = "the Maniac", factors = [
         ["trait.bloodthirsty", "trait.irrational"],
-        ["weapon.Cleaver", "trait.irrational"],  // вовсе потерял связь с реальностью
+        ["weapon.cleaver", "trait.irrational"],  // вовсе потерял связь с реальностью
         ["perk.berserk"],          // literally berserk
         ["perk.killing_frenzy"],   // frenzied after kills
     ]}
@@ -688,12 +692,12 @@ def.Titles <- [
     ]}
 
     {ru = "Стрела", en = "Arrow", factors = [
-        ["weapon.Bow", "attr.RangedSkill.high"],
-        ["weapon.Bow", "perk.bullseye"],      // never misses
+        ["weapon.bow", "attr.RangedSkill.high"],
+        ["weapon.bow", "perk.bullseye"],      // never misses
     ]}
     {ru = "Болт", en = "Bolt", factors = [
-        ["weapon.Crossbow", "attr.RangedSkill.high"],
-        ["weapon.Crossbow", "perk.bullseye"],
+        ["weapon.crossbow", "attr.RangedSkill.high"],
+        ["weapon.crossbow", "perk.bullseye"],
     ]}
     {ru = "Яблочко", en = "Bullseye", factors = [
         ["type.ranged", "attr.RangedSkill.high"],
@@ -705,14 +709,14 @@ def.Titles <- [
         ["background.swordmaster"],
     ]}
     {ru = "Костелом", en = "Bonebreaker", factors = [
-        ["weapon.Hammer", "trait.brute"],    // тупое оружие + грубая сила
-        ["weapon.Hammer", "attr.MeleeSkill.high"],
-        ["weapon.Mace", "trait.brute"],
-        ["weapon.Mace", "attr.MeleeSkill.high"],
+        ["weapon.hammer", "trait.brute"],    // тупое оружие + грубая сила
+        ["weapon.hammer", "attr.MeleeSkill.high"],
+        ["weapon.mace", "trait.brute"],
+        ["weapon.mace", "attr.MeleeSkill.high"],
     ]}
     {ru = "Жнец", en = "Reaper", factors = [
-        ["weapon.Polearm", "attr.MeleeSkill.high"],
-        ["weapon.Polearm", "trait.bloodthirsty"],  // косит врагов как траву
+        ["weapon.polearm", "attr.MeleeSkill.high"],
+        ["weapon.polearm", "trait.bloodthirsty"],  // косит врагов как траву
         ["perk.hackflows.bloody_harvest"],  // keeps enemies in the scythe zone
     ]}
     {ru = "Первая кровь", en = "First Blood", factors = [
@@ -752,7 +756,7 @@ def.Titles <- [
     ]}
     {ru = "Людоед", en = "Man Eater", factors = [
         ["trait.huge", "trait.bloodthirsty"],
-        ["trait.bloodthirsty", "trait.brute"],
+        ["trait.huge", "trait.brute"],
     ]}
     {ru = "Перспективный", en = "Promising", factors = [
         ["type.melee", "attr.MeleeSkill.high", "attr.MeleeDefense.high", "cost.low"],
@@ -807,8 +811,8 @@ def.Titles <- [
     ]}
     {ru = "Гарпун", en = "Harpoon", factors = [
         ["background.fisherman"],
-        ["background.fisherman", "weapon.Spear"],
-        ["background.fisherman", "weapon.Throwing"],
+        ["background.fisherman", "weapon.spear"],
+        ["background.fisherman", "weapon.throwing"],
     ]}
     {ru = "Наковальня", en = "Anvil", factors = [
         ["background.hackflows_blacksmith"],
@@ -819,7 +823,7 @@ def.Titles <- [
     ]}
     {ru = "Заноза", en = "Splinter", factors = [
         ["trait.tiny", "trait.impatient"],
-        ["weapon.Dagger", "attr.MeleeSkill.high"],
+        ["weapon.dagger", "attr.MeleeSkill.high"],
     ]}
     {ru = "Затычка", en = "Plug", factors = [
         ["perk.shield_expert", "attr.MeleeDefense.high"],
@@ -832,15 +836,15 @@ def.Titles <- [
         ["trait.iron_jaw", "trait.tough"],
     ]}
     {ru = "Молотило", en = "Thresher", factors = [
-        ["weapon.Flail"],
-        ["weapon.Flail", "trait.brute"],
-        ["weapon.Flail", "attr.MeleeSkill.high"],
+        ["weapon.flail"],
+        ["weapon.flail", "trait.brute"],
+        ["weapon.flail", "attr.MeleeSkill.high"],
     ]}
     {ru = "Карусель", en = "Whirligig", factors = [
-        ["weapon.Flail", "perk.berserk"],
-        ["weapon.Flail", "perk.hackflows.bloody_harvest"],
-        ["weapon.Axe", "perk.berserk"],
-        ["weapon.Axe", "perk.hackflows.bloody_harvest"],
+        ["weapon.flail", "perk.berserk"],
+        ["weapon.flail", "perk.hackflows.bloody_harvest"],
+        ["weapon.axe", "perk.berserk"],
+        ["weapon.axe", "perk.hackflows.bloody_harvest"],
         ["background.juggler"],
     ]}
     {ru = "Дробина", en = "Buckshot", factors = [
@@ -849,17 +853,17 @@ def.Titles <- [
         ["trait.tiny", "trait.strong"],
     ]}
     {ru = "Щепка", en = "Sliver", factors = [
-        ["trait.tiny", "weapon.Dagger"],
+        ["trait.tiny", "weapon.dagger"],
     ]}
     {ru = "Зубодробитель", en = "Toothbreaker", factors = [
-        ["weapon.Hammer", "trait.brute"],
-        ["weapon.Hammer", "perk.head_hunter"],
-        ["weapon.Mace", "trait.brute"],
-        ["weapon.Mace", "perk.head_hunter"],
+        ["weapon.hammer", "trait.brute"],
+        ["weapon.hammer", "perk.head_hunter"],
+        ["weapon.mace", "trait.brute"],
+        ["weapon.mace", "perk.head_hunter"],
     ]}
     {ru = "Гром", en = "Thunder", factors = [
-        ["cost.high", "weapon.Hammer"],
-        ["cost.high", "weapon.Hammer", "attr.MeleeSkill.high"],
+        ["cost.high", "weapon.hammer"],
+        ["cost.high", "weapon.hammer", "attr.MeleeSkill.high"],
     ]}
     {ru = "Крюк", en = "Hook", factors = [
         ["perk.crippling_strikes"],
@@ -867,12 +871,12 @@ def.Titles <- [
         ["background.hackflows_hangman"],
     ]}
     {ru = "Костолом", en = "Bonecracker", factors = [
-        ["weapon.Hammer", "trait.brute"],    // молот/кость ломает грубой силой
+        ["weapon.hammer", "trait.brute"],    // молот/кость ломает грубой силой
     ]}
     {ru = "Шило", en = "Awl", factors = [
         ["background.hackflows_cobbler", "trait.swift"],    // быстрый сапожник с ножом
-        ["background.hackflows_cobbler", "weapon.Dagger"],
-        ["trait.swift", "weapon.Dagger"],
+        ["background.hackflows_cobbler", "weapon.dagger"],
+        ["trait.swift", "weapon.dagger"],
     ]}
     {ru = "Клык", en = "Fang", factors = [
         ["trait.bloodthirsty", "trait.hate_beasts"],  // агрессивный зверобой
@@ -889,11 +893,11 @@ def.Titles <- [
         ["attr.Initiative.low", "perk.shield_expert"],
     ]}
     {ru = "Мозгоправ", en = "Headshrinker", factors = [
-        ["weapon.Mace", "trait.brute"],                    // вправляет мозги ударом булавы
+        ["weapon.mace", "trait.brute"],                    // вправляет мозги ударом булавы
         ["background.hackflows_surgeon", "trait.brute"],
     ]}
     {ru = "Трубочист", en = "Chimney Sweep", factors = [
-        ["weapon.Firearm", "trait.dumb"],  // вечно с чёрной от пороха мордой
+        ["weapon.firearm", "trait.dumb"],  // вечно с чёрной от пороха мордой
     ]}
     {ru = "Гроза Орков", en = "Orc Terror", factors = [
         ["trait.fear_greenskins", "attr.Bravery.low"],   // ironic: бледнеет при слове «зеленокожий»
@@ -907,7 +911,7 @@ def.Titles <- [
     // Boris the Bullet Dodger — Snatch (2000)
     {ru = "Хрен попадёшь", en = "Bullet Dodger", setting = false, factors = [
         ["attr.MeleeDefense.high", "attr.RangedDefense.high"],
-        ["perk.dodge"],  // trained to dodge
+        ["attr.MeleeDefense.high", "perk.dodge"],  // trained to dodge
     ]}
 
     // ── Судьба ───────────────────────────────────────────────────────────
@@ -1335,7 +1339,7 @@ def.Titles <- [
     {ru = "Дрын", en = "Cudgel", factors = [
         ["trait.huge", "trait.brute"],  // огромный, тупой детина, бьёт с размаху
         ["trait.huge", "trait.dumb"],
-        ["trait.huge", "weapon.Mace"],
+        ["trait.huge", "weapon.mace"],
     ]}
     {ru = "Мясо", en = "Cannon Fodder", factors = [
         ["trait.dumb", "trait.deathwish"],     // расходный материал, идёт вперёд жрать урон
@@ -1491,8 +1495,8 @@ def.Titles <- [
     ]}
     {ru = "Лесоруб", en = "the Woodcutter", factors = [
         ["background.lumberjack"],
-        ["background.lumberjack", "weapon.Axe"],
-        ["background.wildman", "weapon.Axe"],  // дикарь с топором — та же работа
+        ["background.lumberjack", "weapon.axe"],
+        ["background.wildman", "weapon.axe"],  // дикарь с топором — та же работа
     ]}
     {ru = "Мясной щит", en = "Meatshield", setting = false, factors = [
         ["attr.Hitpoints.high", "attr.MeleeDefense.high"],  // стоит впереди и держит удар
@@ -1500,8 +1504,8 @@ def.Titles <- [
     ]}
     {ru = "Валящий дубы", en = "Oak Feller", factors = [
         ["background.lumberjack"],
-        ["background.lumberjack", "weapon.Axe"],
-        ["trait.strong", "weapon.Axe"],  // рубит как заправский лесоруб
+        ["background.lumberjack", "weapon.axe"],
+        ["trait.strong", "weapon.axe"],  // рубит как заправский лесоруб
     ]}
     {ru = "Звонарь", en = "Bell Ringer", factors = [
         ["background.hackflows_town_watchman"],
@@ -1540,7 +1544,7 @@ def.Titles <- [
     ]}
     {ru = "Вилы", en = "Pitchfork", factors = [
         ["background.farmhand"],
-        ["background.farmhand", "weapon.Spear"],  // вилы — они и есть вилы
+        ["background.farmhand", "weapon.spear"],  // вилы — они и есть вилы
     ]}
     {ru = "Ходок по доскам", en = "Plank Walker", factors = [
         ["background.hackflows_pirate"],

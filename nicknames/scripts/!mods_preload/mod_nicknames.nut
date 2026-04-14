@@ -22,7 +22,7 @@ def.PauperBackgrounds <- {
 };
 
 // Base attribute ranges before background modifiers
-local BaseAttrRanges = {
+def.BaseAttrRanges <- {
     Hitpoints = [50, 60],
     Bravery = [30, 40],
     Stamina = [90, 100],
@@ -38,15 +38,12 @@ def.buildFactorSet <- function(_bro) {
 
     // background, traits and perks
     set[_bro.getBackground().getID()] <- true;
-    // FIX: use _bro.getSkills().query(::Const.SkillType.All)
-    foreach (skill in _bro.getSkills().getAllSkillsOfType(::Const.SkillType.Trait))
-        if (skill.getID().find("trait.") == 0) set[skill.getID()] <- true;
-    local masteryPrefix = "perk.mastery.";
-    foreach (skill in _bro.getSkills().getAllSkillsOfType(::Const.SkillType.Perk)) {
+    foreach (skill in _bro.getSkills().query(::Const.SkillType.All)) {
         local id = skill.getID();
-        if (id.find(masteryPrefix) == 0) {
-            local name = id.slice(masteryPrefix.len());
-            set["weapon." + name.slice(0, 1).toupper() + name.slice(1)] <- true;
+        if (id.find("trait.") == 0) set[id] <- true;
+        else if (id.find("perk.mastery.") == 0) {
+            local name = id.slice("perk.mastery.".len());
+            set["weapon." + name] <- true;
         } else if (id.find("perk.") == 0) {
             set[id] <- true;
         }
@@ -55,7 +52,7 @@ def.buildFactorSet <- function(_bro) {
     // attrs
     local changeAttrs = _bro.getBackground().onChangeAttributes();
     local props = _bro.getCurrentProperties();
-    foreach (attr, br in BaseAttrRanges) {
+    foreach (attr, br in def.BaseAttrRanges) {
         local low = br[0] + changeAttrs[attr][0], high =  br[1] + changeAttrs[attr][1];
         local stars = _bro.m.Talents[::Const.Attributes[attr == "Stamina" ? "Fatigue" : attr]];
         if (stars > 0 && props[attr] >= high - stars)
@@ -85,7 +82,7 @@ def.buildFactorSet <- function(_bro) {
     if (weapon != null && "MSU" in getroottable())
         foreach (name, val in ::Const.Items.WeaponType)
             if (weapon.isWeaponType(val))
-                set["weapon." + name] <- true;
+                set["weapon." + name.tolower()] <- true;
 
     // add aliases
     local extra = {};

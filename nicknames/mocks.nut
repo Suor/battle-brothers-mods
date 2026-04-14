@@ -6,7 +6,7 @@
     RangedSkill = 4, Bravery = 5, MeleeDefense = 6, RangedDefense = 7,
     COUNT = 8
 }
-::Const.SkillType <- {Trait = 1, Perk = 4}
+::Const.SkillType <- {Trait = 1, Perk = 4, All = 0xFFFF}
 ::Const.ItemSlot  <- {Mainhand = 0}
 ::Const.Items <- {
     WeaponType = {
@@ -113,6 +113,12 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
                     }
                     foreach (p in perkList) if (p == id) return true;
                     return false;
+                }
+                function query(_type) {
+                    local result = [];
+                    if (_type & ::Const.SkillType.Trait) result.extend(getAllSkillsOfType(::Const.SkillType.Trait));
+                    if (_type & ::Const.SkillType.Perk)  result.extend(getAllSkillsOfType(::Const.SkillType.Perk));
+                    return result;
                 }
                 function getAllSkillsOfType(_type) {
                     if (_type == ::Const.SkillType.Perk) {
