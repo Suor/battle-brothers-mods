@@ -14,10 +14,14 @@ local function positive(value) {
 }
 local function named(value) {return ::Const.UI.getColorized(value + "", "#1e468f")}
 local function enemy(value) {return ::Const.UI.getColorized(value + "", "#8f1e1e")}
+// TODO: use Rosetta._ when new rosetta will come out and become common enough
+local _ = "Rosetta" in getroottable() ? Rosetta.translate.bindenv(Rosetta) : @(s) s;
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("stdlib >= 2.5");
 mod.queue(">msu", ">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", function () {
+    ::include("retinue_ups/rosetta_ru");
+
     if (::Hooks.hasMod("mod_msu")) {
         def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
 
@@ -364,7 +368,7 @@ mod.queue(">msu", ">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_follow
         local injury = ::std.Player.removePermanentInjury(_player);
         if (!injury) return;
 
-        _player.addLevelUpChanges("Promoted Surgeon fixes", [{
+        _player.addLevelUpChanges(_("Promoted Surgeon fixes"), [{
             id = injury.getID()
             icon = injury.getIcon()
             removed = true
