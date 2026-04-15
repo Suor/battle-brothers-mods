@@ -21,7 +21,7 @@ mod.conflictWith("mod_autopilot");
 mod.queue(">mod_msu", ">mod_reforged", ">mod_sellswords", ">mod_fantasybro", function () {
     def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
     def.conf <- function (name) {
-            return def.msu.ModSettings.getSetting(name).getValue();
+        return def.msu.ModSettings.getSetting(name).getValue();
     }
 
     local msd = ::MSU.System.Registry.ModSourceDomain, upd = def.Updates;
