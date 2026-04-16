@@ -23,7 +23,7 @@ So it has:
     - Lone Chosen
     - Cultist Origin
 
-Russian localization included - need to install [rosetta][] and it's dependencies.
+Russian localization included - need to install [Rosetta][] and it's dependencies.
 
 
 ## Getting the Most
@@ -32,7 +32,9 @@ Certain mods and their settings will open more factors and thus more diverse tit
 
 1. [More Backgrounds and Events (Updated)][xbe] - more backgrounds to mock and praise, and to play.
 2. [Starting Perks By Background (Updated)][mod_background_perks] - starting perks also affect nicknames.
-3. [Bro Studio][bro_studio] - set 1 extra starting trait for each bro. Will make combo nicknames trigger more often.
+3. [Bro Studio][bro_studio] - set 1 extra starting trait. Will make combo nicknames trigger more often.
+4. Bro Studio (again) - may add permanent injury chance. Will unlock injury-specific titles.
+5. Any other mods from above adding backgrounds or traits.
 
 
 ## Compatibility

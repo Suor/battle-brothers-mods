@@ -36,15 +36,13 @@ def.BaseAttrRanges <- {
 def.buildFactorSet <- function(_bro) {
     local set = {};
 
-    // background, traits and perks
+    // background, traits, perks and permanent injuries
     set[_bro.getBackground().getID()] <- true;
     foreach (skill in _bro.getSkills().query(::Const.SkillType.All)) {
         local id = skill.getID();
-        if (id.find("trait.") == 0) set[id] <- true;
-        else if (id.find("perk.mastery.") == 0) {
-            local name = id.slice("perk.mastery.".len());
-            set["weapon." + name] <- true;
-        } else if (id.find("perk.") == 0) {
+        if (id.find("perk.mastery.") == 0) {
+            set["weapon." + id.slice("perk.mastery.".len())] <- true;
+        } else if (id.find("trait.") == 0 || id.find("perk.") == 0 || id.find("injury.") == 0) {
             set[id] <- true;
         }
     }

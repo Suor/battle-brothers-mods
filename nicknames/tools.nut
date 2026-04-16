@@ -91,12 +91,11 @@ local KNOWN = {
         // necro perks
         "necro.blood_sucking", "necro.mind_meld", "necro.regeneration", "necro.soul_link"
     ]
-    perm = [
-        "brain_damage_injury", "broken_elbow_joint_injury", "broken_knee_injury",
-        "collapsed_lung_part_injury", "maimed_foot_injury", "missing_ear_injury",
-        "missing_eye_injury", "missing_finger_injury", "missing_hand_injury",
-        "missing_nose_injury", "permanent_injury", "traumatized_injury",
-        "weakened_heart_injury"
+    injury = [
+        "brain_damage", "broken_elbow_joint", "broken_knee",
+        "collapsed_lung_part", "maimed_foot", "missing_ear",
+        "missing_eye", "missing_finger", "missing_hand",
+        "missing_nose", "traumatized", "weakened_heart"
     ]
 };
 

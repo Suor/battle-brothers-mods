@@ -205,4 +205,33 @@ foreach (t in nobleCandidates)
     assertIn(t, xxheroCandidates);
 print("aliases: xxherosp matches adventurous_noble titles OK\n");
 
+// ── injury.* (permanent injuries) tests ──────────────────────────────────────
+
+// injury.missing_eye should unlock One-Eye and Squinty
+local broMissingEye = makeBro("background.farmhand", null, [], null, null, 5, [], [], null, ["injury.missing_eye"]);
+local eyeTitles = candidateTitles(broMissingEye);
+assertIn("One-Eye", eyeTitles);
+assertIn("Squinty", eyeTitles);
+print("injury.missing_eye triggers OK\n");
+
+// injury factor appears in factorSet
+assert("injury.missing_eye" in def.buildFactorSet(broMissingEye));
+print("injury factor in factorSet OK\n");
+
+// injury weight is applied correctly
+local eyeCands = def.buildCandidates(broMissingEye);
+assertEq(eyeCands.filter(@(_, c) c.title == "One-Eye"), [{title = "One-Eye", weight = W.injury}]);
+print("injury weight OK\n");
+
+// no injury → no injury titles
+local broNoInjury = makeBro("background.farmhand");
+if (candidateTitles(broNoInjury).find("One-Eye") != null)
+    throw "One-Eye should not appear without injury.missing_eye";
+print("no injury → no injury titles OK\n");
+
+// combo: injury + trait
+local broDancer = makeBro("background.farmhand", null, ["trait.drunkard"], null, null, 5, [], [], null, ["injury.broken_knee"]);
+assertIn("the Dancer", candidateTitles(broDancer));
+print("injury + trait combo OK\n");
+
 print("Tests OK\n");

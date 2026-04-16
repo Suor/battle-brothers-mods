@@ -6,7 +6,7 @@
     RangedSkill = 4, Bravery = 5, MeleeDefense = 6, RangedDefense = 7,
     COUNT = 8
 }
-::Const.SkillType <- {Trait = 1, Perk = 4, All = 0xFFFF}
+::Const.SkillType <- {Trait = 1, Perk = 4, PermanentInjury = 4096, All = 0xFFFF}
 ::Const.ItemSlot  <- {Mainhand = 0}
 ::Const.Items <- {
     WeaponType = {
@@ -72,7 +72,7 @@ function getNicknamesOnHired() {
 // baseProps: override base properties
 // bgDailyCost: background DailyCost (default 5 = cheap/common)
 // bgTitles: vanilla .m.Titles for the background
-function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = null, bgDailyCost = 5, bgTitles = [], perks = [], bgProps = null) {
+function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = null, bgDailyCost = 5, bgTitles = [], perks = [], bgProps = null, injuries = []) {
     local defaultAttrs = {
         Hitpoints = [0, 10], Bravery = [0, 10], Stamina = [0, 10],
         MeleeSkill = [0, 10], RangedSkill = [0, 10],
@@ -101,8 +101,9 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
         }
         b = {}
         function getSkills() {
-            local traitList = _traits;
-            local perkList  = _perks;
+            local traitList  = _traits;
+            local perkList   = _perks;
+            local injuryList = injuries;
             local bgId = _bgId;
             return {
                 function hasSkill(id) {
@@ -112,15 +113,22 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
                         if (tid == id) return true;
                     }
                     foreach (p in perkList) if (p == id) return true;
+                    foreach (inj in injuryList) if (inj == id) return true;
                     return false;
                 }
                 function query(_type) {
                     local result = [];
                     if (_type & ::Const.SkillType.Trait) result.extend(getAllSkillsOfType(::Const.SkillType.Trait));
                     if (_type & ::Const.SkillType.Perk)  result.extend(getAllSkillsOfType(::Const.SkillType.Perk));
+                    if (_type & ::Const.SkillType.PermanentInjury) result.extend(getAllSkillsOfType(::Const.SkillType.PermanentInjury));
                     return result;
                 }
                 function getAllSkillsOfType(_type) {
+                    if (_type == ::Const.SkillType.PermanentInjury) {
+                        return injuryList.map(function(inj) {
+                            return {function getID() {return inj}};
+                        });
+                    }
                     if (_type == ::Const.SkillType.Perk) {
                         return perkList.map(function(p) {
                             return {m = {Titles = []} b = {Titles = []} function getID() {return p}};

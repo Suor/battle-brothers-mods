@@ -85,12 +85,10 @@
 // [NOT IMPLEMENTED] offhand.Shield, offhand.Net  — bro uses a shield or throwing net
 // [NOT IMPLEMENTED] armor.heavy, armor.light  — bro's body armor tier
 //
-// [NOT IMPLEMENTED] perm.*  — permanent injuries; new bros don't have them in vanilla,
-//                               but possible for future use (e.g. injury.lost_eye → "Одноглазый")
-//    brain_damage_injury, broken_elbow_joint_injury, broken_knee_injury, collapsed_lung_part_injury,
-//    maimed_foot_injury, missing_ear_injury, missing_eye_injury, missing_finger_injury,
-//    missing_hand_injury, missing_nose_injury, permanent_injury, traumatized_injury,
-//    weakened_heart_injury
+// injury.*  — permanent injuries (skill IDs used directly as factors)
+//    brain_damage, broken_elbow_joint, broken_knee, collapsed_lung_part,
+//    maimed_foot, missing_ear, missing_eye, missing_finger,
+//    missing_hand, missing_nose, traumatized, weakened_heart
 //
 // perk.*    — specific perks taken; requires mod_background_perks
 //   vanilla:   "adrenaline", "anticipation", "backstabber", "bags_and_belts", "battle_forged",
@@ -118,6 +116,7 @@ def.Weights <- {
     background = 1.5
     trait      = 1.5
     attr       = 2.0
+    injury     = 3.0
     cost       = 1.0
     type       = 1.0
     weapon     = 1.5
@@ -187,23 +186,23 @@ def.Titles <- [
         ["trait.fat", "attr.MeleeSkill.low"],  // тучный и неумелый
     ]}
     {ru = "Носатый", en = "Nosy", factors = [
-        ["perm.missing_nose_injury"],  // [NOT IMPLEMENTED] нос сломан в драке, криво торчит
+        ["injury.missing_nose"],  // нос сломан в драке, криво торчит
     ]}
     // Зубастый — нет обоснования; iron_jaw не про зубы, не использовать
     {ru = "Четыре пальца", en = "Four Fingers", factors = [
-        ["perm.missing_finger_injury"],  // [NOT IMPLEMENTED]
+        ["injury.missing_finger"],
     ]}
     {ru = "Кривой", en = "Crooked", factors = [
         ["trait.clubfooted"],        // ходит вкривь — clubfoot ближайшее
-        ["perm.broken_knee_injury"], // [NOT IMPLEMENTED] нога срослась криво
+        ["injury.broken_knee"], // нога срослась криво
     ]}
     {ru = "Косой", en = "Squinty", factors = [
         ["trait.short_sighted"],     // плохое зрение — щурится
-        ["perm.missing_eye_injury"], // [NOT IMPLEMENTED] повреждённый глаз
+        ["injury.missing_eye"], // повреждённый глаз
     ]}
     {ru = "Хромой", en = "Limpy", factors = [
         ["trait.clubfooted"],       // прямое попадание
-        ["perm.maimed_foot_injury"], // [NOT IMPLEMENTED] или последствие старой раны
+        ["injury.maimed_foot"], // или последствие старой раны
     ]}
     {ru = "Косматый", en = "Shaggy", factors = [
         ["background.wildman"],
@@ -221,9 +220,8 @@ def.Titles <- [
         ["attr.Hitpoints.low"],
         ["attr.Bravery.low"],
     ]}
-    // Шрам — нет подходящего perm.*; TODO: найти обоснование или убрать
     {ru = "Одноглазый", en = "One-Eye", factors = [
-        ["perm.missing_eye_injury"]  // [NOT IMPLEMENTED],
+        ["injury.missing_eye"],
     ]}
     {ru = "Меченый", en = "Marked", factors = [
         ["background.cultist"],    // ритуальные метки
@@ -1426,13 +1424,13 @@ def.Titles <- [
         ["trait.clubfooted", "trait.survivor"],  // тащится позади всего отряда
     ]}
     {ru = "Мыслитель", en = "the Thinker", factors = [
-        ["perm.brain_damage_injury"],  // [NOT IMPLEMENTED] лицо умное, но в голове пусто
+        ["injury.brain_damage"],  // лицо умное, но в голове пусто
     ]}
     {ru = "Плясун", en = "the Dancer", factors = [
-        ["perm.broken_knee_injury", "trait.drunkard"],  // [NOT IMPLEMENTED] еле стоит на ногах
+        ["injury.broken_knee", "trait.drunkard"],  // еле стоит на ногах
     ]}
     {ru = "Дырявая Башка", en = "Cracked Skull", factors = [
-        ["perm.brain_damage_injury"],  // [NOT IMPLEMENTED] после ранения забыл, как его зовут
+        ["injury.brain_damage"],  // после ранения забыл, как его зовут
     ]}
 
     // ── Прочие ───────────────────────────────────────────────────────────
