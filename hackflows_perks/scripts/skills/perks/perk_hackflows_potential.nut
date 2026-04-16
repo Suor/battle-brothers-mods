@@ -162,6 +162,13 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
             actor.getPerkTree().addPerk(getID(), 1);
 
             if (!m.Failed) stage.up(this, actor);
+
+            // Show level up change
+            actor.addLevelUpChanges(m.Name, [{
+                id = getID()
+                icon = getIcon()
+                tooltip = getTooltip()
+            }])
         }
     }
 

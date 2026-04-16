@@ -127,6 +127,8 @@ mod.queue(">msu", ">mod_heal_repair_fix", ">mod_reforged", function () {
         }
     })
 
+    ::include("scripts/i_hackflows_perks_levelup_changes");
+
     // Add these perks to Reforged perk trees.
     // Do not use Stabilized: Reforged has its own medium armor perk.
     // Bloody Harvest is kind of superseded with Death Dealer, doesn't work with ranged though.
