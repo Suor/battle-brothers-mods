@@ -388,8 +388,8 @@ def.Titles <- [
         ["trait.bloodthirsty"],
         ["perk.fearsome"],  // enemies fear him
     ]}
-    {ru = "Брехун", en = "Liar", factors = [
-        ["trait.weasel"],
+    {ru = "Брехло", en = "Liar", factors = [
+        ["trait.disloyal"],
         ["trait.legend_double_tongued"],
     ]}
     {ru = "Двулицый", en = "Two-Face", factors = [
@@ -1066,6 +1066,7 @@ def.Titles <- [
     ]}
     {ru = "Тролль", en = "the Troll", factors = [
         ["trait.huge", "trait.dumb"],  // большой и тупой
+        ["trait.huge", "trait.brute"],
     ]}
     {ru = "Йети", en = "the Yeti", factors = [
         ["background.wildman", "trait.huge"],
@@ -1078,9 +1079,9 @@ def.Titles <- [
         ["background.shepherd", "trait.teamplayer"],  // и правда прикрывает всех
     ]}
     {ru = "Орёл", en = "Eagle", factors = [
-        ["trait.eagle_eyes"],
-        ["trait.eagle_eyes", "attr.RangedSkill.high"],  // видит и попадает
-        ["attr.Bravery.high", "trait.brave"],            // гордый, непреклонный
+        ["attr.Bravery.high", "trait.brave"],           // гордый, непреклонный
+        ["attr.Bravery.high", "trait.eagle_eyes"],
+        ["type.ranged", "trait.eagle_eyes", "attr.RangedSkill.high"],  // видит и попадает
     ]}
     {ru = "Зверь", en = "Beast", factors = [
         ["trait.bloodthirsty", "trait.huge"],
