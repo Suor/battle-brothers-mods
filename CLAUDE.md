@@ -12,9 +12,8 @@ All commands run from within a specific mod's directory (e.g. `cd nicknames && m
 
 ```bash
 make check          # Run all the checks: syntax, tests, custom check
-make zip            # Create release ZIP (checks for debug statements, uses git tag for name)
 make install        # Install to DATA_DIR (from .env)
-make include        # Copy shared files from ../_includes/ with variable substitution
+make zip            # Create release ZIP (checks for debug statements, uses git tag for name)
 ```
 
 Build config is in `.env` at repo root — sets `STDLIB_DIR`, `DATA_DIR`, `SCRIPTS`, etc. All mods use `include ../Makefile.common`.
