@@ -360,6 +360,17 @@ def.Titles <- [
         ["trait.hesitant"],
         ["trait.impatient"],
     ]}
+    {names = [
+        {ru = "Тугодум", en = "Slow Thinker"},
+        {ru = "Топтун", en = "Shuffler"},
+        {ru = "Завтра", en = "Tomorrow"},
+    ], factors = [
+        ["trait.hesitant"],
+    ]}
+    {ru = "Якорь", en = "Anchor", factors = [
+        ["trait.hesitant"],
+        ["background.hackflows_pirate", "trait.hesitant"],
+    ]}
     {ru = "Шальной", en = "Unhinged", factors = [
         ["trait.bloodthirsty"],
         ["trait.deathwish"],
@@ -459,6 +470,13 @@ def.Titles <- [
         ["background.oathbreaker"],
         ["background.refugee", "trait.disloyal"],
         ["perk.lone_wolf"],  // fights alone, cast out
+    ]}
+    {names = [
+        {ru = "Позор", en = "Disgrace"},
+        {ru = "Отступник", en = "Apostate"},
+        {ru = "Отречённый", en = "Renounced"},
+    ], factors = [
+        ["background.oathbreaker"],
     ]}
     {ru = "Правдоруб", en = "Truth-cutter", factors = [
         ["background.hackflows_dissenter"],
@@ -593,6 +611,16 @@ def.Titles <- [
         ["trait.athletic", "trait.strong"],        // сила и выносливость
         ["perk.brawny"],  // built for heavy armor
     ]}
+    {names = [
+        {ru = "Борец", en = "Wrestler"},
+        {ru = "Жеребец", en = "Stallion"},
+        {ru = "Удалец", en = "Gallant"},
+    ], factors = [
+        ["trait.athletic"],
+    ]}
+    {ru = "Крепкий Орешек", en = "Hard Nut", factors = [
+        ["trait.athletic", "trait.survivor"],
+    ]}
     {ru = "Громила", en = "Bruiser", factors = [
         ["trait.huge", "trait.strong"],
         ["trait.brute"],
@@ -690,8 +718,18 @@ def.Titles <- [
     {ru = "Мышка", en = "Fieldmouse", factors = [
         ["trait.fear_beasts"],     // боится любой живности
     ]}
+    {ru = "Зайка", en = "Bunny", factors = [
+        ["trait.fear_beasts"],  // ironic: при любом звере — заяц
+    ]}
     {ru = "Набожный", en = "the Devout", factors = [
         ["trait.fear_undead"],  // молится — авось поможет
+    ]}
+    {names = [
+        {ru = "Крест", en = "the Cross"},
+        {ru = "Свечка", en = "Candle"},
+        {ru = "Чеснок", en = "Garlic"},
+    ], factors = [
+        ["trait.fear_undead"],
     ]}
 
     {ru = "Стрела", en = "Arrow", factors = [
@@ -900,9 +938,19 @@ def.Titles <- [
         ["trait.fear_greenskins", "attr.Bravery.low"],   // ironic: бледнеет при слове «зеленокожий»
         ["trait.hate_greenskins", "attr.Bravery.high"],  // и у тех, кто их вправду ненавидит
     ]}
+    {names = [
+        {ru = "Оркоед", en = "Orc-Eater"},
+        {ru = "Зелёный", en = "Greenie"},
+    ], factors = [
+        ["trait.fear_greenskins"],  // ironic: самый трусливый зовётся Оркоедом / сам позеленел от страха
+    ]}
     {ru = "Шнырь", en = "Snooper", factors = [
         ["background.thief", "trait.quick"],  // везде прошмыгнёт без мыла
         ["trait.weasel", "trait.quick"],
+    ]}
+    {ru = "Решето", en = "Sieve", factors = [
+        ["attr.RangedDefense.low"],
+        ["attr.RangedDefense.low", "attr.Hitpoints.high"],  // ironic: дырявый, но живёт
     ]}
 
     // Boris the Bullet Dodger — Snatch (2000)
@@ -948,6 +996,10 @@ def.Titles <- [
     {ru = "Дырявый", en = "Full of Holes", factors = [
         ["trait.bleeder"],
         ["trait.bleeder", "trait.survivor"],  // кровоточит, но живёт
+    ]}
+    {ru = "Красный Норс", en = "Red Nose", factors = [
+        ["trait.bleeder"],
+        ["trait.bleeder", "trait.drunkard"],  // и кровоточит, и пьёт — вечно красный
     ]}
     {ru = "Смертник", en = "Dead Man", factors = [
         ["trait.brave", "trait.deathwish"],                        // храбрый + тяга к смерти
@@ -1106,6 +1158,13 @@ def.Titles <- [
     ]}
     {ru = "Курица", en = "Chicken", factors = [
         ["trait.night_blind"],  // куриная слепота — буквально
+    ]}
+    {ru = "Фонарь", en = "Lantern", factors = [
+        ["trait.night_blind"],  // без фонаря ни шагу — ironic: зовут Фонарём
+    ]}
+    {ru = "Слепень", en = "Horsefly", factors = [
+        ["trait.night_blind"],
+        ["trait.short_sighted"],  // летит прямо куда не надо
     ]}
     {ru = "Шмель", en = "Hornet", factors = [
         ["trait.tiny", "trait.brute"],
@@ -1425,11 +1484,38 @@ def.Titles <- [
     {names = [
         {ru = "Мыслитель", en = "the Thinker"},
         {ru = "Дырявая Башка", en = "Cracked Skull"},
+        {ru = "Юродивый", en = "Holy Fool"},
     ], factors = [
-        ["injury.brain_damage"],  // лицо умное, но в голове пусто
+        ["injury.brain_damage"],
     ]}
     {ru = "Плясун", en = "the Dancer", factors = [
         ["injury.broken_knee", "trait.drunkard"],  // еле стоит на ногах
+    ]}
+    {ru = "Клешня", en = "Pincer", factors = [
+        ["injury.broken_elbow_joint"],
+        ["injury.broken_elbow_joint", "background.beggar"],
+    ]}
+    {ru = "Ухо", en = "Ear", factors = [
+        ["injury.missing_ear"],  // ironic: нет уха — зовут Ухом
+    ]}
+    {ru = "Полушка", en = "Half-ear", factors = [
+        ["injury.missing_ear"],  // было два уха, осталось полтора
+        ["trait.tiny", "trait.greedy"],  // мелкий и жадный — цена ему полушка
+    ]}
+    {ru = "Культяпка", en = "Stub", factors = [
+        ["injury.missing_hand"],
+    ]}
+    {ru = "Пуганый", en = "Spooked", factors = [
+        ["injury.traumatized"],
+    ]}
+    {ru = "Блаженный", en = "Blessed", factors = [
+        ["injury.traumatized"],
+        ["injury.traumatized", "trait.optimist"],  // после всего, что видел — сидит с улыбкой
+    ]}
+    {ru = "Синяк", en = "Bruise", factors = [
+        ["injury.weakened_heart"],
+        ["injury.weakened_heart", "attr.Stamina.low"],
+        ["trait.ailing"],  // ironic: синеет при нагрузке
     ]}
 
     // ── Прочие ───────────────────────────────────────────────────────────
@@ -1461,6 +1547,17 @@ def.Titles <- [
         ["trait.asthmatic"],
         ["injury.collapsed_lung_part"],
         ["trait.iron_lungs", "attr.Stamina.low"],  // ironic
+    ]}
+    {ru = "Мехи", en = "Wind Pumps", factors = [
+        ["trait.iron_lungs"],  // кузнечные меха: качает воздух без устали
+    ]}
+    {ru = "Труба", en = "Foghorn", factors = [
+        ["trait.iron_lungs"],
+        ["background.minstrel", "trait.iron_lungs"],  // дышит как труба, слышно на весь лагерь
+    ]}
+    {ru = "Бурдюк", en = "Wineskin", factors = [
+        ["trait.iron_lungs"],
+        ["trait.iron_lungs", "trait.drunkard"],  // ironic: бурдюк с воздухом — или с вином
     ]}
     {ru = "Задохлик", en = "Сhoke", factors = [
         ["trait.asthmatic"],
@@ -1507,13 +1604,36 @@ def.Titles <- [
         ["background.hackflows_town_watchman"],
         ["background.militia"],
     ]}
+    {names = [
+        {ru = "Рекрут", en = "Recruit"},
+        {ru = "Частокол", en = "Palisade"},
+        {ru = "Деревня", en = "Village Boy"},
+        {ru = "Земляк", en = "Homeboy"},
+    ], factors = [
+        ["background.militia"],
+    ]}
     {ru = "Проводник", en = "Pathfinder", factors = [
         ["background.hackflows_cartographer"],
         ["trait.sure_footing"],                              // знает, куда ступить
         ["background.hackflows_cartographer", "trait.sure_footing"],
         ["perk.pathfinder"],  // literal match
     ]}
+    {names = [
+        {ru = "Козлик", en = "Billy Goat"},
+        {ru = "Верный Шаг", en = "Sure Step"},
+    ], factors = [
+        ["trait.sure_footing"],
+    ]}
     {ru = "Полукровка", en = "Half-Blood", factors = [
+        ["background.bastard"],
+    ]}
+    {names = [
+        {ru = "Байстрюк", en = "By-blow"},
+        {ru = "Нагуляный", en = "Love Child"},
+        {ru = "Отпрыск", en = "Offspring"},
+        {ru = "Левый Сын", en = "Left-Hand Son"},
+        {ru = "Случайный", en = "Accident"},
+    ], factors = [
         ["background.bastard"],
     ]}
     {ru = "Каблук", en = "Cobbler", factors = [
@@ -1663,6 +1783,28 @@ def.Titles <- [
     {ru = "Шарлатан", en = "Charlatan", factors = [
         ["background.hackflows_con_artist"],  // мастер вешать лапшу на уши
     ]}
+    {names = [
+        {ru = "Обоз", en = "Baggage Train"},
+        {ru = "Погонщик", en = "Drover"},
+        {ru = "Колея", en = "the Rut"},
+        {ru = "Тюк", en = "the Bundle"},
+        {ru = "Пыль Столбом", en = "Dustcloud"},
+    ], factors = [
+        ["background.caravan_hand"],
+    ]}
+    {names = [
+        {ru = "Клетка", en = "the Cage"},
+        {ru = "Любимчик", en = "Crowd Favourite"},
+        {ru = "Последний бой", en = "Last Fight"},
+        {ru = "Сетка", en = "Net Fighter"},
+    ], factors = [
+        ["background.gladiator"],
+    ]}
+    {ru = "Пилигрим", en = "Pilgrim", factors = [
+        ["weapon.staff", "group.peaceful"],
+        ["group.peaceful"],
+        ["background.monk", "group.peaceful"],
+    ]}
 
     // ── Происхождение ────────────────────────────────────────────────────
     {ru = "Белоручка", en = "Soft Hands", factors = [
@@ -1671,19 +1813,65 @@ def.Titles <- [
     {ru = "Клинок", en = "the Blade", factors = [
         ["background.sellsword"],          // буквально продавал меч
     ]}
+    {names = [
+        {ru = "Задаток", en = "Down Payment"},
+        {ru = "Серебро", en = "Silver"},
+        {ru = "Ничего Личного", en = "Nothing Personal"},
+        {ru = "Свободный", en = "Free Blade"},
+    ], factors = [
+        ["background.sellsword"],
+    ]}
     {ru = "Холоп", en = "Serf", factors = [
         ["background.servant"],
         ["trait.legend_fear_nobles"],      // страх перед господами — у него в крови
     ]}
+    {names = [
+        {ru = "Лакей", en = "Lackey"},
+        {ru = "Метла", en = "Broom"},
+        {ru = "Поклон", en = "the Bow"},
+    ], factors = [
+        ["background.servant"],
+    ]}
     {ru = "Кирпич", en = "Brick", factors = [
-        ["background.mason"],              // клал стены — сам как стена
+        ["background.mason"],
+        ["background.mason", "trait.iron_jaw"],  // крепкий и квадратный
+    ]}
+    {names = [
+        {ru = "Плита", en = "Slab"},
+        {ru = "Зубило", en = "Chisel"},
+    ], factors = [
+        ["background.mason"],
+    ]}
+    {ru = "Паж", en = "Page", factors = [
+        ["background.squire"],
     ]}
     {ru = "Коробейник", en = "Pedlar", factors = [
         ["background.peddler"],
         ["perk.bags_and_belts"],  // carries everything with him
     ]}
+    {names = [
+        {ru = "Торгаш", en = "Huckster"},
+        {ru = "Лоток", en = "Tray Man"},
+    ], factors = [
+        ["background.peddler"],
+    ]}
+    {ru = "Сюда Иди", en = "Come Hither", factors = [
+        ["background.peddler"],
+        ["background.peddler", "trait.cocky"],
+    ]}
     {ru = "Силки", en = "Snares", factors = [
         ["background.poacher"],            // жил тихо — расставлял ловушки
+    ]}
+    {names = [
+        {ru = "Кот", en = "Tom Cat"},
+        {ru = "Ночник", en = "Night Prowler"},
+        {ru = "Нычка", en = "Stash"},
+    ], factors = [
+        ["background.poacher"],
+    ]}
+    {ru = "Капкан", en = "Trap", factors = [
+        ["background.poacher"],
+        ["background.poacher", "trait.irrational"],  // ironic: сам попался в наёмники
     ]}
     {ru = "Инквизитор", en = "Inquisitor", factors = [
         ["trait.hate_undead"],
@@ -1708,6 +1896,15 @@ def.Titles <- [
     ]}
     {ru = "Кукловод", en = "Puppeteer", factors = [
         ["perk.necro.mind_meld"],  // bends undead minds to his will
+    ]}
+    {ru = "Поводырь", en = "the Guide", factors = [
+        ["perk.necro.soul_link"],  // водит нежить за собой
+    ]}
+    {names = [
+        {ru = "Голосок", en = "High Voice"},
+        {ru = "Дворцовый", en = "Palace Man"},
+    ], factors = [
+        ["background.eunuch"],
     ]}
 
     // ── Легендарные черты ─────────────────────────────────────────────────
@@ -1741,5 +1938,11 @@ def.Titles <- [
     ]}
     {ru = "Мука", en = "Flour", factors = [
         ["background.miller"],  // мельник — мука буквально
+    ]}
+    {names = [
+        {ru = "Водяной", en = "Water Spirit"},
+        {ru = "Закрома", en = "the Granary"},
+    ], factors = [
+        ["background.miller"],
     ]}
 ];

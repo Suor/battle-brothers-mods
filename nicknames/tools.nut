@@ -318,6 +318,154 @@ function cmdStats() {
     print("factor arrays: " + numFactorArrays + "\n");
 }
 
+function readLines(path) {
+    local f = file(path, "rb");
+    f.seek(0, 'e'); local size = f.tell(); f.seek(0, 'b');
+    local b = f.readblob(size);
+    f.close();
+    local lines = [], s = "", NL = 10;
+    for (local i = 0; i < size; i++) {
+        if (b[i] == NL) { lines.push(s); s = ""; }
+        else s += b[i].tochar();
+    }
+    if (s.len() > 0) lines.push(s);
+    return lines;
+}
+
+// Parse **Name** or **Name / EnName** entries at line starts from a markdown file.
+// Returns array of {ru, en} where en may be null if not in the format.
+function parseBoldTitles(filename) {
+    local lines;
+    try { lines = readLines(filename); } catch(e) {
+        print("Cannot open '" + filename + "'\n"); return [];
+    }
+    local result = [];
+    foreach (line in lines) {
+        if (line.len() < 4 || line.slice(0, 2) != "**") continue;
+        local close = line.find("**", 2);
+        if (close == null) continue;
+        local raw = line.slice(2, close);
+        local sep = raw.find(" / ");
+        local ru = sep != null ? raw.slice(0, sep) : raw;
+        local en = sep != null ? raw.slice(sep + 3) : null;
+        local factors = [], rest = line.slice(close + 2), k = 0;
+        while (true) {
+            local q1 = rest.find("`", k);
+            if (q1 == null) break;
+            local q2 = rest.find("`", q1 + 1);
+            if (q2 == null) break;
+            factors.push(rest.slice(q1 + 1, q2));
+            k = q2 + 1;
+        }
+        result.push({ru = ru, en = en, factors = factors});
+    }
+    return result;
+}
+
+// Parse "quoted name" strings from built-in.nut comment sections.
+// Returns norm_name -> {en = "original name", factor = "background.xxx"}.
+function parseBuiltInNames() {
+    local norm = {};
+    local lines;
+    try { lines = readLines("built-in.nut"); } catch(e) { return norm; }
+    foreach (line in lines) {
+        local start = line.find("[\"");
+        if (start == null) continue;
+        local factorEnd = line.find("\"", start + 2);
+        if (factorEnd == null) continue;
+        local factor = line.slice(start + 2, factorEnd);
+        local ci = line.find("//");
+        if (ci == null) continue;
+        local k = ci;
+        while (true) {
+            local q1 = line.find("\"", k);
+            if (q1 == null) break;
+            local q2 = line.find("\"", q1 + 1);
+            if (q2 == null) break;
+            local en = line.slice(q1 + 1, q2);
+            local s = en.tolower();
+            if (s.len() > 4 && s.slice(0, 4) == "the ") s = s.slice(4);
+            if (!(s in norm)) norm[s] <- {en = en, factor = factor};
+            k = q2 + 1;
+        }
+    }
+    return norm;
+}
+
+function cmdNew(filename) {
+    local proposed;
+    try { proposed = parseBoldTitles(filename); } catch(e) {
+        print("Cannot read '" + filename + "'\n"); return;
+    }
+
+    // ru -> title entry and ru -> en maps
+    local ruToTitle = {}, ruToEn = {};
+    foreach (t in titles) {
+        local names = "names" in t ? t.names : [{ru = t.ru, en = t.en}];
+        foreach (n in names) { ruToTitle[n.ru] <- t; ruToEn[n.ru] <- n.en; }
+    }
+
+    local builtInNames = parseBuiltInNames();
+
+    function normEn(s) {
+        s = s.tolower();
+        if (s.len() > 4 && s.slice(0, 4) == "the ") s = s.slice(4);
+        return s;
+    }
+
+    function builtInInfo(entry) {
+        local enForMatch = entry.en != null ? normEn(entry.en) : (entry.ru in ruToEn ? normEn(ruToEn[entry.ru]) : null);
+        return (enForMatch != null && enForMatch in builtInNames) ? builtInNames[enForMatch] : null;
+    }
+
+    local inTitles = [], alsoInBuiltIn = [], notAdded = [], notAddedButBuiltIn = [];
+    foreach (entry in proposed) {
+        if (entry.ru in ruToEn) {
+            inTitles.push(entry.ru);
+            local info = builtInInfo(entry);
+            if (info != null) alsoInBuiltIn.push({ru = entry.ru, info = info});
+        } else {
+            local info = builtInInfo(entry);
+            if (info != null) notAddedButBuiltIn.push({ru = entry.ru, en = entry.en, factors = entry.factors, info = info});
+            else notAdded.push(entry.ru);
+        }
+    }
+
+    print(proposed.len() + " proposed in " + filename + "\n");
+    print(inTitles.len() + " in titles.nut\n");
+    function factorsStr(t) {
+        local parts = [];
+        foreach (combo in t.factors) parts.push("[" + sortedKey(combo, " + ") + "]");
+        local s = "";
+        foreach (i, p in parts) { if (i > 0) s += "; "; s += p; }
+        return s;
+    }
+
+    if (alsoInBuiltIn.len() > 0) {
+        print("  " + alsoInBuiltIn.len() + " also in built-ins:\n");
+        foreach (m in alsoInBuiltIn)
+            print("    " + m.ru + " (\"" + ruToEn[m.ru] + "\" = \"" + m.info.en + "\" in " + m.info.factor + ")"
+                + " — " + factorsStr(ruToTitle[m.ru]) + "\n");
+    }
+    if (notAddedButBuiltIn.len() > 0) {
+        print(notAddedButBuiltIn.len() + " not added, covered by built-ins:\n");
+        foreach (m in notAddedButBuiltIn) {
+            local enLabel = m.en != null ? "\"" + m.en + "\"" : "?";
+            local fstr = "";
+            foreach (i, f in m.factors) { if (i > 0) fstr += "; "; fstr += "[" + f + "]"; }
+            print("  " + m.ru + " (" + enLabel + " = \"" + m.info.en + "\" in " + m.info.factor + ")"
+                + (fstr.len() > 0 ? " — " + fstr : "") + "\n");
+        }
+    }
+    if (notAdded.len() > 0) {
+        local s = "";
+        foreach (i, n in notAdded) { if (i > 0) s += ", "; s += n; }
+        print(notAdded.len() + " not yet added: " + s + "\n");
+    } else if (notAddedButBuiltIn.len() == 0) {
+        print("All added!\n");
+    }
+}
+
 // ── Dispatch ──────────────────────────────────────────────────────────────────
 
 local cmd = vargv.len() > 0 ? vargv[0] : "";
@@ -326,10 +474,12 @@ switch (cmd) {
     case "check": cmdCheck(); break;
     case "usage": cmdUsage(doSort); break;
     case "stats": cmdStats(); break;
+    case "new": cmdNew(vargv.len() > 1 ? vargv[1] : "new_titles.md"); break;
     default:
         print("Usage: squirrel tools.nut <command>\n");
         print("Commands:\n");
-        print("  check   show errors and warnings\n");
-        print("  usage   show factor combo usage stats\n");
-        print("  stats   show title and factor array counts\n");
+        print("  check        show errors and warnings\n");
+        print("  usage        show factor combo usage stats\n");
+        print("  stats        show title and factor array counts\n");
+        print("  new [file]   check new_titles.md proposals vs titles.nut (default: new_titles.md)\n");
 }
