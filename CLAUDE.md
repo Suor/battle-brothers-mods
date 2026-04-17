@@ -4,7 +4,27 @@ This repo is a collection of Battle Brothers game mods written in Squirrel (`.nu
 
 Battle Brothers is a tactical rogue-like game, set in middle age Europe, it also has some fantasy elements like witches, weidegangers and greenskins.
 
-Sister repos (often referenced): `../stdlib` and `../rosetta`.
+## Related Directories (in `~/projects/bbm/`, which is `../`)
+
+```
+base/
+  scripts-base/   # vanilla game scripts — look up original classes, methods, constants
+  data_001/       # vanilla game resources unpacked
+  data_014/       # Russian translation unpacked
+legends/          # Legends mod — a major overhaul mod
+stdlib/           # shared utility library used by mods
+rosetta/          # localization framework; rosetta.py CLI, AGENTS_TRANSLATING.md
+3rdparty/         # third-party mods and libraries
+  msu/            # MSU — Modding Standards & Utilities, mod compatibility library
+  reforged/       # Reforged — a newer but smaller major overhaul mod
+  xbe/            # XBE — More Backgrounds and Events mod
+mods/             # THIS DIR, a collection of hackflow's (mine) mods
+  _includes/      # Shared utils, may be auto-included by a mod during build
+  <mod-name>/     # Individuals mods
+  ...
+```
+
+Can compare data_014 .nut and .js files to their english counterparts in data_001 to find out established term translations to russian.
 
 ## Build Commands
 
@@ -30,7 +50,7 @@ mod_name/
     hooks/                               # Hook implementations
       *.nut
   README.md
-  Makefile                               # Defines MOD_NAME, TAG_NAME, SOURCES, INCLUDES
+  Makefile                               # Defines MOD_NAME, TAG_NAME, SOURCES
   test.nut                               # (optional) unit tests
   mocks.nut                              # (optional) test mocks
 ```
@@ -79,18 +99,13 @@ Tests pass if no stderr output. `mocks.nut` provides fake `::Hooks`, `::Const`, 
 
 Mods include translation files like `mod_name/rosetta_ru.nut` in SOURCES if they support localization. The rosetta framework intercepts strings at the Squirrel/JS boundary. See [`../rosetta/AGENTS_TRANSLATING.md`](../rosetta/AGENTS_TRANSLATING.md) for a detailed guide on creating and updating translations.
 
-IMPORTNANT: Follow game setting. Prefer more fun and concise translation options.
+IMPORTANT: Follow game setting. Prefer more fun and concise translation options.
 
 To verify a rosetta translation file, run:
 
 ```bash
 rosetta -c <path/to/translation.nut> <path/to/mod/dir>
 ```
-
-
-### `_includes` Directory
-
-Shared boilerplate (MSU settings, common hooks) lives in `_includes/`. The `<mod_name>` placeholder in included files is replaced with `MOD_NAME` at copy time.
 
 ## Utility Scripts
 
