@@ -134,8 +134,12 @@ def.buildCandidates <- function (_bro) {
             }
             w += fw;
         }
-        if (w > 0)
-            candidates.push({title = entry.en, weight = w});
+        if (w > 0) {
+            if ("names" in entry)
+                foreach (name in entry.names) candidates.push({title = name.en, weight = w});
+            else
+                candidates.push({title = entry.en, weight = w});
+        }
     }
 
     // 2. Vanilla trait .m.Titles

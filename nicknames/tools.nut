@@ -113,7 +113,12 @@ function unicodeLen(s) {
     return n;
 }
 
-function titleLabel(t) { return "'" + t.ru + "' / '" + t.en + "'"; }
+function titleLabel(t) {
+    local names = "names" in t ? t.names : [{ru = t.ru, en = t.en}];
+    local s = "";
+    foreach (i, n in names) { if (i > 0) s += ", "; s += "'" + n.ru + "' / '" + n.en + "'"; }
+    return s;
+}
 
 function sortedKey(arr, sep) {
     local sorted = clone arr;
@@ -159,13 +164,16 @@ function cmdCheck() {
                 foreach (w in r.warnings) warnings.push(label + ": " + w);
             }
         }
-        local ruLen = unicodeLen(title.ru), enLen = title.en.len();
-        if (ruLen > 16) errors.push(label + ": ru too long (" + ruLen + " chars)");
-        if (enLen > 16) errors.push(label + ": en too long (" + enLen + " chars)");
-        if (title.en in seenEn) errors.push(label + ": duplicate en='" + title.en + "' (first: " + titleLabel(seenEn[title.en]) + ")");
-        else seenEn[title.en] <- title;
-        if (title.ru in seenRu) errors.push(label + ": duplicate ru='" + title.ru + "' (first: " + titleLabel(seenRu[title.ru]) + ")");
-        else seenRu[title.ru] <- title;
+        local names = "names" in title ? title.names : [{ru = title.ru, en = title.en}];
+        foreach (name in names) {
+            local ruLen = unicodeLen(name.ru), enLen = name.en.len();
+            if (ruLen > 16) errors.push(label + ": ru too long (" + ruLen + " chars)");
+            if (enLen > 16) errors.push(label + ": en too long (" + enLen + " chars)");
+            if (name.en in seenEn) errors.push(label + ": duplicate en='" + name.en + "' (first: " + titleLabel(seenEn[name.en]) + ")");
+            else seenEn[name.en] <- title;
+            if (name.ru in seenRu) errors.push(label + ": duplicate ru='" + name.ru + "' (first: " + titleLabel(seenRu[name.ru]) + ")");
+            else seenRu[name.ru] <- title;
+        }
     }
 
     // Check for titles with identical factor sets
@@ -301,9 +309,11 @@ function cmdUsage(doSort) {
 }
 
 function cmdStats() {
-    local numTitles = titles.len();
-    local numFactorArrays = 0;
-    foreach (title in titles) numFactorArrays += title.factors.len();
+    local numTitles = 0, numFactorArrays = 0;
+    foreach (title in titles) {
+        numTitles += "names" in title ? title.names.len() : 1;
+        numFactorArrays += title.factors.len();
+    }
     print("titles: " + numTitles + "\n");
     print("factor arrays: " + numFactorArrays + "\n");
 }
