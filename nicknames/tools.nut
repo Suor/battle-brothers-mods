@@ -128,6 +128,32 @@ function sortedKey(arr, sep) {
     return s;
 }
 
+// Returns list of background.* factors in a combo (bros have only one background).
+function backgroundsIn(combo) {
+    local bgs = [];
+    foreach (f in combo)
+        if (f.len() > 11 && f.slice(0, 11) == "background.") bgs.push(f);
+    return bgs;
+}
+
+// Splits a raw combo string like "background.beggar + trait.dumb" on '+', trimming whitespace.
+function splitCombo(s) {
+    local parts = [], cur = "";
+    for (local i = 0; i < s.len(); i++) {
+        if (s[i] == '+') { parts.push(cur); cur = ""; }
+        else cur += s[i].tochar();
+    }
+    parts.push(cur);
+    local out = [];
+    foreach (p in parts) {
+        local a = 0, b = p.len();
+        while (a < b && (p[a] == ' ' || p[a] == '\t')) a++;
+        while (b > a && (p[b-1] == ' ' || p[b-1] == '\t')) b--;
+        out.push(p.slice(a, b));
+    }
+    return out;
+}
+
 // ── Factor validation ─────────────────────────────────────────────────────────
 
 // Returns {errors, warnings} for a single factor string.
@@ -163,6 +189,9 @@ function cmdCheck() {
                 foreach (e in r.errors)   errors.push(label + ": " + e);
                 foreach (w in r.warnings) warnings.push(label + ": " + w);
             }
+            local bgs = backgroundsIn(combo);
+            if (bgs.len() > 1)
+                errors.push(label + ": combo requires multiple backgrounds (" + sortedKey(bgs, " + ") + ") — a bro has only one");
         }
         local names = "names" in title ? title.names : [{ru = title.ru, en = title.en}];
         foreach (name in names) {
@@ -318,6 +347,13 @@ function cmdStats() {
     print("factor arrays: " + numFactorArrays + "\n");
 }
 
+function writeStr(f, s) {
+    if (s.len() == 0) return;
+    local b = blob(s.len());
+    for (local i = 0; i < s.len(); i++) b[i] = s[i];
+    f.writeblob(b);
+}
+
 function readLines(path) {
     local f = file(path, "rb");
     f.seek(0, 'e'); local size = f.tell(); f.seek(0, 'b');
@@ -398,11 +434,14 @@ function cmdNew(filename) {
         print("Cannot read '" + filename + "'\n"); return;
     }
 
-    // ru -> title entry and ru -> en maps
-    local ruToTitle = {}, ruToEn = {};
+    // ru -> title entry, ru -> en, en -> title maps
+    local ruToTitle = {}, ruToEn = {}, enToTitle = {};
     foreach (t in titles) {
         local names = "names" in t ? t.names : [{ru = t.ru, en = t.en}];
-        foreach (n in names) { ruToTitle[n.ru] <- t; ruToEn[n.ru] <- n.en; }
+        foreach (n in names) {
+            ruToTitle[n.ru] <- t; ruToEn[n.ru] <- n.en;
+            if (n.en != null) enToTitle[n.en] <- t;
+        }
     }
 
     local builtInNames = parseBuiltInNames();
@@ -418,10 +457,26 @@ function cmdNew(filename) {
         return (enForMatch != null && enForMatch in builtInNames) ? builtInNames[enForMatch] : null;
     }
 
+    local multiBg = [];
+    foreach (entry in proposed) {
+        foreach (f in entry.factors) {
+            local bgs = backgroundsIn(splitCombo(f));
+            if (bgs.len() > 1)
+                multiBg.push(entry.ru + ": multiple backgrounds in [" + f + "]");
+        }
+    }
+
     local inTitles = [], alsoInBuiltIn = [], notAdded = [], notAddedButBuiltIn = [];
     foreach (entry in proposed) {
-        if (entry.ru in ruToEn) {
-            inTitles.push(entry.ru);
+        local matchedTitle = (entry.ru in ruToTitle) ? ruToTitle[entry.ru]
+            : (entry.en != null && entry.en in enToTitle) ? enToTitle[entry.en] : null;
+        if (matchedTitle != null) {
+            local label = entry.ru;
+            if (!(entry.ru in ruToTitle)) {
+                local mnames = "names" in matchedTitle ? matchedTitle.names : [{ru = matchedTitle.ru, en = matchedTitle.en}];
+                label = entry.ru + " (en='" + entry.en + "' matches ru='" + mnames[0].ru + "')";
+            }
+            inTitles.push(label);
             local info = builtInInfo(entry);
             if (info != null) alsoInBuiltIn.push({ru = entry.ru, info = info});
         } else {
@@ -439,6 +494,13 @@ function cmdNew(filename) {
         local s = "";
         foreach (i, p in parts) { if (i > 0) s += "; "; s += p; }
         return s;
+    }
+
+    local enMatched = [];
+    foreach (label in inTitles) if (label.find("(en=") != null) enMatched.push(label);
+    if (enMatched.len() > 0) {
+        print("  " + enMatched.len() + " matched by en name (different ru):\n");
+        foreach (label in enMatched) print("    " + label + "\n");
     }
 
     if (alsoInBuiltIn.len() > 0) {
@@ -464,6 +526,84 @@ function cmdNew(filename) {
     } else if (notAddedButBuiltIn.len() == 0) {
         print("All added!\n");
     }
+    if (multiBg.len() > 0) {
+        print("\nMulti-background combos (a bro has only one background):\n");
+        foreach (m in multiBg) print("  " + m + "\n");
+    }
+}
+
+function cmdLoadNew(filename) {
+    local proposed;
+    try { proposed = parseBoldTitles(filename); } catch(e) {
+        print("Cannot read '" + filename + "'\n"); return;
+    }
+
+    local ruToTitle = {}, enToTitle = {};
+    foreach (t in titles) {
+        local names = "names" in t ? t.names : [{ru = t.ru, en = t.en}];
+        foreach (n in names) {
+            ruToTitle[n.ru] <- t;
+            if (n.en != null) enToTitle[n.en] <- t;
+        }
+    }
+
+    local newEntries = [];
+    foreach (entry in proposed) {
+        if (entry.factors.len() == 0) continue;
+        local matched = (entry.ru in ruToTitle) ? ruToTitle[entry.ru]
+            : (entry.en != null && entry.en in enToTitle) ? enToTitle[entry.en] : null;
+        if (matched == null) newEntries.push(entry);
+    }
+
+    if (newEntries.len() == 0) {
+        print("No new titles to add.\n");
+        return;
+    }
+
+    function quoteStr(s) { return "\"" + s + "\""; }
+
+    local newLines = [];
+    foreach (entry in newEntries) {
+        local header = "    {ru = " + quoteStr(entry.ru);
+        if (entry.en != null) header += ", en = " + quoteStr(entry.en);
+        header += ", factors = [";
+        newLines.push(header);
+        foreach (raw in entry.factors) {
+            local parts = splitCombo(raw);
+            local s = "        [";
+            foreach (i, p in parts) { if (i > 0) s += ", "; s += quoteStr(p); }
+            s += "],";
+            newLines.push(s);
+        }
+        newLines.push("    ]}");
+    }
+
+    local titlesPath = "nicknames/titles.nut";
+    local content = readLines(titlesPath);
+
+    local insertBefore = -1;
+    for (local i = content.len() - 1; i >= 0; i--) {
+        local line = content[i];
+        local a = 0;
+        while (a < line.len() && (line[a] == ' ' || line[a] == '\t')) a++;
+        if (line.slice(a) == "];") { insertBefore = i; break; }
+    }
+
+    if (insertBefore < 0) {
+        print("Cannot find ]; in " + titlesPath + "\n"); return;
+    }
+
+    local out = file(titlesPath, "wb");
+    for (local i = 0; i < insertBefore; i++) { writeStr(out, content[i]); writeStr(out, "\n"); }
+    foreach (line in newLines) { writeStr(out, line); writeStr(out, "\n"); }
+    for (local i = insertBefore; i < content.len(); i++) { writeStr(out, content[i]); writeStr(out, "\n"); }
+    out.close();
+
+    print("Added " + newEntries.len() + " new titles to " + titlesPath + ":\n");
+    foreach (entry in newEntries) {
+        local enLabel = entry.en != null ? " / " + entry.en : "";
+        print("  " + entry.ru + enLabel + "\n");
+    }
 }
 
 // ── Dispatch ──────────────────────────────────────────────────────────────────
@@ -475,11 +615,13 @@ switch (cmd) {
     case "usage": cmdUsage(doSort); break;
     case "stats": cmdStats(); break;
     case "new": cmdNew(vargv.len() > 1 ? vargv[1] : "new_titles.md"); break;
+    case "load-new": cmdLoadNew(vargv.len() > 1 ? vargv[1] : "new_titles.md"); break;
     default:
         print("Usage: squirrel tools.nut <command>\n");
         print("Commands:\n");
-        print("  check        show errors and warnings\n");
-        print("  usage        show factor combo usage stats\n");
-        print("  stats        show title and factor array counts\n");
-        print("  new [file]   check new_titles.md proposals vs titles.nut (default: new_titles.md)\n");
+        print("  check           show errors and warnings\n");
+        print("  usage           show factor combo usage stats\n");
+        print("  stats           show title and factor array counts\n");
+        print("  new [file]      check new_titles.md proposals vs titles.nut (default: new_titles.md)\n");
+        print("  load-new [file] add new titles from new_titles.md into titles.nut (default: new_titles.md)\n");
 }
