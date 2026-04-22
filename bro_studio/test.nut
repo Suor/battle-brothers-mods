@@ -208,13 +208,12 @@ local function makeInjPlayer() {
     }
 }
 
-setconf({injuriesNth = "off"})
+setconf({permChance = 0})
 local p = makeInjPlayer();
 assertEq(mod.addInjury(p), false);
 assertEq(p.m.Skills.Skills.len(), 0);
 
-// nth = 1 means int(1, 1) == 1, so always injured
-setconf({injuriesNth = 1})
+setconf({permChance = 100})
 local p = makeInjPlayer();
 assertEq(mod.addInjury(p), true);
 assertEq(p.m.Skills.Skills.len(), 1);
