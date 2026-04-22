@@ -95,11 +95,13 @@ dofile("scripts/!mods_preload/mod_name.nut", true);      // load the mod
 
 Tests pass if no stderr output. `mocks.nut` provides fake `::Hooks`, `::Const`, `::Math`, `::include()`, etc. See `nicknames/mocks.nut` and `nicknames/test.nut` for a full example of a well-tested mod.
 
+When reproducing or fixing a bug, add a failing assertion to the project's existing `test.nut` (or `test_rosetta.py` for Rosetta) — don't create throwaway scripts in `/tmp`. Run `make test` (or `pytest`) to watch it flip from fail→pass. The same applies to framework fixes in `../rosetta/`, `../stdlib/`, etc.
+
 ### Rosetta (Translations)
 
 Mods include translation files like `mod_name/rosetta_ru.nut` in SOURCES if they support localization. The rosetta framework intercepts strings at the Squirrel/JS boundary. See [`../rosetta/AGENTS_TRANSLATING.md`](../rosetta/AGENTS_TRANSLATING.md) for a detailed guide on creating and updating translations.
 
-IMPORTANT: Follow game setting. Prefer more fun and concise translation options.
+**IMPORTANT — Translation style:** These are strings from Battle Brothers game, set in middle age Europe, it also has some fantasy elements like witches, weidegangers and greenskins. Follow the game setting. Prefer fun and concise translations over literal or formal ones.
 
 To verify a rosetta translation file, run:
 
