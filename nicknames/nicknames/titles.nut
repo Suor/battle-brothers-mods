@@ -718,9 +718,6 @@ def.Titles <- [
     {ru = "Мышка", en = "Fieldmouse", factors = [
         ["trait.fear_beasts"],     // боится любой живности
     ]}
-    {ru = "Зайка", en = "Bunny", factors = [
-        ["trait.fear_beasts"],  // ironic: при любом звере — заяц
-    ]}
     {ru = "Набожный", en = "the Devout", factors = [
         ["trait.fear_undead"],  // молится — авось поможет
     ]}
