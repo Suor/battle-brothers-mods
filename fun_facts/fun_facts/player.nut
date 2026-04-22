@@ -46,11 +46,12 @@
         local ret = onDeath.acall(vargv);
         if (!this.isGuest()) {
             // this.m.FunFacts.clearRanks();
+            this.m.FunFacts.onCombatEnd(this);
             local casualties = ::Tactical.getCasualtyRoster().getAll();
             casualties[casualties.len() - 1].m.FunFacts = this.m.FunFacts;
         }
         // this.m.FunFacts.onDeath(vargv[1], vargv[4]);
-        if (!this.m.IsGuest && !this.Tactical.State.isScenarioMode() && vargv[4] != this.Const.FatalityType.Unconscious && (vargv[2] != null && vargv[1] != null || vargv[4] == this.Const.FatalityType.Devoured || vargv[4] == this.Const.FatalityType.Kraken))
+        else if (!this.m.IsGuest && !this.Tactical.State.isScenarioMode() && vargv[4] != this.Const.FatalityType.Unconscious && (vargv[2] != null && vargv[1] != null || vargv[4] == this.Const.FatalityType.Devoured || vargv[4] == this.Const.FatalityType.Kraken))
         {
             this.m.FunFacts.onCombatEnd(this);
         }
