@@ -273,6 +273,12 @@ function cmdUsage(doSort) {
     function padR(s, w) { while (s.len() < w) s = " " + s; return s; }
     function padL(s, w) { while (s.len() < w) s += " "; return s; }
 
+    local lenTotals = {};
+    foreach (len in lens) lenTotals[len] <- 0;
+    foreach (_, fstats in stats)
+        foreach (len, n in fstats)
+            lenTotals[len] += n;
+
     // Column widths
     local factorW = 6; // "factor"
     local allFactors = clone factors;
@@ -282,18 +288,28 @@ function cmdUsage(doSort) {
     local colW = [];
     foreach (len in lens) {
         local w = colHeader(len).len();
+        if ((lenTotals[len] + "").len() > w)
+            w = (lenTotals[len] + "").len();
         foreach (f in factors)
             if (len in stats[f] && (stats[f][len] + "").len() > w)
                 w = (stats[f][len] + "").len();
         colW.push(w);
     }
     local extW = hasExternal ? 8 : 0; // "built-in"
+    local extTotal = 0;
     if (hasExternal)
-        foreach (f, n in ::BuiltInTitles)
+        foreach (f, n in ::BuiltInTitles) {
+            if (typeof n == "integer") extTotal += n;
             if ((n + "").len() > extW) extW = (n + "").len();
+        }
+    if (hasExternal && (extTotal + "").len() > extW) extW = (extTotal + "").len();
+
+    local grandTotal = extTotal;
+    foreach (_, n in lenTotals) grandTotal += n;
 
     local totalW = 5; // "total"
     foreach (f in allFactors) if ((factorTotal(f) + "").len() > totalW) totalW = (factorTotal(f) + "").len();
+    if ((grandTotal + "").len() > totalW) totalW = (grandTotal + "").len();
 
     // Header
     local header = padL("factor", factorW);
@@ -320,6 +336,14 @@ function cmdUsage(doSort) {
         row += "  " + padR(total > 0 ? (total + "") : "-", totalW);
         print(row + "\n");
     }
+
+    local totalRow = padL("total", factorW);
+    foreach (i, len in lens)
+        totalRow += "  " + padR(lenTotals[len] > 0 ? (lenTotals[len] + "") : "-", colW[i]);
+    if (hasExternal)
+        totalRow += "  " + padR(extTotal > 0 ? (extTotal + "") : "-", extW);
+    totalRow += "  " + padR(grandTotal > 0 ? (grandTotal + "") : "-", totalW);
+    print(totalRow + "\n");
 
     // Unused: exclude factors covered by built-in titles or reachable via aliases
     local aliasTargets = {};
