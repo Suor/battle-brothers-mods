@@ -137,9 +137,17 @@ Quirk = se.Quirk <- {
                 addRage(rage * 2);
             }
 
+            local onUpdate = rage.onUpdate;
+            rage.onUpdate = function(_properties) {
+                onUpdate(_properties);
+                // Tone down damage
+                _properties.DamageRegularMin    -= m.RageStacks / 2;
+                _properties.DamageRegularMax    -= m.RageStacks / 2;
+            }
+
             // Add some rage on miss
             rage.onTargetMissed <- function(_skill, _targetEntity) {
-                addRage(3);
+                addRage(2);
             }
 
             // Get some rage on every time being attacked

@@ -124,7 +124,7 @@ if ("dofile" in gt) {
                     }
                     function getSkillByID(_id) {
                         if (_id == "effects.berserker_rage") {
-                            return {addRage = @(r) r}
+                            return {addRage = @(r) r, onUpdate = @(p) null}
                         }
                         return null;
                     }
