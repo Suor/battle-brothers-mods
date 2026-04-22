@@ -1,5 +1,5 @@
 local def = ::HackFixes <- {
-    ID = "mod_hackflows_fixes"
+    ID = "mod_fixes"
     Name = "Hackflow's Fixes"
     Version = "0.5.0"
     Updates = {
@@ -12,7 +12,9 @@ local def = ::HackFixes <- {
     Items = []
 }
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
-mod.queue(function () {
+mod.queue(">mod_msu", function () {
+    ::include("fixes/rosetta_ru");
+
     if (::Hooks.hasMod("mod_msu")) {
         def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
 
@@ -112,3 +114,79 @@ pairs.sort(@(a, b) a[1] <=> b[1]);
 ::Const.ProjectileType.clear();
 foreach (i, p in pairs) ::Const.ProjectileType[p[0]] <- i;
 ::Const.ProjectileType.COUNT <- ::Const.ProjectileType.len() - 1;
+
+// Fix huge Reforged shields
+local conds = {};
+
+mod.queue("<mod_reforged", function () {
+    if (!::Hooks.hasMod("mod_reforged")) return;
+
+    ::mods_hookDescendants("items/shields/shield", function (cls) {
+        local create = cls.create;
+        cls.create = function () {
+            create();
+            if (!(ClassName in conds)) {
+                conds[ClassName] <- {cond = m.Condition, condMax = m.ConditionMax}
+            }
+        }
+    })
+})
+mod.queue(">mod_reforged", function () {
+    local function getTotalArmorFat(_actor) {
+        local items = _actor.getItems();
+        local body = items.getItemAtSlot(::Const.ItemSlot.Body);
+        local head = items.getItemAtSlot(::Const.ItemSlot.Head);
+
+        local fat = 0;
+        if (body != null) fat += body.getStaminaModifier();
+        if (head != null) fat += head.getStaminaModifier();
+
+        return ::Math.abs(fat);
+    }
+    local pushArmorFatLine = @(__original) function () {
+        local ret = __original();
+        local totalArmorFat = getTotalArmorFat(this.getContainer().getActor());
+        if (totalArmorFat > 0) {
+            ret.push({
+                id = 108,
+                type = "text",
+                icon = "ui/icons/fatigue.png",
+                text = format("Total fatigue of armor weared is %s",
+                              ::std.Text.negative(totalArmorFat))
+            })
+        }
+        return ret;
+    }
+    mod.hook("scripts/skills/perks/perk_nimble", function (q) {
+        q.getTooltip = pushArmorFatLine;
+    })
+
+    if (!::Hooks.hasMod("mod_reforged")) return;
+
+    mod.hook("scripts/skills/perks/perk_rf_poise", function (q) {
+        q.getTooltip = pushArmorFatLine;
+    })
+
+    mod.hookTree("scripts/items/shields/shield", function (q) {
+        q.create = @(__original) function () {
+            __original();
+            if (ClassName in conds) {
+                m.Condition = conds[ClassName].cond;
+                m.ConditionMax = conds[ClassName].condMax;
+            }
+        }
+    })
+    // Shield Expert will reduce shield damage again
+    mod.hook("scripts/items/shields/shield", function (q) {
+        q.applyShieldDamage = @(__original) function(_damage, _playHitSound = true) {
+            if (getContainer().getActor().getCurrentProperties().IsSpecializedInShields)
+                _damage /= 2;
+
+            __original(_damage, _playHitSound);
+        }
+    })
+    mod.hook("scripts/items/shields/special/craftable_schrat_shield", function(q) {
+        q.m.SpawnSaplingConditionThreshold = 30;
+        q.m.SpawnSaplingConditionLoss = 15;
+    })
+})
