@@ -1,3 +1,12 @@
+0.5.0
+- down Raise Undead range to 3, Necrotic Reach makes it 6
+- trigger morale checks for Necro when a posessed is hit/dies
+- save loot from zombies raised by whoever
+- Necro Origin:
+    - made ratcatcher and vagabond meat too
+    - up bro hiring costs, down meat daily pay
+- updated russian translation
+
 0.4.2
 - fixed loot lost by zombie raise in 1.5.1
 - allow 16 bros in battle in Necro origin, fixes bug when hiring many bros
