@@ -20,6 +20,7 @@ It is possible to configure whether bros will free themselves and other bros fro
 Is always safe to add or remove. Only uses hooks now, no overwritten files.
 
 Tested with:
+
 - Swifter
 - Reforged (some active skills won't be used)
 - Legends
@@ -27,7 +28,8 @@ Tested with:
 - North Expansion
 - Heroic Scenario Pack
 - Fantasy Brothers (only some custom skills will be used)
-- Proper Necromancer (uses Raise Undead and Possess)
+- [Proper Necromancer][necro] (uses Raise Undead and Possess)
+- NgGH Magic Origins
 
 
 ## Limitations
@@ -101,3 +103,5 @@ Fixes:
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [msu]: https://www.nexusmods.com/battlebrothers/mods/479
 [original]: https://www.nexusmods.com/battlebrothers/mods/62
+
+[necro]: https://www.nexusmods.com/battlebrothers/mods/775

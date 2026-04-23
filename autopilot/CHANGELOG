@@ -1,3 +1,7 @@
+2.7.1
+- fixed animals trying to pick up weapon hanging up (NgGH Magic Origins)
+- try do less friendly fire
+
 2.7.0
 - don't use dogs against ghouls
 - do not tame when more enemies around
