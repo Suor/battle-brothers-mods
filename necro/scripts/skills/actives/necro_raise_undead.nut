@@ -11,7 +11,7 @@ this.necro_raise_undead <- this.inherit("scripts/skills/actives/raise_undead", {
         this.m.ActionPointCost = 5; // Cannot raise three in a single turn anymore
         this.m.FatigueCost = 20;    // Need to stay fit :)
         this.m.MinRange = 1;
-        this.m.MaxRange = 4; // Not 99 anymore
+        this.m.MaxRange = 3; // Not 99 anymore
     }
 
     function getTooltip() {
