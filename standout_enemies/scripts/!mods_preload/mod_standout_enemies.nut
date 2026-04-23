@@ -2,6 +2,11 @@ local mod = {
     ID = "mod_standout_enemies"
     Name = "Standout Enemies"
     Version = 1.3
+    Updates = {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/331"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/standout_enemies"
+        tagPrefix = "standout-enemies-"
+    }
 }
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 
@@ -980,7 +985,17 @@ Util.extend(Mod, {
 })
 
 
-::mods_queue("mod_standout_enemies", "stdlib, mod_hooks(>=20)", function() {
+::mods_queue("mod_standout_enemies", "stdlib, mod_hooks(>=20), >mod_msu", function() {
+    if ("MSU" in getroottable()) {
+        local msu = ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
+        local msd = ::MSU.System.Registry.ModSourceDomain, upd = mod.Updates;
+        msu.Registry.addModSource(msd.NexusMods, upd.nexus);
+        if ("GitHubTags" in msd) {
+            msu.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
+            msu.Registry.setUpdateSource(msd.GitHubTags);
+        }
+    }
+
     this.logInfo("se: loading");
     ::include("scripts/standout_enemies_rosetta_ru");
 
@@ -1034,12 +1049,3 @@ Util.extend(Mod, {
     })
 })
 
-::mods_queue("mod_standout_enemies", ">msu", function () {
-     if (!("MSU" in getroottable())) return;
-    ::include("scripts/standout_enemies_hack_msu");
-    ::HackMSU.setup(mod, {
-        nexus = "https://www.nexusmods.com/battlebrothers/mods/331"
-        github = "https://github.com/Suor/battle-brothers-mods/tree/master/standout_enemies"
-        tagPrefix = "standout-enemies-"
-    })
-});
