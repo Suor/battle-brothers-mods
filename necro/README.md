@@ -9,7 +9,6 @@ Following the idea of [Recrutable Necromancer](old) this adds a Necromancer back
 
 Plans:
 
-- check Necro morale when a possessed is hit/killed
 - an event with a undead uprising to start chopping their heads
 - more events
 - special mechanics for origin or all necros
