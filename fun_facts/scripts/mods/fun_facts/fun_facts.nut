@@ -457,6 +457,8 @@ this.fun_facts <- {
         // Costs
         local S = this.m.Stats.Spent;
         local moneyImg = "[img]gfx/ui/tooltips/money.png[/img]";
+        local templeTotal = 0;
+        foreach (cost in S.Temple) templeTotal += cost;
         local costs = [];
         if (S.Hire > 0 && S.Wages > 0)
             costs.push(format("Hired for %s%d, earned %s%d as wages.",
@@ -472,11 +474,17 @@ this.fun_facts <- {
         if (S.Ammo >= 1) spent.push("[img]gfx/fun_facts/ammo.png[/img]" + Util.round(S.Ammo));
         if (S.Herbs >= 1) spent.push("[img]gfx/fun_facts/medicine.png[/img]" + Util.round(S.Herbs));
         if (spent.len() > 0) costs.push("Spent " + Str.join("&nbsp;", spent)); // used, consumed, wasted
+        if (templeTotal > 0) {
+            local text = S.Temple.len() == 1
+                ? format("Healed for %s%d.", moneyImg, templeTotal)
+                : format("Healed %d times, %s%d total.", S.Temple.len(), moneyImg, templeTotal);
+            costs.push(text);
+        }
 
         // TODO: get proper prices
         local total = S.Hire + S.Wages + S.Food * 4 + S.Parts * 12
-            + S.Ammo * 3 + S.Herbs * 15;
-        if (total >= 1 && spent.len() > 0) {
+            + S.Ammo * 3 + S.Herbs * 15 + templeTotal;
+        if (total >= 1 && (spent.len() > 0 || templeTotal > 0)) {
             local factor = total >= 2000 ? 100 :
                            total >= 1000 ? 50 :
                            total >=  200 ? 10 :

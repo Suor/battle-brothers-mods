@@ -1,5 +1,5 @@
 if (!("Rosetta" in getroottable())) return;
-if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.2.0")) return;
+if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.3.0")) return;
 
 local rosetta = {
     mod = {id = "mod_fun_facts", version = "1.0.3"}
@@ -120,6 +120,7 @@ local pairs = [
         n2 = "Сразил <n> врагов в одном бою"
         n5 = "Сразил <n> врагов в одном бою"
     }
+    // en = "enemy"
     {
         // [1] = "Chopped %s's head",
         mode = "pattern"
@@ -277,6 +278,20 @@ local pairs = [
         mode = "pattern"
         en = "Spent <spent:str>"
         ru = "Потратил <spent>"
+    }
+    {
+        // S.Temple.len() == 1 ? format("Healed for %s%d.", ...)
+        mode = "pattern"
+        en = "Healed for <money:img><total:int>."
+        ru = "Полечился за <money><total>."
+    }
+    {
+        // : format("Healed for %s%d at temple (%d times).", ...)
+        plural = "n"
+        en = "Healed <n:int> times, <money:img><total:int> total."
+        n1 = "Лечился <n> раз, спустил <money><total>."
+        n2 = "Лечился <n> раза, спустил <money><total>."
+        n5 = "Лечился <n> раз, спустил <money><total>."
     }
     {
         // costs.push(format("TCO ~ %s%d", moneyImg, total))
