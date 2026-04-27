@@ -34,12 +34,13 @@
 //         loyal, teamplayer, athletic, night_owl, optimist, weasel, deathwish,
 //         hate_undead, hate_greenskins, hate_beasts
 //   Soso: drunkard, fat, impatient, huge, tiny, paranoid, brute
-//         legend_aggressive, legend_diurnal, legend_light, legend_double_tongued
+//         legend_aggressive, legend_light, legend_double_tongued
 //   Bad:  ailing, asthmatic, bleeder, clubfooted, clumsy, cocky, craven, dastard, disloyal,
 //         dumb, fainthearted, fear_beasts, fear_greenskins, fear_undead, fragile, gluttonous,
 //         greedy, hesitant, insecure, irrational, night_blind, pessimist, short_sighted,
 //         superstitious, legend_fear_nobles, legend_frail, legend_appetite_donkey, legend_fear_dark,
 //         legend_predictable, legend_slack
+//   TODO: update legends traits, the list is outdated here
 //   EXPLAINED: trait.brute — aggressive, uses crude force, goes for the head.
 //              NOT dumb, NOT cocky, NOT pushy.
 //
@@ -540,7 +541,7 @@ def.Titles <- [
         ["background.minstrel", "trait.cocky"],
     ]}
     {ru = "Потроха", en = "Guts", factors = [
-        ["trait.bloodthirsty"],                           // всегда угрожает выпустить кишки
+        ["trait.bloodthirsty"],                    // всегда угрожает выпустить кишки
         ["trait.bloodthirsty", "trait.irrational"],
         ["background.butcher", "trait.irrational"],
     ]}
@@ -555,8 +556,11 @@ def.Titles <- [
     {ru = "Дебошир", en = "Hellraiser", factors = [
         ["trait.drunkard", "trait.irrational"],  // как напьётся, разносит пол-лагеря
     ]}
-    {ru = "Петух", en = "Cockerel", factors = [
+    {ru = "Петух", en = "Cock", factors = [
         ["trait.cocky"],  // постоянно красуется и лезет драться
+    ]}
+    {ru = "Петушок", en = "Cockerel", factors = [
+        ["trait.cocky", "trait.tiny"],
     ]}
     {ru = "Философ", en = "Philosopher", factors = [
         ["trait.dumb", "trait.pessimist"],  // вечно рассуждает о тлене перед боем
@@ -1916,9 +1920,6 @@ def.Titles <- [
         ["perk.berserk"],                  // literally the berserk perk
         ["perk.killing_frenzy"],           // frenzied after kills
         ["perk.hackflows.battle_flow"],    // keeps the momentum going
-    ]}
-    {ru = "Жаворонок", en = "Lark", factors = [
-        ["trait.legend_diurnal"],      // встаёт с петухами
     ]}
     {ru = "Светлячок", en = "Firefly", factors = [
         ["trait.bright"],

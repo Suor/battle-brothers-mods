@@ -31,7 +31,7 @@ local KNOWN = {
         "survivor", "bloodthirsty", "loyal", "teamplayer", "athletic", "night_owl",
         "optimist", "weasel", "deathwish", "hate_undead", "hate_greenskins", "hate_beasts",
         "drunkard", "fat", "impatient", "huge", "tiny", "paranoid", "brute",
-        "legend_aggressive", "legend_diurnal", "legend_light", "legend_double_tongued",
+        "legend_aggressive", "legend_light", "legend_double_tongued",
         "ailing", "asthmatic", "bleeder", "clubfooted", "clumsy", "cocky", "craven",
         "dastard", "disloyal", "dumb", "fainthearted", "fear_beasts", "fear_greenskins",
         "fear_undead", "fragile", "gluttonous", "greedy", "hesitant", "insecure",
