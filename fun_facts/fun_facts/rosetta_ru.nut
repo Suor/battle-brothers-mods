@@ -1,5 +1,5 @@
 if (!("Rosetta" in getroottable())) return;
-if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.3.0")) return;
+if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.3.1")) return;
 
 local rosetta = {
     mod = {id = "mod_fun_facts", version = "1.0.3"}
@@ -276,7 +276,7 @@ local pairs = [
     {
         // if (spent.len() > 0) costs.push("Spent " + Str.join("&nbsp;", spent)); // used, consumed, wasted
         mode = "pattern"
-        en = "Spent <spent:str>"
+        en = "Spent <spent:line>"
         ru = "Потратил <spent>"
     }
     {
