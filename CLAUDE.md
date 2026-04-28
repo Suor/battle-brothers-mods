@@ -81,6 +81,11 @@ mod.hook("scripts/path/to/class", function(q) {
 });
 ```
 
+### Common Idioms
+
+- **Null checks for game objects** — use `::std.Util.isNull(x)`, not `x == null`. Game objects are often `WeakRef` wrappers that compare oddly against `null`.
+- **Class detection** — use `::std.Util.isKindOf(item, "weapon")` to test the class hierarchy (weapon, shield, armor, helmet, player, etc.). `isItemType()` is for the type bitmask (`Named`, `Legendary`, `Armor`, `Helmet`, `Quest`, `Usable`...) and is not interchangeable with `isKindOf`.
+
 ### Testing
 
 Tests use a standalone Squirrel interpreter (no game engine). The pattern:
