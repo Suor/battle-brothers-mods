@@ -19,7 +19,7 @@ local _ = "Rosetta" in getroottable() ? Rosetta.translate.bindenv(Rosetta) : @(s
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("stdlib >= 2.5");
-mod.queue(">msu", ">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", function () {
+mod.queue(">mod_msu", ">sato_balance_mod", ">tnf_expandedRetinue", ">mod_more_followers", function () {
     ::include("retinue_ups/rosetta_ru");
 
     if (::Hooks.hasMod("mod_msu")) {
