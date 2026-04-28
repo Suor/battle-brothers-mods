@@ -40,6 +40,9 @@ test: include check-compile
 
 check: test
 
+log:
+	@python3 ../_scripts/bb_log_errors.py
+
 include:
 	@set -e
 	#find . -name i_* -print -delete  # Delete old included files

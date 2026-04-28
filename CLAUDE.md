@@ -34,7 +34,10 @@ All commands run from within a specific mod's directory (e.g. `cd nicknames && m
 make check          # Run all the checks: syntax, tests, custom check
 make install        # Install to DATA_DIR (from .env)
 make zip            # Create release ZIP (checks for debug statements, uses git tag for name)
+make log            # Print first errors from the game's log.html with stacktraces
 ```
+
+Use `make log` to inspect failures. Look at the **first** error and ignore the JS/UI ConsoleAPI noise; those are downstream effects of an earlier squirrel failure.
 
 Build config is in `.env` at repo root — sets `STDLIB_DIR`, `DATA_DIR`, `SCRIPTS`, etc. All mods use `include ../Makefile.common`.
 

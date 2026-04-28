@@ -32,5 +32,7 @@ cl:
 	echo "$${changed## }"
 
 log:
-	perl -nE 'say for m~class="text">(.*?)</div>~g' ${LOG_FILE} | less
+	@python3 _scripts/bb_log_errors.py
 
+# log:
+# 	perl -nE 'say for m~class="text">(.*?)</div>~g' ${LOG_FILE} | less
