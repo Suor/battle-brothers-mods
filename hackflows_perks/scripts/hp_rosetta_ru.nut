@@ -1,9 +1,9 @@
 if (!("Rosetta" in getroottable())) return;
-if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.2.0")) return;
+if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.3.0")) return;
 
 local rosetta = {
     version = "0.2.0"
-    mod = {id = "mod_hackflow_perks", version = 1.4}
+    mod = {id = "mod_hackflow_perks", version = "1.6.1"}
     author = "hackflow"
     lang = "ru"
 }
@@ -288,5 +288,7 @@ local pairs = [
         en = "This brother's armor is too cumbersome to benefit from being stabilized! Try equipping some lighter armor."
         ru = "Броня этого брата слишком громоздкая для стабилизации! Попробуйте надеть что-нибудь полегче."
     }
+    // en = " and "
+    // en = ", "
 ]
 ::Rosetta.add(rosetta, pairs);
