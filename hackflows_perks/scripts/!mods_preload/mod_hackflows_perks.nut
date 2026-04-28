@@ -36,7 +36,7 @@ local Str = ::std.Str, Text = ::std.Text;
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("stdlib");
-mod.queue(">msu", ">mod_heal_repair_fix", ">mod_reforged", function () {
+mod.queue(">mod_msu", ">mod_heal_repair_fix", ">mod_reforged", function () {
     if (::Hooks.hasMod("mod_msu")) {
         def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
 
