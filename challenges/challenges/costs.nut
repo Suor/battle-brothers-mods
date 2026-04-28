@@ -17,7 +17,7 @@ def.add(::Challenges.SliderSetting("wageMult", 1,
 // Hooks
 
 // Food: hook food_item price.
-mod.hook("scripts/items/food/food_item", function (q) {
+mod.hook("scripts/items/supplies/food_item", function (q) {
     q.getValue = @(__original) function () {
         return ::Math.floor(__original() * def.conf("foodPriceMult"));
     }

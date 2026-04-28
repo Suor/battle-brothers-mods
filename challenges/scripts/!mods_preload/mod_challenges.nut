@@ -11,7 +11,7 @@ local def = ::Challenges <- {
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("stdlib", "mod_msu >= 1.6.0");
 
-mod.queue(">msu", function () {
+mod.queue(">mod_msu", function () {
     def.Mod <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
 
     local msd = ::MSU.System.Registry.ModSourceDomain, upd = def.Updates;

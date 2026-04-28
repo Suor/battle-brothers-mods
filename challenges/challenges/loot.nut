@@ -29,16 +29,11 @@ def.add(::Challenges.SliderSetting("lootGoldComp", 1.0,
 def.add(::MSU.Class.BooleanSetting("protectNamed", true, "Protect Named Items",
     "Named and legendary items always drop regardless of other loot settings."));
 
-// Per-battle drop counter, reset at the start of each gatherLoot call.
-def._lootCount <- 0;
-
-// Add gold to player wallet for a blocked item drop (based on condition).
+// Add money to combat loot in place of a blocked item drop.
 local function compensate(_item) {
     local goldComp = def.conf("lootGoldComp");
     if (goldComp <= 0.0) return;
-    local cond = _item.m.ConditionMax > 0
-        ? _item.m.Condition.tofloat() / _item.m.ConditionMax : 1.0;
-    local amount = ::Math.floor(_item.m.Price * cond * goldComp);
+    local amount = ::Math.floor(_item.getValue() * goldComp * 0.15);
     if (amount <= 0) return;
     local money = ::new("scripts/items/supplies/money_item");
     money.setAmount(amount);
@@ -55,63 +50,81 @@ local function isProtected(_item) {
     return isPlayer && !::Tactical.State.isScenarioMode() && ::World.Assets.m.IsBlacksmithed;
 }
 
-// Applies cap and chance filter after vanilla isDroppedAsLoot said yes.
-// Returns the final drop decision.
-local function filterDrop(_item, _chance) {
-    if (isProtected(_item)) return true;
+// Removes the item from whatever container holds it. By the end of gatherLoot
+// the tile is irrelevant — combat is over and the map is about to be torn down.
+local function removeFromContainer(_item) {
+    local cont = _item.m.Container;
+    if (::std.Util.isKindOf(cont, "stash_container")) cont.remove(_item);
+    if (::std.Util.isKindOf(cont, "item_container")) {
+        if (_item.m.CurrentSlotType == ::Const.ItemSlot.Bag) cont.removeFromBag(_item);
+        else cont.unequip(_item);
+    }
+}
+
+// Applies chance and per-battle cap to all loot. Survivors stay where
+// they ended up (loot pile or a brother's bag). Rejected items are destroyed
+// and replaced with money in the loot pile.
+local function filterLoot(_loot) {
+    if (_loot.len() == 0) return;
+
+    local weaponChance = def.conf("weaponDropChance");
+    local armorChance = def.conf("armorDropChance");
+    local survived = [], rejected = [];
+    foreach (item in _loot) {
+        local chance = ::std.Util.isKindOf(item, "weapon") || ::std.Util.isKindOf(item, "shield")
+            ? weaponChance : armorChance;
+        if (chance >= 1.0 || ::std.Rand.chance(chance)) survived.push(item);
+        else rejected.push(item);
+    }
 
     local maxItems = def.conf("maxItemsPerBattle");
-    if (maxItems >= 0 && def._lootCount >= maxItems) {
-        compensate(_item);
-        return false;
+    if (maxItems >= 0 && survived.len() > maxItems) {
+        local weights = survived.map(@(item) item.getValue());
+        local kept = ::std.Rand.take(maxItems, survived, weights);
+        foreach (item in survived)
+            if (kept.find(item) == null) rejected.push(item);
     }
 
-    if (_chance < 1.0 && ::Math.rand(0, 99) >= _chance * 100) {
-        compensate(_item);
-        return false;
+    foreach (item in rejected) {
+        compensate(item);
+        removeFromContainer(item);
     }
-
-    def._lootCount++;
-    return true;
 }
 
 // Hooks
 
-// Reset the drop counter at battle start so isDroppedAsLoot() calls via item.drop() during
-// combat don't carry over stale counts from a previous battle.
 mod.hook("scripts/states/tactical_state", function (q) {
+    q.m.challenges_loot <- [];
+
     q.init = @(__original) function () {
-        def._lootCount = 0;
+        this.m.challenges_loot = [];
         __original();
     }
-})
 
-// Weapons and shields share the weaponDropChance setting.
-mod.hook("scripts/items/weapons/weapon", function (q) {
-    q.isDroppedAsLoot = @(__original) function () {
-        if (!__original()) return false;
-        return filterDrop(this, def.conf("weaponDropChance"));
+    q.gatherLoot = @(__original) function () {
+        __original();
+        local props = !this.isScenarioMode() ? this.m.StrategicProperties : null;
+        if (props && (props.IsArenaMode || props.IsLootingProhibited)) return;
+
+        filterLoot(this.m.challenges_loot);
+        this.m.challenges_loot = [];
+        ::Tactical.CombatResultLoot.sort();
     }
 })
 
-mod.hook("scripts/items/shields/shield", function (q) {
+// Register item for end-of-battle filtering.
+// Dedup because item can be dropped, picked up and dropped again.
+local function passiveHook(q) {
     q.isDroppedAsLoot = @(__original) function () {
-        if (!__original()) return false;
-        return filterDrop(this, def.conf("weaponDropChance"));
+        local res = __original();
+        if (!res || isProtected(this)) return res;
+        local loot = ::Tactical.State.m.challenges_loot;
+        if (loot.find(this) == null) loot.push(this);
+        return res;
     }
-})
+}
 
-// Armor and helmets share the armorDropChance setting.
-mod.hook("scripts/items/armor/armor", function (q) {
-    q.isDroppedAsLoot = @(__original) function () {
-        if (!__original()) return false;
-        return filterDrop(this, def.conf("armorDropChance"));
-    }
-})
-
-mod.hook("scripts/items/helmets/helmet", function (q) {
-    q.isDroppedAsLoot = @(__original) function () {
-        if (!__original()) return false;
-        return filterDrop(this, def.conf("armorDropChance"));
-    }
-})
+mod.hook("scripts/items/weapons/weapon", passiveHook);
+mod.hook("scripts/items/shields/shield", passiveHook);
+mod.hook("scripts/items/armor/armor", passiveHook);
+mod.hook("scripts/items/helmets/helmet", passiveHook);

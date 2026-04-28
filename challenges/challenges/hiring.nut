@@ -26,13 +26,13 @@ if (::Hooks.hasMod("mod_backgrounds_and_events")) {
         "hackflows/drifter_background"
     ]);
 }
-def.CheapClasses = {}
+def.CheapClasses <- {}
 foreach (bg in def.CheapBackgrounds) def.CheapClasses[split(bg, "/").top()] <- true;
 // Wage fallback for other cheap backgrounds not in the explicit list.
-def.LowWage <- 7;
+def.LowWage <- 8;
 
 local function isOk(_bro, _costLimit) {
-    return _bro.getBackground().Classname in def.CheapClasses
+    return _bro.getBackground().ClassName in def.CheapClasses
         || _bro.getDailyCost() <= def.LowWage
         || _bro.getHiringCost() <= _costLimit;
 }
@@ -51,7 +51,7 @@ mod.hookTree("scripts/scenarios/world/starting_scenario", function (q) {
         if (mult == 0) return;
 
         local limit = ::World.Assets.getMoney() / mult;
-        local garbage = _roster.getAll().filter(@(b) isOk(b, limit));
+        local garbage = _roster.getAll().filter(@(_, b) !isOk(b, limit));
 
         // remove and replace them
         local toAdd = garbage.len()
