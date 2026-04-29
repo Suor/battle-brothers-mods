@@ -5,6 +5,7 @@ local mod = ::Hooks.getMod("mod_autopilot_new");
 ::MSU.AI.addBehavior("AP_UnbagShield", "AP.UnbagShield", 36, 400);
 ::MSU.AI.addBehavior("AP_UnleashDog", "AP.UnleashDog", 37, 200);
 ::MSU.AI.addBehavior("AP_Tame", "AP.Tame", 38, 400);
+::MSU.AI.addBehavior("AP_SwapQuiver", "AP.SwapQuiver", 39, 400);
 ::MSU.AI.addBehavior("AP_AttackAlternate", "AP.AttackAlternate",
     ::Const.AI.Behavior.Order.AttackDefault - 1, ::Const.AI.Behavior.Score.Attack * 2);
 
