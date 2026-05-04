@@ -619,18 +619,6 @@ local pairs = [
         en = "<name:str>'s <item:str>"
         ru = "<item:t> <name>"
     }
-    {
-        // return this.getRandomCharacterName(::Const.Strings.BanditLeaderNames) + "\'s " + ::MSU.Array.rand(this.m.NameList);
-        mode = "pattern"
-        en = "<name:str>'s <item:str>"
-        ru = "<item:t> <name>"
-    }
-    {
-        // this.m.Name = _name + "\'s " +  this.m.DefaultName;
-        mode = "pattern"
-        en = "<name:str>'s <item:str>"
-        ru = "<item:t> <name>"
-    }
     // FILE: scripts/items/accessory/named/nggh_mod_named_alp_trophy_item.nut
     {
         en = "Alp Trophy Necklace"
@@ -829,12 +817,6 @@ local pairs = [
     {
         en = "This shield was used by a living tree to defend against your attacks. A great trophy from a great battle, and is also quite light for its size. By holding it on your hand, you somehow feel safe and calm."
         ru = "Этот щит использовало живое дерево для защиты от ваших атак. Отличный трофей из великого сражения, к тому же довольно лёгкий для своих размеров. Держа его в руке, вы почему-то чувствуете себя в безопасности и спокойствии."
-    }
-    {
-        // this.m.Name = _name + "\'s " + ::MSU.Array.rand(this.m.NameList);
-        mode = "pattern"
-        en = "<name:str>'s <item:str>"
-        ru = "<item:t> <name>"
     }
     {
         // text = "Takes [color=" + ::Const.UI.Color.PositiveValue + "]33%[/color] less damage from piercing attacks."
