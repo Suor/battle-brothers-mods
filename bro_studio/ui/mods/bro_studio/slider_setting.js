@@ -3,6 +3,12 @@ function BroStudio_SliderSetting(_mod, _page, _setting, _parentDiv) {
     RangeSetting.call(this, _mod, _page, _setting, _parentDiv);
     _setting.value = _setting.values[_setting.value];
 
+    if (_setting.labelInTitle) {
+        this.label.detach();
+        this.label.css({position: 'static', top: '', left: '', 'margin-left': 'auto'});
+        this.titleContainer.append(this.label);
+    }
+
     // Only need to set it once
     this.slider.attr({min: this.data.min, max: this.data.max, step: this.data.step});
 

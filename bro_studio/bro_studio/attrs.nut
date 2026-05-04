@@ -43,12 +43,12 @@ page.add(::MSU.Class.SettingsSpacer("attrsVeteranSpacer", "35rem", "8rem"));
 page.add(::MSU.Class.RangeSetting("attrsVeteran", 11, 11, 31, 1, "Veteran Level for Attributes"));
 // Non-veterans get 0.5 per level per star on average,
 // Veteran Boost allows to get certain fraction of it.
-page.add(::BroStudio.SliderSetting("attrsVeteranBoostValue", 0,
+local vboost = page.add(::BroStudio.SliderSetting("attrsVeteranBoostValue", 0,
     [0, 0.1, 0.1667, 0.25],
     ["off" "slight" "classic" "high"],
     "Veteran Boost",
     "Allow veterans to get more than 1 sometimes in talented attributes"));
-
+vboost.setLabelInTitle(true);
 
 // The meat
 local isBackgroundUntalented = ::Hooks.hasMod("mod_legends")

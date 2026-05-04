@@ -3,6 +3,7 @@
 ::BroStudio.SliderSetting <- class extends ::MSU.Class.RangeSetting {
     Values = null;
     Labels = null;
+    LabelInTitle = false;
     static Type = "BroStudio_Slider";
 
     constructor(_id, _value, _values, _labels = null, _name = null, _description = null) {
@@ -20,9 +21,13 @@
         this.Labels = _labels;
     }
 
+    function setLabelInTitle(_value) {
+        this.LabelInTitle = _value;
+    }
+
     function getUIData(_flags = []) {
         return ::std.Table.merge(
-            base.getUIData(_flags), {values = this.Values, labels = this.Labels})
+            base.getUIData(_flags), {values = this.Values, labels = this.Labels, labelInTitle = this.LabelInTitle})
     }
 
     function tostring() {

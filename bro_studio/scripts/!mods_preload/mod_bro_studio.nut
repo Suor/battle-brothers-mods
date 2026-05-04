@@ -37,6 +37,7 @@ mh.queue(">stdlib", ">mod_msu", ">mod_legends", function () {
         }
     }
 
+    ::include("bro_studio/rosetta_ru");
     ::include("bro_studio/slider_setting");
     ::include("bro_studio/attrs");
     ::include("bro_studio/perks");

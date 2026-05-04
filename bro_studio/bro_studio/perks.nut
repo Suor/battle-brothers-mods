@@ -7,7 +7,8 @@ page.add(::MSU.Class.RangeSetting("perksEach", 1, 0, 5, 1, "Perks given each lev
     "On levels from to 2 to Veteran Level, i.e. 10 times by default."));
 page.add(::BroStudio.SliderSetting("perksNth", "off", ["off" 5 4 3 2], null,
     "Add a perk each N-th level",
-    "Starting from but not including level 1 and not after the Veteran Level"));
+    "Starting from but not including level 1 and not after the Veteran Level."
+    + "\n\nE.g. veteran level 11, N=5: extra perk on levels 6 and 11."));
 
 // Veterans
 page.add(::MSU.Class.SettingsDivider("perksDiv"));
@@ -18,7 +19,8 @@ page.add(::MSU.Class.SettingsSpacer("perksVeteranSpacer", "35rem", "8rem"));
 
 page.add(::BroStudio.SliderSetting("perksVeteranNth", "off", ["off", 10, 5, 4, 3, 2, 1], null,
     "Add a perk each N-th veteran level",
-    "Starting from but not including the Veteran Level"));
+    "Starting from but not including the Veteran Level."
+    + "\n\nE.g. veteran level 11, N=3: extra perk on levels 14, 17, 20 and so on."));
 page.add(::MSU.Class.StringSetting("perksPreset", "",
     "Give a perk on these levels", "Level numbers separated by space or comma"));
 

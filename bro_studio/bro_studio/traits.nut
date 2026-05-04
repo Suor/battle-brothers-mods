@@ -4,7 +4,7 @@ local mod = ::BroStudio, Util = ::std.Util, Player = ::std.Player;
 local page = mod.addPage("Traits");
 
 page.add(::MSU.Class.RangeSetting("traitsNum", 0, 0, 5, 1, "Number",
-    "Will add this number of random traits after a bro is hired"));
+    "Will add this number of random traits to each bro"));
 page.add(::MSU.Class.SettingsSpacer("traitsSpacer", "35rem", "8rem"));
 
 page.add(::MSU.Class.BooleanSetting("traitsGood", true, "Add good traits",

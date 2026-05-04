@@ -5,3 +5,6 @@ INCLUDES = levelup_changes
 SUBDIR = scripts/\!mods_preload
 
 include ../Makefile.common
+
+check:
+	@rosetta -qc bro_studio/rosetta_ru.nut .
