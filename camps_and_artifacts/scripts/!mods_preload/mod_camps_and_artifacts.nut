@@ -16,6 +16,7 @@ local mod = ::CampsAndArtifacts <- {
 //    - artifact goblin impaler?
 //    - artifact goblin bow?
 // TODO: weapon perks?
+local _ = "Rosetta" in getroottable() ? Rosetta._ : @(s) s;
 mod.choice <- function(options) {
     return options[::Math.rand(0, options.len() - 1)];
 }
@@ -36,7 +37,7 @@ mod.createRandomName <- function () {
         return name;
     }
     // Use prefix if failed
-    return mod.choice(this.m.PrefixList) + " " + mod.choice(this.m.NameList)
+    return _(mod.choice(this.m.PrefixList)) + " " + _(mod.choice(this.m.NameList))
 }
 
 
