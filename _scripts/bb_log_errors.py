@@ -59,6 +59,10 @@ for r in rows:
     txt = field(entry, "text")
     if not txt or "resuming dead generator" in txt:
         continue
+    if "gfx/necro/" in txt and "Skipping this image keyword" in txt:
+        continue
+    if "gfx/fonts/" in txt:
+        continue
     tag = field(entry, "tag")
     # JS errors are downstream noise from earlier squirrel failures.
     if tag == "UI" and "ConsoleAPI" in txt:
