@@ -95,7 +95,7 @@ mh.queue(">stdlib", ">mod_msu", ">mod_legends", function () {
         q.getHiringCost = @(__original) function () {
             local cost = __original();
             if (!this.getSkills().hasSkillOfType(::Const.SkillType.PermanentInjury)) return cost;
-            return ::Math.ceil(cost * 0.1); // debug, will be 0.7 eventually
+            return ::Math.ceil(cost * 0.7);
         }
 
         q.onHired = @(__original) function () {
