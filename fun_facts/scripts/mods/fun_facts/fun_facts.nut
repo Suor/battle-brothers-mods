@@ -481,9 +481,12 @@ this.fun_facts <- {
             costs.push(text);
         }
 
-        // TODO: get proper prices
-        local total = S.Hire + S.Wages + S.Food * 4 + S.Parts * 12
-            + S.Ammo * 3 + S.Herbs * 15 + templeTotal;
+        local Buys = ::FunFacts.Buys;
+        local total = S.Hire + S.Wages + templeTotal
+            + S.Food  * Buys.getAvgPrice("Food",  4)
+            + S.Parts * Buys.getAvgPrice("Parts", 12)
+            + S.Ammo  * Buys.getAvgPrice("Ammo",  3)
+            + S.Herbs * Buys.getAvgPrice("Herbs", 15);
         if (total >= 1 && (spent.len() > 0 || templeTotal > 0)) {
             local factor = total >= 2000 ? 100 :
                            total >= 1000 ? 50 :

@@ -7,6 +7,12 @@ local rosetta = {
     lang = "ru"
 }
 local pairs = [
+    // FILE: fun_facts/buys.nut
+    // Internal Buys-table keys, not user-facing.
+    // en = "Food"
+    // en = "Ammo"
+    // en = "Parts"
+    // en = "Herbs"
     // FILE: fun_facts/statistics_manager.nut
     {
         en = "Noone remembers anything fun about this dude."
@@ -293,6 +299,8 @@ local pairs = [
         n2 = "Лечился <n> раза, спустил <money><total>."
         n5 = "Лечился <n> раз, спустил <money><total>."
     }
+    // Internal expression with table keys, not user-facing.
+    // en = "<S.Hire + S.Wages + templeTotal + S.Food*Buys.getAvgPrice(Food, 4) + S.Parts*Buys.getAvgPrice(Parts, 12) + S.Ammo*Buys.getAvgPrice(Ammo, 3) + S.Herbs*Buys.getAvgPrice(Herbs, 15)>"
     {
         // costs.push(format("TCO ~ %s%d", moneyImg, total))
         en = "<start:str>\nTCO ~ <end:str>"

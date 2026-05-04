@@ -21,6 +21,7 @@ local Debug = ::std.Debug, Util = std.Util;
                 this.m.Flags.set("FallenFunFacts." + i, null);
             }
         }
+        ::FunFacts.Buys.pack(this.m.Flags);
         onSerialize(_out);
     }
 
@@ -40,6 +41,8 @@ local Debug = ::std.Debug, Util = std.Util;
             fallen.FunFacts.unpack(ffState);
             fallen.FunFacts.setName(fallen.Name);
         }
+
+        ::FunFacts.Buys.unpack(this.m.Flags);
     }
 
     o.FunFacts_getTooltipForFallen <- function( _idx ) {
