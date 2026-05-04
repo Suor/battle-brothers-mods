@@ -7,7 +7,7 @@ local mod = ::FixReforged <- {
 // local Util = ::std.Util;
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 
-::mods_queue(mod.ID, "mod_reforged, >mod_hackflows_perks, >msu", function () {
+::mods_queue(mod.ID, "mod_reforged, >mod_hackflows_perks, >mod_msu", function () {
     // Make vanilla backgrounds get dynamic perks
     ::mods_hookExactClass("skills/backgrounds/character_background", function (cls) {
         local create = cls.create;
