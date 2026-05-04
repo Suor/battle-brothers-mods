@@ -17,7 +17,7 @@ local Settings = {
 ::Const.Faction <- {Player = 1};
 ::Const.Items <- {ItemType = {None = 0, Named = 1, Legendary = 2, Armor = 4, Helmet = 8}};
 ::Const.ItemSlot <- {None = -1, Mainhand = 0, Bag = 6};
-::World <- {Assets = {m = {IsBlacksmithed = false}}};
+::World <- {Assets = {m = {IsBlacksmithed = false}, function getStash() { return {function getItems() { return []; }} }}};
 ::Tactical <- {State = null, CombatResultLoot = null};
 
 ::new <- function (_script) {
@@ -103,11 +103,15 @@ function makeItem(_id, _value, _type = 0, _faction = 0, _className = "weapon") {
     local self = {
         ClassName = _className,
         m = null,
+        function getName() { return this.m.Name; }
+        function getInstanceID() { return "abc1"}
+        function getID() { return this.m.ID; }
         function getValue() { return this.m.Value; }
         function isItemType(_type) { return (this.m.ItemType & _type) != 0; }
     };
     self.m = {
         ID = _id,
+        Name = _id,
         Value = _value,
         Condition = 1.0,
         ConditionMax = 1.0,
@@ -256,5 +260,29 @@ gatherLootHook(function () {}).call(state);
 if (state.m.CombatResultLoot.Items.find(cuirass) != null) throw "armor should be dropped by chance filter";
 assertEq(moneyTotal(state.m.CombatResultLoot.Items), 13);
 print("loot armor: armorDropChance applied OK\n");
+
+// 10. Cap prefers items not already in the player's stash via stash-aware weighting.
+Settings.weaponDropChance = 1.0;
+Settings.armorDropChance = 1.0;
+Settings.maxItemsPerBattle = 1;
+state = makeState();
+local stash10 = makeContainer();
+::World.Assets.getStash <- function () { return stash10; }
+local weaponBase = {ClassName = "weapon"};
+local swordA = makeItem("sword_a", 50, 0, 0, "sword_a");
+swordA.setdelegate(weaponBase);
+local axeA = makeItem("axe_a", 50, 0, 0, "axe_a");
+axeA.setdelegate(weaponBase);
+stash10.add(makeItem("sword_a_stash", 50, 0, 0, "sword_a")); // sword_a already owned
+state.m.CombatResultLoot.add(swordA);
+state.m.CombatResultLoot.add(axeA);
+hook = weaponHook(function () { return true; });
+hook.call(swordA); // first in survived → weight halved by stash match
+hook.call(axeA);   // second in survived → full weight, wins
+gatherLootHook(function () {}).call(state);
+items = state.m.CombatResultLoot.Items;
+if (items.find(axeA) == null) throw "axe (not in stash) should survive cap";
+if (items.find(swordA) != null) throw "sword (already in stash) should be capped";
+print("loot cap: stash-aware weighting OK\n");
 
 print("Tests OK\n")

@@ -1,4 +1,5 @@
 local def = ::Challenges, mod = def.mh;
+local Debug = ::std.Debug.with({prefix = "loot: "});
 
 // Settings
 def.add(::MSU.Class.SettingsTitle("lootTitle", "Loot"));
@@ -29,6 +30,17 @@ def.add(::Challenges.SliderSetting("lootGoldComp", 1.0,
 def.add(::MSU.Class.BooleanSetting("protectNamed", true, "Protect Named Items",
     "Named and legendary items always drop regardless of other loot settings."));
 
+local function lootStr(_item) {
+    local type = ::std.Util.isKindOf(_item, "weapon") ? "weapon"
+        : ::std.Util.isKindOf(_item, "shield") ? "shield"
+        : ::std.Util.isKindOf(_item, "armor") ? "armor"
+        : ::std.Util.isKindOf(_item, "helmet") ? "helmet"
+        : "?";
+    return _item.ClassName + " [" + type + ", id = " + _item.getInstanceID()
+        + ", value=" + _item.getValue() + ", faction=" + _item.m.LastEquippedByFaction
+        + ", slot=" + _item.m.CurrentSlotType + "]";
+}
+
 // Add money to combat loot in place of a blocked item drop.
 local function compensate(_item) {
     local goldComp = def.conf("lootGoldComp");
@@ -40,52 +52,74 @@ local function compensate(_item) {
     ::Tactical.CombatResultLoot.add(money);
 }
 
-// Returns true if this item must always drop (named/legendary protection).
+// Do not prevent named and player items from dropping
 local function isProtected(_item) {
     if (def.conf("protectNamed") && (
             _item.isItemType(::Const.Items.ItemType.Named) ||
             _item.isItemType(::Const.Items.ItemType.Legendary)))
         return true;
-    local isPlayer = _item.m.LastEquippedByFaction == ::Const.Faction.Player;
-    return isPlayer && !::Tactical.State.isScenarioMode() && ::World.Assets.m.IsBlacksmithed;
+    return _item.m.LastEquippedByFaction == ::Const.Faction.Player
 }
 
 // Removes the item from whatever container holds it. By the end of gatherLoot
 // the tile is irrelevant — combat is over and the map is about to be torn down.
 local function removeFromContainer(_item) {
     local cont = _item.m.Container;
+    Debug.log("_item.cont", cont)
     if (::std.Util.isKindOf(cont, "stash_container")) cont.remove(_item);
-    if (::std.Util.isKindOf(cont, "item_container")) {
+    else if (::std.Util.isKindOf(cont, "item_container")) {
         if (_item.m.CurrentSlotType == ::Const.ItemSlot.Bag) cont.removeFromBag(_item);
         else cont.unequip(_item);
+    } else {
+        ::Tactical.CombatResultLoot.remove(_item);
     }
+}
+
+local function stashCounts() {
+    local counts = {};
+    foreach (item in ::World.Assets.getStash().getItems()) {
+        if (item == null) continue;
+        local cn = item.ClassName;
+        if (cn in counts) counts[cn]++; else counts[cn] <- 0;
+    }
+    return counts
 }
 
 // Applies chance and per-battle cap to all loot. Survivors stay where
 // they ended up (loot pile or a brother's bag). Rejected items are destroyed
 // and replaced with money in the loot pile.
 local function filterLoot(_loot) {
+    Debug.log("filterLoot in", _loot.map(lootStr));
     if (_loot.len() == 0) return;
 
     local weaponChance = def.conf("weaponDropChance");
     local armorChance = def.conf("armorDropChance");
     local survived = [], rejected = [];
     foreach (item in _loot) {
-        local chance = ::std.Util.isKindOf(item, "weapon") || ::std.Util.isKindOf(item, "shield")
-            ? weaponChance : armorChance;
+        local isWeaponLike = ::std.Util.isKindOf(item, "weapon") || ::std.Util.isKindOf(item, "shield");
+        local chance = isWeaponLike ? weaponChance : armorChance;
         if (chance >= 1.0 || ::std.Rand.chance(chance)) survived.push(item);
         else rejected.push(item);
     }
+    Debug.log("filterLoot chance out", rejected.map(lootStr));
 
     local maxItems = def.conf("maxItemsPerBattle");
     if (maxItems >= 0 && survived.len() > maxItems) {
-        local weights = survived.map(@(item) item.getValue());
+        local counts = stashCounts();
+        local weights = survived.map(function(item) {
+            local n = ::std.Table.get(counts, item.ClassName, 0);
+            return (item.getValue() + item.m.Value).tofloat() / (1 + n);
+        });
+        Debug.log("cap", {survived = survived.map(lootStr), weights = weights})
         local kept = ::std.Rand.take(maxItems, survived, weights);
         foreach (item in survived)
             if (kept.find(item) == null) rejected.push(item);
+        // rejected.extend(Array.diff(survived, kept))
+        Debug.log("filterLoot kept cap", kept.map(lootStr));
     }
 
     foreach (item in rejected) {
+        Debug.log("filterLoot remove", lootStr(item));
         compensate(item);
         removeFromContainer(item);
     }
@@ -117,9 +151,18 @@ mod.hook("scripts/states/tactical_state", function (q) {
 local function passiveHook(q) {
     q.isDroppedAsLoot = @(__original) function () {
         local res = __original();
-        if (!res || isProtected(this)) return res;
+        local protected = isProtected(this);
+        if (!res || protected) {
+            Debug.log("drop", lootStr(this) + " res=" + res + " protected=" + protected);
+            return res;
+        }
+
         local loot = ::Tactical.State.m.challenges_loot;
-        if (loot.find(this) == null) loot.push(this);
+        local alreadyTracked = loot.find(this) != null;
+        if (!alreadyTracked) loot.push(this);
+
+        Debug.log("drop", lootStr(this) + " res=" + res + " protected=false"
+            + (alreadyTracked ? " already" : " new"));
         return res;
     }
 }

@@ -9,7 +9,7 @@ def.add(::Challenges.SliderSetting("hiringRequirement", 0,
     ["off" "5x" "10x" "20x"],
     "Hiring Requirement",
     "You need to have this multiple of a bro's hiring cost in gold to even see him."
-    + "Cheap bros like beggars and cripples are always there for you though."));
+    + " Cheap bros like beggars and cripples are always there for you though."));
 
 // Guaranteed cheap bros: never filtered out regardless of gold requirement.
 // Just to not end up with noone to hire at all.
