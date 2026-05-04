@@ -1,7 +1,7 @@
 local mod = {
     ID = "mod_standout_enemies"
     Name = "Standout Enemies"
-    Version = 1.3
+    Version = "Hooks" in getroottable() ? "1.3.0": 1.3
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/331"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/standout_enemies"
