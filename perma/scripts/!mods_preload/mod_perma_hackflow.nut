@@ -23,12 +23,16 @@ mod.queue(function () {
         })
     }
 
+    local function isNull(_obj) {
+        return _obj == null || (_obj instanceof ::WeakTableRef && _obj.isNull());
+    }
+
     mod.hook("scripts/items/item_container", function (q) {
         q.onShieldHit = @(__original) function (_attacker, _skill) {
             __original(_attacker, _skill);
 
             // Attacker dropping weapon
-            if (_attacker && !_attacker.isNull() && _attacker.getSkills().hasSkill("injury.missing_finger")) {
+            if (!isNull(_attacker) && _attacker.getSkills().hasSkill("injury.missing_finger")) {
                 local main = _attacker.getItems().getItemAtSlot(::Const.ItemSlot.Mainhand);
                 if (main && main.m.Condition > 0 && main.m.BlockedSlotType == ::Const.ItemSlot.Offhand
                     && ::Math.rand(1, 10) == 1)
@@ -41,7 +45,7 @@ mod.queue(function () {
 
             // Defender dropping shield
             local actor = getActor();
-            if (actor == null || actor.isNull()) return;
+            if (isNull(actor)) return;
             foreach (item in m.Items[::Const.ItemSlot.Offhand]) {
                 if (item == null || item == -1 || item.isGarbage() || item.m.Condition == 0) continue;
 
