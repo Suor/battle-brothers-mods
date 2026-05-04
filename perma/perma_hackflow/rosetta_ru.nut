@@ -29,5 +29,12 @@ local pairs = [
         en = "<name:str_tag>'s shield slips from his fingers"
         ru = "<name> роняет щит, он выскользнул из его пальцев"
     }
+    // FILE: perma_hackflow/hooks/double_grip.nut
+    {
+        // return "Stub Bonus" + (pos ? name.slice(pos) : "");
+        mode = "pattern"
+        en = "Stub Bonus<suffix:str>"
+        ru = "Культяпка помогает<suffix>"
+    }
 ]
 ::Rosetta.add(rosetta, pairs);

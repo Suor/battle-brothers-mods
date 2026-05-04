@@ -12,7 +12,7 @@ local def = ::PermaHackflow <- {
 ::include("perma_hackflow/rosetta_ru");
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
-mod.queue(function () {
+mod.queue(">mod_reforged", function () {
     foreach (file in ::IO.enumerateFiles("perma_hackflow/hooks")) ::include(file);
 
     // Legends have this already
@@ -55,6 +55,18 @@ mod.queue(function () {
                     item.drop();
                 }
             }
+        }
+    })
+
+    mod.hook("scripts/skills/special/double_grip", function (q) {
+        q.getName = @(__original) function () {
+            local actor = !isNull(getContainer()) ? getContainer().getActor() : null;
+            if (isNull(actor) || !actor.getSkills().hasSkill("injury.missing_hand"))
+                return __original();
+
+            local name = __original();
+            local pos = name.find(" (");
+            return "Stub Bonus" + (pos ? name.slice(pos) : "");
         }
     })
 })
