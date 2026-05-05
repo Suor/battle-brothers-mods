@@ -10,6 +10,8 @@ Changes:
 - make Missing ear do nothing
 - Brain Damage lowers pay a little, but otherwise unchanged (flavor and fun change)
 
+Russian localization included - need to install [Rosetta][] and it's dependencies.
+
 
 ## Compatibility
 
@@ -20,9 +22,12 @@ Is safe to add midgame, cannot remove if any of your bros have missing hand. Com
 
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHooks][].
 
+To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
+
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/855
 [ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
+[Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
 

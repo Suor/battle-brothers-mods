@@ -1,3 +1,7 @@
+2.0.2
+- fixed actor being non-WeakTableRef null, some mod incompat
+- change Double Grip to Stub Bonus if hand is missing
+
 2.0.1
 - better Legends compat
 - drop items more carefully when Missing Hand is added
