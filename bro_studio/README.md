@@ -9,6 +9,8 @@ Allows to set up all sort of things during bro generation and level up:
 
 All things are optional and highly customizable.
 
+Russian localization included - need to install [Rosetta][] and it's dependencies.
+
 
 ## Compatibility
 
@@ -24,12 +26,15 @@ Is safe to add or remove mid-game.
 
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [Modern Hooks][ModernHooks], [stdlib][] and [MSU][].
 
+To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
+
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/677
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
 [msu]: https://www.nexusmods.com/battlebrothers/mods/479
+[Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
 
 [ultra-bros]: https://www.nexusmods.com/battlebrothers/mods/11
 [veteran-ap]: https://www.nexusmods.com/battlebrothers/mods/648

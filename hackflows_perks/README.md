@@ -18,6 +18,8 @@ So here we have:
 
 **Promised Potential:** *(Reforged only)* A more granular and balanced Promised Potential perk for Reforged. Upgrades at levels 5, 8 and 11 progressively.
 
+Russian localization included - need to install [Rosetta][] and it's dependencies.
+
 
 ## Compatibility
 
@@ -30,12 +32,15 @@ Compatible with Reforged (Flesh on the Bones, Balance and Full Force are added t
 
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [Modern Hooks][ModernHooks] and [stdlib][].
 
+To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
+
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/673
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
 [msu]: https://www.nexusmods.com/battlebrothers/mods/479
+[Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
 
 [More Perks]: https://www.nexusmods.com/battlebrothers/mods/44
 [True Balance]: https://www.nexusmods.com/battlebrothers/mods/333

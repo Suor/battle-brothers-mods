@@ -13,6 +13,8 @@ Plans:
 - more events
 - special mechanics for origin or all necros
 
+Russian localization included - need to install [Rosetta][] and it's dependencies.
+
 
 ## Compatibility
 
@@ -25,11 +27,14 @@ Will play nice with [Autopilot New][autopilot] >= 2.5.0. Will work with Reforged
 
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHooks][] and [stdlib][].
 
+To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
+
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/775
 [ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
+[Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
 
 [old]: https://www.nexusmods.com/battlebrothers/mods/32
 [autopilot]: https://www.nexusmods.com/battlebrothers/mods/675

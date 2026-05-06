@@ -24,6 +24,8 @@ Fixes:
 - always provide a unique name for an artifact as long as they are available
 - fixed artifact weapons type to not contain Weapon (affected Autopilot)
 
+Russian localization included - need to install [Rosetta][] and it's dependencies.
+
 ## Compatibility
 
 Safe to add midgame, can't remove. Is also savegame compatible with the old camps mod, i.e. if you have a campaign played with that you can replace it with this, the artifacts with updated attributes won't be regenerated though.
@@ -39,9 +41,12 @@ Should be highly compatible with other mods. Tested and works with:
 
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
 
+To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
+
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/678
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
+[Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
 
 [camps-old]: https://www.nexusmods.com/battlebrothers/mods/195
 [sato_balance_mod]: https://github.com/jcsato/sato_balance_mod

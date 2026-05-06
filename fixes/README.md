@@ -10,6 +10,8 @@ A collection of bug fixes and minor UI tweaks to smooth the game:
 
 More about these below (TBD).
 
+Russian localization included - need to install [Rosetta][] and it's dependencies.
+
 
 ## Compatibility
 
@@ -19,6 +21,8 @@ Is safe to add and remove midgame. Compatible with most other mods.
 ## Install
 
 <!-- Download a zip from [NexusMods][] and put it into `data` dir. Requires [stdlib][], [Modern Hooks][ModernHooks] and [msu][]. -->
+
+To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
 
 
 ## More ...
@@ -30,3 +34,4 @@ Is safe to add and remove midgame. Compatible with most other mods.
 [ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
+[Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
