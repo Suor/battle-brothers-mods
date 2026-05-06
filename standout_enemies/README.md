@@ -6,28 +6,14 @@ Number of quirked enemies increases with current day and combat difficulty. Firs
 
 I won't list possible things you can encounter, exploring should be more fun.
 
+Russian localization included - need to install [Rosetta][] and it's dependencies.
+
 
 ## Install
 
 Download a zip from [NexusMods][] and put it into `data` dir.
 
-
-## Tinkering
-
-Put `scripts` dir into Battle Brothers `data` dir. Then:
-
-```bash
-cd scripts/!mods_preload
-<edit> mod_standout_enemies.nut
-```
-
-Optionally you can run a "test", which will at least check syntax and maybe find some typos saving you a couple of game restarts:
-
-```bash
-squirrel test_mod_standout_enemies.nut
-```
-
-You will need squirrel installed for this to work
+To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
 
 
 ## Feedback
@@ -38,4 +24,5 @@ New ideas are also welcome, even though I have some of my own not yet implemente
 
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/331
+[Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
 [nm-posts]: https://www.nexusmods.com/battlebrothers/mods/331?tab=posts
