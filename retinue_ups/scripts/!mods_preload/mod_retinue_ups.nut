@@ -1,7 +1,7 @@
 local def = ::RetinueUps <- {
     ID = "mod_retinue_ups"
     Name = "Retinue Promotions"
-    Version = "1.2.2"
+    Version = "1.3.0"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/681"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/retinue_ups"

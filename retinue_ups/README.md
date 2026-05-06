@@ -19,6 +19,8 @@ To promote a follower you need to first hire him or her and then Ctrl-click on a
 
 More ideas are welcome.
 
+Russian localization included - need to install [Rosetta][] and it's dependencies.
+
 ## Compatibility
 
 Is safe to add or remove mid-game. If you remove the mod promotions effects would be lost, will be back if you reinstall.
@@ -31,12 +33,15 @@ Plays nice with Expanded Retinue mod from [Tweaks and Fixes][tnf] and [More Reti
 
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [Modern Hooks][].
 
+To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
+
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/681
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
 [msu]: https://www.nexusmods.com/battlebrothers/mods/479
+[Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
 
 [tnf]: https://www.nexusmods.com/battlebrothers/mods/69
 [more-retinue]: https://www.nexusmods.com/battlebrothers/mods/281
