@@ -2,6 +2,8 @@
 
 You start with several jars containing soul of ancient warriors. These might be used onto your brothers to imbue them with immortal powers, which are configurable :). Upon death the soul is returned to a jar.
 
+Immortal warriors also have a chance to heal a permanent injury on level up.
+
 
 ## Compatibility
 

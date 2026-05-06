@@ -1,3 +1,8 @@
+0.2.0
+- heal permanent injuries on level up (33% chance every 3rd level)
+- made jars unsellable
+- will place jar in stash if needed when returning soul
+
 0.1.1
 - fixed hack MSU updater
 

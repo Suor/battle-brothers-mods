@@ -1,7 +1,7 @@
 local def = ::ImmortalWarriors <- {
     ID = "mod_immortal_warriors"
     Name = "Immortal Warriors"
-    Version = "0.1.1"
+    Version = "0.2.0"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/763"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/immortal_warriors"
