@@ -51,7 +51,7 @@
         {
             id = 1,
             type = "title",
-            text = "AI Control"
+            text = "AI Control (Q)"
         },
         {
             id = 2,

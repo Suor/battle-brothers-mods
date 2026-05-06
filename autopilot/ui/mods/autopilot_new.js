@@ -102,3 +102,28 @@ TacticalScreenTurnSequenceBarModule.prototype.setAIButtonVisible = function (_vi
 {
     this.mAI.button.enableButton(_visible);
 }
+
+
+// Bind Enter/Esc on confirmation dialogs
+AutopilotNew.DialogScreen_show = DialogScreen.prototype.show;
+DialogScreen.prototype.show = function (_data)
+{
+    AutopilotNew.DialogScreen_show.call(this, _data);
+    var self = this;
+    $(document).on('keyup.autopilot_dialog', function (e) {
+        if (e.which === KeyConstants.Return) {
+            self.notifyBackendOkButtonPressed();
+            e.preventDefault(); e.stopPropagation();
+        } else if (e.which === KeyConstants.Escape) {
+            self.notifyBackendCancelButtonPressed();
+            e.preventDefault(); e.stopPropagation();
+        }
+    });
+}
+
+AutopilotNew.DialogScreen_hide = DialogScreen.prototype.hide;
+DialogScreen.prototype.hide = function ()
+{
+    $(document).off('keyup.autopilot_dialog');
+    AutopilotNew.DialogScreen_hide.call(this);
+}

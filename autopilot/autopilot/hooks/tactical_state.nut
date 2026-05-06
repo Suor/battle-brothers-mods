@@ -23,8 +23,12 @@ mod.hook("scripts/states/tactical_state", function (q) {
                 Tactical.TurnSequenceBar.onShieldWallButtonPressed();
                 return true;
             }
+            else if (key.getKey() == 27) { // Q
+                Tactical.TurnSequenceBar.onAIButtonPressed();
+                return true;
+            }
         }
-        
+
         return result;
     }
 

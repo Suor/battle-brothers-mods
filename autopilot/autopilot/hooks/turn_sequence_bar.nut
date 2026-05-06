@@ -69,6 +69,9 @@ mod.hook("scripts/ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_ba
                 if (cancelIgnorance) e.m._isIgnored <- false;
                 e.clearAutoSkills();
                 e.setSkipTurn(false);
+                // Reforged: clear IsWaitingTurn so its isTurnDone() override stops
+                // forcing the bro to wait. Gating in case Reforged is not installed.
+                if (::std.Util.isIn("IsWaitingTurn", e.m)) e.m.IsWaitingTurn = false;
                 if (::std.Util.isKindOf(e, "player")) e.cancelAIControl();
             }
         }
