@@ -850,7 +850,8 @@ Util.extend(se, {
     }
 
     function getTroopType(t) {
-        if (t.Strength < 15) return "garbage";  // Skip weakest enemies
+        // if (t.Strength < 15) return "garbage";  // Skip weakest enemies
+        if (t.Script == "") return "none";
         if (t.Variant != 0) return "champion";  // Skip champions
 
         local nameParts = split(t.Script, "/");
