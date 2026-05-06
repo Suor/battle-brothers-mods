@@ -1,3 +1,7 @@
+2.6.2
+- fixed typos in perk ids - some perks were not assigned as intended
+- dropped unnecessary logging
+
 2.6.1
 - added support Cultist Commander
 - added many more fallbacks for Reforged
