@@ -64,9 +64,6 @@ for r in rows:
     if "gfx/fonts/" in txt:
         continue
     tag = field(entry, "tag")
-    # JS errors are downstream noise from earlier squirrel failures.
-    if tag == "UI" and "ConsoleAPI" in txt:
-        continue
     time = field(entry, "time")
     block = [f"[{kind}] {time} {tag}: {txt}"]
     block.extend(stacktrace(r))
