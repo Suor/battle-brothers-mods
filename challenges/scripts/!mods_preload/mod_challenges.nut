@@ -3,6 +3,7 @@ local def = ::Challenges <- {
     Name = "Challenges"
     Version = "0.1.0"
     Updates = {
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/1010"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/challenges"
         tagPrefix = "challenges-"
     }
