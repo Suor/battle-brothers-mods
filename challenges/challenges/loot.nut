@@ -1,5 +1,5 @@
 local def = ::Challenges, mod = def.mh;
-local Debug = ::std.Debug.with({prefix = "loot: "});
+local Debug = ::std.Debug.noop();//with({prefix = "loot: "});
 
 // Settings
 def.add(::MSU.Class.SettingsTitle("lootTitle", "Loot"));
