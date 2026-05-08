@@ -1,8 +1,8 @@
 if (!("Rosetta" in getroottable())) return;
-if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.3.0")) return;
+if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.4.0")) return;
 
 local rosetta = {
-    mod = {id = "mod_bro_studio", version = "1.2.0"}
+    mod = {id = ::BroStudio.ID, version = ::BroStudio.Version}
     author = "hackflow"
     lang = "ru"
 }
