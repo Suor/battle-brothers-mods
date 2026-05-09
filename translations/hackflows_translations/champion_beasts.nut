@@ -1,4 +1,5 @@
 if (!("Rosetta" in getroottable())) return;
+if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.4.0")) return;
 
 local rosetta = {
     mod = {id = "mod_champion_beasts", version = "1.2.1"}

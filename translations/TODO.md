@@ -2,38 +2,40 @@
 
 Mods without Russian translation (rosetta_ru.nut).
 
-## Own mods
+## Own mods — no translation
 
-- autopilot
-- camps_and_artifacts
-- immortal_warriors
-- cheap_meat (just do inline, not separate file)
-- stupid_game (just do inline, not separate file)
+- autopilot — 63 strings
+- immortal_warriors — 52 strings
+- cheap_meat — 2 strings (just do inline, not separate file)
+- stupid_game — 2 strings (just do inline, not separate file)
 - xbe/More Backgrounds and Events (incomplete translation)
 
-## 3rdparty (installed)
+## Own mods — incomplete translation
 
-- eimo
-- mod_backgrounds_reforged_compatibility
-- plan_perks
-- prepare_for_battle
-- shield_damage (TODO: check for update)
-- swifter
+- fun_facts — NEW string `"Killed %s"`, old pattern `"Killed <name:str_tag>"` unmatched
+- camps_and_artifacts — DUPS in rosetta_ru.nut
 
-## Other installed mods
+## 3rdparty (installed, source in 3rdparty/)
 
-- BackgroundBonuses
-- ends_colored_rumors
-- settlement_prices_tooltip
-- stronghold
-- tnf_ammoThrowSpear
-- tnf_betterEagleEyes
-- tnf_expandedRetinue
-- tnf_noSwallowIndomitable
-- tnf_resistFXResilient
-- tnf_survivorNineLives
-- tnf_triesBowyer
-- tnf_trueNightOwl
+- eimo — 54 strings; `3rdparty/eimo`
+- plan_perks — 53 strings; `3rdparty/plan_perks`
+- swifter — 16 strings; `3rdparty/swifter`
+- mod_backgrounds_reforged_compatibility — 5 strings; `3rdparty/mod_backgrounds_reforged_compatibility`
+- prepare_for_battle — 4 strings; `3rdparty/prepare_for_battle`
+- shield_damage — 3 strings; `3rdparty/shield_damage`
+- settlement_prices_tooltip — 6 strings; `3rdparty/settlement_prices_tooltip` (decompiled)
+
+## 3rdparty (installed, no source — zip only)
+
+- stronghold — 378 strings
+- BackgroundBonuses — 152 strings
+- tnf_resistFXResilient — 16 strings
+- tnf_ammoThrowSpear — 8 strings
+- tnf_expandedRetinue — 7 strings
+- tnf_noSwallowIndomitable — 3 strings
+- tnf_trueNightOwl — 3 strings
+- tnf_survivorNineLives — 2 strings
+- tnf_betterEagleEyes — 1 string
 
 # Done or Postponed
 
@@ -45,12 +47,11 @@ Mods without Russian translation (rosetta_ru.nut).
 - champion_beasts (translated here)
 
 ## MSU settings (not sure how to translate)
+
 - bro_studio
 - challenges
 - elite_few
-
 - clever_recruiter
-
 
 ## Nothing to translate here
 
@@ -75,6 +76,9 @@ Mods without Russian translation (rosetta_ru.nut).
 - vision_radius
 - vse
 - xpInReserve
+- ends_colored_rumors (only colors rumor categories, no translatable text)
+- More Flags (graphics only)
+- tnf_triesBowyer (0 strings)
 
 ## Don't Care
 
