@@ -23,12 +23,10 @@ Mods without Russian translation (rosetta_ru.nut).
 - mod_backgrounds_reforged_compatibility — 5 strings; `3rdparty/mod_backgrounds_reforged_compatibility`
 - prepare_for_battle — 4 strings; `3rdparty/prepare_for_battle`
 - shield_damage — 3 strings; `3rdparty/shield_damage`
-- settlement_prices_tooltip — 6 strings; `3rdparty/settlement_prices_tooltip` (decompiled)
 
 ## 3rdparty (installed, no source — zip only)
 
 - stronghold — 378 strings
-- BackgroundBonuses — 152 strings
 - tnf_resistFXResilient — 16 strings
 - tnf_ammoThrowSpear — 8 strings
 - tnf_expandedRetinue — 7 strings
@@ -45,6 +43,8 @@ Mods without Russian translation (rosetta_ru.nut).
 - nicknames
 - standout_enemies
 - champion_beasts (translated here)
+- BackgroundBonuses (translated here, source in `3rdparty/BackgroundBonuses`)
+- settlement_prices_tooltip (translated here, decompiled source in `3rdparty/settlement_prices_tooltip`)
 
 ## MSU settings (not sure how to translate)
 

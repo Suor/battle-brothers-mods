@@ -7,4 +7,5 @@ local mh = mod.mh <- ::Hooks.register(mod.ID, mod.Version, mod.Name);
 mh.require("mod_rosetta >= 0.2.0");
 mh.queue(function() {
     ::include("hackflows_translations/champion_beasts");
+    ::include("hackflows_translations/settlement_prices_tooltip");
 });
