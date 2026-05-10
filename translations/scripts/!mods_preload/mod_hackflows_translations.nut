@@ -9,4 +9,8 @@ mh.queue(function() {
     ::include("hackflows_translations/champion_beasts");
     ::include("hackflows_translations/settlement_prices_tooltip");
     ::include("hackflows_translations/background_bonuses");
+    ::include("hackflows_translations/swifter");
+    ::include("hackflows_translations/backgrounds_reforged");
+    ::include("hackflows_translations/prepare_for_battle");
+    ::include("hackflows_translations/shield_damage");
 });
