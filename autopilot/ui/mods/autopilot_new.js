@@ -127,3 +127,62 @@ DialogScreen.prototype.hide = function ()
     $(document).off('keyup.autopilot_dialog');
     AutopilotNew.DialogScreen_hide.call(this);
 }
+
+// NOTE: uncomment to debug missing js methods
+// console.error("LOAD autopilot early engine.on()");
+
+// engine.off('callFromSQ');
+// engine.on('callFromSQ', function (_instanceName, _moduleName, _methodName, _args)
+// {
+//     if(_instanceName in Screens)
+//     {
+//         var target = Screens[_instanceName];
+
+//         if (_moduleName != null && _moduleName != "")
+//         {
+//             if (target.getModule(_moduleName) != null)
+//                 target = target.getModule(_moduleName);
+//             else
+//             {
+//                 console.error("Attempted to call unknown module '" + _moduleName + "' of '" + _instanceName + "'.");
+//                 return;
+//             }
+//         }
+
+//         if (!target[_methodName]) {
+//             console.error("BAD CALL " + _instanceName + "." + (_moduleName || 'NONE')
+//                 + "." + _methodName + "(...)");
+//         }
+//         target[_methodName](_args);
+//     }
+//     else
+//     {
+//         console.error("Attempted to call unknown instance '" + _instanceName + "'.");
+//     }
+// });
+
+// engine.off('callFromSQNoArgs');
+// engine.on('callFromSQNoArgs', function (_instanceName, _moduleName, _methodName)
+// {
+//     if (_instanceName in Screens)
+//     {
+//         var target = Screens[_instanceName];
+
+//         if (_moduleName != null && _moduleName != "")
+//         {
+//             if (target.getModule(_moduleName) != null)
+//                 target = target.getModule(_moduleName);
+//             else
+//             {
+//                 console.error("Attempted to call unknown module '" + _moduleName + "' of '" + _instanceName + "'.");
+//                 return;
+//             }
+//         }
+
+//         if (!target[_methodName]) {
+//             console.error("BAD CALL " + _instanceName + "." + (_moduleName || '<no-module>')
+//                 + "." + _methodName + "() // NoArgs");
+//         }
+//         target[_methodName]();
+//     }
+// });
