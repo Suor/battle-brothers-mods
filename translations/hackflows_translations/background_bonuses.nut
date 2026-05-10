@@ -33,7 +33,7 @@ local pairs = [
     }
     {
         en = "Melee damage has +15% more armor piercing against enemies who are stunned, dazed, distracted, webbed, rooted, or netted."
-        ru = "Урон в ближнем бою пробивает на +15% больше брони по врагам, оглушённым, одурманенным, отвлечённым, опутанным паутиной, обездвиженным или пойманным в сеть."}
+        ru = "Урон в ближнем бою пробивает на +15% больше брони по врагам, оглушённым, с выбитым духом, отвлечённым, опутанным паутиной, обездвиженным или пойманным в сеть."}
     {
         en = "Heals for 20% of damage dealt."
         ru = "Восстанавливает 20% от нанесённого урона в виде ОЗ."
@@ -98,11 +98,11 @@ local pairs = [
     }
     {
         en = "Increase base fatigue by 30%. Regain -3 fatigue each turn."
-        ru = "Базовая выносливость увеличивается на 30%. Восстановление снижается на -3 за ход."
+        ru = "Базовая выносливость увеличивается на 30%. Восстанавливает на 3 выносливости меньше за ход."
     }
     {
         en = "Deals 20% increased damage when wavering, and 40% increased damage when breaking."
-        ru = "Наносит на 20% больше урона при колебании и на 40% при панике."
+        ru = "Наносит на 20% больше урона при нерешительном боевом духе и на 40% при сломленном."
     }
     {
         en = "The effects of a positive morale state are twice as strong. The effects of negative morale states are 50% stronger."
@@ -114,11 +114,11 @@ local pairs = [
     }
     {
         en = "Will always be at confident morale."
-        ru = "Всегда находится в состоянии уверенности."
+        ru = "Всегда находится в решительном боевом духе."
     }
     {
         en = "Always gains the effects of confident morale, and will never be below steady morale."
-        ru = "Всегда получает эффекты уверенного боевого духа и никогда не опускается ниже стойкого."
+        ru = "Всегда получает эффекты решительного боевого духа и никогда не опускается ниже уравновешенного."
     }
     {
         en = "Immune to charm, fear, and other mental effects."
@@ -158,7 +158,7 @@ local pairs = [
     }
     {
         en = "Gain +1 head and body armor for each ally who has died, up to +30."
-        ru = "+1 к броне головы и тела за каждого погибшего союзника, до +30."
+        ru = "+1 к прочности шлема и доспеха за каждого погибшего союзника, до +30."
     }
     {
         en = "Reduces armor penetrating damage by 10%."
@@ -208,7 +208,7 @@ local pairs = [
     }
     {
         en = "Whip skills cost 2 less fatigue and gain +5 chance to hit."
-        ru = "Умения с кнутом стоят на 2 усталости меньше и дают +5 к шансу попасть."
+        ru = "Умения с кнутом стоят на 2 выносливости меньше и дают +5 к шансу попасть."
     }
     {
         en = "Base melee defense is increased by 50%. Melee skill is reduced by the same amount."
@@ -216,7 +216,7 @@ local pairs = [
     }
     {
         en = "Reduces fatigue cost of movement by 50%."
-        ru = "Стоимость передвижения в усталости снижается на 50%."
+        ru = "Стоимость передвижения в выносливости снижается на 50%."
     }
     {
         en = "Deals 15% increased damage when allies outnumber enemies."
@@ -224,7 +224,7 @@ local pairs = [
     }
     {
         en = "Gains HP equal to 15% of max fatigue."
-        ru = "Получает ОЗ, равные 15% максимальной усталости."
+        ru = "Получает ОЗ, равные 15% максимальной выносливости."
     }
     {
         en = "Deals an additional 10% damage to armor."
@@ -232,7 +232,7 @@ local pairs = [
     }
     {
         en = "Restores +3 fatigue to all allies if wielding a lute at the start of this unit's turn."
-        ru = "Восстанавливает +3 усталости всем союзникам в начале хода, если держит лютню."
+        ru = "Восстанавливает +3 выносливости всем союзникам в начале хода, если держит лютню."
     }
     {
         // this.Tactical.EventLog.log("All allies regain 3 fatigue from " + this.Const.UI.getColorizedEntityName(actor) + "'s song!");
@@ -258,7 +258,7 @@ local pairs = [
     }
     {
         en = "Gain +1 head and body armor per 1000 gold, up to +50."
-        ru = "+1 к броне головы и тела за каждые 1000 монет в казне, до +50."
+        ru = "+1 к прочности шлема и доспеха за каждые 1000 крон в казне, до +50."
     }
     {
         en = "All allies start combat at one higher morale state."
@@ -282,7 +282,7 @@ local pairs = [
     }
     {
         en = "-1 ap per tile moved, but fatigue cost of movement is increased by 50%."
-        ru = "-1 ОД за клетку при движении, но стоимость в выносливсти увеличивается на 50%."
+        ru = "-1 ОД за клетку при движении, но стоимость в выносливости увеличивается на 50%."
     }
     {
         en = "Immune to 'Overwhelm' effect."
@@ -318,7 +318,7 @@ local pairs = [
     }
     {
         en = "Gain 10 crowns on each hit against non-beast enemies."
-        ru = "+10 монет за каждое попадание по небестиальным врагам."
+        ru = "+10 крон за каждое попадание по небестиальным врагам."
     }
     {
         en = "Gain +5% damage for each tile moved this turn."
@@ -358,13 +358,13 @@ local pairs = [
     }
     {
         en = "Gain 50 crowns for each kill. Reward is 10x larger for champion kills."
-        ru = "+50 монет за каждое убийство. Награда в 10 раз больше за убийство чемпионов."
+        ru = "+50 крон за каждое убийство. Награда в 10 раз больше за убийство чемпионов."
     }
     {
         // this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(actor) + " gains the company 500 crowns for killing " + this.Const.UI.getColorizedEntityName(_victim) + ".");
         mode = "pattern"
         en = "<actor:str_tag> gains the company <n:int> crowns for killing <victim:str_tag>."
-        ru = "<actor> приносит отряду <n> монет, убив <victim>."
+        ru = "<actor> приносит отряду <n> крон, убив <victim>."
     }
     {
         en = "Melee and ranged defense of this unit's equipped shield is increased by 25%, and by 50% when using shieldwall."
@@ -500,13 +500,13 @@ local pairs = [
     }
     {
         en = "Gain +1 to either melee skill, melee defense, fatigue, or resolve for each kill made during settlement defense contracts."
-        ru = "+1 к навыку ближнего боя, защите ближнего боя, выносливости или решимости за каждое убийство в контрактах по обороне поселений."
+        ru = "+1 к навыку ближнего боя, защите в ближнем бою, выносливости или решимости за каждое убийство в контрактах по обороне поселений."
     }
     {
         // text = "Gain +1 to either melee skill, melee defense, fatigue, or resolve for each kill made during settlement defense contracts. Current bonuses: " + mSkillBonus + " Melee Skill, " + mDefBonus + " Melee Defense, " + stamBonus + " Fatigue, " + bravBonus + " Resolve."
         mode = "pattern"
         en = "Gain +1 to either melee skill, melee defense, fatigue, or resolve for each kill made during settlement defense contracts. Current bonuses: <ms:int> Melee Skill, <md:int> Melee Defense, <st:int> Fatigue, <br:int> Resolve."
-        ru = "+1 к навыку ближнего боя, защите ближнего боя, выносливсти или решимости за убийство в контрактах обороны поселений. Текущие бонусы: <ms> навык, <md> защита ближнего боя, <st> выносливсть, <br> решимость."
+        ru = "+1 к навыку ближнего боя, защите в ближнем бою, выносливости или решимости за убийство в контрактах обороны поселений. Текущие бонусы: <ms> навык, <md> защита в ближнем бою, <st> выносливость, <br> решимость."
     }
     {
         // this.Tactical.EventLog.log(getColorizedEntityName(actor) + " gains +1 permanent max fatigue.");
@@ -530,7 +530,7 @@ local pairs = [
         // this.Tactical.EventLog.log(getColorizedEntityName(actor) + " gains +1 permanent melee defense.");
         mode = "pattern"
         en = "<actor:str_tag> gains +1 permanent melee defense."
-        ru = "<actor> навсегда получает +1 к защите ближнего боя."
+        ru = "<actor> навсегда получает +1 к защите в ближнем бою."
     }
     {
         en = "This unit's stats become the average of their own stats with the stats of all adjacent allies."
@@ -604,7 +604,7 @@ local pairs = [
     }
     {
         en = "Gains +5 melee skill and melee defense after waiting."
-        ru = "+5 к навыку и защите ближнего боя после ожидания."
+        ru = "+5 к навыку и защите в ближнем бою после ожидания."
     }
     {
         en = "When nothing is equipped in the offhand, follow up each attack against adjacent targets with a clawed swipe."
@@ -633,7 +633,7 @@ local pairs = [
     }
     {
         en = "Immune to stuns and knockbacks, and suffers no fatigue penalty for using orc weapons."
-        ru = "Невосприимчив к оглушениям и отбрасываниям, нет штрафа усталости от орочьего оружия."
+        ru = "Невосприимчив к оглушениям и отбрасываниям, нет штрафа к выносливости при использовании орочьего оружия."
     }
     {
         en = "Base fatigue is reduced by 70%. Skills and movement consume no fatigue."

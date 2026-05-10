@@ -25,12 +25,12 @@ local pairs = [
     // FILE: mod_backgrounds_reforged/hooks/master_archer_background.nut
     {
         en = "Has either [Bow Mastery|Perk+perk_mastery_bow] or [Crossbow Mastery|Perk+perk_mastery_crossbow] permanently for free"
-        ru = "Имеет [Мастер лука|Perk+perk_mastery_bow] или [Мастер арбалета|Perk+perk_mastery_crossbow] [навык|Concept.Perk] постоянно и бесплатно"
+        ru = "Имеет [навык|Concept.Perk] [Мастер лука|Perk+perk_mastery_bow] или [Мастер арбалета|Perk+perk_mastery_crossbow] постоянно и бесплатно"
     }
     // FILE: mod_backgrounds_reforged/hooks/paladin_commander_background.nut
     {
         en = "Has the [Exude Confidence|Perk+perk_rf_exude_confidence] [perk|Concept.Perk] permanently for free"
-        ru = "Имеет [Уверенность|Perk+perk_rf_exude_confidence] [навык|Concept.Perk] постоянно и бесплатно"
+        ru = "Имеет [навык|Concept.Perk] [Уверенность|Perk+perk_rf_exude_confidence] постоянно и бесплатно"
     }
 ]
 ::Rosetta.add(rosetta, pairs);

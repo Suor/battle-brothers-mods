@@ -740,7 +740,7 @@ local pairs = [
         // text = "Reduces an armor\'s penalty to Maximum Fatigue by [color=" + ::Const.UI.Color.NegativeValue + "]" + this.m.SpecialValue + "%[/color]"
         mode = "pattern"
         en = "Reduces an armor's penalty to Maximum Fatigue by <penalty:val_tag>"
-        ru = "Снижает штраф доспехов к Максимальной усталости на <penalty>"
+        ru = "Снижает штраф доспехов к выносливости на <penalty>"
     }
     // FILE: scripts/items/armor_upgrades/named/nggh_mod_named_lindwurm_scales_upgrade.nut
     {
