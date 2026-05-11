@@ -1,0 +1,1 @@
+Add more titles to @new_titles.md, follow istructions, may run `./tools.nut usage` for ideas, i.e. what factors are underused. Generate at least 100 of them. May do one by one or a set for combination of factors

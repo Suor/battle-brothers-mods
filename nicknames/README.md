@@ -32,7 +32,7 @@ Certain mods and their settings will open more factors and thus more diverse tit
 
 1. [More Backgrounds and Events (Updated)][xbe] - more backgrounds to mock and praise, and to play.
 2. [Starting Perks By Background (Updated)][mod_background_perks] - starting perks also affect nicknames.
-3. [Bro Studio][bro_studio] - set 1 extra starting trait. Will make combo nicknames trigger more often.
+3. [Bro Studio 1.3.0+][bro_studio] - set 1 extra starting trait. Will make combo nicknames trigger more often.
 4. Bro Studio (again) - may add permanent injury chance. Will unlock injury-specific titles.
 5. Any other mods from above adding backgrounds or traits.
 
@@ -49,7 +49,7 @@ Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHo
 To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
 
 
-[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/...
+[NexusMods]: https://www.nexusmods.com/games/battlebrothers/mods/1013
 [ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
 [Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802

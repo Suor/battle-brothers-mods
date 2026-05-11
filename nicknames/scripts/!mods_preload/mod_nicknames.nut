@@ -1,15 +1,32 @@
 local def = ::Nicknames <- {
     ID = "mod_nicknames"
     Name = "Nicknames for Everyone"
-    Version = "0.1"
+    Version = "0.5.0"
+    Updates = {
+        nexus = "https://www.nexusmods.com/games/battlebrothers/mods/1013"
+        github = "https://github.com/Suor/battle-brothers-mods/tree/master/nicknames"
+        tagPrefix = "nicknames-"
+    }
 
-    Debug = true
+    Debug = false
     FlagPrefix = "nicknames."
     Logs = {factors = {idx = null, items = []}, candidates = {idx = null, items = []}}
 }
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.conflictWith("mod_renamer");
+
+mod.queue(">mod_msu", function () {
+    if (!::Hooks.hasMod("mod_msu")) return;
+
+    def.msu <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);
+    local msd = ::MSU.System.Registry.ModSourceDomain, upd = def.Updates;
+    def.msu.Registry.addModSource(msd.NexusMods, upd.nexus);
+    if ("GitHubTags" in msd) {
+        def.msu.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
+        def.msu.Registry.setUpdateSource(msd.GitHubTags);
+    }
+});
 
 def.PauperBackgrounds <- {
     "background.beggar": true
