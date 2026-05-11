@@ -1,7 +1,7 @@
 local def = ::ImmortalWarriors <- {
     ID = "mod_immortal_warriors"
     Name = "Immortal Warriors"
-    Version = "0.2.0"
+    Version = "0.2.1"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/763"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/immortal_warriors"
@@ -9,7 +9,7 @@ local def = ::ImmortalWarriors <- {
     }
 };
 local Rand = ::std.Rand.using(::rng), Util = ::std.Util, Table = ::std.Table;
-local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
+local Debug = ::std.Debug.with({prefix = "iw: "})//.noop();
 
 ::mods_registerMod(def.ID, def.Version, def.Name);
 ::mods_queue(def.ID, "mod_hooks(>=20), stdlib(>=2.5), mod_msu(>=1.6.0)", function () {
@@ -108,14 +108,17 @@ local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
         cls.fillAttributeLevelUpValues = function ( _amount, _maxOnly = false, _minOnly = false ) {
             fillAttributeLevelUpValues(_amount, _maxOnly, _minOnly);
             if (_maxOnly || _minOnly) this.m.immortal_extraALUV += _amount;
+            // this.m.Flags.increment("immortal_minmax_ALUV", _amount);
         }
 
         local setAttributeLevelUpValues = cls.setAttributeLevelUpValues;
         cls.setAttributeLevelUpValues = function (_v) {
             setAttributeLevelUpValues(_v);
-            if (this.m.immortal_extraALUV > 0) this.m.immortal_extraALUV--;
+            this.m.immortal_extraALUV--;
+            // if (this.m.Flags.getAsInt("immortal_minmax_ALUV") > 0)
+            //     this.m.Flags.increment("immortal_minmax_ALUV", -1);
         }
-    });
+    })
 
     ::include("scripts/i_immortal_warriors_levelup_changes");
     ::LevelUpChanges.onLevel(function (_player, _level) {
@@ -134,6 +137,46 @@ local Debug = ::std.Debug.with({prefix = "iw: "}).noop();
     })
 
 });
+
+// Settings
+// NOTE: should I use script names instead of ids to distinguish gladiator stuff?
+def.RetainTraits <- [
+    "trait.player"
+    "trait.glorious"
+    "trait.pit_fighter"
+    "trait.arena_fighter"
+    "trait.arena_veteran"
+    // HeroicScenarioPack
+    "trait.dancer"
+    "trait.deadlya"
+    "trait.deadlyr"
+    "trait.halfbreed"
+    // North Expansion
+    "trait.feral"
+    "trait.destined"
+    "trait.chosen"
+    "trait.champion"
+    "trait.duel_fighter"
+    "trait.moonkissed"
+    "trait.shieldmaster"
+    "trait.skald"
+    // "trait.thrall" // This one is too limiting
+    // For this to work need direwolf
+    //    items.equip(::new("scripts/items/accessory/direwolf_item"));
+    "trait.wolfmaster"
+]
+def.RetainFlags <- [
+    "ArenaFights"
+    "ArenaFightsWon"
+    // North Expansion
+    "Nem_DuelFights"
+    "Nem_DuelThralls"
+    "Nem_DuelReavers"
+    "Nem_DuelChosen"
+    "Nem_DuelChampion"
+    // Of Flesh and Faith Plus
+    "CursedExplorersLegendaryLocations"
+]
 
 
 // The meat
