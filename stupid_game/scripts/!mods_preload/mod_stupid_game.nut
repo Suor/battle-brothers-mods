@@ -1,4 +1,4 @@
-local mod = ::Hooks.register("mod_stupid_game", "0.2.0", "Stupid Game");
+local mod = ::Hooks.register("mod_stupid_game", "0.3.0", "Stupid Game");
 mod.queue(">mod_reforged", ">mod_backgrounds_reforged", "<mod_useful", function () {
     this.logInfo("sg: loading");
 
