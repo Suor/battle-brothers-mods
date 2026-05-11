@@ -4,15 +4,8 @@ mod.queue(">mod_reforged", ">mod_backgrounds_reforged", "<mod_useful", function 
 
         }
 
-    // More Promised Potentials!
-    // if (::Hooks.hasMod("mod_reforged"))
+    // More Promised Potentials! Mostly for Reforged
     mod.hookTree("scripts/skills/backgrounds/character_background", function (q) {
-        // q.create = @(__original) function() {
-        //     __original();
-        //     ::logInfo("FIxing" + this.getName() + " DailyCost=" + this.m.DailyCost);
-        //     if (this.m.DailyCost < 10) this.m.PerkTree.addPerkGroup("pg.rf_pauper");
-        // }
-
         q.onBuildPerkTree = @(__original) function () {
             __original();
             ::logInfo("sg: fixing " + this.getName() + " DailyCost=" + this.m.DailyCost);
