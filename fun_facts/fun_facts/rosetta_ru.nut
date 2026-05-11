@@ -147,6 +147,7 @@ local pairs = [
     }
     {
         // local tpl = _kill.Fatality in fatalities ? fatalities[_kill.Fatality] : "Killed %s";
+        // TODO: split
         mode = "pattern"
         en = "Killed <name:str_tag>"
         ru = "Убил <name>"

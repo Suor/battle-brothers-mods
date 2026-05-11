@@ -388,6 +388,7 @@ this.fun_facts <- {
             [3] = "Gutted %s",
         }
         if (playerKills.len() > 0) {
+            // TODO: how do we translate this?
             local kills = playerKills.map(function(_kill) {
                 // TODO: verb based on skill: shot, chopped up, slashed, ...
                 local tpl = _kill.Fatality in fatalities ? fatalities[_kill.Fatality] : "Killed %s";
