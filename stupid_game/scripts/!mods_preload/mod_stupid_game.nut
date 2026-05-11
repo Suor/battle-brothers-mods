@@ -2,7 +2,12 @@ local mod = ::Hooks.register("mod_stupid_game", "0.2.0", "Stupid Game");
 mod.queue(">mod_reforged", ">mod_backgrounds_reforged", "<mod_useful", function () {
     this.logInfo("sg: loading");
 
+    local discoveredTalent = ::Const.Perks.findById("perk.rf_discovered_talent");
+    if (discoveredTalent != null) {
+        discoveredTalent.verifyPrerequisites = function ( _player, _tooltip ) {
+            return true;
         }
+    }
 
     // More Promised Potentials! Mostly for Reforged
     mod.hookTree("scripts/skills/backgrounds/character_background", function (q) {
