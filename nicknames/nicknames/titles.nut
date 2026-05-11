@@ -207,9 +207,12 @@ def.Titles <- [
         ["trait.short_sighted"],     // плохое зрение — щурится
         ["injury.missing_eye"], // повреждённый глаз
     ]}
-    {ru = "Хромой", en = "Limpy", factors = [
-        ["trait.clubfooted"],       // прямое попадание
-        ["injury.maimed_foot"], // или последствие старой раны
+    {names = [
+        {ru = "Косолапый", en = "Clubfoot"}
+        {ru = "Хромой", en = "Limpy"}
+    ], factors = [
+        ["trait.clubfooted"],
+        ["injury.maimed_foot"],
     ]}
     {ru = "Косматый", en = "Shaggy", factors = [
         ["background.wildman"],
@@ -999,8 +1002,9 @@ def.Titles <- [
         ["trait.bleeder"],
         ["trait.bleeder", "trait.survivor"],  // кровоточит, но живёт
     ]}
-    {ru = "Красный Норс", en = "Red Nose", factors = [
+    {ru = "Красный Нос", en = "Red Nose", factors = [
         ["trait.bleeder"],
+        ["trait.drunkard"],
         ["trait.bleeder", "trait.drunkard"],  // и кровоточит, и пьёт — вечно красный
     ]}
     {ru = "Смертник", en = "Dead Man", factors = [
@@ -2410,6 +2414,8 @@ def.Titles <- [
         ["trait.survivor"],
         ["trait.lucky", "trait.survivor"],
         ["perk.nine_lives"],
+        ["trait.dumb"],
+        ["trait.drunkard"],
     ]}
     {ru = "Гнилушка", en = "Rotten Stub", factors = [
         ["trait.ailing", "trait.survivor"],
