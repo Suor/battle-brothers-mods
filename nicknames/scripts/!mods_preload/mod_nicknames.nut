@@ -3,7 +3,7 @@ local def = ::Nicknames <- {
     Name = "Nicknames for Everyone"
     Version = "0.5.0"
     Updates = {
-        nexus = "https://www.nexusmods.com/games/battlebrothers/mods/1013"
+        nexus = "https://www.nexusmods.com/battlebrothers/mods/1013"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/nicknames"
         tagPrefix = "nicknames-"
     }
