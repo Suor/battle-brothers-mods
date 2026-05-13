@@ -31,16 +31,19 @@
 Угрюмый, Дрёма, Соломинка, Семь бед, Чёрный день, Буревестник, Зарница, Ртуть, Сквозняк, Порох,
 Скрытень, Мякина, Разгильдяй, Свалка, Ворог, Сиделец, Ланцет, Ополченец, Завсегдатай, Дружинник
 
-Проверить статус предложений (добавлено / в built-in / ещё нет):
-```
-squirrel tools.nut new
+```bash
+./tools.nut new       # Проверить статус предложений (добавлено / в built-in / ещё нет)
+./tools.nut load-new  # Загрузить новые прозвища
 ```
 
-Формат: **Прозвище / Nickname** — кому давать свободным текстом — `факторы`
+## Формат
+
+**Прозвище / Nickname** — кому давать свободным текстом — `факторы`
+
 Примеры:
 
-**Волкодав** — натаскан на тварей, знает как с ними — `trait.hate_beasts + attr.MeleeSkill.high`; `background.houndmaster + trait.hate_beasts`
-**Крюк** — цепляется и не отпускает — `perk.crippling_strikes`; `background.hackflows_hangman`; `background.fisherman`
+**Волкодав / Wolfhound** — натаскан на тварей, знает как с ними — `trait.hate_beasts + attr.MeleeSkill.high`; `background.houndmaster + trait.hate_beasts`
+**Крюк / Hook** — цепляется и не отпускает — `perk.crippling_strikes`; `background.hackflows_hangman`; `background.fisherman`
 
 ---
 
