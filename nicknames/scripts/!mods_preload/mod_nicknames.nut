@@ -52,9 +52,10 @@ def.BaseAttrRanges <- {
 
 def.buildFactorSet <- function(_bro) {
     local set = {};
+    local bg = _bro.getBackground();
 
     // background, traits, perks and permanent injuries
-    set[_bro.getBackground().getID()] <- true;
+    set[bg.getID()] <- true;
     foreach (skill in _bro.getSkills().query(::Const.SkillType.All)) {
         local id = skill.getID();
         if (id.find("perk.mastery.") == 0) {
@@ -65,7 +66,7 @@ def.buildFactorSet <- function(_bro) {
     }
 
     // attrs
-    local changeAttrs = _bro.getBackground().onChangeAttributes();
+    local changeAttrs = bg.onChangeAttributes();
     local props = _bro.getCurrentProperties();
     foreach (attr, br in def.BaseAttrRanges) {
         local low = br[0] + changeAttrs[attr][0], high =  br[1] + changeAttrs[attr][1];
@@ -82,7 +83,6 @@ def.buildFactorSet <- function(_bro) {
     else set["type.melee"] <- true;
 
     // elite or cheap
-    local bg = _bro.getBackground();
     if (bg.m.DailyCost >= 20) set["cost.high"] <- true;
     if (bg.m.DailyCost <= 10) set["cost.low"] <- true;
 
@@ -168,8 +168,7 @@ def.buildCandidates <- function (_bro) {
     }
 
     // 3. Vanilla background .m.Titles
-    local bgTitles = _bro.getBackground().m.Titles;
-    foreach (t in bgTitles)
+    foreach (t in _bro.getBackground().m.Titles)
         candidates.push({title = t, weight = def.Weights.background * 0.8});
 
     return candidates;
@@ -254,10 +253,19 @@ mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ul
 // Need to move it to "very late" because mod_background_perks hooks very late
 mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ultrabros", function () {
     mod.hook("scripts/entity/tactical/player", function (q) {
-        q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
-            __original(_backgrounds, _addTraits);
-            // Overwriting title set by setStartValuesEx() for better distribution
-            if (!starting) def.fillTitle(this);
+        // Overwriting title set by setStartValuesEx() for better distribution
+        if (::Hooks.hasMod("mod_legends")) {
+            q.setStartValuesEx = @(__original)
+                function (_backgrounds, _addTraits = true, _gender = -1, _addEquipment = true)
+            {
+                __original(_backgrounds, _addTraits, _gender, _addEquipment);
+                if (!starting) def.fillTitle(this);
+            }
+        } else {
+            q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
+                __original(_backgrounds, _addTraits);
+                if (!starting) def.fillTitle(this);
+            }
         }
     });
 }, ::Hooks.QueueBucket.VeryLate);
