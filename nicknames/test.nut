@@ -43,14 +43,14 @@ print("vanilla trait m.Titles OK\n");
 // Single-factor title: trait.tiny should produce Shorty, Little, Ant, etc.
 local broTiny = makeBro("background.farmhand", null, ["trait.tiny"]);
 local tinyTitles = candidateTitles(broTiny);
-foreach (expected in ["Shorty", "Little", "Ant"])
+foreach (expected in ["Shorty", "the Little", "the Ant"])
     assertIn(expected, tinyTitles);
 print("titles: single factor (trait.tiny) OK\n");
 
 // Multi-factor title: trait.tiny + trait.bright → Imp
 local broImp = makeBro("background.farmhand", null, ["trait.tiny", "trait.bright"]);
 local impTitles = candidateTitles(broImp);
-assertIn("Imp", impTitles);
+assertIn("the Imp", impTitles);
 // Should also have single-factor titles
 assertIn("Shorty", impTitles);
 print("titles: multi-factor combo OK\n");
@@ -65,7 +65,7 @@ print("titles: no false matches OK\n");
 local W = def.Weights;
 local weightCands = def.buildCandidates(broImp);
 assertEq(weightCands.filter(@(_, c) c.title == "Shorty"), [{title = "Shorty", weight = W.trait}]);
-assertEq(weightCands.filter(@(_, c) c.title == "Imp"), [{title = "Imp", weight = W.trait * W.trait}]);
+assertEq(weightCands.filter(@(_, c) c.title == "the Imp"), [{title = "the Imp", weight = W.trait * W.trait}]);
 print("titles: combo weight > single weight OK\n");
 
 // Built-in vanilla background .m.Titles appear in candidates
@@ -81,12 +81,12 @@ print("titles: built-in trait titles in candidates OK\n");
 
 // perk.* factor: perk.student should unlock Pedant
 local broPerkStudent = makeBro("background.farmhand", null, [], null, null, 5, [], ["perk.student"]);
-assertIn("Pedant", candidateTitles(broPerkStudent));
+assertIn("the Pedant", candidateTitles(broPerkStudent));
 print("titles: perk factor (perk.student) OK\n");
 
 // perk factor NOT matched when bro lacks the perk
 local broNoPerk = makeBro("background.farmhand");
-if (candidateTitles(broNoPerk).find("Pedant") != null) throw "Pedant should not appear without perk.student";
+if (candidateTitles(broNoPerk).find("the Pedant") != null) throw "the Pedant should not appear without perk.student";
 print("titles: perk factor absent → no match OK\n");
 
 // ── attr.high / attr.low tests ───────────────────────────────────────────────
@@ -107,14 +107,14 @@ function withProp(overrides) {
 local broHighStamina = makeBro("background.farmhand", null, [], [0, 1, 0, 0, 0, 0, 0, 0],
     withProp({Stamina = 109}));
 assertEq(attrLimit(broHighStamina, "Stamina", true), 109);
-assertIn("Workhorse", candidateTitles(broHighStamina));
+assertIn("the Workhorse", candidateTitles(broHighStamina));
 print("attr.Stamina.high triggers OK\n");
 
 // attr.Stamina.high does NOT trigger without a talent
 local broHighStaminaNoTalent = makeBro("background.farmhand", null, [], null,
     withProp({Stamina = 110}));
-if (candidateTitles(broHighStaminaNoTalent).find("Workhorse") != null)
-    throw "Workhorse should not appear without stamina talent";
+if (candidateTitles(broHighStaminaNoTalent).find("the Workhorse") != null)
+    throw "the Workhorse should not appear without stamina talent";
 print("attr.Stamina.high: no talent → no trigger OK\n");
 
 // attr.Initiative.low: stars=0, limit = base_low(100) + bgChange
@@ -136,21 +136,21 @@ print("attr.Initiative.low: stat above limit → no trigger OK\n");
 local broLowHP = makeBro("background.farmhand", null, [], null,
     withProp({Hitpoints = 50}));
 assertEq(attrLimit(broLowHP, "Hitpoints", false), 50);
-assertIn("Runt", candidateTitles(broLowHP));
+assertIn("the Runt", candidateTitles(broLowHP));
 print("attr.Hitpoints.low triggers OK\n");
 
 // attr.Hitpoints.low does NOT trigger when bro has a Hitpoints talent (stars=1)
 local broLowHPWithTalent = makeBro("background.farmhand", null, [], [1, 0, 0, 0, 0, 0, 0, 0],
     withProp({Hitpoints = 50}));
-if (candidateTitles(broLowHPWithTalent).find("Runt") != null)
-    throw "Runt should not appear when bro has hitpoints talent";
+if (candidateTitles(broLowHPWithTalent).find("the Runt") != null)
+    throw "the Runt should not appear when bro has hitpoints talent";
 print("attr.Hitpoints.low: has talent → no trigger OK\n");
 
 // ── BgPerks.fallbacks → perk aliases ─────────────────────────────────────────
 
 // perk.rf_promised_potential is a fallback for perk.student → should match Pedant
 local broFallbackPerk = makeBro("background.farmhand", null, [], null, null, 5, [], ["perk.rf_promised_potential"]);
-assertIn("Pedant", candidateTitles(broFallbackPerk));
+assertIn("the Pedant", candidateTitles(broFallbackPerk));
 print("aliases: BgPerks fallback perk matches canonical perk titles OK\n");
 
 // ── group.* tests ────────────────────────────────────────────────────────────
@@ -211,7 +211,7 @@ print("aliases: xxherosp matches adventurous_noble titles OK\n");
 local broMissingEye = makeBro("background.farmhand", null, [], null, null, 5, [], [], null, ["injury.missing_eye"]);
 local eyeTitles = candidateTitles(broMissingEye);
 assertIn("One-Eye", eyeTitles);
-assertIn("Squinty", eyeTitles);
+assertIn("the Squinty", eyeTitles);
 print("injury.missing_eye triggers OK\n");
 
 // injury factor appears in factorSet
