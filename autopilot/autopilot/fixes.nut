@@ -58,6 +58,13 @@ mod.hook("scripts/ai/tactical/behaviors/ai_engage_ranged", function (q) {
     }
 
     q.selectBestTargetTile = @(__original) function (_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded) {
+        // The line `targetScore *= BlockedByAllyMult * (1.0 - TargetPriorityHittingAlliesMult)` in
+        // vanilla selectBestTargetTile (~line 541) inverts the convention used everywhere else:
+        //     lower mult = less wiling to hit allies
+        // So we flip it here.
+        local props = this.getProperties();
+        props.TargetPriorityHittingAlliesMult = 1.0 - props.TargetPriorityHittingAlliesMult;
+
         local ret;
         local gen = __original(_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded);
 
@@ -68,6 +75,7 @@ mod.hook("scripts/ai/tactical/behaviors/ai_engage_ranged", function (q) {
             ret = resume gen;
             if (ret != null) {
                 // Restore mult
+                props.TargetPriorityHittingAlliesMult = 1.0 - props.TargetPriorityHittingAlliesMult;
                 if (this.m.TargetTile == null && "_autopilot" in _entity.m
                         && this.m.ValidTargets.len() > 0
                         && walkBlindly(this, _entity, _maxRange)) {
