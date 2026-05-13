@@ -18,22 +18,64 @@ mod.hookTree("scripts/skills/skill", function (q) {
 
 // Fix crash after ranged actor killing somebody or enemy dying while ranged actor is thinking
 mod.hook("scripts/ai/tactical/behaviors/ai_engage_ranged", function (q) {
+    // Walk in the general direction of the closest reachable known opponent. Used as a fallback
+    // when the vanilla candidate-tile search produced nothing — usually because no tile within
+    // search radius has line of sight to any enemy. Vanilla only enters this branch when enemies
+    // are >12 tiles away (see ai_engage_ranged.nut:381–411), which leaves an autopilot ranged
+    // bro stuck on Idle when enemies are closer but visually blocked.
+    local function walkBlindly(_b, _entity, _maxRange) {
+        local navigator = ::Tactical.getNavigator();
+        local myTile = _entity.getTile();
+        local settings = navigator.createSettings();
+        settings.ActionPointCosts = _entity.getActionPointCosts();
+        settings.FatigueCosts = _entity.getFatigueCosts();
+        settings.FatigueCostFactor = 0.0;
+        settings.ActionPointCostPerLevel = _entity.getLevelActionPointCost();
+        settings.FatigueCostPerLevel = _entity.getLevelFatigueCost();
+        settings.AllowZoneOfControlPassing = false;
+        settings.ZoneOfControlCost = ::Const.AI.Behavior.ZoneOfControlAPPenalty;
+        settings.AlliedFactions = _entity.getAlliedFactions();
+        settings.Faction = _entity.getFaction();
+        local stopAt = ::Math.min(12,
+            ::Math.max(::Const.AI.Behavior.RangedEngageMinQueryRadius, _maxRange));
+        _b.m.ValidTargets.sort(_b.onSortByDistance);
+        foreach (target in _b.m.ValidTargets) {
+            if (!navigator.findPath(myTile, target.Tile, settings, stopAt)) continue;
+            local cost = navigator.getCostForPath(_entity, settings,
+                _entity.getActionPoints(), _entity.getFatigueMax() - _entity.getFatigue());
+            if (cost.Tiles == 0) continue;
+            _b.m.TargetDist = stopAt;
+            _b.m.TargetTile = target.Tile;
+            _b.m.TargetDanger = 0;
+            return true;
+        }
+        return false;
+    }
+
     local function cleanup(_b) {
         _b.m.ValidTargets = _b.m.ValidTargets.filter(@(_, t) Actor.isAlive(t.Actor));
         _b.m.PotentialDanger = _b.m.PotentialDanger.filter(@(_, a) Actor.isAlive(a));
     }
 
-    // The problem with this is while we go through tiles a target might become invalid,
-    // usually after a ranged bro shoots someone and we are evaluating his next shot
     q.selectBestTargetTile = @(__original) function (_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded) {
         local ret;
         local gen = __original(_entity, _maxRange, _considerLineOfFire, _visibleTileNeeded);
 
         while (true) {
+            // The problem with this is while we go through tiles a target might become invalid,
+            // usually after a ranged bro shoots someone and we are evaluating his next shot
             cleanup(this);
             ret = resume gen;
-            // Proxy "results"
-            if (ret != null) return ret;
+            if (ret != null) {
+                // Restore mult
+                if (this.m.TargetTile == null && "_autopilot" in _entity.m
+                        && this.m.ValidTargets.len() > 0
+                        && walkBlindly(this, _entity, _maxRange)) {
+                    ::logInfo("autopilot: " + _entity.getName()
+                         + " walking blindly toward known enemy");
+                }
+                return ret;
+            }
             yield ret;
         }
     }
