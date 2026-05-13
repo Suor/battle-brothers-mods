@@ -7,6 +7,7 @@ local Settings = {
     armorDropChance = 1.0,
     maxItemsPerBattle = -1,
     lootGoldComp = 1.0,
+    chooseAtRandom = true,
     protectNamed = true
 };
 
@@ -17,8 +18,21 @@ local Settings = {
 ::Const.Faction <- {Player = 1};
 ::Const.Items <- {ItemType = {None = 0, Named = 1, Legendary = 2, Armor = 4, Helmet = 8}};
 ::Const.ItemSlot <- {None = -1, Mainhand = 0, Bag = 6};
-::World <- {Assets = {m = {IsBlacksmithed = false}, function getStash() { return {function getItems() { return []; }} }}};
-::Tactical <- {State = null, CombatResultLoot = null};
+::Const.Tactical <- {CombatResult = {EnemyDestroyed = 0, EnemyRetreated = 1, PlayerRetreated = 2, PlayerDestroyed = 3}};
+::UIDataHelper <- {
+    function convertStashToUIData(_b) { return []; }
+    function convertCombatResultLootToUIData() { return []; }
+};
+::World <- {Assets = {
+    m = {IsBlacksmithed = false, Money = 0},
+    function getStash() { return {function getItems() { return []; }} }
+    function addMoney(_amount) { this.m.Money += _amount; }
+}};
+::Tactical <- {
+    State = null,
+    CombatResultLoot = null,
+    Entities = {function getCombatResult() { return ::Const.Tactical.CombatResult.EnemyDestroyed; }}
+};
 
 ::new <- function (_script) {
     return {
@@ -32,6 +46,10 @@ local Settings = {
     }
 }
 
+::Hooks <- {
+    function hasMod(_id) { return false; }
+}
+
 ::MSU <- {
     Class = {
         function SettingsTitle(...) { return {Data = {}}; }
@@ -41,12 +59,17 @@ local Settings = {
 
 ::Challenges <- {
     mh = {
+        function queue(...) {}  // EIMO and other optional queues are no-ops in tests
         function hook(_path, _func) {
             local q = {
                 m = {CombatResultLoot = null, StrategicProperties = null},
                 init = null,
                 gatherLoot = null,
-                isDroppedAsLoot = null
+                isDroppedAsLoot = null,
+                convertItemToUIData = null,
+                onLootAllItemsButtonPressed = null,
+                onLeaveButtonPressed = null,
+                onSwapItem = null
             };
             _func(q);
             HooksByPath[_path] <- q;
@@ -75,6 +98,7 @@ function makeContainer() {
         function sort() {}
         function getItems() { return this.Items; }
         function assign(_arr) { this.Items = _arr; }
+        function shrink() { this.Items = this.Items.filter(@(_, x) x != null); }
     }
 }
 
@@ -129,6 +153,7 @@ function makeState() {
     m.CombatResultLoot = loot;
     local state = {
         m = m,
+        Tactical = ::Tactical,
         function isScenarioMode() { return false; }
     };
     HooksByPath["scripts/states/tactical_state"].init(function () {}).call(state);
@@ -143,6 +168,14 @@ function moneyTotal(_items) {
         if (item.m.ID == "supplies.money") total += item.getAmount();
     }
     return total;
+}
+
+function moneyCount(_items) {
+    local count = 0;
+    foreach (item in _items) {
+        if (item.m.ID == "supplies.money") count++;
+    }
+    return count;
 }
 
 local weaponHook = HooksByPath["scripts/items/weapons/weapon"].isDroppedAsLoot;
@@ -199,7 +232,7 @@ weaponHook(function () { return true; }).call(fallen);
 gatherLootHook(function () {}).call(state);
 local items = state.m.CombatResultLoot.Items;
 if (items.find(fallen) != null) throw "rejected item should be removed from loot pile";
-assertEq(moneyTotal(items), 9);
+assertEq(moneyTotal(items), 8);
 assertEq(state.m.challenges_loot, []);
 print("loot chance: zero-chance destroys + compensates OK\n");
 
@@ -233,7 +266,7 @@ broBag.addToBag(pickedUp);
 weaponHook(function () { return true; }).call(pickedUp);
 gatherLootHook(function () {}).call(state);
 if (broBag.Items.find(pickedUp) != null) throw "picked-up item should be pulled from bag";
-assertEq(moneyTotal(state.m.CombatResultLoot.Items), 12);
+assertEq(moneyTotal(state.m.CombatResultLoot.Items), 11);
 print("loot pickup: removed from brother's bag OK\n");
 
 // 8. Survivors of both filters keep their containers untouched.
@@ -258,7 +291,7 @@ state.m.CombatResultLoot.add(cuirass);
 armorHook(function () { return true; }).call(cuirass);
 gatherLootHook(function () {}).call(state);
 if (state.m.CombatResultLoot.Items.find(cuirass) != null) throw "armor should be dropped by chance filter";
-assertEq(moneyTotal(state.m.CombatResultLoot.Items), 13);
+assertEq(moneyTotal(state.m.CombatResultLoot.Items), 12);
 print("loot armor: armorDropChance applied OK\n");
 
 // 10. Cap prefers items not already in the player's stash via stash-aware weighting.
@@ -284,5 +317,47 @@ items = state.m.CombatResultLoot.Items;
 if (items.find(axeA) == null) throw "axe (not in stash) should survive cap";
 if (items.find(swordA) != null) throw "sword (already in stash) should be capped";
 print("loot cap: stash-aware weighting OK\n");
+
+// 11. Compensation for several rejected items is merged into one money stack.
+Settings.weaponDropChance = 0.0;
+Settings.maxItemsPerBattle = -1;
+state = makeState();
+local rejectedA = makeItem("rejected_a", 60);
+local rejectedB = makeItem("rejected_b", 80);
+state.m.CombatResultLoot.add(rejectedA);
+state.m.CombatResultLoot.add(rejectedB);
+hook = weaponHook(function () { return true; });
+hook.call(rejectedA);
+hook.call(rejectedB);
+gatherLootHook(function () {}).call(state);
+items = state.m.CombatResultLoot.Items;
+assertEq(moneyTotal(items), 19);
+assertEq(moneyCount(items), 1);
+print("loot compensation: merged money stack OK\n");
+
+// 12. Non-random cap: auto-loot skips capped items (withoutCappedLoot uses find, not `in`).
+Settings.weaponDropChance = 1.0;
+Settings.armorDropChance = 1.0;
+Settings.chooseAtRandom = false;
+Settings.maxItemsPerBattle = 1;
+state = makeState();
+local cappedA = makeItem("weapon_a", 50);
+local cappedB = makeItem("weapon_b", 100);
+state.m.CombatResultLoot.add(cappedA);
+state.m.CombatResultLoot.add(cappedB);
+hook = weaponHook(function () { return true; });
+hook.call(cappedA);
+hook.call(cappedB);
+gatherLootHook(function () {}).call(state);
+if (state.m.challenges_loot_choices.len() == 0) throw "challenges_loot_choices must be non-empty for this test";
+local lootAllHook = HooksByPath["scripts/ui/screens/tactical/tactical_combat_result_screen"].onLootAllItemsButtonPressed;
+lootAllHook(function () {
+    local loot = ::Tactical.CombatResultLoot.getItems();
+    if (loot.find(cappedA) != null) throw "cappedA must be hidden from auto-loot __orig";
+    if (loot.find(cappedB) != null) throw "cappedB must be hidden from auto-loot __orig";
+}).call({});
+if (state.m.CombatResultLoot.Items.find(cappedA) == null) throw "cappedA must be restored after auto-loot";
+if (state.m.CombatResultLoot.Items.find(cappedB) == null) throw "cappedB must be restored after auto-loot";
+print("loot cap: non-random auto-loot skips capped items OK\n");
 
 print("Tests OK\n")
