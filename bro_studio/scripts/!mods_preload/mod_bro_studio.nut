@@ -1,7 +1,7 @@
 local mod = ::BroStudio <- {
     ID = "mod_bro_studio"
     Name = "Bro Studio"
-    Version = "1.3.0"
+    Version = "1.3.1"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/677"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/bro_studio"
