@@ -77,18 +77,26 @@ mh.queue(">stdlib", ">mod_msu", ">mod_legends", function () {
                     mod.fillTalentValues(this, rollTalentsNum(), opts);
                 }
             }
+            q.setStartValuesEx = @(__original)
+                function (_backgrounds, _addTraits = true, _gender = -1, _addEquipment = true)
+            {
+                __original(_backgrounds, _addTraits, _gender, _addEquipment);
+                if (!starting && _addTraits) {
+                    mod.addTraits(this, mod.conf("traitsNum"));
+                    mod.addInjury(this);
+                }
+            }
         } else {
             q.fillTalentValues = @(__original) function () {
                 __original(); // Move Math.rand() seed the same way as prior this patch
                 if (!starting) mod.fillTalentValues(this, rollTalentsNum());
             }
-        }
-
-        q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
-            __original(_backgrounds, _addTraits);
-            if (!starting && _addTraits) {
-                mod.addTraits(this, mod.conf("traitsNum"));
-                mod.addInjury(this);
+            q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
+                __original(_backgrounds, _addTraits);
+                if (!starting && _addTraits) {
+                    mod.addTraits(this, mod.conf("traitsNum"));
+                    mod.addInjury(this);
+                }
             }
         }
 
