@@ -349,7 +349,7 @@ hook = weaponHook(function () { return true; });
 hook.call(cappedA);
 hook.call(cappedB);
 gatherLootHook(function () {}).call(state);
-if (state.m.challenges_loot_choices.len() == 0) throw "challenges_loot_choices must be non-empty for this test";
+if (state.m.challenges_choices.len() == 0) throw "challenges_choices must be non-empty for this test";
 local lootAllHook = HooksByPath["scripts/ui/screens/tactical/tactical_combat_result_screen"].onLootAllItemsButtonPressed;
 lootAllHook(function () {
     local loot = ::Tactical.CombatResultLoot.getItems();

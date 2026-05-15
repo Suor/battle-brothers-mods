@@ -74,11 +74,15 @@ local function removeFromContainer(_item) {
     }
 }
 
+local function compFor(_item) {
+    return ::Math.floor(_item.getValue() * def.conf("lootGoldComp") * 0.14);
+}
+
 // Remove items, return total gold compensation value.
 local function removeItems(_items) {
     local money = 0;
     foreach (item in _items) {
-        money += ::Math.floor(item.getValue() * def.conf("lootGoldComp") * 0.14);
+        money += compFor(item);
         removeFromContainer(item);
     }
     return money;
@@ -130,7 +134,7 @@ local function filterLoot(_loot) {
             _loot.resize(0);  // Nothing to decide anymore
         } else {
             Debug.log("filterLoot prepare choices", survived.map(lootStr));
-            Tactical.State.m.challenges_loot_choices = survived;
+            Tactical.State.m.challenges_choices = survived;
         }
     }
 
@@ -141,47 +145,18 @@ local function filterLoot(_loot) {
 local function isChoosingLoot() {
     return !def.conf("chooseAtRandom") && def.conf("maxItemsPerBattle") >= 0
         && ("State" in Tactical) && Tactical.State
-        && Tactical.State.m.challenges_loot_choices.len() > 0;
-}
-
-// Hide capped items from loot, call _fn, restore them, return fresh UI data.
-// Caller must check capped.len() > 0 before calling.
-local function withoutCappedLoot(_fn) {
-    local lootItems = ::Tactical.CombatResultLoot.getItems();
-    local saved = [];
-    Debug.log("WCL lootItems", lootItems.map(lootStr));
-
-    foreach (i, item in lootItems) {
-        if (item != null && ::Tactical.State.m.challenges_loot_choices.find(item) != null) {
-            saved.push(item);
-            lootItems[i] = null;
-        }
-    }
-    // Remove nulls, this is needed to EIMO smart loot, which doesn't expect nulls there
-    ::Tactical.CombatResultLoot.shrink();
-    Debug.log("WCL lootItems after", lootItems.map(lootStr));
-    Debug.log("WCL saved", saved.map(lootStr));
-
-    if (saved.len() == 0) return _fn();
-    _fn();  // stash/loot arrays modified in place; foundLoot in result is now stale
-
-    foreach (item in saved) ::Tactical.CombatResultLoot.add(item);
-    Debug.log("WCL lootItems restore",
-        ::Tactical.CombatResultLoot.getItems().map(lootStr));
-    return {
-        stash = ::UIDataHelper.convertStashToUIData(true),
-        foundLoot = ::UIDataHelper.convertCombatResultLootToUIData()
-    };
+        && Tactical.State.m.challenges_choices.len() > 0;
 }
 
 // Hooks
 
 mod.hook("scripts/states/tactical_state", function (q) {
     q.m.challenges_loot <- [];
-    q.m.challenges_loot_choices <- [];
+    q.m.challenges_choices <- [];
 
     q.init = @(__original) function () {
         m.challenges_loot = [];
+        m.challenges_choices = [];
         __original();
     }
 
@@ -204,8 +179,37 @@ mod.hook("scripts/states/tactical_state", function (q) {
 
 })
 
+// Hide capped items from loot, call _fn, restore them, return fresh UI data.
+// Caller must check capped.len() > 0 before calling.
+local function withoutCappedLoot(_fn) {
+    local lootItems = ::Tactical.CombatResultLoot.getItems();
+    local saved = [];
+    Debug.log("WCL lootItems", lootItems.map(lootStr));
+
+    foreach (i, item in lootItems) {
+        if (item != null && ::Tactical.State.m.challenges_choices.find(item) != null) {
+            saved.push(item);
+            lootItems[i] = null;
+        }
+    }
+    // Remove nulls, this is needed to EIMO smart loot, which doesn't expect nulls there
+    ::Tactical.CombatResultLoot.shrink();
+    Debug.log("WCL lootItems after", lootItems.map(lootStr));
+    Debug.log("WCL saved", saved.map(lootStr));
+
+    if (saved.len() == 0) return _fn();
+    _fn();  // stash/loot arrays modified in place; foundLoot in result is now stale
+
+    foreach (item in saved) ::Tactical.CombatResultLoot.add(item);
+    Debug.log("WCL lootItems restore",
+        ::Tactical.CombatResultLoot.getItems().map(lootStr));
+    return {
+        stash = ::UIDataHelper.convertStashToUIData(true),
+        foundLoot = ::UIDataHelper.convertCombatResultLootToUIData()
+    };
+}
+
 // Register item for end-of-battle filtering.
-// Dedup because item can be dropped, picked up and dropped again.
 local function passiveHook(q) {
     q.isDroppedAsLoot = @(__original) function () {
         local res = __original();
@@ -215,6 +219,7 @@ local function passiveHook(q) {
             return res;
         }
 
+        // Dedup because item can be dropped, picked up and dropped again.
         local loot = ::Tactical.State.m.challenges_loot;
         local alreadyTracked = loot.find(this) != null;
         if (!alreadyTracked) loot.push(this);
@@ -235,8 +240,8 @@ mod.hook("scripts/ui/global/data_helper", function (q) {
     q.convertItemToUIData = @(__original) function (_item, _forceSmallIcon, _owner = null) {
         if (!isChoosingLoot()) return __original(_item, _forceSmallIcon, _owner);
         local result = __original(_item, _forceSmallIcon, _owner);
-        if (result != null && ::Tactical.State.m.challenges_loot_choices.find(_item) != null)
-            result.challenges_capped <- true;
+        if (result != null && ::Tactical.State.m.challenges_choices.find(_item) != null)
+            result.challenges <- {capped = true, gold = compFor(_item)};
         // Debug.log("convertItemToUIData", result);
         return result;
     }
@@ -244,34 +249,43 @@ mod.hook("scripts/ui/global/data_helper", function (q) {
 
 // Auto-loot and manual-take hooks for the non-random cap mode.
 mod.hook("scripts/ui/screens/tactical/tactical_combat_result_screen", function (q) {
-    q.onLootAllItemsButtonPressed = @(__original) function () {
-        Debug.log("onLootAllItemsButtonPressed in");
-        if (!isChoosingLoot()) return __original();
-        local capped = ::Tactical.State.m.challenges_loot_choices;
-        Debug.log("onLootAllItemsButtonPressed capped", capped.map(lootStr));
-        return withoutCappedLoot(__original);
+    local function wrapLootAll(_name) {
+        return @(__original) function () {
+            Debug.log(_name + " in");
+            if (!isChoosingLoot()) return __original();
+            local capped = ::Tactical.State.m.challenges_choices;
+            Debug.log(_name + "onLootAllItemsButtonPressed capped", capped.map(lootStr));
+            return withoutCappedLoot(__original);
+        }
+    }
+
+    q.onLootAllItemsButtonPressed = wrapLootAll("LootAll");
+
+    // Consume and Smart Loot overwrites any Modern style hook with their mods_hookNewObject()
+    if (::Hooks.hasMod("mod_consume") || ::Hooks.hasMod("mod_smartLoot")) {
+        mods_hookNewObject("ui/screens/tactical/tactical_combat_result_screen", function (o) {
+            o.onLootAllItemsButtonPressed = wrapLootAll("consumeAll")(o.onLootAllItemsButtonPressed);
+      });
     }
 
     // EIMO integration: smart loot button should also skip capped items.
     if (::Hooks.hasMod("mod_EIMO")) {
-        q.eimo_onSmartLootButtonPressed = @(__original) function () {
-            Debug.log("eimo_onSmartLootButtonPressed in");
-            if (!isChoosingLoot()) return __original();
-            return withoutCappedLoot(__original);
-        }
+        q.eimo_onSmartLootButtonPressed = wrapLootAll("EIMO_Smart")
     }
 
     // Give gold compensation for capped items the player left behind.
     q.onLeaveButtonPressed = @(__original) function () {
         if (!isChoosingLoot()) return __original();
-        local capped = ::Tactical.State.m.challenges_loot_choices;
+        local capped = ::Tactical.State.m.challenges_choices;
         Debug.log("onLeaveButtonPressed capped", capped.map(lootStr));
 
+        // Q: array intersection?
         local toRemove = Tactical.CombatResultLoot.getItems().filter(
             @(_, item) item != null && capped.find(item) != null)
         local money = removeItems(toRemove);
+        Debug.log("onLeaveButtonPressed money", money);
         if (money > 0) ::World.Assets.addMoney(money);
-        ::Tactical.State.m.challenges_loot_choices = [];
+        ::Tactical.State.m.challenges_choices = [];
 
         return __original();
     }
@@ -279,7 +293,7 @@ mod.hook("scripts/ui/screens/tactical/tactical_combat_result_screen", function (
     // Block taking capped items once the cap is reached.
     q.onSwapItem = @(__original) function (_data) {
         if (!isChoosingLoot()) return __original(_data);
-        local capped = ::Tactical.State.m.challenges_loot_choices;
+        local capped = ::Tactical.State.m.challenges_choices;
         Debug.log("onSwapItem", _data);
         // Debug.log("capped", capped.map(lootStr));
         local sourceOwner = _data[1];

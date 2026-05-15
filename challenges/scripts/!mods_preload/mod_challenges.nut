@@ -11,7 +11,7 @@ local def = ::Challenges <- {
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("stdlib", "mod_msu >= 1.6.0");
-mod.queue(">mod_msu", ">mod_EIMO", function () {
+mod.queue(">mod_msu", ">mod_EIMO", ">mod_consume", ">mod_smartLoot", function () {
     ::Hooks.registerJS("ui/mods/challenges/loot_panel.js");
     ::Hooks.registerCSS("ui/mods/challenges/loot_panel.css");
 

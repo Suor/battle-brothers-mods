@@ -1,3 +1,69 @@
+/* Blue outline on capped items */
 .tactical-combat-result-screen .loot-panel .ui-control.item.challenges-capped {
     box-shadow: inset 0 0 4px 3px rgba(0, 100, 200, 0.6);
+}
+
+/* EIMO's repair-profit overlay does not work on this screen — Alt+RMB is a no-op
+   here — and visually clashes with our compensation numbers. Hide it. */
+.tactical-combat-result-screen .loot-panel .ui-control.item > .repair-profit-layer {
+    display: none !important;
+}
+
+/* Per-item gold compensation overlay (Variant 1). Top-left corner — same area
+   EIMO uses for repair-profit, now freed. */
+.tactical-combat-result-screen .loot-panel .ui-control.item > .challenges-gold-layer {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    padding: 0.4rem;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.tactical-combat-result-screen .loot-panel .ui-control.item > .challenges-gold-layer img {
+    left: 0.3rem;
+    bottom: 5.95rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    position: absolute;
+    pointer-events: none;
+}
+
+.tactical-combat-result-screen .loot-panel .ui-control.item > .challenges-gold-layer .label {
+    left: 1.5rem;
+    bottom: 6.05rem;
+    height: 1.0rem;
+    position: absolute;
+    text-align: left;
+    line-height: 1.0rem;
+    pointer-events: none;
+}
+
+/* Total compensation stack above the stash bag (Variant 2).
+   Compact icon-over-label stack, placed snugly above the bag image
+   (which starts at ~50.8rem) with a small gap. */
+.tactical-combat-result-screen .loot-panel .challenges-comp-total-container {
+    position: absolute;
+    width: 12.6rem;
+    height: 4.4rem;
+    top: 46.0rem;
+    left: -0.3rem;
+}
+
+.tactical-combat-result-screen .loot-panel .challenges-comp-total-container img {
+    top: 0;
+    left: 2.3rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    position: absolute;
+}
+
+.tactical-combat-result-screen .loot-panel .challenges-comp-total-container .label {
+    top: 2.4rem;
+    left: 0;
+    width: 7.2rem;
+    height: 2.0rem;
+    position: absolute;
+    line-height: 2.0rem;
+    text-align: center;
 }
