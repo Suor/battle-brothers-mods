@@ -96,8 +96,9 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         // Should not be needed as long as we set IsControlledByPlayer to true
         agent.removeBehavior(Const.AI.Behavior.ID.Retreat); // retreat is always chosen for players if available, so remove it
 
-        // reduce the chance of friendly fire, affects ranged in a weird manner
-        // agent.m.Properties.TargetPriorityHittingAlliesMult = -0.8;
+        // Reduce friendly fire. Vanilla range is [0, 1] (lower = less willing to hit allies);
+        // we extend to [-1, 1] for an even stronger avoidance. Mostly this works as is.
+        agent.m.Properties.TargetPriorityHittingAlliesMult = -0.8;
 
         // AC (Accessory Companions)
         if (this.getSkills().hasSkill("actives.companions_tame")) {
