@@ -24,6 +24,9 @@ mod.hook("scripts/ai/tactical/behaviors/ai_engage_ranged", function (q) {
     // are >12 tiles away (see ai_engage_ranged.nut:381–411), which leaves an autopilot ranged
     // bro stuck on Idle when enemies are closer but visually blocked.
     local function walkBlindly(_b, _entity, _maxRange) {
+        // Bail if the bro no ranged weapon - wait until switched to ranged.
+        // NOTE: might also trigger bug where a guy stepping 1 tile back and forth.
+        if (!_entity.isArmedWithRangedWeapon()) return false;
         local navigator = ::Tactical.getNavigator();
         local myTile = _entity.getTile();
         local settings = navigator.createSettings();
