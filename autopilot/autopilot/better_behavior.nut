@@ -9,12 +9,32 @@ local mod = ::Hooks.getMod("mod_autopilot_new");
 ::MSU.AI.addBehavior("AP_AttackAlternate", "AP.AttackAlternate",
     ::Const.AI.Behavior.Order.AttackDefault - 1, ::Const.AI.Behavior.Score.Attack * 2);
 
+// When a 2-tile bro evaluates ai_engage_melee, make longer-reach non-ranged allies of the
+// same faction report ideal range 2. The PreferCarefulEngage orbit-around-ally branch
+// (ai_engage_melee.nut:207) then skips them via its `a.getIdealRange() == 2` clause — without
+// this, a 2-tile bro orbits a whip wielder and ends up at a spot where nothing is in reach.
+local mimicReach2Faction = -1;
+
+mod.hook("scripts/entity/tactical/actor", function (q) {
+    q.getIdealRange = @(__original) function () {
+        local r = __original();
+        if (r > 2 && mimicReach2Faction == this.getFaction() && !this.hasRangedWeapon()) return 2;
+        return r;
+    }
+});
+
 // Prefer doing something else than wandering around/waiting
 mod.hook("scripts/ai/tactical/behaviors/ai_engage_melee", function (q) {
     q.evaluate = @(__original) function (_entity) {
         if (!("_autopilot" in _entity.m)) return __original(_entity);
 
-        local done = __original(_entity);
+        local prev = mimicReach2Faction;
+        if (_entity.getIdealRange() == 2) mimicReach2Faction = _entity.getFaction();
+        local done;
+        try { done = __original(_entity); }
+        catch (e) { mimicReach2Faction = prev; throw e; }
+        mimicReach2Faction = prev;
+
         if (done && this.m.IsWaitingBeforeMove && _entity.getIdealRange() == 2) this.m.Score /= 5;
         return done;
     }
