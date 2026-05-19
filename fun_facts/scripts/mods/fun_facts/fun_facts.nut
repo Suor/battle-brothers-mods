@@ -382,19 +382,8 @@ this.fun_facts <- {
         }
 
         local playerKills = this.getProp("PlayerKills");
-        local fatalities = {
-            [1] = "Chopped %s's head",
-            [2] = "Smashed %s's head",
-            [3] = "Gutted %s",
-        }
         if (playerKills.len() > 0) {
-            // TODO: how do we translate this?
-            local kills = playerKills.map(function(_kill) {
-                // TODO: verb based on skill: shot, chopped up, slashed, ...
-                local tpl = _kill.Fatality in fatalities ? fatalities[_kill.Fatality] : "Killed %s";
-                return format(tpl, Text.ally(_kill.Name));
-            })
-            addHint("ui/icons/asset_brothers.png", Str.join(". ", kills));
+            addHint("ui/icons/asset_brothers.png", ::FunFacts.PlayerKillsHint(playerKills));
         }
 
         if (this.m.Stats.Injuries.len() > 0) {

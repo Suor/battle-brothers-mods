@@ -1,11 +1,35 @@
 if (!("Rosetta" in getroottable())) return;
 if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.3.1")) return;
 
+local Array = ::std.Array, Str = ::std.Str;
+
 local rosetta = {
-    mod = {id = "mod_fun_facts", version = "1.0.3"}
+    mod = {id = ::FunFacts.ID, version = ::FunFacts.Version}
     author = "hackflow"
     lang = "ru"
 }
+
+// Independent rosetta instance for kill verbs — its own .maps so it doesn't pollute ::Rosetta.
+// TODO: make an official feature?
+local verbsRosetta = {maps = {}}.setdelegate(::Rosetta);
+verbsRosetta._ = verbsRosetta.translate.bindenv(verbsRosetta);
+
+// "Bob, John and Mike" <-> ["Bob", "John", "Mike"]
+local function splitAnd(_andWord, _str) {
+    local sep = " " + _andWord + " ";
+    return Array.cat(Str.split(sep, _str).map(@(chunk) Str.split(", ", chunk)));
+    // local result = [];
+    // foreach (chunk in Str.split(sep, _str))
+    //     result.extend(Str.split(", ", chunk))
+    // return result;
+}
+local function joinAnd(_andWord, _list) {
+    if (_list.len() == 0) return "";
+    if (_list.len() == 1) return _list[0];
+    return Str.join(", ", _list.slice(0, -1)) + " " + _andWord + " " + _list.top();
+    // return Str.join(", ", _list.slice(0, _list.len() - 1)) + " " + _andWord + " " + _list.top();
+}
+
 local pairs = [
     // FILE: fun_facts/buys.nut
     // Internal Buys-table keys, not user-facing.
@@ -128,30 +152,17 @@ local pairs = [
     }
     // en = "enemy"
     {
-        // [1] = "Chopped %s's head",
+        // return "Unwittingly " + Str.join(". ", parts);
         mode = "pattern"
-        en = "Chopped <name:str_tag>'s head"
-        ru = "Отрубил голову <name>"
+        en = "Unwittingly <kills:str>"
+        function use(_str, _m) {
+            return "Нечаянно " + Str.join(". ",
+                Str.split(". ", _m.kills).map(@(p) Str.replace(verbsRosetta._(p), " and ", " и ")));
+                // Str.split(". ", _m.kills).map(@(p) joinAnd("и", splitAnd("and", verbsRosetta._(p)))));
+        }
     }
-    {
-        // [2] = "Smashed %s's head",
-        mode = "pattern"
-        en = "Smashed <name:str_tag>'s head"
-        ru = "Разбил голову <name>"
-    }
-    {
-        // [3] = "Gutted %s",
-        mode = "pattern"
-        en = "Gutted <name:str_tag>"
-        ru = "Выпотрошил <name>"
-    }
-    {
-        // local tpl = _kill.Fatality in fatalities ? fatalities[_kill.Fatality] : "Killed %s";
-        // TODO: split
-        mode = "pattern"
-        en = "Killed <name:str_tag>"
-        ru = "Убил <name>"
-    }
+    // en = "<_names[0]> and <_names[1]>"
+    // en = "<Str.join(, , _names.slice(0, _names.len()-1))> and <_names[_names.len()-1]>"
     {
         // format("Suffered %s injuries", red(this.m.Stats.Injuries.len())))
         plural = "n"
@@ -315,3 +326,203 @@ local pairs = [
     }
 ]
 ::Rosetta.add(rosetta, pairs);
+
+// Verb pairs used by the "Unwittingly <kills:str>" rule above.
+// Each part of _m.kills is built as `format(en_template, joinNames(...))`,
+// so the pattern becomes `<verb> <names:str> [<suffix>]`.
+local verbPairs = [
+    // FILE: fun_facts/kill_verbs.nut
+    {
+        // fatalities[1] <- "chopped %s";
+        mode = "pattern"
+        en = "chopped <names:str>"
+        ru = "снёс башку <names>"
+    }
+    {
+        // fatalities[2] <- "smashed %s";
+        mode = "pattern"
+        en = "smashed <names:str>"
+        ru = "размозжил башку <names>"
+    }
+    {
+        // fatalities[3] <- "gutted %s";
+        mode = "pattern"
+        en = "gutted <names:str>"
+        ru = "выпотрошил <names>"
+    }
+    {
+        // ["shot %s in the back", [
+        mode = "pattern"
+        en = "shot <names:str> in the back"
+        ru = "застрелил в спину <names>"
+    }
+    {
+        // ["skewered %s", [
+        mode = "pattern"
+        en = "skewered <names:str>"
+        ru = "наколол <names>"
+    }
+    {
+        // ["hatcheted %s", ["actives.throw_axe"]],
+        mode = "pattern"
+        en = "hatcheted <names:str>"
+        ru = "зарубил <names>"
+    }
+    {
+        // ["pelted %s",    ["actives.throw_balls"]],
+        mode = "pattern"
+        en = "pelted <names:str>"
+        ru = "закидал камнями <names>"
+    }
+    {
+        // ["stabbed %s", [
+        mode = "pattern"
+        en = "stabbed <names:str>"
+        ru = "заколол <names>"
+    }
+    {
+        // ["ran %s through", [
+        mode = "pattern"
+        en = "ran <names:str> through"
+        ru = "пронзил <names>"
+    }
+    {
+        // ["impaled %s",   ["actives.impale"]],
+        mode = "pattern"
+        en = "impaled <names:str>"
+        ru = "насадил <names>"
+    }
+    {
+        // ["gouged %s",    ["actives.rf_gouge"]],
+        mode = "pattern"
+        en = "gouged <names:str>"
+        ru = "пропорол <names>"
+    }
+    {
+        // ["hacked up %s", [
+        mode = "pattern"
+        en = "hacked up <names:str>"
+        ru = "изрубил <names>"
+    }
+    {
+        // ["cleaved %s", [
+        mode = "pattern"
+        en = "cleaved <names:str>"
+        ru = "раскроил <names>"
+    }
+    {
+        // ["beheaded %s",    ["actives.decapitate"]],
+        mode = "pattern"
+        en = "beheaded <names:str>"
+        ru = "снёс голову <names>"
+    }
+    {
+        // ["eviscerated %s", ["actives.rupture"]],
+        mode = "pattern"
+        en = "eviscerated <names:str>"
+        ru = "выпотрошил <names>"
+    }
+    {
+        // ["swept %s away", [
+        mode = "pattern"
+        en = "swept <names:str> away"
+        ru = "смёл <names>"
+    }
+    {
+        // ["mowed down %s", ["actives.swing"]],
+        mode = "pattern"
+        en = "mowed down <names:str>"
+        ru = "скосил <names>"
+    }
+    {
+        // ["reaped %s",     ["actives.reap"]],
+        mode = "pattern"
+        en = "reaped <names:str>"
+        ru = "пожал <names>"
+    }
+    {
+        // ["thrashed %s", [
+        mode = "pattern"
+        en = "thrashed <names:str>"
+        ru = "отдубасил <names>"
+    }
+    {
+        // ["whipped %s", [
+        mode = "pattern"
+        en = "whipped <names:str>"
+        ru = "отстегал <names>"
+    }
+    {
+        // ["clobbered %s", [
+        mode = "pattern"
+        en = "clobbered <names:str>"
+        ru = "огрел <names>"
+    }
+    {
+        // ["hammered %s",   ["actives.hammer"]],
+        mode = "pattern"
+        en = "hammered <names:str>"
+        ru = "замолотил <names>"
+    }
+    {
+        // ["pulverized %s", ["actives.pound"]],
+        mode = "pattern"
+        en = "pulverized <names:str>"
+        ru = "размолотил <names>"
+    }
+    {
+        // ["crushed %s", [
+        mode = "pattern"
+        en = "crushed <names:str>"
+        ru = "раздавил <names>"
+    }
+    {
+        // ["felled %s", [
+        mode = "pattern"
+        en = "felled <names:str>"
+        ru = "уложил <names>"
+    }
+    {
+        // ["battered %s",   ["actives.batter"]],
+        mode = "pattern"
+        en = "battered <names:str>"
+        ru = "забил <names>"
+    }
+    {
+        // ["shattered %s",  ["actives.shatter"]],
+        mode = "pattern"
+        en = "shattered <names:str>"
+        ru = "расплющил <names>"
+    }
+    {
+        // ["pummeled %s",   ["actives.rf_pummel"]],
+        mode = "pattern"
+        en = "pummeled <names:str>"
+        ru = "отметелил <names>"
+    }
+    {
+        // ["plowed into %s",["actives.rf_swordmaster_charge"]],
+        mode = "pattern"
+        en = "plowed into <names:str>"
+        ru = "протаранил <names>"
+    }
+    {
+        // ["booted %s",     ["actives.rf_swordmaster_kick"]],
+        mode = "pattern"
+        en = "booted <names:str>"
+        ru = "запинал <names>"
+    }
+    {
+        // ["tackled %s",    ["actives.rf_swordmaster_tackle"]],
+        mode = "pattern"
+        en = "tackled <names:str>"
+        ru = "завалил <names>"
+    }
+    {
+        // return "killed %s";
+        mode = "pattern"
+        en = "killed <names:str>"
+        ru = "убил <names>"
+    }
+]
+verbsRosetta.add(rosetta, verbPairs);
