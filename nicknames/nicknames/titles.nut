@@ -2691,4 +2691,68 @@ def.Titles <- [
         ["weapon.polearm", "perk.crippling_strikes"],
         ["trait.bloodthirsty", "perk.crippling_strikes"],
     ]}
+    {ru = "Пароход", en = "Ironclad", factors = [
+        ["perk.battle_forged", "attr.MeleeDefense.high"],
+        ["perk.battle_forged", "trait.tough"],
+        ["perk.battle_forged", "background.hedge_knight"],
+        ["perk.battle_forged", "trait.huge"],
+        ["background.hedge_knight", "trait.huge"],
+    ]}
+    {ru = "Доброе Железо", en = "Goodblade", factors = [
+        ["weapon.sword", "attr.MeleeSkill.high"],
+        ["weapon.sword", "perk.duelist"],
+        ["weapon.axe", "attr.MeleeSkill.high"],
+        ["weapon.axe", "attr.MeleeSkill.high", "trait.determined"],
+    ]}
+    {ru = "Кузнечик", en = "Quickstep", factors = [
+        ["background.hackflows_skirmisher", "trait.swift"],
+        ["trait.tiny", "perk.footwork"],
+        ["trait.swift", "trait.dexterous"],
+    ]}
+    {ru = "Скороход", en = "Longstride", factors = [
+        ["trait.huge", "background.hunter"],
+        ["trait.huge", "background.messenger"],
+        ["trait.huge", "trait.athletic"],
+    ]}
+    {ru = "Лоб", en = "Hardhead", factors = [
+        ["trait.iron_jaw", "trait.determined"],
+        ["perk.steel_brow", "trait.determined"],
+        ["type.melee", "trait.brute", "attr.MeleeSkill.high"],
+    ]}
+    {ru = "Барин", en = "Proudfoot", factors = [
+        ["trait.cocky", "group.noble"],
+    ]}
+    {ru = "Волчий Глаз", en = "Wolfeye", factors = [
+        ["trait.night_owl", "trait.bloodthirsty"],
+        ["trait.night_owl", "background.killer_on_the_run"],
+        ["trait.night_owl", "background.hackflows_town_watchman"],
+    ]}
+    {ru = "Бугай", en = "Bullneck", factors = [
+        ["trait.strong", "trait.huge"],
+        ["trait.strong", "perk.steel_brow"],
+        ["background.hackflows_bodyguard", "trait.strong"],
+    ]}
+    {ru = "Хряк", en = "Boarhead", factors = [
+        ["trait.brute", "trait.huge"],
+        ["trait.brute", "perk.berserk"],
+        ["background.wildman", "trait.brute"],
+    ]}
+    {ru = "Благодетель", en = "Godsend", factors = [
+        ["trait.bloodthirsty", "background.sellsword"],
+        ["trait.greedy", "background.sellsword"],
+        ["trait.bloodthirsty", "cost.high"],
+    ]}
+    {ru = "Миротворец", en = "Makepeace", factors = [
+        ["trait.bloodthirsty", "weapon.hammer"],
+        ["trait.bloodthirsty", "trait.brute"],
+        ["trait.brute", "attr.MeleeSkill.high"],
+    ]}
+    {ru = "Дружок", en = "Goodfriend", factors = [
+        ["trait.teamplayer"],
+        ["trait.disloyal"],
+        ["trait.greedy"],
+        ["trait.disloyal", "trait.greedy"],
+        ["background.hackflows_con_artist"],
+        ["background.hackflows_con_artist", "trait.disloyal"],
+    ]}
 ];

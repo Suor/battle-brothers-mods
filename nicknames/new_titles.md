@@ -55,18 +55,18 @@
 
 FILL HERE
 
-* Ironclad: Given to a heavily armored mercenary who survives a ridiculous amount of damage.
-* Goodblade: For a soldier known for a highly reliable, high-quality weapon.
+**Латник / Ironclad** — закован в железо, отскакивает урон — `perk.battle_forged + attr.MeleeDefense.high`; `perk.battle_forged + trait.tough`; `perk.battle_forged + background.hedge_knight`
+**Доброе Железо / Goodblade** — оружие надёжное, как сам — `weapon.sword + attr.MeleeSkill.high`; `weapon.sword + perk.duelist`; `weapon.axe + attr.MeleeSkill.high + trait.determined`
 
-* Quickstep: A common descriptor for an agile skirmisher, scout, or a fast-moving duelist.
-* Longstride: For an exceptionally tall mercenary or a scout who covers terrain quickly.
-* Hardhead: For a brute known for taking a blow to the face without backing down, or an incredibly stubborn veteran.
-* Proudfoot: A real historical medieval surname used for someone who walked with an arrogant, swaggering gait. [2]
+**Кузнечик / Quickstep** — мелкий, скачет, нигде не задерживается — `background.hackflows_skirmisher + trait.swift`; `trait.tiny + perk.footwork`; `trait.swift + trait.dexterous`
+**Скороход / Longstride** — длинноногий, шагает за двоих — `trait.huge + background.hunter`; `trait.huge + background.messenger`; `trait.huge + trait.athletic`
+**Лоб / Hardhead** — лбом удары держит, упрямый — `trait.iron_jaw + trait.determined`; `perk.steel_brow + trait.brute`; `perk.steel_brow + trait.determined`
+**Барин / Proudfoot** — корчит из себя благородного, ходит вразвалку — `trait.cocky + background.disowned_noble`; `background.disowned_noble + group.combat`; `trait.cocky + group.noble`
 
-* Wolfeye: Implies a highly alert night-scout or a cold-blooded killer.
-* Bullneck: A rugged, single-word description for a thick-set, muscular infantryman.
-* Boarhead: Perfect for a savage, reckless charger who breaks enemy shield walls.
+**Волчий Глаз / Wolfeye** — видит ночью, бьёт без жалости — `trait.night_owl + trait.bloodthirsty`; `trait.night_owl + background.killer_on_the_run`; `trait.night_owl + background.hackflows_town_watchman`
+**Бугай / Bullneck** — кряжистый, толстошеий, в строю не сдвинуть — `trait.strong + trait.huge`; `trait.strong + perk.steel_brow`; `background.hackflows_bodyguard + trait.strong`
+**Хряк / Boarhead** — прёт буром, шлемом сшибает щиты — `trait.brute + trait.huge`; `trait.brute + perk.berserk`; `background.wildman + trait.brute`
 
-* Godsend: Often used ironically for a completely brutal, ungodly mercenary who saves a town only to loot it.
-* Makepeace: An ironic name for a mercenary whose only method of solving conflicts is violence.
-* Goodfriend: A real medieval compound name, often used mockingly for a mercenary who is only loyal to his comrades as long as the gold holds out.
+**Благодетель / Godsend** — иронично: «спас» город — и обчистил — `trait.bloodthirsty + background.sellsword`; `trait.greedy + background.sellsword`; `trait.bloodthirsty + background.hedge_knight`
+**Миротворец / Makepeace** — иронично: миром не умеет, только железом — `trait.bloodthirsty + weapon.hammer`; `trait.bloodthirsty + trait.brute`; `trait.brute + attr.MeleeSkill.high`
+**Дружок / Goodfriend** — иронично: «друг», пока золото платят — `trait.disloyal + trait.greedy`; `background.hackflows_con_artist + trait.disloyal`; `trait.greedy + background.sellsword`
