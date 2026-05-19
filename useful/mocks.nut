@@ -31,7 +31,7 @@ local mod = {
     JSFiles = []
     QueueBucket = {VeryLate = 4}
     function register(_id, _version, _name) {return mod}
-    function __unverifiedRegister(_id, _version, _name) {return mod}
+    function __unverifiedRegister(_id, _version, _name, _metadata = null) {return mod}
     function getMod(_id) {return mod}
     function hasMod(_id) {return true}
     function registerJS(_filename) {}

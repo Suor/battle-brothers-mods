@@ -10,6 +10,9 @@ local def = ::Nicknames <- {
 
     Debug = false
     FlagPrefix = "nicknames."
+    FlagState = "nicknames.state"
+    HireWindow = 14
+    State = null  // {generated = {title: {days = [...]}}, hired = {title: count}}
     Logs = {factors = {idx = null, items = []}, candidates = {idx = null, items = []}}
 }
 
@@ -125,13 +128,33 @@ local function weightedRandPick(_items) {
     return _items.top();
 }
 
-// Check if title is used by any fallen bro
-// TODO: not really efficient, does not cover fired guys, may simply remember in World.Flags
-//       when a bro joins, then we won't even need to track death, kick, leave
-local function isTitleUsedByFallen(_title, _fallenNames) {
-    foreach (name in _fallenNames)
-        if (name.find(_title) != null) return true;
-    return false;
+// State: {generated = {title: {days = [...]}}, hired = {title: count}}
+// generated: titles given to generated bros, day-tagged, trimmed to def.HireWindow.
+// hired: titles of bros that joined the roster (via onHired); never trimmed —
+// used to compute fallen = hired - currentRoster.
+def.loadState <- function () {
+    if (def.State != null) return def.State;
+    local s = ::std.Flags.unpack(::World.Flags, def.FlagState);
+    def.State = s != null ? s : {generated = {}, hired = {}};
+    if (s != null) ::std.Flags.pack(::World.Flags, def.FlagState, s); // unpack removed key, restore
+    return def.State;
+}
+
+def.saveState <- function () {
+    ::std.Flags.pack(::World.Flags, def.FlagState, def.State);
+}
+
+// Append today to generated[title].days, drop entries past def.HireWindow, persist.
+def.recordGenerated <- function (_title, _today) {
+    local generated = def.loadState().generated;
+    if (!(_title in generated)) generated[_title] <- {days = []};
+    generated[_title].days.push(_today);
+    local cutoff = _today - def.HireWindow;
+    foreach (t, rec in clone generated) {
+        rec.days = rec.days.filter(@(_, d) d > cutoff);
+        if (rec.days.len() == 0) delete generated[t];
+    }
+    def.saveState();
 }
 
 // Build candidates list for a bro: [{title, weight}, ...]
@@ -181,24 +204,47 @@ def.fillTitle <- function (_bro) {
 
     def.log("candidates", "full candidates for " + _bro.getName(), candidates)
 
-    // 2. Build used titles set
-    local inUse = {};
-    foreach (bro in ::World.getPlayerRoster().getAll()) {
-        inUse[bro.m.Title] <- true;
-        inUse[bro.getTitle()] <- true; // Rosetta translated
+    // 2. Build blocked sets: bros, set14/set7 (from generated), fallen (hired - bros)
+    local bros = {};
+    foreach (b in ::World.getPlayerRoster().getAll()) {
+        bros[b.m.Title] <- true;
+        bros[b.getTitle()] <- true; // Rosetta translated
     }
-    local fallenNames = [];
-    foreach (fallen in ::World.Statistics.getFallen())
-        fallenNames.push(fallen.Name);
+    local state = def.loadState();
+    local today = ::World.getTime().Days;
+    local set14 = {}, set7 = {};
+    foreach (title, rec in state.generated)
+        foreach (d in rec.days) {
+            if (d > today - 14) set14[title] <- true;
+            if (d > today - 7)  set7[title]  <- true;
+        }
+    local fallen = {};
+    foreach (title, _ in state.hired)
+        if (!(title in bros)) fallen[title] <- true;
 
-    // 3. Filter out used titles
-    local filtered = candidates.filter(@(_, c)
-        !(c.title in inUse) && !isTitleUsedByFallen(c.title, fallenNames)
-    );
-    if (filtered.len() == 0) filtered = candidates; // allow reuse if all taken
+    // 3. Cascade: pick from strictest block first, fall back when filter is empty
+    local function merged(_sets) {
+        local out = {};
+        foreach (s in _sets) foreach (k, _ in s) out[k] <- true;
+        return out;
+    }
+    local levels = [
+        merged([set14, bros, fallen]),
+        merged([set7,  bros, fallen]),
+        merged([bros, fallen]),
+        bros,
+        {}
+    ];
+    local filtered;
+    foreach (block in levels) {
+        filtered = candidates.filter(@(_, c) !(c.title in block));
+        if (filtered.len() > 0) {break;}
+    }
 
-    // 4. Weighted random pick
-    _bro.setTitle(weightedRandPick(filtered).title);
+    // 4. Apply and record
+    local title = weightedRandPick(filtered).title;
+    _bro.setTitle(title);
+    def.recordGenerated(title, today);
 }
 
 def.log <- function (_key, _label, _value) {
@@ -266,6 +312,15 @@ mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ul
                 __original(_backgrounds, _addTraits);
                 if (!starting) def.fillTitle(this);
             }
+        }
+
+        q.onHired = @(__original) function () {
+            __original();
+            local title = this.getTitle();
+            if (title == null || title == "") return;
+            local state = def.loadState();
+            state.hired[title] <- (title in state.hired ? state.hired[title] : 0) + 1;
+            def.saveState();
         }
     });
 }, ::Hooks.QueueBucket.VeryLate);

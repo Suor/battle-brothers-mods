@@ -24,15 +24,34 @@
 ::Math.rand <- function (mn, mx) {
     return mn; // always pick first candidate in tests
 }
-::World <- {
-    function getPlayerRoster() {return {function getAll() {return []}}}
-    Statistics = {function getFallen() {return []}}
-    Flags = {
-        function set(_key, _vale) {}
-        function getAsInt(_key) {return 0}
-    }
+// Mutable in-memory Flags backing store for tests
+local _flagStore = {};
+local FlagsImpl = {
+    function set(_key, _val)   {_flagStore[_key] <- _val;}
+    function get(_key)         {return _key in _flagStore ? _flagStore[_key] : false;}
+    function getAsInt(_key)    {return _key in _flagStore ? _flagStore[_key] : 0;}
+    function remove(_key)      {if (_key in _flagStore) delete _flagStore[_key];}
 }
 
+local _rosterAll = [];
+::World <- {
+    function getPlayerRoster() {
+        local all = _rosterAll;
+        return {function getAll() {return all}};
+    }
+    function getTime() {return {Days = 1};}
+    Statistics = {function getFallen() {return []}}
+    Flags = FlagsImpl
+}
+
+// Test helpers: set roster, advance day, reset flags
+function setTestRoster(_bros) {_rosterAll = _bros;}
+function setTestDay(_d) {
+    ::World.getTime = function () {local d = _d; return {Days = d};}
+}
+function resetTestFlags() {_flagStore.clear();}
+
+// Captured hooked methods (populated by mod_obj.hook below)
 local captured_onHired = null;
 
 local mod_obj = {
@@ -43,7 +62,13 @@ local mod_obj = {
         func();
     }
     function hook(_filename, _func) {
-        _func({}.setdelegate({_set = @(k,v) null}))
+        local q = {}.setdelegate({
+            _set = function (k, v) {
+                if (k == "onHired") captured_onHired = v(@() null);
+                return v;
+            }
+        });
+        _func(q);
     }
     function hookTree(_filename, _func) {
         _func({}.setdelegate({_set = @(k,v) null}))

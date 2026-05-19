@@ -5,7 +5,6 @@ dofile("mocks.nut", true);
 dofile("scripts/!mods_preload/mod_nicknames.nut", true);
 
 // TODO: redo tests to assert candidates list, i.e. move randomness out
-local onHired = getNicknamesOnHired();
 local def = ::Nicknames;
 
 function assertIn(val, arr) {
@@ -233,5 +232,112 @@ print("no injury → no injury titles OK\n");
 local broDancer = makeBro("background.farmhand", null, ["trait.drunkard"], null, null, 5, [], [], null, ["injury.broken_knee"]);
 assertIn("the Dancer", candidateTitles(broDancer));
 print("injury + trait combo OK\n");
+
+// ── post-filter cascade tests ────────────────────────────────────────────────
+// Helpers
+function makeRosterBro(_title) {
+    local b = makeBro("background.farmhand");
+    b.setTitle(_title);
+    b.m.Title <- _title;
+    return b;
+}
+function fresh(traits = ["trait.tiny"]) {
+    return makeBro("background.farmhand", null, traits);
+}
+
+// Reset and run on a clean state, single bro picks Shorty (first by Math.rand mock)
+resetTestFlags();
+def.State = null;
+setTestRoster([]);
+setTestDay(10);
+local bro1 = fresh();
+def.fillTitle(bro1);
+assertEq(bro1.getTitle(), "Shorty");
+print("fillTitle: clean state picks first OK\n");
+
+// State recorded after fillTitle
+local state = def.loadState();
+assertEq(state.generated.Shorty.days, [10]);
+print("fillTitle: writes generated[title].days OK\n");
+
+// Same day, second generated bro: Shorty is in set14 → next candidate picked
+local bro2 = fresh();
+def.fillTitle(bro2);
+if (bro2.getTitle() == "Shorty") throw "set14 should block Shorty";
+print("fillTitle: set14 blocks recently generated OK\n");
+
+// Title in current roster → blocked by `bros`
+resetTestFlags();
+def.State = null;
+local rosterBro = makeRosterBro("Shorty");
+setTestRoster([rosterBro]);
+local bro3 = fresh();
+def.fillTitle(bro3);
+if (bro3.getTitle() == "Shorty") throw "bros should block Shorty";
+print("fillTitle: bros set blocks current roster OK\n");
+
+// onHired records to state.hired and fallen blocks it
+resetTestFlags();
+def.State = null;
+setTestRoster([]);
+def.loadState().hired["Shorty"] <- 1; // simulate prior hire
+def.saveState();
+local bro4 = fresh();
+def.fillTitle(bro4);
+if (bro4.getTitle() == "Shorty") throw "fallen (hired - bros) should block Shorty";
+print("fillTitle: fallen blocks ever-hired non-roster OK\n");
+
+// Record outside window: day 10 entry, today=30 → trim drops it on next fillTitle
+// Use trait.brave bro so Shorty isn't re-picked.
+resetTestFlags();
+def.State = null;
+setTestDay(30);
+def.loadState().generated["Shorty"] <- {days = [10]};
+def.saveState();
+local braveBro = makeBro("background.farmhand", null, ["trait.brave"]);
+def.fillTitle(braveBro); // triggers trim
+local s = def.loadState();
+assertEq(s.generated, {[braveBro.getTitle()] = {days = [30]}}); // Shorty gone, only today's pick
+print("fillTitle: trim removes records past 14-day window OK\n");
+
+// 7-day window narrower than 14: Shorty at day 8, today=20 → in set14, not in set7
+resetTestFlags();
+def.State = null;
+setTestDay(20);
+def.loadState().generated["Shorty"] <- {days = [8]};
+def.saveState();
+local bro5 = fresh();
+def.fillTitle(bro5);
+// Level1 (set14) blocks Shorty → picks next non-Shorty
+if (bro5.getTitle() == "Shorty") throw "set14 should still block Shorty at day 20";
+local s2 = def.loadState();
+assertEq(s2.generated.Shorty, {days = [8]}); // within 14-day window, untouched
+print("fillTitle: 7-day window narrower than 14 OK\n");
+
+// Cascade fallback: ALL candidates blocked at level1 → falls back, eventually picks
+resetTestFlags();
+def.State = null;
+setTestDay(10);
+local probe = fresh();
+local allCandidateTitles = candidateTitles(probe);
+local st = def.loadState();
+foreach (t in allCandidateTitles) st.generated[t] <- {days = [10]};
+def.saveState();
+local bro6 = fresh();
+def.fillTitle(bro6); // set14 blocks all → falls through; eventually empty-set level → pick first
+assertIn(bro6.getTitle(), allCandidateTitles);
+print("fillTitle: cascade falls back when all blocked OK\n");
+
+// onHired hook captured and writes to state.hired
+resetTestFlags();
+def.State = null;
+local hiredBro = makeRosterBro("Bjorn");
+local onHiredFn = getNicknamesOnHired();
+assert(onHiredFn != null);
+onHiredFn.call(hiredBro);
+assertEq(def.loadState().hired.Bjorn, 1);
+onHiredFn.call(hiredBro);
+assertEq(def.loadState().hired.Bjorn, 2);
+print("onHired hook records into state.hired OK\n");
 
 print("Tests OK\n");
