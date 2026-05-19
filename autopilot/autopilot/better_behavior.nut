@@ -8,6 +8,8 @@ local mod = ::Hooks.getMod("mod_autopilot_new");
 ::MSU.AI.addBehavior("AP_SwapQuiver", "AP.SwapQuiver", 39, 400);
 ::MSU.AI.addBehavior("AP_AttackAlternate", "AP.AttackAlternate",
     ::Const.AI.Behavior.Order.AttackDefault - 1, ::Const.AI.Behavior.Score.Attack * 2);
+::MSU.AI.addBehavior("AP_StepNHit", "AP.StepNHit",
+    ::Const.AI.Behavior.Order.AttackDefault - 1, ::Const.AI.Behavior.Score.Attack);
 
 // When a 2-tile bro evaluates ai_engage_melee, make longer-reach non-ranged allies of the
 // same faction report ideal range 2. The PreferCarefulEngage orbit-around-ally branch

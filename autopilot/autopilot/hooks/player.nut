@@ -65,6 +65,7 @@ mod.hook("scripts/entity/tactical/player", function (q) {
 
         // Our behaviors
         agent.addBehavior(this.new("scripts/ai/autopilot_attack_alternate"));
+        agent.addBehavior(this.new("scripts/ai/autopilot_step_n_hit"));
         agent.addBehavior(this.new("scripts/ai/autopilot_unbag_shield"));
         agent.addBehavior(this.new("scripts/ai/autopilot_swap_quiver"));
         if (::Autopilot.conf("dogs")) {
