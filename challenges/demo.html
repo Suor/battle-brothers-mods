@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loot Panel Demo</title>
+    <link rel="stylesheet" type="text/css" href="ui/mods/challenges/loot_panel.css">
+    <style>
+        body {
+            background-color: #2a2520;
+            color: #ddd;
+            font-family: sans-serif;
+            padding: 20px;
+        }
+        .row { display: flex; gap: 4rem; margin-bottom: 3rem; }
+        .col { background-color: #1a1612; border: 1px solid #4a3a2a; padding: 2rem; }
+        .col h3 { margin: 0 0 1.2rem; font-weight: normal; color: #c0a060; font-size: 1.4rem; }
+        .tile-grid { width: 22.2rem; }
+        .tile-grid::after { content: ''; display: block; clear: both; }
+
+        /* Match the game: data_001/ui/main.css sets `font-size: 62.5%` so 1rem ≈ 10px. */
+        html { font-size: 62.5%; }
+        body { font-size: 1.4rem; }
+
+        /* Geometry copied from data_001/ui/controls/item.css (.is-list-item). */
+        .ui-control.item {
+            width: 7.4rem;
+            height: 7.4rem;
+            background-image: url("../../base/data_001/gfx/ui/skin/inventory_slot.png");
+            background-size: 7.4rem 7.4rem;
+            background-repeat: no-repeat;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            float: left;
+            margin: 0;
+        }
+        .ui-control.item > .image-layer {
+            width: 7.0rem;
+            height: 7.0rem;
+            position: absolute;
+            left: 0.2rem;
+            top: 0.1rem;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .ui-control.item > .image-layer img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .display-none { display: none !important; }
+        .display-block { display: block !important; }
+
+        /* From data_001/ui/fonts.css */
+        .label.text-font-very-small { font-size: 1.2rem; }
+        .label.text-font-small { font-size: 1.4rem; }
+        .font-color-value { color: #ffd966; }
+        .font-bold { font-weight: bold; }
+        .font-shadow-outline { text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000; }
+
+        /* Real gold icon (ui/icons/asset_money.png) — same asset the mod
+           injects via Asset.ICON_ASSET_MONEY in loot_panel.js. */
+
+        /* loot_panel.css references the capped-slot background via coui://,
+           which only resolves inside the game. Override with a relative
+           path so the demo renders in a plain browser. */
+        .tactical-combat-result-screen .loot-panel .ui-control.item.challenges-capped {
+            background-image: url("gfx/ui/mods/challenges/inventory_slot_capped.png");
+        }
+
+        /* Frame the middle column to simulate game layout */
+        .middle-column {
+            position: relative;
+            width: 12.6rem;
+            height: 8.0rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed #5a4530;
+        }
+        .middle-column .label-top {
+            position: absolute; top: 0.2rem; left: 0; right: 0;
+            text-align: center; font-size: 1.0rem; color: #886040;
+        }
+    </style>
+</head>
+<body>
+    <div class="tactical-combat-result-screen">
+        <div class="loot-panel">
+            <div class="row">
+                <div class="col">
+                    <h3>Normal items + empty slots</h3>
+                    <div class="tile-grid">
+                        <div class="ui-control item">
+                            <div class="image-layer"><img src="../../base/data_001/gfx/ui/items/weapons/melee/axe_01_70x70.png"/></div>
+                        </div>
+                        <div class="ui-control item">
+                            <div class="image-layer"><img src="../../base/data_001/gfx/ui/items/weapons/melee/dagger_01_70x70.png"/></div>
+                        </div>
+                        <div class="ui-control item">
+                            <div class="image-layer"><img src="../../base/data_001/gfx/ui/items/helmets/inventory_faction_helmet_01.png"/></div>
+                        </div>
+                        <div class="ui-control item">
+                            <div class="image-layer"></div>
+                        </div>
+                        <div class="ui-control item">
+                            <div class="image-layer"></div>
+                        </div>
+                        <div class="ui-control item">
+                            <div class="image-layer"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h3>Capped (red-gold frame only)</h3>
+                    <div class="tile-grid">
+                        <div class="ui-control item challenges-capped">
+                            <div class="image-layer"><img src="../../base/data_001/gfx/ui/items/armor/icon_body_armor_01.png"/></div>
+                        </div>
+                        <div class="ui-control item challenges-capped">
+                            <div class="image-layer"><img src="../../base/data_001/gfx/ui/items/shields/icon_bandits_shield_01_named_01.png"/></div>
+                        </div>
+                        <div class="ui-control item challenges-capped">
+                            <div class="image-layer"><img src="../../base/data_001/gfx/ui/items/weapons/melee/ancient_sword_01_70x70.png"/></div>
+                        </div>
+                        <div class="ui-control item">
+                            <div class="image-layer"></div>
+                        </div>
+                        <div class="ui-control item">
+                            <div class="image-layer"></div>
+                        </div>
+                        <div class="ui-control item">
+                            <div class="image-layer"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <h3>Variant 1: capped + gold overlay</h3>
+                    <div class="tile-grid">
+                        <div class="ui-control item challenges-capped">
+                            <div class="image-layer"><img src="../../base/data_001/gfx/ui/items/weapons/melee/axe_02_70x70.png"/></div>
+                            <div class="challenges-gold-layer display-block">
+                                <img src="../../base/data_001/gfx/ui/icons/asset_money.png"/>
+                                <div class="label text-font-very-small font-color-value font-shadow-outline">14</div>
+                            </div>
+                        </div>
+                        <div class="ui-control item challenges-capped">
+                            <div class="image-layer"><img src="../../base/data_001/gfx/ui/items/weapons/melee/dagger_02_70x70.png"/></div>
+                            <div class="challenges-gold-layer display-block">
+                                <img src="../../base/data_001/gfx/ui/icons/asset_money.png"/>
+                                <div class="label text-font-very-small font-color-value font-shadow-outline">3</div>
+                            </div>
+                        </div>
+                        <div class="ui-control item challenges-capped">
+                            <div class="image-layer"><img src="../../base/data_001/gfx/ui/items/armor/icon_body_armor_02.png"/></div>
+                            <div class="challenges-gold-layer display-block">
+                                <img src="../../base/data_001/gfx/ui/icons/asset_money.png"/>
+                                <div class="label text-font-very-small font-color-value font-shadow-outline">22</div>
+                            </div>
+                        </div>
+                        <div class="ui-control item">
+                            <div class="image-layer"></div>
+                        </div>
+                        <div class="ui-control item">
+                            <div class="image-layer"></div>
+                        </div>
+                        <div class="ui-control item">
+                            <div class="image-layer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h3>Variant 2: total comp below bag</h3>
+                    <div class="middle-column">
+                        <div class="label-top">(stash bag &amp; 25/81 live above)</div>
+                        <!-- Position is absolute relative to .loot-panel in the real game; for
+                             demo, place it within this faux column so it renders close to where
+                             the game would render it. -->
+                        <div class="challenges-comp-total-container display-block"
+                             style="top: 4.0rem; left: 0;">
+                            <img src="../../base/data_001/gfx/ui/icons/asset_money.png"/>
+                            <div class="label text-font-small font-bold font-color-value">+39</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

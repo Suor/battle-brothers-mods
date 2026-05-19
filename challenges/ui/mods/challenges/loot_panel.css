@@ -1,8 +1,12 @@
-/* Blue outline on capped items */
+/* Red-gold slot frame for capped items. We tried recoloring the vanilla
+   inventory_slot.png via CSS (filter on a ::before layer, inset
+   box-shadow) but the BB browser doesn't render either cleanly, and a
+   box-shadow outline visually merges with neighboring slots' frames.
+   Solution: ship a red-gold recolor of inventory_slot.png and swap it
+   in as the background. */
 .tactical-combat-result-screen .loot-panel .ui-control.item.challenges-capped {
-    box-shadow: inset 0 0 4px 3px rgba(0, 100, 200, 0.6);
+    background-image: url("coui://gfx/ui/mods/challenges/inventory_slot_capped.png");
 }
-
 /* EIMO's repair-profit overlay does not work on this screen — Alt+RMB is a no-op
    here — and visually clashes with our compensation numbers. Hide it. */
 .tactical-combat-result-screen .loot-panel .ui-control.item > .repair-profit-layer {
@@ -44,26 +48,24 @@
    (which starts at ~50.8rem) with a small gap. */
 .tactical-combat-result-screen .loot-panel .challenges-comp-total-container {
     position: absolute;
-    width: 12.6rem;
-    height: 4.4rem;
     top: 46.0rem;
     left: -0.3rem;
+    width: 7.2rem;
+    flex-direction: column;
+    align-items: center;
+}
+/* Vanilla `.display-none` has lower specificity than the rule above, so
+   `display: flex` is gated to the visible state — otherwise the row would
+   stay visible even with `display-none` on. */
+.tactical-combat-result-screen .loot-panel .challenges-comp-total-container.display-block {
+    display: flex;
 }
 
 .tactical-combat-result-screen .loot-panel .challenges-comp-total-container img {
-    top: 0;
-    left: 2.3rem;
     width: 2.4rem;
     height: 2.4rem;
-    position: absolute;
 }
 
 .tactical-combat-result-screen .loot-panel .challenges-comp-total-container .label {
-    top: 2.4rem;
-    left: 0;
-    width: 7.2rem;
-    height: 2.0rem;
-    position: absolute;
     line-height: 2.0rem;
-    text-align: center;
 }
