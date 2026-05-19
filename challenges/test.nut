@@ -16,7 +16,7 @@ local Settings = {
 }
 
 ::Const.Faction <- {Player = 1};
-::Const.Items <- {ItemType = {None = 0, Named = 1, Legendary = 2, Armor = 4, Helmet = 8}};
+::Const.Items <- {ItemType = {None = 0, Named = 1, Legendary = 2, Armor = 4, Helmet = 8, Tool = 16}};
 ::Const.ItemSlot <- {None = -1, Mainhand = 0, Bag = 6};
 ::Const.Tactical <- {CombatResult = {EnemyDestroyed = 0, EnemyRetreated = 1, PlayerRetreated = 2, PlayerDestroyed = 3}};
 ::UIDataHelper <- {
@@ -219,6 +219,14 @@ hook.call(named);
 hook.call(legendary);
 assertEq(state.m.challenges_loot, []);
 print("loot protect: named/legendary skip OK\n");
+
+// 4b. Tools (throwing nets, bombs) inherit from weapon but skip registration.
+Settings.weaponDropChance = 0.0;
+state = makeState();
+local net = makeItem("net", 50, ::Const.Items.ItemType.Tool);
+weaponHook(function () { return true; }).call(net);
+assertEq(state.m.challenges_loot, []);
+print("loot protect: tools skip OK\n");
 
 // 5. Chance filter at gatherLoot destroys the item wherever it ended up and
 //    leaves a money pile in its place.

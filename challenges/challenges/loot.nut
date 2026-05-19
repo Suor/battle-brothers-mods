@@ -214,8 +214,12 @@ local function passiveHook(q) {
     q.isDroppedAsLoot = @(__original) function () {
         local res = __original();
         local protected = isProtected(this);
-        if (!res || protected) {
-            Debug.log("drop", lootStr(this) + " res=" + res + " protected=" + protected);
+        // Tools (throwing nets, bombs, banners, ...) inherit from weapon but are
+        // not equipment — don't count them toward the cap.
+        local isTool = this.isItemType(::Const.Items.ItemType.Tool);
+        if (!res || protected || isTool) {
+            Debug.log("drop", lootStr(this) + " res=" + res + " protected=" + protected
+                + " tool=" + isTool);
             return res;
         }
 
