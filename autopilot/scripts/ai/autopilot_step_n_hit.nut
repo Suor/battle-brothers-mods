@@ -193,7 +193,7 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
 
             this.m.IsFirstExecuted = false;
             if (this.m.TargetTile.ID == _entity.getTile().ID) {
-                // Stand-and-attack — skip the movement phase.
+                // Stand-and-attack - skip the movement phase.
                 this.m.IsMoving = false;
                 return false;
             }
@@ -304,20 +304,7 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
         }
 
         if (candidates.len() == 0) {
-            if (::Const.AI.VerboseMode) {
-                // Dump every skill with its flags so we can see exactly which rule eliminated it.
-                local lines = [];
-                foreach (s in _entity.getSkills().m.Skills) {
-                    if (s == null) continue;
-                    lines.push(s.getID() + "(maxR=" + s.getMaxRange()
-                        + " act=" + s.m.IsActive + " atk=" + s.m.IsAttack
-                        + " wpn=" + s.m.IsWeaponSkill + " tgt=" + s.m.IsTargeted
-                        + " ranged=" + s.m.IsRanged
-                        + " usable=" + s.isUsable() + " aff=" + s.isAffordable() + ")");
-                }
-                this.snh_log(_entity, "no usable 2-reach melee attack; skills: "
-                    + (lines.len() == 0 ? "<none>" : ::std.Str.join(", ", lines)));
-            }
+            this.snh_log(_entity, "no usable 2-reach melee attack");
             return null;
         }
 
