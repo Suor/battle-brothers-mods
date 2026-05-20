@@ -103,7 +103,7 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
             if (skill.isUsableOn(targetTile, myTile)) {
                 local v = this.queryTargetValue(_entity, target, skill);
                 if (v > 0) {
-                    local s = this.snh_scoreTile(v, 0, myTile, targetTile);
+                    local s = this.snh_scoreTile(_entity, v, 0, myTile, targetTile);
                     if (s > 0) candidates.push({Tile = myTile, Target = target, Skill = skill, Score = s});
                 }
             }
@@ -132,7 +132,7 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
                 local v = this.queryTargetValue(_entity, target, skill);
                 if (v <= 0) { rejTargetValue++; continue; }
 
-                local s = this.snh_scoreTile(v, cost.ActionPointsRequired, destTile, targetTile);
+                local s = this.snh_scoreTile(_entity, v, cost.ActionPointsRequired, destTile, targetTile);
                 if (s <= 0) { rejTargetValue++; continue; }
 
                 candidates.push({Tile = destTile, Target = target, Skill = skill, Score = s});
@@ -151,12 +151,12 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
             return ::Const.AI.Behavior.Score.Zero;
         }
 
-        // Weighted-random pick (same shape as ai_attack_bow / better_attack_default).
-        local pow = ::Const.AI.Behavior.AttackRangedChancePOW;
-        local cutoffRatio = ::Const.AI.Behavior.AttackRangedScoreCutoff;
+        // Weighted-random pick (same shape as ai_attack_bow / better_attack_default), but with
+        // a stronger pow so tile-quality differences (height, terrain effects) dominate.
+        local pow = 5.0;
         local maxScore = candidates[0].Score;
         foreach (c in candidates) if (c.Score > maxScore) maxScore = c.Score;
-        local threshold = maxScore * cutoffRatio;
+        local threshold = maxScore * ::Const.AI.Behavior.AttackRangedScoreCutoff;
         local weights = candidates.map(@(c) c.Score < threshold ? 0 : ::Math.pow(c.Score, pow));
         local choice = ::std.Rand.choice(candidates, weights);
 
@@ -268,15 +268,16 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
         return true;
     }
 
-    function snh_scoreTile(_baseValue, _apCost, _tile, _targetTile) {
+    function snh_scoreTile(_entity, _baseValue, _apCost, _tile, _targetTile) {
         // Mirror vanilla engage_melee's tile preferences: high ground bonus / low ground penalty
-        // (≈ +10% hit chance per level), bad terrain penalty, small AP-spent tiebreaker.
-        // Cf. ai_engage_melee.nut:1258 (EngageOnLevelDifferenceMult) / config/ai.nut:560-561.
+        // Q: maybe revert mult to vanilla ones and just jack up weights pow to 10?
         local s = _baseValue - _apCost * 0.05;
-        local levelDiff = _tile.Level - _targetTile.Level;
-        if (levelDiff > 0) s = s * ::Const.AI.Behavior.EngageOnLevelDifferenceMult;
-        else if (levelDiff < 0) s = s / ::Const.AI.Behavior.EngageOnLevelDifferenceMult;
-        if (_tile.IsBadTerrain) s = s * ::Const.AI.Behavior.EngageOnBadTerrainMult;
+        s = _tile.Level - _targetTile.Level > 0 ? s * 1.5 : s / 1.5;
+        if (_tile.IsBadTerrain) s *= 0.6; // Q: EngageBadTerrainPenalty?
+        // Fire / poison clouds / catapult-mark tiles - discourage drastically.
+        // TODO: should follow EngageOnBadTerrainPenaltyMult, and maybe somehow
+        //       Const.AI.Behavior.EngageBadTerrainEffectPenalty - but need to adjust for scale
+        if (hasNegativeTileEffect(_tile, _entity) || _tile.Properties.IsMarkedForImpact) s *= 0.3;
         return s;
     }
 
@@ -354,8 +355,8 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
     function snh_isTileInDanger(_entity, _tile) {
         local opponents = this.getAgent().getKnownOpponents();
         foreach (op in opponents) {
-            if (op.Actor == null || !::std.Actor.isAlive(op.Actor)) continue;
             local opp = op.Actor;
+            if (!::std.Actor.isAlive(opp)) continue;
             if (opp.isNonCombatant()) continue;
             if (opp.getMoraleState() == ::Const.MoraleState.Fleeing) continue;
             if (opp.getCurrentProperties().IsStunned) continue;
