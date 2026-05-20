@@ -2,6 +2,18 @@ dofile(getenv("STDLIB_DIR") + "load.nut", true); // Also have some mocks, like M
 
 Math.rand <- @(a, b) ::std.rng.next(a, b);
 
+::IO <- {
+    function enumerateFiles(_prefix) {
+        return []
+        // if (this._files == null) this._files = dofile("tests/_files.nut");
+
+        // foreach (name in this._files) {
+        //     if (!Str.startswith(name, _prefix) || !Str.endswith(name, ".nut")) continue;
+        //     yield name.slice(0, -4)
+        // }
+    }
+}
+
 // Game stuff
 ::Const.XP <- {
     MaxLevelWithPerkpoints = 11
@@ -38,6 +50,39 @@ local mod = {
     function registerJS(_filename) {}
     function registerCSS(_filename) {}
 }
+
+// Mod hooks mocks
+::mods_registerMod <- function (x, y, x) {}
+::mods_getRegisteredMod <- function (name) {return false}
+::mods_queue <- function (x, y, func) {
+    func()
+}
+::mods_hookClass <- function (x, func) {
+    func({});
+}
+::mods_hookExactClass <- function (x, func) {
+    func({
+        onShow = @() null
+    })
+}
+::mods_hookChildren <- function (x, func) {
+    func({})
+}
+::mods_hookBaseClass <- function (x, func) {
+    func({})
+}
+::mods_hookDescendants <- function (x, func) {
+    func({})
+}
+::mods_hookNewObject <- function (x, func) {
+    func({})
+}
+::mods_addHook <- function(name, func) {
+    func("some/parent", "some/parent/child", {})
+}
+::mods_registerCSS <- function(path) {}
+::mods_registerJS <- function(path) {}
+
 
 // Mock MSU
 local function makePage(name) {
@@ -82,6 +127,9 @@ local function makePage(name) {
                 function addModSource(_domain, _url, _opts = {}) {}
                 function setUpdateSource(_domain) {}
             }
+            Tooltips = {
+                function setTooltips(_data) {}
+            }
         }
     }
     RangeSetting = class extends ::Mocks.Input { Type = "Range" }
@@ -91,6 +139,7 @@ local function makePage(name) {
     SettingsTitle = class extends ::Mocks.Input { Type = "Title" }
     SettingsDivider = class extends ::Mocks.Input { Type = "Divider" }
     SettingsSpacer = class extends ::Mocks.Input { Type = "Spacer" }
+    CustomTooltip = function (_func) {}
 }
 ::MSU.System <- {
     Registry = {
