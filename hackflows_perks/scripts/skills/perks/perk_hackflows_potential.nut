@@ -136,7 +136,9 @@ this.perk_hackflows_potential <- ::inherit("scripts/skills/skill", {
     }
 
     function _syncLevel() {
-        for (local level = 2; level <= getContainer().getActor().m.Level; level++)
+        local container = getContainer();
+        if (::std.Util.isNull(container)) return;
+        for (local level = 2; level <= container.getActor().m.Level; level++)
             _onUpdateLevel(level);
     }
 
