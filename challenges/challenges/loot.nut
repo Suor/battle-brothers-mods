@@ -129,7 +129,7 @@ local function filterLoot(_loot) {
             local kept = ::std.Rand.take(maxItems, survived, weights);
             foreach (item in survived)
                 if (kept.find(item) == null) rejected.push(item);
-            // rejected.extend(Array.diff(survived, kept))
+            // rejected.extend(::std.Array.diff(survived, kept))
             Debug.log("filterLoot kept cap", kept.map(lootStr));
             _loot.resize(0);  // Nothing to decide anymore
         } else {
@@ -214,17 +214,20 @@ local function passiveHook(q) {
     q.isDroppedAsLoot = @(__original) function () {
         local res = __original();
         local protected = isProtected(this);
-        // Tools (throwing nets, bombs, banners, ...) inherit from weapon but are
-        // not equipment — don't count them toward the cap.
+        // Make tools (throwing nets, bombs, banners, ...) not equipment, even come from weapon.
         local isTool = this.isItemType(::Const.Items.ItemType.Tool);
+        local loot = ::Tactical.State.m.challenges_loot;
         if (!res || protected || isTool) {
+            // A previous call may have tracked this item (drop is non-deterministic
+            // and item can be dropped, picked up and dropped again).
+            local idx = loot.find(this);
+            if (idx != null) loot.remove(idx);
             Debug.log("drop", lootStr(this) + " res=" + res + " protected=" + protected
-                + " tool=" + isTool);
+                + " tool=" + isTool + (idx != null ? " untracked" : ""));
             return res;
         }
 
         // Dedup because item can be dropped, picked up and dropped again.
-        local loot = ::Tactical.State.m.challenges_loot;
         local alreadyTracked = loot.find(this) != null;
         if (!alreadyTracked) loot.push(this);
 
@@ -299,17 +302,15 @@ mod.hook("scripts/ui/screens/tactical/tactical_combat_result_screen", function (
         if (!isChoosingLoot()) return __original(_data);
         local capped = ::Tactical.State.m.challenges_choices;
         Debug.log("onSwapItem", _data);
-        // Debug.log("capped", capped.map(lootStr));
-        local sourceOwner = _data[1];
 
-        if (sourceOwner == "tactical-combat-result-screen.found-loot"
-                && _data[3] != "tactical-combat-result-screen.found-loot") {
+        if (_data[1] == "tactical-combat-result-screen.found-loot" && _data[3] != _data[1]) {
             local sourceEntry = Tactical.CombatResultLoot.getItemAtIndex(_data[0]);
             if (sourceEntry != null && capped.find(sourceEntry.item) != null) {
-                local inLoot = 0;
-                foreach (item in Tactical.CombatResultLoot.getItems())
-                    if (item != null && capped.find(item) != null) inLoot++;
-                local taken = capped.len() - inLoot;
+                local taken = 0;
+                foreach (item in ::World.Assets.getStash().getItems())
+                    if (item != null && capped.find(item) != null) taken++;
+                // local taken = ::std.Array.count(::World.Assets.getStash().getItems(),
+                //     @(item) item != null && capped.find(item) != null);
                 if (taken >= def.conf("maxItemsPerBattle"))
                     return ::Const.UI.convertErrorToUIData(::Const.UI.Error.NotEnoughStashSpace);
             }

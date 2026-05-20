@@ -209,6 +209,15 @@ weaponHook(function () { return false; }).call(item);
 assertEq(state.m.challenges_loot, []);
 print("loot hook: vanilla-rejected items not tracked OK\n");
 
+// 3b. Item registered earlier (e.g., dropped then picked up) gets untracked when
+//     a later call returns false (vanilla flipped its mind via Math.rand).
+state = makeState();
+weaponHook(function () { return true; }).call(item);
+assertEq(state.m.challenges_loot, [item]);
+weaponHook(function () { return false; }).call(item);
+assertEq(state.m.challenges_loot, []);
+print("loot hook: re-evaluated rejection untracks OK\n");
+
 // 4. Protected (named/legendary) items skip registration entirely.
 Settings.weaponDropChance = 0.0;
 state = makeState();
