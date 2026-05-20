@@ -1029,11 +1029,11 @@ local pairs = [
     }
     {
         en = ", dazing target on hit."
-        ru = ", оглушающие цель при попадании."
+        ru = ", выбивающие дух цели при попадании."
     }
     {
         en = "Applies daze on target hit"
-        ru = "Оглушает цель при попадании"
+        ru = "Выбивает дух цели при попадании"
     }
     {
         en = "Jagged "
@@ -2016,17 +2016,17 @@ local pairs = [
     }
     {
         en = "A successful hit will daze the target."
-        ru = "Успешное попадание оглушит цель."
+        ru = "Успешное попадание выбьет дух цели."
     }
     {
         en = "Will daze a target on hit"
-        ru = "Оглушает цель при попадании"
+        ru = "Выбивает дух цели при попадании"
     }
     {
         // ::Tactical.EventLog.log(::Const.UI.getColorizedEntityName(_targetEntity) + " is dazed");
         mode = "pattern"
         en = "<name:str_tag> is dazed"
-        ru = "<name> оглушён"
+        ru = "<name> выбит дух"
     }
     // FILE: scripts/skills/traits/bonus_ap_trait.nut
     {
