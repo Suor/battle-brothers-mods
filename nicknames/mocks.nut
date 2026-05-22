@@ -55,6 +55,7 @@ function resetTestFlags() {_flagStore.clear();}
 local captured_onHired = null;
 
 local mod_obj = {
+    function require(...) {}
     function conflictWith(...) {}
     function queue(...) {
         local func = vargv.pop();

@@ -44,7 +44,7 @@ Safe to add or remove midgame. Should be compatible with everything.
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHooks][] and [stdlib][].
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHooks][], [stdlib][] and [MSU][].
 
 To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
 
@@ -52,6 +52,7 @@ To use built-in russian translation will also need to install [Rosetta][] and th
 [NexusMods]: https://www.nexusmods.com/games/battlebrothers/mods/1013
 [ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
+[msu]: https://www.nexusmods.com/battlebrothers/mods/479
 [Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
 
 [mod_background_perks]: https://www.nexusmods.com/battlebrothers/mods/661
