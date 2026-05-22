@@ -1,7 +1,7 @@
 if (!("Rosetta" in getroottable())) return;
 
 local rosetta = {
-    mod = {id = "mod_nicknames", version = "0.1"}
+    mod = {id = "mod_nicknames", version = "0.6.0"}
     author = "hackflow"
     lang = "ru"
 }
