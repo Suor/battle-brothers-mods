@@ -1,0 +1,10 @@
+0.1.0
+- initial version
+- Druid background, hireable from the start, with a Summon Beast active
+- beasts are chosen by the battlefield: wolves in snow, wolves/spiders on grassland,
+  wolves/spiders/young schrats in forests, wolves/hyenas on steppe and hills,
+  hyenas/snakes in the desert, spiders/snakes in swamps
+- Druid-only perks: Apex Predators, Pack, Regrowth, Entangling Roots, Venom, Pack Leader
+- Regrowth heals one ally per turn; only one ally can carry it at a time
+- Proper Druid origin
+- Russian localization (req Rosetta)
