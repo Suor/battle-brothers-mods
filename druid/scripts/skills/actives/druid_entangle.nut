@@ -8,39 +8,18 @@ this.druid_entangle <- this.inherit("scripts/skills/actives/root_skill", {
         this.m.Name = "Entangling Roots";
         this.m.Description = "Call writhing roots from the earth to root an enemy in place,"
                            + " holding them fast for a turn.";
-        # FIX: do not repeat whatever is alredy in ancestor
-        this.m.Order = this.Const.SkillOrder.UtilityTargeted;
-        this.m.ActionPointCost = 6;
-        this.m.FatigueCost = 15;
-        this.m.MinRange = 1;
-        this.m.MaxRange = 6;
+        this.m.MaxRange = 6;  // root_skill defaults to 8; everything else is inherited
     }
 
     function getTooltip()
     {
-        # FIX: use getDefaultUtilityTooltip(), same in other skills here
-        return [
-            {
-                id = 1,
-                type = "title",
-                text = this.getName()
-            },
-            {
-                id = 2,
-                type = "description",
-                text = this.getDescription()
-            },
-            {
-                id = 3,
-                type = "text",
-                text = this.getCostString()
-            },
-            {
-                id = 6,
-                type = "text",
-                icon = "ui/icons/vision.png",
-                text = "Has a range of " + ::std.Text.positive(this.getMaxRange()) + " tiles"
-            }
-        ];
+        local tooltip = this.getDefaultUtilityTooltip();
+        tooltip.push({
+            id = 6,
+            type = "text",
+            icon = "ui/icons/vision.png",
+            text = "Has a range of " + ::std.Text.positive(this.getMaxRange()) + " tiles"
+        });
+        return tooltip;
     }
 });

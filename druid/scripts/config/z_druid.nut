@@ -100,8 +100,8 @@ local T = ::Const.World.TerrainType;
         ApexMap = {
             wolf = "direwolf"
             hyena = "hyena_high"
-            spider = "spider_bodyguard"
-            schrat_small = "schrat"
+            // Beasts with no entry here (spider, schrat_small, serpent) are grown in place
+            // by druid_summon_beast.makeApex() instead of swapping to another entity.
         }
     }
 }

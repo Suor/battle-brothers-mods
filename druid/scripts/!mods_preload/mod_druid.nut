@@ -30,12 +30,11 @@ mod.queue(">mod_reforged", function () {
     ::Hooks.registerCSS("ui/mods/druid.css");
 
     // Make the Druid hireable: seed his background into settlement draft lists.
-    // Only small and medium settlements — no druids in big cities. More of them in the
-    // woods (forest/lumber) and the swamps.
+    // Prefer the woods (forest/lumber) and the swamps.
     mod.hookTree("scripts/entity/world/settlement", function (q) {
         local cn = q.ClassName;
-        local isBig = cn.find("large_") != null || cn.find("city_state") != null;
-        if (isBig) return;
+        // local isBig = cn.find("large_") != null || cn.find("city_state") != null;
+        // if (isBig) return;
 
         local num = 1;
         local isWild = cn.find("_forest_") != null || cn.find("_lumber_") != null

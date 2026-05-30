@@ -138,6 +138,14 @@ local pairs = [
         ru = "Этот зверь охотится ядовитым клыком и жалом. Достаточно глубокий укус отравляет добычу, истощая её здоровье каждый ход, пока яд не выветрится."
     }
     {
+        en = "Fearless"
+        ru = "Бесстрашие"
+    }
+    {
+        en = "This beast knows its master for the alpha. It stays confident and will never break or flee the field."
+        ru = "Этот зверь признаёт в хозяине вожака. Он сохраняет уверенность и никогда не дрогнет и не побежит с поля боя."
+    }
+    {
         mode = "pattern"
         en = "Has a range of <range:int_tag> tiles"
         ru = "Дальность — <range> клеток"
