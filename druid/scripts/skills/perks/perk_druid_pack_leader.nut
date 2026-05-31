@@ -1,4 +1,4 @@
-// Passive flag — read by druid_summon_beast so summoned beasts never check morale.
+// Passive flag - read by druid_summon_beast so summoned beasts never check morale.
 this.perk_druid_pack_leader <- this.inherit("scripts/skills/skill", {
     m = {}
     function create() {

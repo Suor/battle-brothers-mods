@@ -1,6 +1,6 @@
 # Proper Druid
 
-Adds a Druid background — a hedge-mage who calls the beasts of the wild to fight at his
+Adds a Druid background - a hedge-mage who calls the beasts of the wild to fight at his
 side, entangles his foes in roots and knits his allies' wounds back together.
 
 - summon a beast fitting the battlefield: snow gives wolves, grassland wolves or spiders,
@@ -12,13 +12,13 @@ side, entangles his foes in roots and knits his allies' wounds back together.
 
 ## Perks
 
-- **Apex Predators** — wolves answer as direwolves, hyenas come frenzied, spiders
+- **Apex Predators** - wolves answer as direwolves, hyenas come frenzied, spiders
   broodmother-sized, young schrats rise full-grown
-- **Pack** — summon one more beast each battle (one only without it)
-- **Regrowth** — bestow a steady heal on a single ally; only one can carry it at a time
-- **Entangling Roots** — root an enemy in place
-- **Venom** — your beasts' bites poison the prey
-- **Pack Leader** — summoned beasts arrive confident and never flee
+- **Pack** - summon one more beast each battle (one only without it)
+- **Regrowth** - bestow a steady heal on a single ally; only one can carry it at a time
+- **Entangling Roots** - root an enemy in place
+- **Venom** - your beasts' bites poison the prey
+- **Pack Leader** - summoned beasts arrive confident and never flee
 
 Plans:
 
@@ -27,7 +27,7 @@ Plans:
 
 ## Compatibility
 
-Standalone — summons the game's own beast entities, no hard dependency on Animal
+Standalone - summons the game's own beast entities, no hard dependency on Animal
 Companions. Safe to add midgame. Works with Reforged.
 
 ## Install

@@ -1,4 +1,4 @@
-// Regrowth: a steady knit of flesh on a single ally. No countdown — it lasts until the
+// Regrowth: a steady knit of flesh on a single ally. No countdown - it lasts until the
 // Druid bestows it elsewhere (the active strips it from the previous bearer) or battle ends.
 this.druid_regeneration_effect <- this.inherit("scripts/skills/skill", {
     m = {

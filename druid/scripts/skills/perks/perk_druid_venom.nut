@@ -1,4 +1,4 @@
-// Passive flag — read by druid_summon_beast to give summoned beasts envenomed bites.
+// Passive flag - read by druid_summon_beast to give summoned beasts envenomed bites.
 this.perk_druid_venom <- this.inherit("scripts/skills/skill", {
     m = {}
     function create() {

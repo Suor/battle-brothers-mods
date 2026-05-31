@@ -1,4 +1,4 @@
-// Passive flag — read by druid_summon_beast to upgrade summoned beasts.
+// Passive flag - read by druid_summon_beast to upgrade summoned beasts.
 this.perk_druid_apex <- this.inherit("scripts/skills/skill", {
     m = {}
     function create() {
