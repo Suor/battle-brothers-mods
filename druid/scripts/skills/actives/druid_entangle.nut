@@ -8,6 +8,8 @@ this.druid_entangle <- this.inherit("scripts/skills/actives/root_skill", {
         this.m.Name = "Entangling Roots";
         this.m.Description = "Call writhing roots from the earth to root an enemy in place,"
                            + " holding them fast for a turn.";
+        this.m.Icon = "druid/active_entangle.png";
+        this.m.IconDisabled = "druid/active_entangle_sw.png";
         this.m.MaxRange = 6;  // root_skill defaults to 8; everything else is inherited
     }
 

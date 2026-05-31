@@ -7,10 +7,10 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
         this.m.ID = "actives.druid_regrowth";
         this.m.Name = "Regrowth";
         this.m.Description = "Channel nature's vigor into an ally, mending their wounds turn"
-                           + " after turn. Only one ally can carry it — bestowing it anew"
+                           + " after turn. Only one ally can carry it - bestowing it anew"
                            + " stops the previous one from mending.";
-        this.m.Icon = "druid/perk_regrowth.png";
-        this.m.IconDisabled = "druid/perk_regrowth_sw.png";
+        this.m.Icon = "druid/active_regrowth.png";
+        this.m.IconDisabled = "druid/active_regrowth_sw.png";
         this.m.SoundOnUse = [
             "sounds/enemies/unhold_regenerate_01.wav"
         ];
@@ -32,23 +32,7 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
 
     function getTooltip()
     {
-        return [
-            {
-                id = 1,
-                type = "title",
-                text = this.getName()
-            },
-            {
-                id = 2,
-                type = "description",
-                text = this.getDescription()
-            },
-            {
-                id = 3,
-                type = "text",
-                text = this.getCostString()
-            }
-        ];
+        return this.getDefaultUtilityTooltip();
     }
 
     function isViableTarget(_user, _target)
