@@ -36,7 +36,7 @@ this.druid_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
         this.World.Assets.getStash().add(::new("scripts/items/weapons/woodcutters_axe"));
 
         local druid = roster.create("scripts/entity/tactical/player");
-        druid.setStartValuesEx(["druid_background"]);
+        druid.setStartValuesEx([::Druid.BackgroundScript]);
         druid.setPlaceInFormation(4 + 9);
         druid.getSkills().add(::new("scripts/skills/traits/player_character_trait"));
         druid.getFlags().set("IsPlayerCharacter", true);

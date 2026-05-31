@@ -8,6 +8,24 @@ local def = ::Druid <- {
         tagPrefix = "druid-"
     }
     FakeKill = false
+
+    // Which background script the origin scenario and (when XBE is absent) the settlement
+    // draft lists should use. Overridden to XBE's druid in the queue when XBE is present.
+    BackgroundScript = "druid_background"
+
+    // The beast-summoning bits that turn a plain background into a Druid. Defined once here so
+    // that both our own background and the XBE druid we hijack reuse them instead of copy-pasting.
+    function addSummonActive(_background) {
+        _background.m.Container.add(::new("scripts/skills/actives/druid_summon_beast"));
+    }
+    function summonTooltipEntry() {
+        return {
+            id = 10
+            type = "text"
+            icon = "ui/icons/special.png"
+            text = "Can summon a beast fitting the battlefield to fight at his side"
+        };
+    }
 }
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
@@ -29,23 +47,51 @@ mod.queue(">mod_reforged", function () {
     ::Hooks.registerJS("ui/mods/druid.js");
     ::Hooks.registerCSS("ui/mods/druid.css");
 
-    // Make the Druid hireable: seed his background into settlement draft lists.
-    // Prefer the woods (forest/lumber) and the swamps.
-    mod.hookTree("scripts/entity/world/settlement", function (q) {
-        local cn = q.ClassName;
-        // local isBig = cn.find("large_") != null || cn.find("city_state") != null;
-        // if (isBig) return;
+    // XBE compat: it ships its own Druid under the same background.hackflows_druid ID. When it's
+    // present we graft our summoning onto XBE's druid instead of adding a second one, and leave
+    // drafts (and perk/bonus keying on that ID) to XBE.
+    local hasXbe = ::Hooks.hasMod("mod_backgrounds_and_events");
+    if (hasXbe) def.BackgroundScript = "hackflows/druid_background";
 
-        local num = 1;
-        local isWild = cn.find("_forest_") != null || cn.find("_lumber_") != null
-                    || cn.find("_swamp_") != null;
-        if (isWild) num++;
+    if (hasXbe) {
+        // Additive hooks only: XBE's flavour, the Reforged shim's perk tree and Background
+        // Bonuses' tooltip wrapping all stay intact; we just add the summon active and its line.
+        mod.hook("scripts/skills/backgrounds/hackflows/druid_background", function (q) {
+            q.onAdded = @(__original) function () {
+                __original();
+                ::Druid.addSummonActive(this);
+            }
+            q.getTooltip = @(__original) function () {
+                local tooltip = __original();
+                tooltip.push(::Druid.summonTooltipEntry());
+                return tooltip;
+            }
+            // Guarantee the Druid perk group. XBE's druid (via the Reforged compat shim) builds
+            // its tree from a DynamicMap, so addSpecialPerkGroups() runs - but the shim never
+            // returns a multiplier for pg.druid, leaving its Chance at 0. A negative multiplier
+            // forces calculateChance() to 100, the same trick our own background uses.
+            q.getPerkGroupMultiplier = @(__original) function (_groupID, _perkTree) {
+                if (_groupID == "pg.druid") return -1;
+                return __original(_groupID, _perkTree);
+            }
+        })
+    }
+    // else {
+        // No XBE: make our own Druid hireable by seeding his background into settlement draft
+        // lists. Prefer the woods (forest/lumber) and the swamps.
+        mod.hookTree("scripts/entity/world/settlement", function (q) {
+            local cn = q.ClassName;
+            local num = 19;
+            local isWild = cn.find("_forest_") != null || cn.find("_lumber_") != null
+                        || cn.find("_swamp_") != null;
+            if (isWild) num++;
 
-        q.create = @(__original) function () {
-            __original();
-            for (local i = 0; i < num; i++) this.m.DraftList.push("druid_background");
-        }
-    })
+            q.create = @(__original) function () {
+                __original();
+                for (local i = 0; i < num; i++) this.m.DraftList.push(def.BackgroundScript);
+            }
+        })
+    // }
 
     // The Druid earns XP and kills from his beasts, but should not fire on-kill effects.
     mod.hookTree("scripts/skills/skill", function (q) {
@@ -92,7 +138,7 @@ mod.queue(">mod_reforged", function () {
         mod.hook("scripts/ui/global/data_helper", function (q) {
             q.convertEntityToUIData = @(__original) function(_entity, _activeEntity) {
                 local result = __original(_entity, _activeEntity);
-                if (_entity != null && _entity.getSkills().hasSkill("background.druid")) {
+                if (_entity != null && _entity.getSkills().hasSkill("background.hackflows_druid")) {
                     local perks = ::Const.Perks.Perks.map(@(row) clone row);
                     foreach (perk in ::Const.Perks.Druid) {
                         perks[perk.Row].push(perk);

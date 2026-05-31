@@ -3,7 +3,7 @@ this.druid_background <- this.inherit("scripts/skills/backgrounds/character_back
     function create()
     {
         this.character_background.create();
-        this.m.ID = "background.druid";
+        this.m.ID = "background.hackflows_druid";
         this.m.Icon = "ui/backgrounds/background_36.png";
         this.m.Name = "Druid";
 
@@ -20,7 +20,6 @@ this.druid_background <- this.inherit("scripts/skills/backgrounds/character_back
             "trait.insecure"
             "trait.brute"
             "trait.superstitious"
-            "trait.hesitant"
         ];
         this.m.Titles = [
             "the Druid",
@@ -49,6 +48,7 @@ this.druid_background <- this.inherit("scripts/skills/backgrounds/character_back
         });
     }
 
+    # TODO: unify with xbe and xbe/reforged
     PerkTreeMultipliers = {
         "pg.druid": -1
         "pg.rf_fast": 1.5,
@@ -80,25 +80,22 @@ this.druid_background <- this.inherit("scripts/skills/backgrounds/character_back
                 type = "description",
                 text = this.getDescription()
             }
-            {
-                id = 10,
-                type = "text",
-                icon = "ui/icons/special.png",
-                text = "Can summon a beast fitting the battlefield to fight at his side"
-            }
+            ::Druid.summonTooltipEntry()
         ];
     }
 
     function onBuildDescription()
     {
-        return "{Wrapped in furs and bark-dyed cloth, %name% smells of moss and old rain. | %name% speaks little to men and much to the trees, or so it seems. | Wherever %name% treads, beasts watch from the treeline and do not flee. | %name% carries no idols, yet kneels often to press an ear against the soil. | The crows seem to follow %name%, and he never shoos them away.} {He was raised at the forest's edge, far from any lord's reach. | Some say he was a hermit who learned the old green tongues. | He was driven from his village for speaking with wolves, they whisper. | None know whence he came, only that the woods opened to let him pass. | He claims the wild folk taught him, and you are not inclined to argue.} {%name% whistles a low note and a hare comes to his hand, then bounds away. | %name% lays a palm on a sick mule and by morning it stands hale. | %name% names the weather by the smell of the wind, and is seldom wrong. | %name% points to a thicket and bids you wait — moments later a stag breaks cover where he pointed.}";
+        # TODO: unify with xbe description somehow
+        return "{Wrapped in furs and bark-dyed cloth, %name% smells of moss and old rain. | %name% speaks little to men and much to the trees, or so it seems. | Wherever %name% treads, beasts watch from the treeline and do not flee. | %name% carries no idols, yet kneels often to press an ear against the soil. | The crows seem to follow %name%, and he never shoos them away.} {He was raised at the forest's edge, far from any lord's reach. | Some say he was a hermit who learned the old green tongues. | He was driven from his village for speaking with wolves, they whisper. | None know whence he came, only that the woods opened to let him pass. | He claims the wild folk taught him, and you are not inclined to argue.} {%name% whistles a low note and a hare comes to his hand, then bounds away. | %name% lays a palm on a sick mule and by morning it stands hale. | %name% names the weather by the smell of the wind, and is seldom wrong. | %name% points to a thicket and bids you wait - moments later a stag breaks cover where he pointed.}";
     }
 
+    # TODO: unify with xbe and xbe/reforged
     function onChangeAttributes()
     {
         local c = {
-            Hitpoints = [0, 0]
-            Bravery = [8, 18]
+            Hitpoints = [0, 5]
+            Bravery = [5, 12]
             Stamina = [-5, 10]
             MeleeSkill = [0, 0]
             RangedSkill = [-5, 0]
@@ -112,22 +109,39 @@ this.druid_background <- this.inherit("scripts/skills/backgrounds/character_back
     function onAdded()
     {
         this.character_background.onAdded();
-        this.m.Container.add(::new("scripts/skills/actives/druid_summon_beast"));
+        ::Druid.addSummonActive(this);
     }
 
     function onAddEquipment()
     {
         local items = this.getContainer().getActor().getItems();
-        local roll = ::Math.rand(1, 3);
-        if (roll == 1) {
-            items.equip(::new("scripts/items/armor/leather_tunic"));
-            items.equip(::new("scripts/items/helmets/hood"));
-        } else if (roll == 2) {
-            items.equip(::new("scripts/items/armor/monk_robe"));
-        } else {
-            items.equip(::new("scripts/items/armor/thick_dark_tunic"));
-            items.equip(::new("scripts/items/helmets/dark_cowl"));
+
+        // A stout stick or a gnarled staff cut from the woods (the latter is XBE's druid weapon).
+        items.equip(::new(::Math.rand(1, 2) == 1
+            ? "scripts/items/weapons/wooden_stick"
+            : "scripts/items/weapons/greenskins/goblin_staff"));
+
+        // Rough woodsfolk garb - hides, robes and sackcloth under hoods and straw hats, never plate.
+        switch (::Math.rand(1, 5)) {
+            case 1:
+                items.equip(::new("scripts/items/armor/leather_tunic"));
+                items.equip(::new("scripts/items/helmets/hood"));
+                break;
+            case 2:
+                items.equip(::new("scripts/items/armor/monk_robe"));
+                items.equip(::new("scripts/items/helmets/straw_hat"));
+                break;
+            case 3:
+                items.equip(::new("scripts/items/armor/thick_dark_tunic"));
+                items.equip(::new("scripts/items/helmets/dark_cowl"));
+                break;
+            case 4:  // XBE's druid armor
+                items.equip(::new("scripts/items/armor/tattered_sackcloth"));
+                items.equip(::new("scripts/items/helmets/straw_hat"));
+                break;
+            case 5:  // XBE's druid armor
+                items.equip(::new("scripts/items/armor/leather_wraps"));
+                break;
         }
-        items.equip(::new("scripts/items/weapons/wooden_stick"));
     }
 });
