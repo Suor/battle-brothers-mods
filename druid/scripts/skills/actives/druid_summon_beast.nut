@@ -1,6 +1,8 @@
 this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
     m = {
-        ChargesUsed = 0
+        // Turns until the summon is ready again (0 = ready). Without the Hatch perk the count is
+        // never ticked down (see onTurnStart), so a single use locks it for the rest of the battle.
+        Cooldown = 0
     },
     function create()
     {
@@ -8,8 +10,8 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         this.m.Name = "Summon Beast";
         this.m.Description = "Call a beast of the surrounding wilds to a free tile beside you."
                            + " It will hunt your enemies but cannot otherwise be commanded.";
-        this.m.Icon = "druid/summon.png";
-        this.m.IconDisabled = "druid/summon_sw.png";
+        this.m.Icon = "druid/active_summon.png";
+        this.m.IconDisabled = "druid/active_summon_sw.png";
         // No SoundOnUse here: the call is voiced by the summoned beast in onUse().
         this.m.Type = this.Const.SkillType.Active;
         this.m.Order = this.Const.SkillOrder.Any + 75;
@@ -28,42 +30,45 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         this.m.MaxRange = 1;
     }
 
-    function getMaxCharges()
-    {
-        return this.getContainer().hasSkill("perk.druid.pack") ? 2 : 1;
-    }
-
     function getTooltip()
     {
-        return [
-            {
-                id = 1,
-                type = "title",
-                text = this.getName()
-            },
-            {
-                id = 2,
-                type = "description",
-                text = this.getDescription()
-            },
-            {
-                id = 3,
-                type = "text",
-                text = this.getCostString()
-            },
-            {
-                id = 6,
-                type = "text",
-                icon = "ui/icons/special.png",
-                text = "Beasts left this battle: "
-                     + ::std.Text.positive(this.getMaxCharges() - this.m.ChargesUsed)
-            }
-        ];
+        local charge;
+        if (this.m.Cooldown > 0) {
+            // Without Hatch the cooldown never ticks down (see onTurnStart), so the summon is just spent.
+            charge = this.hasHatch()
+                ? "Recharges in " + ::std.Text.negative(this.m.Cooldown)
+                    + (this.m.Cooldown == 1 ? " turn" : " turns")
+                : "Spent for this battle";
+        } else {
+            charge = this.hasHatch() ? "Ready - recharges every other turn" : "Ready - once per battle";
+        }
+
+        local tooltip = this.getDefaultUtilityTooltip();
+        tooltip.push({
+            id = 6,
+            type = "text",
+            icon = "ui/icons/special.png",
+            text = charge
+        });
+        return tooltip;
+    }
+
+    function hasHatch()
+    {
+        return this.getContainer().hasSkill("perk.druid.hatch");
     }
 
     function isUsable()
     {
-        return this.skill.isUsable() && this.m.ChargesUsed < this.getMaxCharges();
+        return this.skill.isUsable() && this.m.Cooldown == 0;
+    }
+
+    // Only the Hatch perk lets the summon recharge; otherwise the cooldown set on use never
+    // ticks down, so the call stays spent until the next battle.
+    function onTurnStart()
+    {
+        this.skill.onTurnStart();
+        if (this.hasHatch()) this.m.Cooldown = this.Math.max(0, this.m.Cooldown - 1);
     }
 
     function onVerifyTarget(_originTile, _targetTile)
@@ -73,13 +78,13 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
 
     function onCombatStarted()
     {
-        this.m.ChargesUsed = 0;
+        this.m.Cooldown = 0;
     }
 
     function onCombatFinished()
     {
         this.skill.onCombatFinished();
-        this.m.ChargesUsed = 0;
+        this.m.Cooldown = 0;
     }
 
     // Which world terrain are we fighting on? Falls back to the default pool.
@@ -92,7 +97,7 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         return -1;
     }
 
-    function pickBeastID()
+    function pickBeastType()
     {
         local biomes = this.Const.Druid.Biomes;
         local terrain = this.getTerrainType();
@@ -101,7 +106,7 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
     }
 
     // Apex specimen of a beast that has no greater cousin to swap into: just bigger and tougher.
-    // Multipliers are rough first-pass balance — tune to taste.
+    // Multipliers are rough first-pass balance - tune to taste.
     function makeApex(_beast)
     {
         local hpMult = 1.5;
@@ -109,12 +114,18 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         _beast.m.CurrentProperties.Hitpoints = this.Math.round(_beast.m.CurrentProperties.Hitpoints * hpMult);
         _beast.setHitpoints(_beast.getHitpointsMax());
 
-        // Spiders expose a native size knob that scales every body part; the rest just grow their body sprite.
+        // Spiders expose a native size knob that scales every body part and keeps it grounded.
+        // For the rest we scale the body sprites ourselves, the way Standout Enemies' "Big" quirk
+        // does: the engine offers no way to enumerate an entity's sprites, so we probe a superset
+        // of beast part names with hasSprite(). Extend the list if the summon pool grows new parts.
         try {
-            _beast.setSize(1.1);
+            _beast.setSize(1.1);  // TODO: vary a bit?
         } catch (error) {
-            local body = _beast.getSprite("body");
-            if (body != null) body.Scale = 1.25;
+            local mult = 1.25;
+            foreach (part in ["body", "head", "head_frenzy", "legs_back", "legs_front",
+                              "injury", "body_blood", "armor"]) {
+                if (_beast.hasSprite(part)) _beast.getSprite(part).Scale *= mult;
+            }
         }
     }
 
@@ -122,16 +133,16 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
     {
         local biomes = this.Const.Druid.Biomes;
         local isApex = _user.getSkills().hasSkill("perk.druid.apex");
-        local beastID = this.pickBeastID();
+        local beastType = this.pickBeastType();
 
         // Apex: swap to a greater beast where one exists, otherwise rear a bigger, tougher specimen.
         local boostApex = false;
         if (isApex) {
-            if (beastID in biomes.ApexMap) beastID = biomes.ApexMap[beastID];
+            if (beastType in biomes.ApexMap) beastType = biomes.ApexMap[beastType];
             else boostApex = true;
         }
 
-        local script = "scripts/entity/tactical/enemies/" + beastID;
+        local script = "scripts/entity/tactical/enemies/" + beastType;
         local beast = this.Tactical.spawnEntity(script, _targetTile.Coords.X, _targetTile.Coords.Y);
         if (beast == null) return false;
         if (boostApex) this.makeApex(beast);
@@ -140,7 +151,7 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         beast.m.druid_master <- ::MSU.asWeakTableRef(_user);
         beast.m.druid_RaisedByPlayer = true;
 
-        // Pack Leader: beasts arrive emboldened — they start Confident and, thanks to the
+        // Pack Leader: beasts arrive emboldened - they start Confident and, thanks to the
         // fearless racial, never break or flee. Unlike MoraleState.Ignore they still react
         // to the battle and reap the Confident combat bonus.
         if (_user.getSkills().hasSkill("perk.druid.pack_leader")) {
@@ -161,7 +172,9 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
             this.Sound.play(idle[this.Math.rand(0, idle.len() - 1)], this.Const.Sound.Volume.Skill, beast.getPos());
         }
 
-        this.m.ChargesUsed++;
+        // Cooldown 2 = ready again every other turn (used turn N -> ready turn N+2). Without the
+        // Hatch perk this is never decremented, so it acts as a once-per-battle lock.
+        this.m.Cooldown = 2;
         _user.getSkills().onSummonBeast(beast);
         return true;
     }
