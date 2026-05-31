@@ -72,6 +72,16 @@ mod.queue(">mod_reforged", function () {
             }
             __original(_actor, _tile, _skill);
         }
+
+        // Pack Leader's fearless beasts feel morale like anyone - they can be shaken down to
+        // Breaking and suffer for it - but the roll can never push them into Fleeing. We cap the
+        // negative change so the state floors at Breaking instead of routing them off the field.
+        q.checkMorale = @(__original) function( _change, _difficulty, _type = this.Const.MoraleCheckType.Default, _showIconBeforeMoraleIcon = "", _noNewLine = false ) {
+            if (_change < 0 && this.getSkills().hasSkill("racial.druid_fearless")) {
+                _change = this.Math.max(_change, this.Const.MoraleState.Breaking - this.getMoraleState());
+            }
+            return __original(_change, _difficulty, _type, _showIconBeforeMoraleIcon, _noNewLine);
+        }
     })
 
     // If DynamicPerks is installed we add perks via a special perk group (see druid_pg).

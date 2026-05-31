@@ -1,6 +1,6 @@
-// Pack Leader's beasts know their master for the alpha: they hold their nerve and never flee.
-// A huge Bravery bonus makes checkMorale bail on any morale change (see actor.checkMorale,
-// the `bravery > 500` early-out), so the beast keeps whatever state it starts the battle in.
+// Pack Leader's beasts know their master for the alpha: they can be shaken but never routed.
+// This is a marker skill - mod_druid hooks actor.checkMorale to floor a fearless beast's morale
+// at Breaking, so morale effects still bite but the roll can never drop it into Fleeing.
 this.druid_fearless <- this.inherit("scripts/skills/skill", {
     m = {},
     function create()
@@ -15,12 +15,6 @@ this.druid_fearless <- this.inherit("scripts/skills/skill", {
 
     function getDescription()
     {
-        return "This beast knows its master for the alpha. It stays confident and will never break or flee the field.";
-    }
-
-    function onUpdate( _properties )
-    {
-        # FIX: this is complete bullshit! It should not flee but should not resist all morale effects
-        _properties.Bravery += 1000;
+        return "This beast knows its master for the alpha. It may be shaken in the thick of battle, but it will never flee the field.";
     }
 });
