@@ -60,9 +60,13 @@ if [[ -n "$RIM" ]]; then
 else
   cp "$tmp/disc.png" "$tmp/dr.png"
 fi
-magick "$tmp/dr.png" "$tmp/subj.png" -gravity center -compose over -composite "${OUT}.png"
+# Force 8-bit RGBA on the final write: the game engine (WebCore) can't read 16-bit PNGs,
+# and the source brushes are often 16-bit, which IM would otherwise preserve.
+PNG8=(-depth 8 -define png:color-type=6 -define png:bit-depth=8)
+magick "$tmp/dr.png" "$tmp/subj.png" -gravity center -compose over -composite "${PNG8[@]}" "${OUT}.png"
 
-# 6) Disabled (_sw): desaturate + dim.
-magick "${OUT}.png" -modulate 72,14 -brightness-contrast -10x-4 "${OUT}_sw.png"
+# 6) Disabled (_sw): plain grayscale at full brightness, like vanilla perk _sw icons (which are
+#    just the colour icon desaturated - no dimming). -modulate 100,0 keeps brightness + alpha.
+magick "${OUT}.png" -modulate 100,0 "${PNG8[@]}" "${OUT}_sw.png"
 
 echo "wrote ${OUT}.png and ${OUT}_sw.png (${SIZE}x${SIZE})"

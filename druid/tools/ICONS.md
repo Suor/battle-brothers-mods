@@ -4,13 +4,13 @@ Icons are AI-generated subject cut-outs composed onto a dark disc + a thin rim, 
 downscaled to the game's 56×56 perk-icon size.
 
 ## Tools
-- `tools/icon_postprocess.sh <subject_art.png> <out_basename> [rim.png]` — keys the green
+- `tools/icon_postprocess.sh <subject_art.png> <out_basename> [rim.png]` - keys the green
   background off the generated subject, sharpens it (v3), and composes **disc → rim → subject**
   into `<out>.png` + greyed `<out>_sw.png` (56×56).
   - env (tune via env, do NOT edit the script): `HEAD` subject size % of icon, `DISCR` disc radius,
     `USM` unsharp amount, `SHP` extra -sharpen sigma, `SAT` saturation %, `CON` sigmoidal contrast
     (0=off), `FUZZ` green-key tolerance. Same `USM/SHP/SAT/CON` knobs exist in `reframe.sh`.
-- `tools/check_disc.py <rim.png> <disc.png>` — mechanically verifies, from alpha alone, that the
+- `tools/check_disc.py <rim.png> <disc.png>` - mechanically verifies, from alpha alone, that the
   disc neither **pokes** past the rim nor leaves a transparent **gap** under it. Exit 0 = clean.
 
 ## Settled parameters
@@ -29,20 +29,20 @@ downscaled to the game's 56×56 perk-icon size.
 - Intermediate experiments live in `gfx/druid/_gen/wip/`; source generations + rims stay in `_gen/`.
 
 ## Reframing baked-frame gens
-- `tools/reframe.sh <framed_art> <out> <rim>` — strips a baked codex frame (crop to inner circle,
+- `tools/reframe.sh <framed_art> <out> <rim>` - strips a baked codex frame (crop to inner circle,
   `INNER` frac, default 0.82), fits to the disc area and puts our rim on, keeping the approved art.
-- `tools/process_framed.sh` — keep a baked frame as-is (NOT used now; superseded by reframe).
-- `tools/median_frame.py` — median of many icons to extract a common frame. Useful for the SQUARE
+- `tools/process_framed.sh` - keep a baked frame as-is (NOT used now; superseded by reframe).
+- `tools/median_frame.py` - median of many icons to extract a common frame. Useful for the SQUARE
   active frame (active frames are uniform). NOT for round perks (vanilla perk frames differ).
 
 ## Status (circle perks, rim_c, placed in gfx/druid/)
 - apex ✅ (wolf pipeline, HEAD=96)
-- pack_leader ✅ — codex stripped the frame/bg off the original gen → `pack_leader_cut2.png`, then
+- pack_leader ✅ - codex stripped the frame/bg off the original gen → `pack_leader_cut2.png`, then
   wolf pipeline HEAD=88, sharpness **s3** (`USM=1.5x1.2+1.6+0 SHP=0x0.8`). Snout overlaps the rim.
 - entangle ✅  regrowth ✅  venom ✅  (reframed via reframe.sh)
-- pack — TODO subject
-- Squares (actives): Summon Beast, Regrowth(active), Entangle(active) — TODO, need a square frame.
-- Effect (circle): druid_regeneration_effect — still vanilla status_effect_79.
+- pack - TODO subject
+- Squares (actives): Summon Beast, Regrowth(active), Entangle(active) - TODO, need a square frame.
+- Effect (circle): druid_regeneration_effect - still vanilla status_effect_79.
 
 ## Open / TODO
 - Decide pack + summon subjects. Build the square active frame (median of vanilla actives).

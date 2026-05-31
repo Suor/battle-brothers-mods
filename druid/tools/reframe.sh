@@ -34,6 +34,10 @@ USM="${USM:-1.5x1.0+1.4+0}"; SHP="${SHP:-0x0.5}"; SAT="${SAT:-100}"; CON="${CON:
 CADJ=(-modulate "100,$SAT"); [[ "$CON" != "0" ]] && CADJ+=(-sigmoidal-contrast "${CON}x50%")
 magick "$tmp/inner.png" -resize "${DISC}x${DISC}" -unsharp "$USM" -sharpen "$SHP" "${CADJ[@]}" \
   -background none -gravity center -extent "${SIZE}x${SIZE}" "$tmp/subj.png"
-magick "$tmp/subj.png" \( "$RIM" -resize "${SIZE}x${SIZE}" \) -gravity center -compose over -composite "${OUT}.png"
-magick "${OUT}.png" -modulate 72,14 -brightness-contrast -10x-4 "${OUT}_sw.png"
+# Force 8-bit RGBA: the game engine (WebCore) can't read 16-bit PNGs, which IM would
+# otherwise inherit from 16-bit source brushes.
+PNG8=(-depth 8 -define png:color-type=6 -define png:bit-depth=8)
+magick "$tmp/subj.png" \( "$RIM" -resize "${SIZE}x${SIZE}" \) -gravity center -compose over -composite "${PNG8[@]}" "${OUT}.png"
+# Disabled (_sw): plain grayscale at full brightness like vanilla perk _sw icons.
+magick "${OUT}.png" -modulate 100,0 "${PNG8[@]}" "${OUT}_sw.png"
 echo "wrote ${OUT}.png and ${OUT}_sw.png"
