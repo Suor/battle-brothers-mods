@@ -44,8 +44,8 @@ local pairs = [
         ru = "Высшие хищники"
     }
     {
-        en = "Your call reaches greater beasts. Wolves answer as direwolves, hyenas come frenzied, spiders bloated and broodmother-sized, and young schrats rise full-grown."
-        ru = "Твой зов достигает более грозных тварей. Волки приходят лютоволками, гиены - бешеными, пауки раздуваются до размеров матки, а юные шраты встают в полный рост."
+        en = "Your call reaches greater beasts. Direwolves and hyenas answer frenzied, spiders bloated and broodmother-sized, and young schrats rise full-grown."
+        ru = "Твой зов достигает более грозных тварей. Лютоволки и гиены приходят бешеными, пауки раздуваются до размеров матки, а юные шраты встают в полный рост."
     }
     {
         en = "Venom"

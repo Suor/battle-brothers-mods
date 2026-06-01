@@ -66,9 +66,8 @@ addPerk({
     ID = "perk.druid.apex"
     Script = "scripts/skills/perks/perk_druid_apex"
     Name = "Apex Predators"
-    Tooltip = "Your call reaches greater beasts. Wolves answer as direwolves,"
-            + " hyenas come frenzied, spiders bloated and broodmother-sized,"
-            + " and young schrats rise full-grown."
+    Tooltip = "Your call reaches greater beasts. Direwolves and hyenas answer frenzied,"
+            + " spiders bloated and broodmother-sized, and young schrats rise full-grown."
     Icon = "druid/perk_apex.png"
     IconDisabled = "druid/perk_apex_sw.png"
     Row = 6
@@ -81,25 +80,25 @@ local T = ::Const.World.TerrainType;
 ::Const.Druid <- {
     Biomes = {
         Pools = {
-            [T.Snow] = ["wolf"],
-            [T.SnowyForest] = ["wolf"],
-            [T.Tundra] = ["wolf"],
-            [T.Plains] = ["wolf", "spider"],
-            [T.Farmland] = ["wolf", "spider"],
-            [T.Forest] = ["wolf", "spider", "schrat_small"],
-            [T.LeaveForest] = ["wolf", "spider", "schrat_small"],
-            [T.AutumnForest] = ["wolf", "spider", "schrat_small"],
-            [T.Steppe] = ["wolf", "hyena"],
+            [T.Snow] = ["direwolf"],
+            [T.SnowyForest] = ["direwolf"],
+            [T.Tundra] = ["direwolf"],
+            [T.Plains] = ["direwolf", "spider"],
+            [T.Farmland] = ["direwolf", "spider"],
+            [T.Forest] = ["direwolf", "spider", "schrat_small"],
+            [T.LeaveForest] = ["direwolf", "spider", "schrat_small"],
+            [T.AutumnForest] = ["direwolf", "spider", "schrat_small"],
+            [T.Steppe] = ["direwolf", "hyena"],
             [T.Desert] = ["hyena", "serpent"],
             [T.Oasis] = ["hyena", "serpent"],
             [T.Swamp] = ["spider", "serpent"],
-            [T.Hills] = ["wolf", "hyena"],
-            [T.Mountains] = ["wolf", "hyena"],
-            [T.Badlands] = ["wolf", "hyena"],
+            [T.Hills] = ["direwolf", "hyena"],
+            [T.Mountains] = ["direwolf", "hyena"],
+            [T.Badlands] = ["direwolf", "hyena"],
         }
-        Default = ["wolf"]
+        Default = ["direwolf"]
         ApexMap = {
-            wolf = "direwolf"
+            direwolf = "direwolf_high"
             hyena = "hyena_high"
             // Beasts with no entry here (spider, schrat_small, serpent) are grown in place
             // by druid_summon_beast.makeApex() instead of swapping to another entity.

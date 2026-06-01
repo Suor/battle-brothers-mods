@@ -105,25 +105,27 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         return pool[this.Math.rand(0, pool.len() - 1)];
     }
 
-    // Apex specimen of a beast that has no greater cousin to swap into: just bigger and tougher.
-    // Multipliers are rough first-pass balance - tune to taste.
+    // Apex specimen of a beast that has no greater cousin to swap into (spider, schrat, serpent):
+    // tougher, more skilled and harder-hitting. Beasts that do have a greater cousin (direwolf,
+    // hyena) are swapped to it in onUse() and never reach here.
     function makeApex(_beast)
     {
-        local hpMult = 1.5;
-        _beast.m.BaseProperties.Hitpoints = this.Math.round(_beast.m.BaseProperties.Hitpoints * hpMult);
-        _beast.m.CurrentProperties.Hitpoints = this.Math.round(_beast.m.CurrentProperties.Hitpoints * hpMult);
+        // Bump the base stats and let the skill container rebuild CurrentProperties; writing
+        // CurrentProperties directly would just be clobbered by the next update().
+        local b = _beast.m.BaseProperties;
+        b.Hitpoints += 20;
+        b.MeleeSkill += 5;
+        b.DamageTotalMult *= 1.25;
+        _beast.getSkills().update();
         _beast.setHitpoints(_beast.getHitpointsMax());
 
         // Spiders expose a native size knob that scales every body part and keeps it grounded.
-        // For the rest we scale the body sprites ourselves, the way Standout Enemies' "Big" quirk
-        // does: the engine offers no way to enumerate an entity's sprites, so we probe a superset
-        // of beast part names with hasSprite(). Extend the list if the summon pool grows new parts.
+        // For the rest we scale the body sprites ourselves.
         try {
             _beast.setSize(1.1);  // TODO: vary a bit?
         } catch (error) {
             local mult = 1.25;
-            foreach (part in ["body", "head", "head_frenzy", "legs_back", "legs_front",
-                              "injury", "body_blood", "armor"]) {
+            foreach (part in ::Druid.BodySprites) {
                 if (_beast.hasSprite(part)) _beast.getSprite(part).Scale *= mult;
             }
         }
