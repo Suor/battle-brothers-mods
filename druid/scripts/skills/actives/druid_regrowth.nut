@@ -1,7 +1,10 @@
 // Bestow Regrowth on an ally. Only one ally may carry it at a time, so this first strips
 // it from whoever holds it now, then grants it to the new target. No duration.
 this.druid_regrowth <- this.inherit("scripts/skills/skill", {
-    m = {},
+    m = {
+        // ID of the ally currently carrying our Regrowth, so we strip only our own bearer.
+        BearerID = null
+    },
     function create()
     {
         this.m.ID = "actives.druid_regrowth";
@@ -37,7 +40,7 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
 
     function isViableTarget(_user, _target)
     {
-        return _target.isAlliedWith(_user) && ::std.Actor.isAlive(_target);
+        return ::std.Actor.isAlive(_target) && _target.isAlliedWith(_user);
     }
 
     function onVerifyTarget(_originTile, _targetTile)
@@ -47,15 +50,15 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
         return this.isViableTarget(this.getContainer().getActor(), _targetTile.getEntity());
     }
 
-    // Strip Regrowth from any current bearer so only one ally carries it.
+    // Strip Regrowth from this druid's current bearer so only one ally carries ours.
+    // Other druids' Regrowth is left alone, even on the same side.
     function clearExisting()
     {
-        foreach (faction in [this.Const.Faction.Player, this.Const.Faction.PlayerAnimals]) {
-            foreach (actor in this.Tactical.Entities.getInstancesOfFaction(faction)) {
-                if (actor.getSkills().hasSkill("effects.druid_regeneration")) {
-                    actor.getSkills().removeByID("effects.druid_regeneration");
-                }
-            }
+        if (this.m.BearerID == null) return;
+        local bearer = this.Tactical.getEntityByID(this.m.BearerID);
+        this.m.BearerID = null;
+        if (!::std.Util.isNull(bearer)) {
+            bearer.getSkills().removeByID("effects.druid_regeneration");
         }
     }
 
@@ -65,7 +68,8 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
         local target = _targetTile.getEntity();
 
         this.clearExisting();
-        target.getSkills().add(this.new("scripts/skills/effects/druid_regeneration_effect"));
+        target.getSkills().add(::new("scripts/skills/effects/druid_regeneration_effect"));
+        this.m.BearerID = target.getID();
         target.setDirty(true);
 
         if (!target.isHiddenToPlayer()) {
