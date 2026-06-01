@@ -104,6 +104,52 @@ mod.hook("scripts/ai/tactical/behaviors/ai_engage_melee", function (q) {
     }
 })
 
+// Break out of ai_engage_melee spin: vanilla onExecute can return true with zero tile/AP
+// progress (e.g. findPath fails post-eval), then evaluate picks the same TargetTile from an
+// unchanged world and the bro cycles ~1/sec. Detector: full onExecute series returned true
+// but the bro neither moved, spent AP, nor took a wait turn. State on _entity.m._apStuck so
+// the entityWaitTurn hook below can flag .waited without reaching into the behavior.
+mod.hook("scripts/ai/tactical/behaviors/ai_engage_melee", function (q) {
+    q.evaluate = @(__original) function (_entity) {
+        if ("_apStuck" in _entity.m && _entity.m._apStuck.disabled) {
+            this.m.Score = 0;
+            return true;
+        }
+        return __original(_entity);
+    }
+    q.onBeforeExecute = @(__original) function (_entity) {
+        __original(_entity);
+        _entity.m._apStuck <- {
+            tileID = _entity.getTile().ID
+            ap = _entity.getActionPoints()
+            waited = false
+            disabled = false
+        }
+    }
+    q.onExecute = @(__original) function (_entity) {
+        local result = __original(_entity);
+        if (!result) return result;
+        local s = _entity.m._apStuck;
+        if (_entity.getTile().ID == s.tileID && _entity.getActionPoints() == s.ap && !s.waited) {
+            ::logWarning("autopilot: " + _entity.getName()
+                + " engage_melee made no progress, disabling");
+            s.disabled = true;
+        }
+        return result;
+    }
+})
+
+mod.hook("scripts/ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_bar",
+        function (q) {
+    q.entityWaitTurn = @(__original) function (_entity) {
+        local result = __original(_entity);
+        if (result && _entity != null && "_apStuck" in _entity.m) {
+            _entity.m._apStuck.waited = true;
+        }
+        return result;
+    }
+})
+
 mod.hook("scripts/ai/tactical/behavior", function (q) {
     // Sometimes _tile might be 0 ???
     q.querySpearwallValueForTile = @(__original) function (_entity, _tile) {
