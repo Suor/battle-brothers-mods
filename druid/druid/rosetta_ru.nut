@@ -151,8 +151,8 @@ local pairs = [
         ru = "Зелёный Плащ"
     }
     {
-        en = "This beast hunts with envenomed fang and sting. A deep enough bite poisons the prey, draining their hitpoints each turn until it fades."
-        ru = "Этот зверь охотится ядовитым клыком и жалом. Достаточно глубокий укус отравляет добычу, истощая её здоровье каждый ход, пока яд не выветрится."
+        en = "This beast hunts with envenomed fang and sting. A deep enough bite poisons the prey, leaving them with blurred vision and sluggish, uncoordinated movements until it fades."
+        ru = "Этот зверь охотится ядовитым клыком и жалом. Достаточно глубокий укус отравляет добычу: зрение мутнеет, а движения становятся вялыми и неуклюжими, пока яд не выветрится."
     }
     {
         en = "Fearless"

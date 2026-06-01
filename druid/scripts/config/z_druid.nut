@@ -22,7 +22,16 @@ addPerk({
             + " bestow it elsewhere and the previous one stops mending."
     Icon = "druid/perk_regrowth.png"
     IconDisabled = "druid/perk_regrowth_sw.png"
-    Row = 0
+    Row = 1
+})
+addPerk({
+    ID = "perk.druid.venom"
+    Script = "scripts/skills/perks/perk_druid_venom"
+    Name = "Venom"
+    Tooltip = "Your beasts hunt with envenomed fang and sting. Their bites poison the prey."
+    Icon = "druid/perk_venom.png"
+    IconDisabled = "druid/perk_venom_sw.png"
+    Row = 1
 })
 addPerk({
     ID = "perk.druid.entangle"
@@ -31,7 +40,7 @@ addPerk({
     Tooltip = "Call writhing roots from the earth to root an enemy in place."
     Icon = "druid/perk_entangle.png"
     IconDisabled = "druid/perk_entangle_sw.png"
-    Row = 2
+    Row = 3
 })
 addPerk({
     ID = "perk.druid.hatch"
@@ -51,16 +60,7 @@ addPerk({
             + green("confident") + " and will never flee the field."
     Icon = "druid/perk_pack_leader.png"
     IconDisabled = "druid/perk_pack_leader_sw.png"
-    Row = 3
-})
-addPerk({
-    ID = "perk.druid.venom"
-    Script = "scripts/skills/perks/perk_druid_venom"
-    Name = "Venom"
-    Tooltip = "Your beasts hunt with envenomed fang and sting. Their bites poison the prey."
-    Icon = "druid/perk_venom.png"
-    IconDisabled = "druid/perk_venom_sw.png"
-    Row = 5
+    Row = 4
 })
 addPerk({
     ID = "perk.druid.apex"
