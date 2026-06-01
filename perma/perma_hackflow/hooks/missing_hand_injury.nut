@@ -22,7 +22,7 @@
 
         items.unequip(item);
         if ("State" in ::Tactical && !::Tactical.State.isBattleEnded() && actor.isPlacedOnMap()) {
-            item.drop();
+            item.drop(actor.getTile());
         }
         else if (items.hasEmptySlot(::Const.ItemSlot.Bag)) {
             items.addToBag(item);
