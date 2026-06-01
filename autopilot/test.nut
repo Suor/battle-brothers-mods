@@ -1,18 +1,5 @@
-dofile(getenv("STDLIB_DIR") + "load.nut", true);
+dofile("../mocks.nut", true);
 
-::Hooks <- {
-    function getMod(_id) {
-        return {
-            // ID = _id
-            function hook(_filename, _func) {
-                _func({}.setdelegate({_set = @(k,v) null}))
-            }
-            function hookTree(_filename, _func) {
-                _func({}.setdelegate({_set = @(k,v) null}))
-            }
-        }
-    }
-};
 ::logInfo <- function (_text) {print(_text + "\n")}
 
 dofile("autopilot/fixes.nut", true);
@@ -29,5 +16,9 @@ assert(aref.isAlive());
 ::actor <- null;
 for (local i = 0; i < 1; i++) {time()} // Some time for gc
 assert(!aref.isAlive());
+
+// Load after the weakref GC check above (it's timing-sensitive); this just asserts every
+// behavior hook registers without tripping over the mock (e.g. q.m.PossibleSkills reads).
+dofile("autopilot/better_behavior.nut", true);
 
 print("Tests OK\n");
