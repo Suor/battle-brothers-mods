@@ -35,10 +35,10 @@ local mod = {
         func();
     }
     function hook(_filename, _func) {
-        _func({}.setdelegate({_set = @(k,v) null}))
+        _func({m = {PossibleSkills = []}}.setdelegate({_set = @(k,v) null}))
     }
     function hookTree(_filename, _func) {
-        _func({}.setdelegate({_set = @(k,v) null}))
+        _func({m = {PossibleSkills = []}}.setdelegate({_set = @(k,v) null}))
     }
 }
 ::Hooks <- {
@@ -144,5 +144,24 @@ local function makePage(name) {
 ::MSU.System <- {
     Registry = {
         ModSourceDomain = {NexusMods = "NexusMods", GitHubTags = "GithubTags"}
+    }
+}
+
+// AI behavior registry, mirrors MSU.AI.addBehavior: extends the Const.AI.Behavior tables.
+::Const.AI <- {
+    Behavior = {
+        ID = {COUNT = 100}
+        Name = []
+        Order = {AttackDefault = 60}
+        Score = {Attack = 100, Zero = 0}
+    }
+}
+::MSU.AI <- {
+    function addBehavior(_id, _name, _order, _score) {
+        ::Const.AI.Behavior.ID[_id] <- ::Const.AI.Behavior.ID.COUNT;
+        ::Const.AI.Behavior.ID.COUNT += 1;
+        ::Const.AI.Behavior.Name.push(_name);
+        ::Const.AI.Behavior.Order[_id] <- _order;
+        ::Const.AI.Behavior.Score[_id] <- _score;
     }
 }
