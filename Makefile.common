@@ -38,7 +38,21 @@ endef
 test: include check-compile
 	@if [[ -f "test.nut" ]]; then $(call run_squirrel,test.nut); fi
 
-check: test
+# The game engine (WebCore) can't read 16-bit PNGs - they silently fail to load in-game
+# ("Unable to get info for image"). Catch them at build time instead of shipping broken icons.
+check-gfx:
+	@set -e
+	if [[ -d gfx ]]; then
+		BAD=$$(find gfx -name \*.png -not -path '*/_*' -print0 | xargs -0 -r identify -format '%[bit-depth] %i\n' 2>/dev/null | awk '$$1 == 16 { print $$2 }');
+		if [[ -n "$$BAD" ]]; then
+			echo "16-bit PNGs found (BB engine needs 8-bit):";
+			echo "$$BAD";
+			exit 1;
+		fi
+		echo "GFX OK";
+	fi
+
+check: test check-gfx
 
 upload: zip
 	python3 ../_scripts/nexus_upload.py $(URL)

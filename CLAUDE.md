@@ -34,12 +34,16 @@ All commands run from within a specific mod's directory (e.g. `cd nicknames && m
 make check          # Run all the checks: syntax, tests, custom check
 make install        # Install to DATA_DIR (from .env)
 make zip            # Create release ZIP (checks for debug statements, uses git tag for name)
-make log            # Print first errors from the game's log.html with stacktraces
+make log            # Print first errors from the game's log.html with stacktraces (wraps `../_scripts/bb_log_errors.py`)
 ```
 
-Use `make log` to inspect failures. Look at the **first** error and ignore the JS/UI ConsoleAPI noise; those are downstream effects of an earlier squirrel failure.
+Use `make log` (or `../_scripts/bb_log_errors.py`) to inspect failures — this is the default for almost any "what blew up" question. Look at the **first** error and ignore the JS/UI ConsoleAPI noise; those are downstream effects of an earlier squirrel failure.
+
+For deeper traces use `../_scripts/parse_log.py` — flattens `log.html` to `HH:MM:SS [level] TAG | text`, plays nicely with `grep`. Default filter drops engine/rosetta noise; use `--all` to disable, `--level error,warning` / `--tag SQ` / `--tail N` to narrow. Reach for it only when you need context around `logInfo` calls our own code emits (decision loops, AI verbose mode, custom diagnostics), not for ordinary errors.
 
 Build config is in `.env` at repo root — sets `STDLIB_DIR`, `DATA_DIR`, `SCRIPTS`, etc. All mods use `include ../Makefile.common`.
+
+`make check` runs syntax + tests + a gfx guard + the mod's own check, often `rosetta -c`.
 
 ## Mod Architecture
 
