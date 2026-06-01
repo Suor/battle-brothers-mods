@@ -166,6 +166,10 @@ mod.hook("scripts/ai/tactical/behavior", function (q) {
         //     score *= 1.0 + (1.0 - this.Math.minf(1.0, this.queryActorTurnsNearTarget(_target, myTile, _entity).Turns)) * ::Const.AI.Behavior.AttackDangerMult;
         // }
 
+        // Vanilla queryTargetValue underweights hitchance (small additive term, no factor on
+        // expectedDamage). Hitchance is engine-capped to [5, 95].
+        if ("_autopilot" in _entity.m) score *= _skill.getHitchance(_target) / 100.0;
+
         return score;
     }
 })
