@@ -9,28 +9,20 @@ local def = ::Druid <- {
     }
     FakeKill = false
 
+    // Beast body-part sprites; can't enumerate an entity's sprites, so we probe these with hasSprite().
+    BodySprites = ["body", "body_blood", "head", "head_frenzy", "injury",
+                   "legs_back", "legs_front", "armor"]
+
     // Which background script the origin scenario and (when XBE is absent) the settlement
     // draft lists should use. Overridden to XBE's druid in the queue when XBE is present.
     BackgroundScript = "druid_background"
-
-    // The beast-summoning bits that turn a plain background into a Druid. Defined once here so
-    // that both our own background and the XBE druid we hijack reuse them instead of copy-pasting.
-    function addSummonActive(_background) {
-        _background.m.Container.add(::new("scripts/skills/actives/druid_summon_beast"));
-    }
-    function summonTooltipEntry() {
-        return {
-            id = 10
-            type = "text"
-            icon = "ui/icons/special.png"
-            text = "Can summon a beast fitting the battlefield to fight at his side"
-        };
-    }
 }
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("mod_msu >= 1.6.0", "stdlib >= 2.1");
-mod.queue(">mod_reforged", function () {
+mod.queue(">mod_reforged", ">mod_background_perks",
+          ">mod_backgrounds_and_events", ">mod_backgrounds_and_events_reforged_patch",
+        function () {
     ::include("druid/rosetta_ru");
 
     local Util = ::std.Util, Debug = ::std.Debug.with({prefix = "druid: "});
@@ -42,37 +34,32 @@ mod.queue(">mod_reforged", function () {
     def.msu.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
     def.msu.Registry.setUpdateSource(msd.GitHubTags);
 
+    // TODO: do we really need it?
     ::MSU.Skills.addEvent("onSummonBeast", function (_beast) {});
 
     ::Hooks.registerJS("ui/mods/druid.js");
     ::Hooks.registerCSS("ui/mods/druid.css");
 
-    // XBE compat: it ships its own Druid under the same background.hackflows_druid ID. When it's
-    // present we graft our summoning onto XBE's druid instead of adding a second one, and leave
-    // drafts (and perk/bonus keying on that ID) to XBE.
-    local hasXbe = ::Hooks.hasMod("mod_backgrounds_and_events");
-    if (hasXbe) def.BackgroundScript = "hackflows/druid_background";
+    if ("BgPerks" in getroottable()) {
+        ::std.Table.extend(::BgPerks.chances.hackflows_druid, {
+            "druid.entangle": 5
+            "druid.hatch": 3
+            "druid.pack_leader": 1
+        })
+    }
 
-    if (hasXbe) {
-        // Additive hooks only: XBE's flavour, the Reforged shim's perk tree and Background
-        // Bonuses' tooltip wrapping all stay intact; we just add the summon active and its line.
+
+    // If More Backgrounds and Events present we repurpose it's druid background.
+    // We queue after the Reforged compat patch to overwrite it.
+    if (::Hooks.hasMod("mod_backgrounds_and_events")) {
+        def.BackgroundScript = "hackflows/druid_background";
+
         mod.hook("scripts/skills/backgrounds/hackflows/druid_background", function (q) {
-            q.onAdded = @(__original) function () {
-                __original();
-                ::Druid.addSummonActive(this);
-            }
-            q.getTooltip = @(__original) function () {
-                local tooltip = __original();
-                tooltip.push(::Druid.summonTooltipEntry());
-                return tooltip;
-            }
-            // Guarantee the Druid perk group. XBE's druid (via the Reforged compat shim) builds
-            // its tree from a DynamicMap, so addSpecialPerkGroups() runs - but the shim never
-            // returns a multiplier for pg.druid, leaving its Chance at 0. A negative multiplier
-            // forces calculateChance() to 100, the same trick our own background uses.
-            q.getPerkGroupMultiplier = @(__original) function (_groupID, _perkTree) {
-                if (_groupID == "pg.druid") return -1;
-                return __original(_groupID, _perkTree);
+            ::include("druid/scripts/skills/backgrounds/druid_background");
+            foreach (name, member in ::Druid.BackgroundMethods) {
+                if (typeof member != "function") continue;
+                if (q.contains(name, true)) q[name] = @(__original) member; // replace existing method
+                else                        q[name] <- member;             // add new (e.g. Reforged-only)
             }
         })
     }
@@ -88,7 +75,7 @@ mod.queue(">mod_reforged", function () {
 
             q.create = @(__original) function () {
                 __original();
-                for (local i = 0; i < num; i++) this.m.DraftList.push(def.BackgroundScript);
+                for (local i = 0; i < num; i++) m.DraftList.push(def.BackgroundScript);
             }
         })
     // }

@@ -1,10 +1,12 @@
-this.druid_background <- this.inherit("scripts/skills/backgrounds/character_background", {
-    m = {},
+// Druid background methods. Defined as a plain table so they can be either inherited into our own
+// standalone background (when XBE is absent) or copied wholesale onto XBE's druid (see mod_druid.nut).
+local def = {
+    m = {}
     function create()
     {
         this.character_background.create();
         this.m.ID = "background.hackflows_druid";
-        this.m.Icon = "ui/backgrounds/background_36.png";
+        this.m.Icon = "druid/background_druid.png";
         this.m.Name = "Druid";
 
         this.m.HiringCost = 1400;
@@ -13,13 +15,20 @@ this.druid_background <- this.inherit("scripts/skills/backgrounds/character_back
             ::Const.Attributes.RangedSkill
         ];
         this.m.Excluded = [
-            "trait.impatient"
-            "trait.iron_jaw"
-            "trait.clubfooted"
-            "trait.dumb"
-            "trait.insecure"
             "trait.brute"
+            "trait.clubfooted"
+            "trait.cocky"
+            "trait.dumb"
+            "trait.fat"
+            "trait.gluttonous"
+            "trait.greedy"
+            "trait.hate_beasts"
+            "trait.impatient"
+            "trait.insecure"
+            "trait.night_blind",
+            "trait.short_sighted"
             "trait.superstitious"
+            "trait.teamplayer"
         ];
         this.m.Titles = [
             "the Druid",
@@ -41,30 +50,33 @@ this.druid_background <- this.inherit("scripts/skills/backgrounds/character_back
             DynamicMap = {
                 "pgc.rf_exclusive_1": [],
                 "pgc.rf_shared_1": [],
-                "pgc.rf_weapon": ["pg.rf_spear"],
+                "pgc.rf_weapon": [],
                 "pgc.rf_armor": [],
                 "pgc.rf_fighting_style": []
             }
         });
     }
 
-    # TODO: unify with xbe and xbe/reforged
-    PerkTreeMultipliers = {
-        "pg.druid": -1
-        "pg.rf_fast": 1.5,
-        "pg.rf_tough": 0.7,
-        "pg.special.rf_leadership": 1.3
-        "pg.special.rf_student": 1.5
-        "pg.rf_axe": 0
-        "pg.rf_hammer": 0.3
-        "pg.rf_spear": 1.5
-        "pg.rf_polearm": 1.3
-        "pg.rf_crossbow": 0
-        "pg.rf_heavy_armor": 0
-    }
     function getPerkGroupMultiplier(_groupID, _perkTree)
     {
-        return ::std.Table.get(PerkTreeMultipliers, _groupID)
+        return ::std.Table.get({
+            "pg.druid": -1
+            "pg.rf_vigorous": 1.5
+            "pg.special.rf_student": 1.5
+        }, _groupID)
+    }
+
+    // Borrowed from XBE's Reforged compat shim so we fully own the tree when both are present.
+    function getPerkGroupCollectionMin(_collection)
+    {
+        switch (_collection.getID())
+        {
+            case "pgc.rf_shared_1":
+                return _collection.getMin() + 1;
+
+            case "pgc.rf_fighting_style":
+                return _collection.getMin() - 1;
+        }
     }
 
     function getTooltip()
@@ -80,17 +92,20 @@ this.druid_background <- this.inherit("scripts/skills/backgrounds/character_back
                 type = "description",
                 text = this.getDescription()
             }
-            ::Druid.summonTooltipEntry()
+            {
+                id = 10
+                type = "text"
+                icon = "ui/icons/special.png"
+                text = "Can summon a beast fitting the battlefield to fight at his side"
+            }
         ];
     }
 
     function onBuildDescription()
     {
-        # TODO: unify with xbe description somehow
         return "{Wrapped in furs and bark-dyed cloth, %name% smells of moss and old rain. | %name% speaks little to men and much to the trees, or so it seems. | Wherever %name% treads, beasts watch from the treeline and do not flee. | %name% carries no idols, yet kneels often to press an ear against the soil. | The crows seem to follow %name%, and he never shoos them away.} {He was raised at the forest's edge, far from any lord's reach. | Some say he was a hermit who learned the old green tongues. | He was driven from his village for speaking with wolves, they whisper. | None know whence he came, only that the woods opened to let him pass. | He claims the wild folk taught him, and you are not inclined to argue.} {%name% whistles a low note and a hare comes to his hand, then bounds away. | %name% lays a palm on a sick mule and by morning it stands hale. | %name% names the weather by the smell of the wind, and is seldom wrong. | %name% points to a thicket and bids you wait - moments later a stag breaks cover where he pointed.}";
     }
 
-    # TODO: unify with xbe and xbe/reforged
     function onChangeAttributes()
     {
         local c = {
@@ -109,7 +124,7 @@ this.druid_background <- this.inherit("scripts/skills/backgrounds/character_back
     function onAdded()
     {
         this.character_background.onAdded();
-        ::Druid.addSummonActive(this);
+        this.m.Container.add(::new("scripts/skills/actives/druid_summon_beast"));
     }
 
     function onAddEquipment()
@@ -125,7 +140,6 @@ this.druid_background <- this.inherit("scripts/skills/backgrounds/character_back
         switch (::Math.rand(1, 5)) {
             case 1:
                 items.equip(::new("scripts/items/armor/leather_tunic"));
-                items.equip(::new("scripts/items/helmets/hood"));
                 break;
             case 2:
                 items.equip(::new("scripts/items/armor/monk_robe"));
@@ -144,4 +158,8 @@ this.druid_background <- this.inherit("scripts/skills/backgrounds/character_back
                 break;
         }
     }
-});
+}
+
+// Expose the methods for the XBE-overwrite path, and build the standalone background by inheritance.
+::Druid.BackgroundMethods <- def;
+this.druid_background <- this.inherit("scripts/skills/backgrounds/character_background", clone def);
