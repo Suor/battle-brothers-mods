@@ -1,3 +1,6 @@
+2.0.3
+- fixed a two-handed weapon or a shield lost upon missing a hand
+
 2.0.2
 - fixed actor being non-WeakTableRef null, some mod incompat
 - change Double Grip to Stub Bonus if hand is missing
