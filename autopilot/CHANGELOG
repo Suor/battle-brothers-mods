@@ -1,3 +1,13 @@
+2.8.0
+- added step_n_hit behavior to make 2-tile/backrow bros more active
+- swap quivers
+- weigh hitchance for ranged targets (no more shooting geists)
+- better ranged target selection
+- do not stuck 2-tile bro behind a whip ones
+- added Q, Enter, Esc hotkeys
+- fixed occasional engage_melee hang up
+- fixed ranged bros not doing anything occasionally
+
 2.7.1
 - fixed animals trying to pick up weapon hanging up (NgGH Magic Origins)
 - try do less friendly fire

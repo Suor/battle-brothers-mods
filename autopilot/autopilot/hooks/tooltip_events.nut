@@ -56,7 +56,7 @@
         {
             id = 2,
             type = "description",
-            text = "Ends the current character's turn and gives control of the party to the AI."
+            text = "Give control of the party to the AI."
         }
     ]
 }

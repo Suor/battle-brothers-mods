@@ -15,6 +15,15 @@ Download a zip from [NexusMods][] and put it into `data` dir. Requires [stdlib][
 It is possible to configure whether bros will free themselves and other bros from nets, webs and sleep and auto reload if some AP left at end turn. Also, there is a way to show AI debug for auto bros. Press Esc -> Mod Options -> Autopilot New. Consult field tooltips there for more info.
 
 
+## Hotkeys
+
+- `Q` - Switch to Auto
+- `H` - Mass Wait Turn
+- `N` - Mass Shield Wall
+- `V` - Cancel Auto or Mass Action
+- `Enter` / `Esc` - confirm / dismiss a popup dialog
+
+
 ## Compatibility
 
 Is always safe to add or remove. Only uses hooks now, no overwritten files.
@@ -38,11 +47,10 @@ AI mode uses military melee and ranged agents to control your bros. Some behavio
 
 So, what auto bros won't do currently (probably, not an exhaustive list):
 
-- change ammo
 - throw grenades, holy water, acid
 - use poison, bandages
 - taunt
-- use any active skills from other mods, unless added to some common behavior by their mod or mentioned lower, i.e. Sprint from Reforged, which are not used by enemy military
+- use any active skills from other mods, unless added to some common behavior by their mod or mentioned lower,
 - use custom weapon skills that are not used by enemies, unless added here manually
 
 The last two points might be fixed easy enough if there are behaviors in that mod. So *contact me* to add those to autopilot agent.
@@ -61,16 +69,19 @@ Aside from better compatibility my modifications to auto bros behavior include:
 - pick up a weapon
 - throw nets, unleash dogs, beat the drum
 - equip a net or a shield from bag (completely new behaviors)
+- swap for a new quiver from the bag
 - much better Raise Undead behavior
+- better ranged target selection (no more shooting at geists)
 - mind spent fatigue more when thinking of using shield wall, split shield, adrenaline, rotation, knock back and disengage
 - specific improvements to 2-tile bros:
     - more active overall, move and attack more, wait less
-    - do not hide behind throwing bros
+    - do not hide behind throwing and whip bros
 - specific improvements to throwing bros:
     - lock into melee less
     - do not be afraid of throwing over the shoulder of an ally
     - do not move next to an ally to protect him, i.e. like a melee bro
     - account for missile diversion properly
+- some hotkeys added
 
 Support some skills from third-party mods:
 

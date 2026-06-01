@@ -1,7 +1,7 @@
 local def = ::Autopilot <- {
     ID = "mod_autopilot_new"
     Name = "Autopilot New"
-    Version = "2.7.1"
+    Version = "2.8.0"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/675"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/autopilot"
