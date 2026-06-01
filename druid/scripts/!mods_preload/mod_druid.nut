@@ -83,14 +83,14 @@ mod.queue(">mod_reforged", ">mod_background_perks",
     // The Druid earns XP and kills from his beasts, but should not fire on-kill effects.
     mod.hookTree("scripts/skills/skill", function (q) {
         q.onTargetKilled = @(__original) function (_targetEntity, _skill) {
-            if (!def.FakeKill || this.m.ID == "special.stats_collector") {
+            if (!def.FakeKill || m.ID == "special.stats_collector") {
                 return __original(_targetEntity, _skill);
             }
         }
     })
 
     mod.hook("scripts/entity/tactical/actor", function (q) {
-        q.m.druid_RaisedByPlayer <- false;
+        q.m.druid_Summoned <- false;
         q.druid_master <- function () {
             if ("druid_master" in m && !m.druid_master.isNull()) return m.druid_master;
             return null;
@@ -106,12 +106,23 @@ mod.queue(">mod_reforged", ">mod_background_perks",
             __original(_actor, _tile, _skill);
         }
 
+        // Enemy beast sprites face left; flip them to face right while the summon fights for us.
+        // In onFactionChanged so a charm/uncharm keeps the orientation right.
+        q.onFactionChanged = @(__original) function() {
+            __original();
+            if (!m.druid_Summoned) return;
+            local flip = isAlliedWithPlayer();
+            foreach (part in ::Druid.BodySprites) {
+                if (hasSprite(part)) getSprite(part).setHorizontalFlipping(flip);
+            }
+        }
+
         // Pack Leader's fearless beasts feel morale like anyone - they can be shaken down to
         // Breaking and suffer for it - but the roll can never push them into Fleeing. We cap the
         // negative change so the state floors at Breaking instead of routing them off the field.
         q.checkMorale = @(__original) function( _change, _difficulty, _type = this.Const.MoraleCheckType.Default, _showIconBeforeMoraleIcon = "", _noNewLine = false ) {
-            if (_change < 0 && this.getSkills().hasSkill("racial.druid_fearless")) {
-                _change = this.Math.max(_change, this.Const.MoraleState.Breaking - this.getMoraleState());
+            if (_change < 0 && getSkills().hasSkill("racial.druid_fearless")) {
+                _change = Math.max(_change, Const.MoraleState.Breaking - getMoraleState());
             }
             return __original(_change, _difficulty, _type, _showIconBeforeMoraleIcon, _noNewLine);
         }

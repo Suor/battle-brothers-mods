@@ -149,9 +149,10 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         if (beast == null) return false;
         if (boostApex) this.makeApex(beast);
 
-        beast.setFaction(this.Const.Faction.PlayerAnimals);
         beast.m.druid_master <- ::MSU.asWeakTableRef(_user);
-        beast.m.druid_RaisedByPlayer = true;
+        // Set before setFaction so the onFactionChanged hook flips the body sprites.
+        beast.m.druid_Summoned = true;
+        beast.setFaction(this.Const.Faction.PlayerAnimals);
 
         // Pack Leader: beasts arrive emboldened - they start Confident and, thanks to the
         // fearless racial, never break or flee. Unlike MoraleState.Ignore they still react
