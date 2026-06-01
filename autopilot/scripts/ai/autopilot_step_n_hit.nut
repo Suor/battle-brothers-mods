@@ -6,10 +6,9 @@
 // engage_melee, this behavior fires earlier with a real plan; engage_melee remains as the
 // fallback for open-ended positioning.
 //
-// Guardrails (kept conservative for the first iteration):
+// Guardrails (kept conservative):
 //   - Never leave own ZoC (that's ai_disengage's job).
 //   - Never step onto a tile in opponent ZoC.
-//   - Don't step from a safe tile into a threatened one.
 //   - Activates only when current AP/fatigue covers both the step path and the attack.
 //
 // Logging is gated by ::Const.AI.VerboseMode (autopilot mod's "verbose" setting flips this on
@@ -52,7 +51,6 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
 
         // Silent skips for bros that aren't this behavior's audience — these fire on every roster
         // eval, no signal to log.
-        if (!("_autopilot" in _entity.m)) return ::Const.AI.Behavior.Score.Zero;
         if (_entity.m._autopilot.ranged) return ::Const.AI.Behavior.Score.Zero;
         if (_entity.getIdealRange() != 2) return ::Const.AI.Behavior.Score.Zero;
 
@@ -71,24 +69,20 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
         if (skill == null) return ::Const.AI.Behavior.Score.Zero;  // logged inside picker
 
         local apForAttack = skill.getActionPointCost();
-        local fatigueForAttack = skill.getFatigueCost();
-        local apBudget = _entity.getActionPoints() - apForAttack;
-        local fatigueBudget = _entity.getFatigueMax() - _entity.getFatigue() - fatigueForAttack;
-        if (apBudget <= 0) return this.snh_bail(_entity, "no AP left for movement (have " + _entity.getActionPoints() + ", attack=" + apForAttack + ")");
-        if (fatigueBudget < 0) return this.snh_bail(_entity, "would exhaust on attack alone");
+        local fullAP = _entity.getActionPoints();
+        local fullFat = _entity.getFatigueMax() - _entity.getFatigue();
 
         local navigator = this.Tactical.getNavigator();
         local settings = this.snh_buildSettings(_entity, navigator);
         local myDanger = this.snh_isTileInDanger(_entity, myTile);
 
-        local seen = {};
         local candidates = [];
         local opponents = this.getAgent().getKnownOpponents();
 
         // Counters for diagnosis when no candidate is picked.
         local examined = 0, rejNotEmpty = 0, rejOccupied = 0, rejZoc = 0, rejSkillUsable = 0,
               rejDanger = 0, rejNoPath = 0, rejCostIncomplete = 0, rejWrongEnd = 0,
-              rejTargetValue = 0;
+              rejOverBudget = 0, rejTargetValue = 0;
 
         foreach (op in opponents) {
             if (op.Actor == null || !::std.Actor.isAlive(op.Actor)) continue;
@@ -101,17 +95,12 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
             // Preserves height advantage / lets us choose between staying and stepping based on
             // tile quality rather than always moving.
             if (skill.isUsableOn(targetTile, myTile)) {
-                local v = this.queryTargetValue(_entity, target, skill);
-                if (v > 0) {
-                    local s = this.snh_scoreTile(_entity, v, 0, myTile, targetTile);
-                    if (s > 0) candidates.push({Tile = myTile, Target = target, Skill = skill, Score = s});
-                }
+                local s = this.snh_scorePlan(_entity, target, skill, 0, myTile);
+                if (s > 0) candidates.push({Tile = myTile, Target = target, Skill = skill, Score = s});
             }
 
-            foreach (destTile in this.snh_iterTilesAt(targetTile, skill.getMinRange(), skill.getMaxRange())) {
+            foreach (destTile in queryDestinationsInRange(targetTile, skill.getMinRange(), skill.getMaxRange())) {
                 if (destTile.ID == myTile.ID) continue;
-                if (destTile.ID in seen) continue;
-                seen[destTile.ID] <- true;
                 examined++;
 
                 if (!destTile.IsEmpty) { rejNotEmpty++; continue; }
@@ -125,14 +114,16 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
                 }
 
                 if (!navigator.findPath(myTile, destTile, settings, 0)) { rejNoPath++; continue; }
-                local cost = navigator.getCostForPath(_entity, settings, apBudget, fatigueBudget);
+                local cost = navigator.getCostForPath(_entity, settings, fullAP, fullFat);
                 if (!cost.IsComplete) { rejCostIncomplete++; continue; }
                 if (cost.End.ID != destTile.ID) { rejWrongEnd++; continue; }
+                // IsComplete just means a path exists; verify it leaves room for the attack.
+                if (fullAP - cost.ActionPointsRequired < apForAttack) {
+                    std.Debug.log("snh: movementCost", cost);
+                    rejOverBudget++; continue; }
+                // if (fullFat - cost.Tiles * maxFatPerTile < fatigueForAttack) { rejOverBudget++; continue; }
 
-                local v = this.queryTargetValue(_entity, target, skill);
-                if (v <= 0) { rejTargetValue++; continue; }
-
-                local s = this.snh_scoreTile(_entity, v, cost.ActionPointsRequired, destTile, targetTile);
+                local s = this.snh_scorePlan(_entity, target, skill, cost.ActionPointsRequired, destTile);
                 if (s <= 0) { rejTargetValue++; continue; }
 
                 candidates.push({Tile = destTile, Target = target, Skill = skill, Score = s});
@@ -145,9 +136,9 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
                 + " zoc=" + rejZoc + " skillUsable=" + rejSkillUsable
                 + " danger=" + rejDanger + " noPath=" + rejNoPath
                 + " costIncomplete=" + rejCostIncomplete + " wrongEnd=" + rejWrongEnd
-                + " targetValue=" + rejTargetValue
+                + " overBudget=" + rejOverBudget + " targetValue=" + rejTargetValue
                 + ") myDanger=" + myDanger + " skill=" + skill.getID()
-                + " apBudget=" + apBudget + " fatBudget=" + fatigueBudget);
+                + " fullAP=" + fullAP + " fullFat=" + fullFat + " apForAttack=" + apForAttack);
             return ::Const.AI.Behavior.Score.Zero;
         }
 
@@ -226,8 +217,9 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
 
         local target = this.m.TargetActor;
         local skill = this.m.Skill;
-        if (::std.Actor.isAlive(target) && skill != null && skill.isAffordable()
-                && skill.isUsableOn(target.getTile())) {
+        if (::std.Actor.isValidTarget(target) && skill != null
+            && skill.isUsableOn(target.getTile()))
+        {
             this.snh_log(_entity, "execute: attacking " + target.getName()
                 + " with " + skill.getID());
             skill.use(target.getTile());
@@ -268,11 +260,14 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
         return true;
     }
 
-    function snh_scoreTile(_entity, _baseValue, _apCost, _tile, _targetTile) {
+    function snh_scorePlan(_entity, _target, _skill, _apCost, _tile) {
         // Mirror vanilla engage_melee's tile preferences: high ground bonus / low ground penalty
         // Q: maybe revert mult to vanilla ones and just jack up weights pow to 10?
-        local s = _baseValue - _apCost * 0.05;
-        s = _tile.Level - _targetTile.Level > 0 ? s * 1.5 : s / 1.5;
+        local v = this.queryTargetValue(_entity, _target, _skill);
+        if (v <= 0) return 0;
+        local targetTile = _target.getTile();
+        local s = v - _apCost * 0.05;
+        s = _tile.Level - targetTile.Level > 0 ? s * 1.5 : s / 1.5;
         if (_tile.IsBadTerrain) s *= 0.6; // Q: EngageBadTerrainPenalty?
         // Fire / poison clouds / catapult-mark tiles - discourage drastically.
         // TODO: should follow EngageOnBadTerrainPenaltyMult, and maybe somehow
@@ -325,7 +320,7 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
         local s = _navigator.createSettings();
         s.ActionPointCosts = _entity.getActionPointCosts();
         s.FatigueCosts = _entity.getFatigueCosts();
-        s.FatigueCostFactor = 0.0;
+        s.FatigueCostFactor = 1.0;
         s.ActionPointCostPerLevel = _entity.getLevelActionPointCost();
         s.FatigueCostPerLevel = _entity.getLevelFatigueCost();
         s.MaxLevelDifference = _entity.getMaxTraversibleLevels();
@@ -334,22 +329,6 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
         s.AlliedFactions = _entity.getAlliedFactions();
         s.Faction = _entity.getFaction();
         return s;
-    }
-
-    function snh_iterTilesAt(_center, _minRange, _maxRange) {
-        local result = [];
-        local cx = _center.SquareCoords.X;
-        local cy = _center.SquareCoords.Y;
-        for (local dx = -_maxRange; dx <= _maxRange; dx++) {
-            for (local dy = -_maxRange; dy <= _maxRange; dy++) {
-                local x = cx + dx, y = cy + dy;
-                if (!this.Tactical.isValidTile(x, y)) continue;
-                local t = this.Tactical.getTileSquare(x, y);
-                local d = _center.getDistanceTo(t);
-                if (d >= _minRange && d <= _maxRange) result.push(t);
-            }
-        }
-        return result;
     }
 
     function snh_isTileInDanger(_entity, _tile) {

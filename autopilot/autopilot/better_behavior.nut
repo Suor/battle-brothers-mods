@@ -110,6 +110,22 @@ mod.hook("scripts/ai/tactical/behaviors/ai_recover", function (q) {
         "actives.rf_bestial_vigor" // Reforged
     ]);
 });
+// Boost rally when step_n_hit also wants to fire, so the weighted-random pick favors rally
+// (bannermen / backrow polearm bros otherwise lose rally to step_n_hit too often).
+// TODO: make it smarter somehow and maybe more universal?
+mod.hook("scripts/ai/tactical/agent", function (q) {
+    q.sortBehaviors = @(__original) function () {
+        local snh = null, rally = null;
+        foreach (b in this.m.Behaviors) {
+            if (b.getID() == ::Const.AI.Behavior.ID.AP_StepNHit) snh = b;
+            else if (b.getID() == ::Const.AI.Behavior.ID.Rally) rally = b;
+        }
+        if (snh != null && rally != null && snh.getScore() > 0 && rally.getScore() > 0) {
+            rally.m.Score = rally.m.Score * 2.0;
+        }
+        __original();
+    }
+});
 
 // Adjust fatigue score mult
 mod.hook("scripts/ai/tactical/behavior", function (q) {
