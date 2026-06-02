@@ -79,6 +79,10 @@ local pairs = [
         ru = "Клюв Ворона"
     }
     {
+        en = "Glaive-Guisarme"
+        ru = "Глефа-Гизарма"
+    }
+    {
         en = "Bohemian Earspoon"
         ru = "Богемский Шпиль"
     }
@@ -829,140 +833,15 @@ local pairs = [
         ru = "Великий <name>"
     }
     // FILE: scripts/entity/world/locations/noble_barracks_location.nut
-    {
-        // this.m.Name = this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName([
-        //  "'s Camp",
-        //  "'s Rest",
-        //  "'s Barracks",
-        //  "'s Muster"
-        //  ]);
-        mode = "pattern"
-        en = "<name:str>'s Camp"
-        ru = "Лагерь <name>"
-    }
-    {
-        // this.m.Name = this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName([
-        //  "'s Camp",
-        //  "'s Rest",
-        //  "'s Barracks",
-        //  "'s Muster"
-        //  ]);
-        mode = "pattern"
-        en = "<name:str>'s Rest"
-        ru = "Стоянка <name>"
-    }
-    {
-        // this.m.Name = this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName([
-        //  "'s Camp",
-        //  "'s Rest",
-        //  "'s Barracks",
-        //  "'s Muster"
-        //  ]);
-        mode = "pattern"
-        en = "<name:str>'s Barracks"
-        ru = "Казармы <name>"
-    }
-    {
-        // this.m.Name = this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName([
-        //  "'s Camp",
-        //  "'s Rest",
-        //  "'s Barracks",
-        //  "'s Muster"
-        //  ]);
-        mode = "pattern"
-        en = "<name:str>'s Muster"
-        ru = "Сбор <name>"
-    }
     // FILE: scripts/entity/world/locations/noble_stronghold_location.nut
-    {
-        // this.m.Name = this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName([
-        //  "'s Bulwark",
-        //  "'s Fortress",
-        //  "'s Holdfast",
-        //  "'s Castle"
-        //  ]);
-        mode = "pattern"
-        en = "<name:str>'s Bulwark"
-        ru = "Бастион <name>"
-    }
-    {
-        // this.m.Name = this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName([
-        //  "'s Bulwark",
-        //  "'s Fortress",
-        //  "'s Holdfast",
-        //  "'s Castle"
-        //  ]);
-        mode = "pattern"
-        en = "<name:str>'s Fortress"
-        ru = "Крепость <name>"
-    }
-    {
-        // this.m.Name = this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName([
-        //  "'s Bulwark",
-        //  "'s Fortress",
-        //  "'s Holdfast",
-        //  "'s Castle"
-        //  ]);
-        mode = "pattern"
-        en = "<name:str>'s Holdfast"
-        ru = "Редут <name>"
-    }
-    {
-        // this.m.Name = this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName([
-        //  "'s Bulwark",
-        //  "'s Fortress",
-        //  "'s Holdfast",
-        //  "'s Castle"
-        //  ]);
-        mode = "pattern"
-        en = "<name:str>'s Castle"
-        ru = "Замок <name>"
-    }
     // FILE: scripts/entity/world/locations/noble_tower_location.nut
-    {
-        // this.m.Name = this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName([
-        //  "'s Tower",
-        //  "'s Post",
-        //  "'s Watch",
-        //  "'s Refuge"
-        //  ]);
-        mode = "pattern"
-        en = "<name:str>'s Tower"
-        ru = "Башня <name>"
-    }
-    {
-        // this.m.Name = this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName([
-        //  "'s Tower",
-        //  "'s Post",
-        //  "'s Watch",
-        //  "'s Refuge"
-        //  ]);
-        mode = "pattern"
-        en = "<name:str>'s Post"
-        ru = "Пост <name>"
-    }
-    {
-        // this.m.Name = this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName([
-        //  "'s Tower",
-        //  "'s Post",
-        //  "'s Watch",
-        //  "'s Refuge"
-        //  ]);
-        mode = "pattern"
-        en = "<name:str>'s Watch"
-        ru = "Вышка <name>"
-    }
-    {
-        // this.m.Name = this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName([
-        //  "'s Tower",
-        //  "'s Post",
-        //  "'s Watch",
-        //  "'s Refuge"
-        //  ]);
-        mode = "pattern"
-        en = "<name:str>'s Refuge"
-        ru = "Убежище <name>"
-    }
+    // These build the same "<name>'s X" runtime names as the citystate_* locations above,
+    // only the name source differs (CharacterNames vs SouthernOfficerTitles). The runtime
+    // strings are already covered by the citystate "<name:str>'s X" patterns, so ignore the
+    // raw concat expressions here.
+    // en = "<this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName(['s Camp, 's Rest, 's Barracks, 's Muster])>"
+    // en = "<this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName(['s Bulwark, 's Fortress, 's Holdfast, 's Castle])>"
+    // en = "<this.World.EntityManager.getUniqueLocationName(this.Const.Strings.CharacterNames) + this.World.EntityManager.getUniqueLocationName(['s Tower, 's Post, 's Watch, 's Refuge])>"
     // FILE: scripts/entity/world/locations/nomad_heretic_location.nut
     {
         en = "A heretic sect from the south; having established their own kingdom, it is only a matter of time before they move on the city-states."
@@ -1132,6 +1011,10 @@ local pairs = [
     {
         en = "Night Vision"
         ru = "Ночное Зрение"
+    }
+    {
+        en = "Self-Repairing"
+        ru = "Самопочинка"
     }
     {
         en = "Preternatural Dodge"
