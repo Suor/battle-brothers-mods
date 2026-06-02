@@ -62,13 +62,12 @@ mod.queue(">mod_reforged", ">mod_background_perks",
                 else                        q[name] <- member;             // add new (e.g. Reforged-only)
             }
         })
-    }
-    // else {
+    } else {
         // No XBE: make our own Druid hireable by seeding his background into settlement draft
         // lists. Prefer the woods (forest/lumber) and the swamps.
         mod.hookTree("scripts/entity/world/settlement", function (q) {
             local cn = q.ClassName;
-            local num = 19;
+            local num = 1;
             local isWild = cn.find("_forest_") != null || cn.find("_lumber_") != null
                         || cn.find("_swamp_") != null;
             if (isWild) num++;
@@ -78,7 +77,7 @@ mod.queue(">mod_reforged", ">mod_background_perks",
                 for (local i = 0; i < num; i++) m.DraftList.push(def.BackgroundScript);
             }
         })
-    // }
+    }
 
     // The Druid earns XP and kills from his beasts, but should not fire on-kill effects.
     mod.hookTree("scripts/skills/skill", function (q) {
