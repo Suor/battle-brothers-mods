@@ -114,7 +114,6 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         ]
         local skills = getSkills()
         if (::std.Array.any(necroSkills, @(s) skills.hasSkill(s))) {
-            ::logInfo("ap: setting up a necro")
             agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_raise_undead"));
             agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_possess_undead"));
             // This adds keep safe distance behavior
@@ -124,6 +123,13 @@ mod.hook("scripts/entity/tactical/player", function (q) {
 
             agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.EngageMelee] = 0.5;
             agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.EngageRanged] = 0.5;
+        }
+
+        // Druid: summon beasts, root foes and bestow regrowth on allies
+        if (::Hooks.hasMod("mod_druid")) {
+            agent.addBehavior(::new("scripts/ai/autopilot_summon_beast"));
+            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_root"));
+            agent.addBehavior(::new("scripts/ai/autopilot_regrowth"));
         }
 
         // Fantasy Brothers: prefer shooting to walking

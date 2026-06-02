@@ -1,6 +1,6 @@
 # Autopilot New
 
-*This is authored by AdamMil01 and significatly modified by me. Original is available [here][original]*
+*This mods stems from Autopilot by AdamMil01 but came a long way since then.*
 
 This mod adds some automation and quality-of-life improvements to battles: fast item switching, auto-passing, auto-shieldwalling, ignoring bros and AI control. Also automatically uses some skills at the end of your turn - reload, break free, wake up ally and recover when it makes sense.
 
@@ -38,6 +38,7 @@ Tested with:
 - Heroic Scenario Pack
 - Fantasy Brothers (only some custom skills will be used)
 - [Proper Necromancer][necro] (uses Raise Undead and Possess)
+- [Druid][druid] (summon, root and regrowth)
 - NgGH Magic Origins
 
 
@@ -92,6 +93,7 @@ Support some skills from third-party mods:
 - unleash companions and tame from AC (Accessory Companions)
 - some skills from Fantasy Brothers
 - many sorts of necromancers will do their thing
+- summon beasts, root foes and bestow regrowth for the [Druid][druid] background
 
 Other additions:
 
@@ -116,3 +118,4 @@ Fixes:
 [original]: https://www.nexusmods.com/battlebrothers/mods/62
 
 [necro]: https://www.nexusmods.com/battlebrothers/mods/775
+[druid]: https://github.com/Suor/battle-brothers-mods/tree/master/druid

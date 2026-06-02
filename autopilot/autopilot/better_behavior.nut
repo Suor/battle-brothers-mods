@@ -6,6 +6,8 @@ local mod = ::Hooks.getMod("mod_autopilot_new");
 ::MSU.AI.addBehavior("AP_UnleashDog", "AP.UnleashDog", 37, 200);
 ::MSU.AI.addBehavior("AP_Tame", "AP.Tame", 38, 400);
 ::MSU.AI.addBehavior("AP_SwapQuiver", "AP.SwapQuiver", 39, 400);
+::MSU.AI.addBehavior("AP_SummonBeast", "AP.SummonBeast", 40, 400);
+::MSU.AI.addBehavior("AP_Regrowth", "AP.Regrowth", 41, 250);
 ::MSU.AI.addBehavior("AP_AttackAlternate", "AP.AttackAlternate",
     ::Const.AI.Behavior.Order.AttackDefault - 1, ::Const.AI.Behavior.Score.Attack * 2);
 ::MSU.AI.addBehavior("AP_StepNHit", "AP.StepNHit",
@@ -110,6 +112,12 @@ mod.hook("scripts/ai/tactical/behaviors/ai_recover", function (q) {
         "actives.rf_bestial_vigor" // Reforged
     ]);
 });
+mod.hook("scripts/ai/tactical/behaviors/ai_root", function (q) {
+    q.m.PossibleSkills.extend([
+        "actives.druid_entangle" // Druid
+    ]);
+});
+
 // Boost rally when step_n_hit also wants to fire, so the weighted-random pick favors rally
 // (bannermen / backrow polearm bros otherwise lose rally to step_n_hit too often).
 // TODO: make it smarter somehow and maybe more universal?
