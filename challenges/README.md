@@ -25,6 +25,11 @@ Reduce equipment drops from enemies. This is only about weapons, shields, armors
 **Wages Multiplier** — multiply daily wages of all brothers.<br>
 
 
+## Enemies
+
+**Enemy Scaling** — multiply your party's perceived strength. Enemies scale to match: bigger parties spawn for contracts, raids and ambushes, and the world AI is more willing to attack.<br>
+
+
 ## Install
 
 Download a zip from [NexusMods][] and put it into `data` dir. Requires [Modern Hooks][], [stdlib][] and [MSU][].

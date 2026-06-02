@@ -2,34 +2,34 @@ local def = ::Challenges, mod = def.mh;
 local Debug = ::std.Debug.with({prefix = "loot: "});
 
 // Settings
-def.add(::MSU.Class.SettingsTitle("lootTitle", "Loot"));
-def.add(::Challenges.SliderSetting("weaponDropChance", 1.0,
+local add = def.addPage("Loot");
+add(::Challenges.SliderSetting("weaponDropChance", 1.0,
     [1.0, 0.75, 0.5, 0.25, 0.1, 0.0],
     ["100%" "75%" "50%" "25%" "10%" "0%"],
     "Weapon & Shield Drop Chance",
     "Chance for weapons and shields to drop when enemies die. "
     + "Does not affect other item types."));
-def.add(::Challenges.SliderSetting("armorDropChance", 1.0,
+add(::Challenges.SliderSetting("armorDropChance", 1.0,
     [1.0, 0.75, 0.5, 0.25, 0.1, 0.0],
     ["100%" "75%" "50%" "25%" "10%" "0%"],
     "Armor & Helmet Drop Chance",
     "Chance for armor and helmets to drop when enemies die. "
     + "Does not affect other item types."));
-def.add(::Challenges.SliderSetting("maxItemsPerBattle", -1,
+add(::Challenges.SliderSetting("maxItemsPerBattle", -1,
     [-1, 5, 4, 3, 2, 1, 0],
     ["off" "5" "4" "3" "2" "1" "none"],
     "Max Equipment Drops Per Battle",
     "Maximum number of weapons/shields and armor/helmets that can drop in a single battle. "
     + "Additional drops are blocked and may be compensated in gold."));
-def.add(::Challenges.SliderSetting("lootGoldComp", 1.0,
+add(::Challenges.SliderSetting("lootGoldComp", 1.0,
     [1.0, 0.5, 0.0],
     ["full" "half" "none"],
     "Gold Compensation",
     "Gold received for each equipment piece that does not drop due to the settings above. "
     + "Accounts for item condition."));
-def.add(::MSU.Class.BooleanSetting("chooseAtRandom", false, "Choose At Random",
+add(::MSU.Class.BooleanSetting("chooseAtRandom", false, "Choose At Random",
     "If enabled loot will be capped for you behind the scenes randomly."));
-def.add(::MSU.Class.BooleanSetting("protectNamed", true, "Protect Named Items",
+add(::MSU.Class.BooleanSetting("protectNamed", true, "Protect Named Items",
     "Named and legendary items always drop regardless of other loot settings."));
 
 local function lootStr(_item) {

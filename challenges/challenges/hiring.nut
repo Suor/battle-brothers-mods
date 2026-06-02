@@ -2,7 +2,6 @@ local def = ::Challenges, mod = def.mh;
 local Array = ::std.Array;
 
 // Settings
-def.add(::MSU.Class.SettingsDivider("hiringDiv"));
 def.add(::MSU.Class.SettingsTitle("hiringTitle", "Hiring"));
 def.add(::Challenges.SliderSetting("hiringRequirement", 0,
     [0, 5, 10, 20],
@@ -66,3 +65,5 @@ mod.hookTree("scripts/scenarios/world/starting_scenario", function (q) {
         }
     }
 })
+
+// Ideas: only allow low-born/noble+some filler?

@@ -11,7 +11,8 @@ local def = ::Challenges <- {
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("stdlib", "mod_msu >= 1.6.0");
-mod.queue(">mod_msu", ">mod_EIMO", ">mod_consume", ">mod_smartLoot", function () {
+// ">mod_necro": wrap outside necro's isDroppedAsLoot, which briefly stamps Player then restores it.
+mod.queue(">mod_msu", ">mod_EIMO", ">mod_consume", ">mod_smartLoot", ">mod_necro", function () {
     ::Hooks.registerJS("ui/mods/challenges/loot_panel.js");
     ::Hooks.registerCSS("ui/mods/challenges/loot_panel.css");
 
@@ -27,15 +28,19 @@ mod.queue(">mod_msu", ">mod_EIMO", ">mod_consume", ">mod_smartLoot", function ()
         return def.Mod.ModSettings.getSetting(_name).getValue();
     }
 
-    local page = def.Mod.ModSettings.addPage("General");
-    def.add <- function (_elem) {
-        page.addElement(_elem);
-        _elem.Data.NewCampaign <- true;
-        return _elem;
+    def.addPage <- function (_id, _name = null) {
+        local page = def.Mod.ModSettings.addPage(_id, _name);
+        return function (_elem) {
+            page.addElement(_elem);
+            _elem.Data.NewCampaign <- true;
+            return _elem;
+        }
     }
+    def.add <- def.addPage("General");
 
     ::include("challenges/slider_setting");
     ::include("challenges/loot");
     ::include("challenges/hiring");
     ::include("challenges/costs");
+    ::include("challenges/enemies");
 });

@@ -75,7 +75,7 @@ local Settings = {
             HooksByPath[_path] <- q;
         }
     }
-    function add(_elem) { return _elem; }
+    function addPage(...) { return function (_elem) { return _elem; }; }
     function SliderSetting(...) { return {Data = {}}; }
     function conf(_name) { return Settings[_name]; }
 }
