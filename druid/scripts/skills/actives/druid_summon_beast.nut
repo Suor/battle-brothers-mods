@@ -169,6 +169,12 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         beast.getSprite("socket").setBrush(_user.getSprite("socket").getBrush().Name);
         beast.setDirty(true);
 
+        // Act this very round, trick borrowed from AC
+        this.Tactical.TurnSequenceBar.removeEntity(beast);
+        beast.m.IsTurnDone = false;
+        beast.m.IsActingImmediately = true;
+        this.Tactical.TurnSequenceBar.insertEntity(beast);
+
         // Voice the call with the summoned beast's own cry instead of a fixed bark.
         local idle = beast.m.Sound[this.Const.Sound.ActorEvent.Idle];
         if (idle != null && idle.len() != 0) {
