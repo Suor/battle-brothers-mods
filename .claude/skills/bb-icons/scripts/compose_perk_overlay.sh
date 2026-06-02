@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
-# Compose a round perk icon ON TOP of a canonical blank frame (AC's blank_passive_ac.png) without
-# ever redrawing the frame — so the rim + outside-rim transparency stay pixel-identical to vanilla
-# perks and no grey junk can appear around the disc. Layers, bottom-up:
+# Compose a round perk/trait icon from TWO art layers ON TOP of a canonical blank frame, without ever
+# redrawing the frame. Use this when the subject is best built from a body that must stay inside the
+# rim plus an overlay whose tips may cross it (e.g. soil+plant body, with clean leaves spilling over).
+# Layers, bottom-up:
 #   1. BLANK frame as-is (dark disc + metal rim + transparent outside)
-#   2. BODY art (e.g. soil + plant) clipped to the disc circle (never past the rim)
-#   3. OVERLAY cut-out (e.g. clean leaves) on top, clipped to a circle a little WIDER than the rim
-#      so its tips spill over the rim like apex ears, but nothing strays to the icon corners.
-# Final alpha is forced to (blank ∪ overlay-in-clip): outside the rim only legit overlay tips show.
+#   2. BODY art clipped to the disc circle (never past the rim)
+#   3. OVERLAY cut-out clipped to a circle slightly WIDER than the rim (tips over rim, no corner stray)
 #
-# Usage: compose_on_blank.sh <body_art.png> <overlay_cut.png> <out_base> [blank.png]
-#   env: BODY = body size % of icon (default 100), BX/BY = body offset px
-#        OVR  = overlay size % of icon (default = BODY), OX/OY = overlay offset px
+# Usage: compose_perk_overlay.sh <body_art.png> <overlay_cut.png> <out_base> [blank.png]
+#   env: BODY = body size %% of icon (default 100), BX/BY = body offset px
+#        OVR  = overlay size %% of icon (default = BODY), OX/OY = overlay offset px
 #        DISCR= disc radius for the body clip (default 24), OVER = extra radius for overlay (default 3)
 #        USM/SHP/SAT/CON = sharpen/colour knobs
 set -euo pipefail
+D="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BODY_IN="${1:?body art}"; OVR_IN="${2:?overlay cut}"; OUT="${3:?out base}"
-BLANK="${4:-/home/suor/projects/bbm/3rdparty/AC/gfx/blank_passive_ac.png}"
+BLANK="${4:-$D/assets/blank_passive_ac.png}"
 SIZE=56
 BODY="${BODY:-100}"; OVR="${OVR:-$BODY}"
 BX="${BX:-0}"; BY="${BY:-0}"; OX="${OX:-0}"; OY="${OY:-0}"
