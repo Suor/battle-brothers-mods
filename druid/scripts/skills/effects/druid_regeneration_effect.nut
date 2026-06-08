@@ -8,22 +8,35 @@ this.druid_regeneration_effect <- this.inherit("scripts/skills/skill", {
     {
         this.m.ID = "effects.druid_regeneration";
         this.m.Name = "Regrowth";
-        this.m.Description = "Nature mends this character, restoring 10 hitpoints at the start of each turn.";
+        this.m.Description = "";  // built per-bearer in getDescription()
         this.m.Icon = "skills/status_effect_79.png";
         this.m.IconMini = "status_effect_79_mini";
-        this.m.Type = this.Const.SkillType.StatusEffect;
-        this.m.Order = this.Const.SkillOrder.Last;
+        this.m.Type = ::Const.SkillType.StatusEffect;
+        this.m.Order = ::Const.SkillOrder.Last;
         this.m.IsActive = false;
         this.m.IsStacking = false;
         this.m.IsRemovedAfterBattle = true;
         this.m.IsHidden = false;
     }
 
+    // Beasts and animals knit back twice as fast.
+    function getHealPerTurn( _actor )
+    {
+        return ::Const.Druid.isAnimal(_actor) ? this.m.HealPerTurn * 2 : this.m.HealPerTurn;
+    }
+
+    // The effect always rides an actor, so the description states that actor's exact rate.
+    function getDescription()
+    {
+        local heal = this.getHealPerTurn(this.getContainer().getActor());
+        return "Nature mends this character, restoring " + heal + " hitpoints at the start of each turn.";
+    }
+
     function onTurnStart()
     {
         local actor = this.getContainer().getActor();
         local missing = actor.getHitpointsMax() - actor.getHitpoints();
-        local healed = this.Math.min(missing, this.m.HealPerTurn);
+        local healed = ::Math.min(missing, this.getHealPerTurn(actor));
         if (healed <= 0) return;
 
         actor.setHitpoints(actor.getHitpoints() + healed);

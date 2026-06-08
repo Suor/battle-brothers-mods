@@ -17,9 +17,8 @@ addPerk({
     ID = "perk.druid.regrowth"
     Script = "scripts/skills/perks/perk_druid_regrowth"
     Name = "Regrowth"
-    Tooltip = "Channel nature's vigor into a single ally, knitting their wounds back at "
-            + green(10) + " hitpoints per turn. Only one ally can carry it at a time -"
-            + " bestow it elsewhere and the previous one stops mending."
+    Tooltip = "Knit an ally's wounds turn after turn, double for beasts and animals."
+            + " One bearer at a time."
     Icon = "druid/perk_regrowth.png"
     IconDisabled = "druid/perk_regrowth_sw.png"
     Row = 1
@@ -46,8 +45,7 @@ addPerk({
     ID = "perk.druid.hatch"
     Script = "scripts/skills/perks/perk_druid_hatch"
     Name = "Hatch"
-    Tooltip = "The wilds teem with new broods. Your summon no longer spends itself once per battle -"
-            + " instead it recharges, ready again " + green("every other turn") + "."
+    Tooltip = "Will summon " + green("every other turn") + ", not once per battle."
     Icon = "druid/perk_hatch.png"
     IconDisabled = "druid/perk_hatch_sw.png"
     Row = 3
@@ -103,5 +101,26 @@ local T = ::Const.World.TerrainType;
             // Beasts with no entry here (spider, schrat_small, serpent) are grown in place
             // by druid_summon_beast.makeApex() instead of swapping to another entity.
         }
+    }
+
+    function isAnimal(_actor)
+    {
+        if (_actor.getFaction() == ::Const.Faction.PlayerAnimals) return true;
+
+        local t = _actor.getType();
+        if (::Const.EntityType.getDefaultFaction(t) == ::Const.FactionType.Beasts) return true;
+
+        switch (t)
+        {
+        case ::Const.EntityType.Wardog:
+        case ::Const.EntityType.ArmoredWardog:
+        case ::Const.EntityType.Warhound:
+        case ::Const.EntityType.Wolf:
+        case ::Const.EntityType.BarbarianUnhold:
+        case ::Const.EntityType.BarbarianUnholdFrost:
+            return true;
+        }
+
+        return false;
     }
 }

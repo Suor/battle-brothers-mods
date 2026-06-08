@@ -15,7 +15,7 @@ side, entangles his foes in roots and knits his allies' wounds back together.
 - **Apex Predators** - wolves answer as direwolves, hyenas come frenzied, spiders
   broodmother-sized, young schrats rise full-grown
 - **Pack** - summon one more beast each battle (one only without it)
-- **Regrowth** - bestow a steady heal on a single ally; only one can carry it at a time
+- **Regrowth** - bestow a steady heal on a single living ally, doubled for animals; only one can carry it at a time
 - **Entangling Roots** - root an enemy in place
 - **Venom** - your beasts' bites poison the prey
 - **Pack Leader** - summoned beasts arrive confident and never flee

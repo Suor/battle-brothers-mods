@@ -10,15 +10,15 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
         this.m.ID = "actives.druid_regrowth";
         this.m.Name = "Regrowth";
         this.m.Description = "Channel nature's vigor into an ally, mending their wounds turn"
-                           + " after turn. Only one ally can carry it - bestowing it anew"
-                           + " stops the previous one from mending.";
+                           + " after turn, double for beasts and animals. One bearer at a"
+                           + " time, and never the undead.";
         this.m.Icon = "druid/active_regrowth.png";
         this.m.IconDisabled = "druid/active_regrowth_sw.png";
         this.m.SoundOnUse = [
             "sounds/enemies/unhold_regenerate_01.wav"
         ];
-        this.m.Type = this.Const.SkillType.Active;
-        this.m.Order = this.Const.SkillOrder.UtilityTargeted;
+        this.m.Type = ::Const.SkillType.Active;
+        this.m.Order = ::Const.SkillOrder.UtilityTargeted;
         this.m.IsActive = true;
         this.m.IsTargeted = true;
         this.m.IsStacking = false;
@@ -40,7 +40,10 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
 
     function isViableTarget(_user, _target)
     {
-        return ::std.Actor.isAlive(_target) && _target.isAlliedWith(_user);
+        return ::std.Actor.isValidTarget(_target)
+            && _target.getID() != _user.getID()
+            && _target.isAlliedWith(_user)
+            && !_target.getFlags().has("undead");
     }
 
     function onVerifyTarget(_originTile, _targetTile)
@@ -55,7 +58,7 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
     function clearExisting()
     {
         if (this.m.BearerID == null) return;
-        local bearer = this.Tactical.getEntityByID(this.m.BearerID);
+        local bearer = ::Tactical.getEntityByID(this.m.BearerID);
         this.m.BearerID = null;
         if (!::std.Util.isNull(bearer)) {
             bearer.getSkills().removeByID("effects.druid_regeneration");
@@ -66,6 +69,7 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
     {
         if (!_targetTile.IsOccupiedByActor) return false;
         local target = _targetTile.getEntity();
+        if (!this.isViableTarget(_user, target)) return false;
 
         this.clearExisting();
         target.getSkills().add(::new("scripts/skills/effects/druid_regeneration_effect"));
@@ -73,8 +77,8 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
         target.setDirty(true);
 
         if (!target.isHiddenToPlayer()) {
-            this.Tactical.EventLog.log(
-                this.Const.UI.getColorizedEntityName(target) + " is wreathed in healing growth"
+            ::Tactical.EventLog.log(
+                ::Const.UI.getColorizedEntityName(target) + " is wreathed in healing growth"
             );
         }
         return true;

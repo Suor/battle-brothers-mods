@@ -18,9 +18,8 @@ local pairs = [
         ru = "Живица"
     }
     {
-        mode = "pattern"
-        en = "Channel nature's vigor into a single ally, knitting their wounds back at <hp:int_tag> hitpoints per turn. Only one ally can carry it at a time - bestow it elsewhere and the previous one stops mending."
-        ru = "Направляет животворную силу в одного союзника, затягивая его раны на <hp> ОЗ за ход. Носить дар может лишь один союзник - наложение на другого снимает его с прежнего."
+        en = "Knit an ally's wounds turn after turn, double for beasts and animals. One bearer at a time."
+        ru = "Затягивает раны союзника ход за ходом, вдвое быстрее всякому зверью. Лишь один носитель за раз."
     }
     {
         en = "Hatch"
@@ -28,8 +27,8 @@ local pairs = [
     }
     {
         mode = "pattern"
-        en = "The wilds teem with new broods. Your summon no longer spends itself once per battle - instead it recharges, ready again <open:tag>every other turn<close:tag>."
-        ru = "Дикие земли кишат новыми выводками. Призыв больше не тратится раз за бой - он восстанавливается и готов снова <open:tag>через ход<close:tag>."
+        en = "Will summon <open:tag>every other turn<close:tag>, not once per battle."
+        ru = "Призывает <open:tag>через ход<close:tag>, а не раз за бой."
     }
     {
         en = "Entangling Roots"
@@ -131,14 +130,15 @@ local pairs = [
 
     // FILE: druid/scripts/skills/actives/druid_regrowth.nut
     {
-        en = "Channel nature's vigor into an ally, mending their wounds turn after turn. Only one ally can carry it - bestowing it anew stops the previous one from mending."
-        ru = "Направляет силу природы в союзника, исцеляя его раны ход за ходом. Носить дар может лишь один союзник - наложение на нового снимает его с прежнего."
+        en = "Channel nature's vigor into an ally, mending their wounds turn after turn, double for beasts and animals. One bearer at a time, and never the undead."
+        ru = "Направляет силу природы в союзника, исцеляя его раны ход за ходом, а зверей и животных - вдвое быстрее. Лишь один носитель за раз, и никогда нежить."
     }
 
     // FILE: druid/scripts/skills/effects/druid_regeneration_effect.nut
     {
-        en = "Nature mends this character, restoring 10 hitpoints at the start of each turn."
-        ru = "Природа исцеляет бойца, восстанавливая 10 ОЗ в начале каждого хода."
+        mode = "pattern"
+        en = "Nature mends this character, restoring <n:int> hitpoints at the start of each turn."
+        ru = "Природа исцеляет бойца, восстанавливая <n> ОЗ в начале каждого хода."
     }
 
     // FILE: druid/scripts/scenarios/world/druid_scenario.nut
@@ -151,8 +151,8 @@ local pairs = [
         ru = "Зелёный Плащ"
     }
     {
-        en = "This beast hunts with envenomed fang and sting. A deep enough bite poisons the prey, leaving them with blurred vision and sluggish, uncoordinated movements until it fades."
-        ru = "Этот зверь охотится ядовитым клыком и жалом. Достаточно глубокий укус отравляет добычу: зрение мутнеет, а движения становятся вялыми и неуклюжими, пока яд не выветрится."
+        en = "This beast hunts with envenomed fang and sting. A deep bite poisons the prey, blurring its sight and slowing it until the venom fades."
+        ru = "Этот зверь охотится ядовитым клыком и жалом. Глубокий укус отравляет добычу, мутит ей зрение и замедляет, пока яд не выветрится."
     }
     {
         en = "Fearless"

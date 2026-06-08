@@ -17,7 +17,7 @@ this.druid_venom <- this.inherit("scripts/skills/effects/poison_coat_effect", {
 
     function getDescription()
     {
-        return "This beast hunts with envenomed fang and sting. A deep enough bite poisons the prey, leaving them with blurred vision and sluggish, uncoordinated movements until it fades.";
+        return "This beast hunts with envenomed fang and sting. A deep bite poisons the prey, blurring its sight and slowing it until the venom fades.";
     }
 
     function onTargetHit( _skill, _targetEntity, _bodyPart, _damageInflictedHitpoints, _damageInflictedArmor )
