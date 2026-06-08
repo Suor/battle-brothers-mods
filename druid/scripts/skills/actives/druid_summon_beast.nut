@@ -91,7 +91,7 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
     function getTerrainType()
     {
         try {
-            local player = this.World.State.getPlayer();
+            local player = ::World.State.getPlayer();
             if (player != null) return player.getTile().Type;
         } catch (e) {}
         return -1;
@@ -99,10 +99,10 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
 
     function pickBeastType()
     {
-        local biomes = this.Const.Druid.Biomes;
+        local biomes = ::Const.Druid.Biomes;
         local terrain = this.getTerrainType();
         local pool = terrain in biomes.Pools ? biomes.Pools[terrain] : biomes.Default;
-        return pool[this.Math.rand(0, pool.len() - 1)];
+        return pool[::Math.rand(0, pool.len() - 1)];
     }
 
     // Apex specimen of a beast that has no greater cousin to swap into (spider, schrat, serpent):
@@ -133,7 +133,7 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
 
     function onUse(_user, _targetTile)
     {
-        local biomes = this.Const.Druid.Biomes;
+        local biomes = ::Const.Druid.Biomes;
         local isApex = _user.getSkills().hasSkill("perk.druid.apex");
         local beastType = this.pickBeastType();
 
@@ -144,9 +144,12 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
             else boostApex = true;
         }
 
-        local script = "scripts/entity/tactical/enemies/" + beastType;
-        local beast = this.Tactical.spawnEntity(script, _targetTile.Coords.X, _targetTile.Coords.Y);
-        if (beast == null) return false;
+        local script = "scripts/entity/tactical/enemies/" + beastType, tile = _targetTile.Coords;
+        local beast = ::Tactical.spawnEntity(script, tile.X, tile.Y);
+        if (beast == null) {
+            ::logError("druid: failed to spawn '" + beastType + "' at " + tile.X + "," + tile.Y);
+            return false;
+        }
         if (boostApex) this.makeApex(beast);
 
         beast.m.druid_master <- ::MSU.asWeakTableRef(_user);
@@ -170,16 +173,13 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         beast.setDirty(true);
 
         // Act this very round, trick borrowed from AC
-        this.Tactical.TurnSequenceBar.removeEntity(beast);
+        ::Tactical.TurnSequenceBar.removeEntity(beast);
         beast.m.IsTurnDone = false;
         beast.m.IsActingImmediately = true;
-        this.Tactical.TurnSequenceBar.insertEntity(beast);
+        ::Tactical.TurnSequenceBar.insertEntity(beast);
 
         // Voice the call with the summoned beast's own cry instead of a fixed bark.
-        local idle = beast.m.Sound[this.Const.Sound.ActorEvent.Idle];
-        if (idle != null && idle.len() != 0) {
-            this.Sound.play(idle[this.Math.rand(0, idle.len() - 1)], this.Const.Sound.Volume.Skill, beast.getPos());
-        }
+        beast.playSound(::Const.Sound.ActorEvent.Idle, ::Const.Sound.Volume.Skill);
 
         // Cooldown 2 = ready again every other turn (used turn N -> ready turn N+2). Without the
         // Hatch perk this is never decremented, so it acts as a once-per-battle lock.
