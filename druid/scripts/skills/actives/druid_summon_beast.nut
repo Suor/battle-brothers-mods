@@ -134,14 +134,20 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
     function onUse(_user, _targetTile)
     {
         local biomes = ::Const.Druid.Biomes;
-        local isApex = _user.getSkills().hasSkill("perk.druid.apex");
-        local beastType = this.pickBeastType();
-
-        // Apex: swap to a greater beast where one exists, otherwise rear a bigger, tougher specimen.
+        local beastType;
         local boostApex = false;
-        if (isApex) {
-            if (beastType in biomes.ApexMap) beastType = biomes.ApexMap[beastType];
-            else boostApex = true;
+
+        // Below the unlock level the wilds answer with a plain Wolf, whatever the biome; the full
+        // biome variety (and Apex, later still) only opens up once the druid has grown into it.
+        if (_user.getLevel() < biomes.UnlockLevel) {
+            beastType = biomes.Starter;
+        } else {
+            beastType = this.pickBeastType();
+            // Apex: swap to a greater beast where one exists, otherwise rear a bigger specimen.
+            if (_user.getSkills().hasSkill("perk.druid.apex")) {
+                if (beastType in biomes.ApexMap) beastType = biomes.ApexMap[beastType];
+                else boostApex = true;
+            }
         }
 
         local script = "scripts/entity/tactical/enemies/" + beastType, tile = _targetTile.Coords;
@@ -157,15 +163,24 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         beast.m.druid_Summoned = true;
         beast.setFaction(this.Const.Faction.PlayerAnimals);
 
-        // Pack Leader: beasts arrive emboldened - they start Confident and, thanks to the
-        // fearless racial, never break or flee. Unlike MoraleState.Ignore they still react
-        // to the battle and reap the Confident combat bonus.
-        if (_user.getSkills().hasSkill("perk.druid.pack_leader")) {
+        // Beast Aura: the druid's own beasts arrive emboldened - they start Confident and, thanks
+        // to the fearless racial, never break or flee. Unlike MoraleState.Ignore they still react
+        // to the battle and reap the Confident combat bonus. They also gain the ai_protect
+        // behaviour, so they keep to the druid's side instead of chasing off after the foe.
+        if (_user.getSkills().hasSkill("perk.druid.beast_aura")) {
             beast.getSkills().add(this.new("scripts/skills/racial/druid_fearless"));
             beast.setMoraleState(this.Const.MoraleState.Confident);
+            local agent = beast.getAIAgent();
+            if (agent != null && agent.getBehavior(this.Const.AI.Behavior.ID.Protect) == null)
+                agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_protect"));
         }
-        // Venom: their bites carry poison.
-        if (_user.getSkills().hasSkill("perk.druid.venom")) {
+        // Every summon carries the aura receiver, so it is emboldened by any aura source in range.
+        beast.getSkills().add(this.new("scripts/skills/effects/druid_beast_aura_effect"));
+
+        // Venom (Supporter variant): the druid's beasts hunt with envenomed bites. In Beastform
+        // the venom rides the druid's own attacks instead (see perk_druid_venom), not his beasts'.
+        if (_user.getSkills().hasSkill("perk.druid.venom")
+            && !_user.getSkills().hasSkill("perk.druid.beastform")) {
             beast.getSkills().add(this.new("scripts/skills/racial/druid_venom"));
         }
 

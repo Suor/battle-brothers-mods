@@ -1,6 +1,6 @@
 MOD_NAME = druid
 TAG_NAME = druid
-SOURCES = gfx druid scripts ui
+SOURCES = brushes gfx druid scripts ui
 
 include ../Makefile.common
 

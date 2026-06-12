@@ -1,3 +1,19 @@
+0.2.0
+- the perk tree splits into two mutually exclusive paths, chosen implicitly by the first
+  group perk taken (the closed path is greyed out in the tree):
+  - Nature (Supporter): Regrowth, Hatch, Entangling Roots, Apex Predators
+  - Beast (Fighter): Beastform (gate) -> Beast Aura, Beast Rage
+  - Venom is ungrouped and adapts to whichever path you commit to
+- Beastform: a one-time permanent transformation - physical bonuses, but no heavy shields,
+  helmets or armor and no ranged weapons; takes on a beast look when Fantasy Brothers is present
+- Beast Aura: your beasts keep to your side and any allied beast near you stands fearless
+  and emboldened (absorbs the old Pack Leader)
+- Beast Rage: a stacking fury (melee damage, Resolve, Initiative, per-turn healing, less
+  Melee Defense) that tears off your shield at its height
+- Venom now also rides a Beastform druid's own melee hits
+- the summon yields a plain Wolf until level 5, then the full biome variety opens up
+- removed Pack Leader (folded into Beast Aura)
+
 0.1.0
 - initial version
 - Druid background, hireable from the start, with a Summon Beast active

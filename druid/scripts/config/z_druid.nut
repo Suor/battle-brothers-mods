@@ -1,5 +1,12 @@
 // ::Const.Perks.Druid - Druid-only perks, injected into the perk tree for the background.
-// ::Const.Druid.Biomes - which beasts a Druid may summon on a given battlefield.
+// ::Const.Druid - Druid runtime config: beast pools, group exclusion rules, Beastform/Rage tunables.
+//
+// The tree splits into two mutually exclusive groups (see docs/beast-branch/plan.md):
+//   Supporter: Regrowth, Hatch, Entangling Roots, Apex Predators
+//   Fighter:   Beastform (gate) -> Beast Aura, Beast Rage
+//   Venom:     ungrouped, adapts to whichever side you commit to
+// The group is chosen implicitly by the first group perk taken; ::Const.Druid.isPerkBlocked
+// enforces the exclusion (see mod_druid.nut for where it is consulted).
 
 ::Const.Perks.Druid <- [];
 
@@ -12,34 +19,21 @@ local function addPerk(perk) {
 local function green(text) {
     return ::Const.UI.getColorized(text + "", ::Const.UI.Color.PositiveValue)
 }
+local function red(text) {
+    return ::Const.UI.getColorized(text + "", ::Const.UI.Color.NegativeValue)
+}
 
+// --- Supporter group -------------------------------------------------------
 addPerk({
     ID = "perk.druid.regrowth"
     Script = "scripts/skills/perks/perk_druid_regrowth"
     Name = "Regrowth"
     Tooltip = "Knit an ally's wounds turn after turn, double for beasts and animals."
             + " One bearer at a time."
+            + "\n" + red("Taking it closes the path of the Beast.")
     Icon = "druid/perk_regrowth.png"
     IconDisabled = "druid/perk_regrowth_sw.png"
     Row = 1
-})
-addPerk({
-    ID = "perk.druid.venom"
-    Script = "scripts/skills/perks/perk_druid_venom"
-    Name = "Venom"
-    Tooltip = "Your beasts hunt with envenomed fang and sting. Their bites poison the prey."
-    Icon = "druid/perk_venom.png"
-    IconDisabled = "druid/perk_venom_sw.png"
-    Row = 1
-})
-addPerk({
-    ID = "perk.druid.entangle"
-    Script = "scripts/skills/perks/perk_druid_entangle"
-    Name = "Entangling Roots"
-    Tooltip = "Call writhing roots from the earth to root an enemy in place."
-    Icon = "druid/perk_entangle.png"
-    IconDisabled = "druid/perk_entangle_sw.png"
-    Row = 3
 })
 addPerk({
     ID = "perk.druid.hatch"
@@ -51,13 +45,12 @@ addPerk({
     Row = 3
 })
 addPerk({
-    ID = "perk.druid.pack_leader"
-    Script = "scripts/skills/perks/perk_druid_pack_leader"
-    Name = "Pack Leader"
-    Tooltip = "The beasts know you for their alpha. Summoned beasts arrive "
-            + green("confident") + " and will never flee the field."
-    Icon = "druid/perk_pack_leader.png"
-    IconDisabled = "druid/perk_pack_leader_sw.png"
+    ID = "perk.druid.entangle"
+    Script = "scripts/skills/perks/perk_druid_entangle"
+    Name = "Entangling Roots"
+    Tooltip = "Call writhing roots from the earth to root an enemy in place."
+    Icon = "druid/perk_entangle.png"
+    IconDisabled = "druid/perk_entangle_sw.png"
     Row = 4
 })
 addPerk({
@@ -71,12 +64,67 @@ addPerk({
     Row = 6
 })
 
+// --- Fighter group ---------------------------------------------------------
+addPerk({
+    ID = "perk.druid.beastform"
+    Script = "scripts/skills/perks/perk_druid_beastform"
+    Name = "Beastform"
+    Tooltip = "Take the shape of the beast for good: " + green("+10% Melee Skill") + ", "
+            + green("+10% Melee Defense") + " and " + green("+20% Hitpoints") + "."
+            + " But you can no longer bear heavy shields, helmets or armor, nor ranged weapons."
+            + "\n" + red("Taking it closes the path of Nature.")
+    Icon = "druid/perk_beastform.png"
+    IconDisabled = "druid/perk_beastform_sw.png"
+    Row = 1
+})
+addPerk({
+    ID = "perk.druid.beast_aura"
+    Script = "scripts/skills/perks/perk_druid_beast_aura"
+    Name = "Beast Aura"
+    Tooltip = "Beasts know you for their alpha. Your beasts keep to your side instead of"
+            + " chasing the foe, and any allied beast near you stands " + green("fearless")
+            + " and emboldened."
+    Icon = "druid/perk_beast_aura.png"
+    IconDisabled = "druid/perk_beast_aura_sw.png"
+    Row = 3
+})
+addPerk({
+    ID = "perk.druid.beast_rage"
+    Script = "scripts/skills/perks/perk_druid_beast_rage"
+    Name = "Beast Rage"
+    Tooltip = "Blood feeds a rising fury: stacking melee damage, Resolve and Initiative and"
+            + " " + green("healing") + " each turn, at the cost of Melee Defense. At its height"
+            + " you tear off your own shield and roar."
+    Icon = "druid/perk_beast_rage.png"
+    IconDisabled = "druid/perk_beast_rage_sw.png"
+    Row = 5
+})
 
-// Beast pools per battlefield. Values are enemy entity script base names under
-// scripts/entity/tactical/enemies/. Apex perk upgrades these per ApexMap below.
+// --- Ungrouped -------------------------------------------------------------
+addPerk({
+    ID = "perk.druid.venom"
+    Script = "scripts/skills/perks/perk_druid_venom"
+    Name = "Venom"
+    Tooltip = "Envenomed fang and sting: your beasts' bites poison the prey - or, once you walk"
+            + " in Beastform, your own. A weakening venom that blurs sight and slows the foe."
+    Icon = "druid/perk_venom.png"
+    IconDisabled = "druid/perk_venom_sw.png"
+    Row = 5
+})
+
+
 local T = ::Const.World.TerrainType;
 ::Const.Druid <- {
+    // Beast pools per battlefield. Values are enemy entity script base names under
+    // scripts/entity/tactical/enemies/. Below BiomeUnlockLevel the pool is ignored and the
+    // call always yields a plain Wolf (see druid_summon_beast.onUse). Apex upgrades these
+    // per ApexMap.
     Biomes = {
+        // Until this character level the wilds answer with a common Wolf only, whatever the
+        // biome; from here the full biome variety (direwolf, spider, schrat...) opens up.
+        UnlockLevel = 5
+        Starter = "wolf"
+
         Pools = {
             [T.Snow] = ["direwolf"],
             [T.SnowyForest] = ["direwolf"],
@@ -101,6 +149,84 @@ local T = ::Const.World.TerrainType;
             // Beasts with no entry here (spider, schrat_small, serpent) are grown in place
             // by druid_summon_beast.makeApex() instead of swapping to another entity.
         }
+    }
+
+    // Beastform tunables (balance pass Q5 - see plan.md). Equipment limits read an item's
+    // fatigue penalty magnitude (-getStaminaModifier); a light shield/buckler stays allowed.
+    Beastform = {
+        MeleeSkillMult = 1.1
+        MeleeDefenseMult = 1.1
+        HitpointsMult = 1.2
+        ShieldFatigueMax = 10
+        HelmetFatigueMax = 10
+        BodyFatigueMax = 20
+    }
+
+    // Beast Rage tunables (Q5). Like Reforged's perk_rf_feral_rage but damage reduction is
+    // swapped for per-stack hitpoint regen, with an extra stack granted on a melee miss.
+    Rage = {
+        PerStackHpRegen = 2
+        PerStackDamageMult = 0.02
+        PerStackResolve = 2
+        PerStackInitiative = 2
+        PerStackMeleeDefense = -1
+        StacksPerTurn = -3
+        ShieldDropThreshold = 10
+    }
+
+    // Beast Aura tunables (Q5).
+    Aura = {
+        Range = 2
+        Resolve = 10
+        // Modest target-attraction bump so the AI's protect behaviour leashes beasts to the
+        // druid; a side cost is that foes weigh him a touch heavier as a target.
+        TargetAttractionMult = 1.25
+    }
+
+    GroupPerks = {
+        Supporter = ["perk.druid.regrowth", "perk.druid.hatch", "perk.druid.entangle",
+                     "perk.druid.apex"]
+        Fighter = ["perk.druid.beastform", "perk.druid.beast_aura", "perk.druid.beast_rage"]
+    }
+
+    // The implicit-group exclusion rule. Returns true when _perkID may NOT be taken given the
+    // perks _skills already holds. Single source of truth, consulted by both the UI gate
+    // (data_helper) and the unlock guard (player.unlockPerk).
+    function isPerkBlocked(_perkID, _skills) {
+        local has = @(id) _skills.hasSkill(id);
+        local hasSupporter = false;
+        foreach (id in ::Const.Druid.GroupPerks.Supporter) if (has(id)) { hasSupporter = true; break; }
+        local hasBeastform = has("perk.druid.beastform");
+
+        switch (_perkID) {
+        case "perk.druid.regrowth":
+        case "perk.druid.hatch":
+        case "perk.druid.entangle":
+        case "perk.druid.apex":
+            return hasBeastform;                       // Supporter perks closed once you turn Beast
+        case "perk.druid.beastform":
+            return hasSupporter;                       // Beastform closed once you took any Nature perk
+        case "perk.druid.beast_aura":
+            return !hasBeastform;                       // gated by Beastform
+        case "perk.druid.beast_rage":
+            return !hasBeastform || has("perk.druid.venom");  // gated by Beastform, excl. Venom
+        case "perk.druid.venom":
+            return has("perk.druid.beast_rage");        // Venom <-> Beast Rage are exclusive
+        }
+        return false;
+    }
+
+    // Whether a Beastform druid may equip _item. Heavy shields/helmets/armor and any ranged
+    // weapon are forbidden; a light shield (buckler) under the fatigue cap stays allowed.
+    function beastformAllows(_item) {
+        local IT = ::Const.Items.ItemType;
+        if (_item.isItemType(IT.RangedWeapon)) return false;
+        local fatigue = -_item.getStaminaModifier();  // penalties are stored negative
+        local B = ::Const.Druid.Beastform;
+        if (_item.isItemType(IT.Shield) && fatigue > B.ShieldFatigueMax) return false;
+        if (_item.isItemType(IT.Helmet) && fatigue > B.HelmetFatigueMax) return false;
+        if (_item.isItemType(IT.Armor)  && fatigue > B.BodyFatigueMax)   return false;
+        return true;
     }
 
     function isAnimal(_actor)

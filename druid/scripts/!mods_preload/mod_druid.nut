@@ -44,8 +44,51 @@ mod.queue(">mod_reforged", ">mod_background_perks",
         ::std.Table.extend(::BgPerks.chances.hackflows_druid, {
             "druid.entangle": 5
             "druid.hatch": 3
-            "druid.pack_leader": 1
+            "druid.beastform": 4
+            "druid.beast_aura": 2
+            "druid.beast_rage": 2
+            "druid.venom": 2
         })
+    }
+
+    // Beastform's permanent transformation: shed any newly-forbidden gear and take the beast look.
+    // Relocation follows perma's missing_hand: drop on the ground mid-battle, else to the bag, else
+    // to the stash - so nothing is ever lost. (Beastform is taken in the world, so usually the bag.)
+    def.relocateItem <- function (_actor, _item) {
+        local items = _actor.getItems();
+        items.unequip(_item);
+        if ("State" in ::Tactical && !::Tactical.State.isBattleEnded() && _actor.isPlacedOnMap()) {
+            _item.drop(_actor.getTile());
+        } else if (items.hasEmptySlot(::Const.ItemSlot.Bag)) {
+            items.addToBag(_item);
+        } else {
+            ::World.Assets.getStash().makeEmptySlots(1);
+            ::World.Assets.getStash().add(_item);
+        }
+    }
+    def.applyBeastform <- function (_actor) {
+        local items = _actor.getItems();
+        foreach (slot in [::Const.ItemSlot.Mainhand, ::Const.ItemSlot.Offhand, ::Const.ItemSlot.Body,
+                          ::Const.ItemSlot.Head, ::Const.ItemSlot.Accessory, ::Const.ItemSlot.Ammo]) {
+            local item = items.getItemAtSlot(slot);
+            if (item == null || ::Const.Druid.beastformAllows(item)) continue;
+            def.relocateItem(_actor, item);
+        }
+        def.applyBeastformLook(_actor);
+    }
+    // The beast look ships with the mod (brushes/druid_beast.brush + gfx/druid_beast.png, vendored
+    // from Fantasy Brothers' Baku set), so no Fantasy Brothers dependency.
+    def.applyBeastformLook <- function (_actor) {
+        local body = _actor.getSprite("body");
+        local head = _actor.getSprite("head");
+        body.setBrush("druid_beast_body_0" + ::Math.rand(1, 2));
+        head.setBrush("druid_beast_head_0" + ::Math.rand(1, 3));
+        _actor.getSprite("hair").setBrush("druid_beast_hair_0" + ::Math.rand(1, 5));
+        if (_actor.hasSprite("injury_body"))
+            _actor.getSprite("injury_body").setBrush(body.getBrush().Name + "_injured");
+        head.varyColor(0.05, 0.05, 0.05);
+        body.Color = head.Color;
+        _actor.setDirty(true);
     }
 
 
@@ -64,13 +107,15 @@ mod.queue(">mod_reforged", ">mod_background_perks",
         })
     } else {
         // No XBE: make our own Druid hireable by seeding his background into settlement draft
-        // lists. Prefer the woods (forest/lumber) and the swamps.
+        // lists. Prefer the woods (forest/lumber) and the swamps, keep out of big cities.
         mod.hookTree("scripts/entity/world/settlement", function (q) {
             local cn = q.ClassName;
-            local num = 1;
             local isWild = cn.find("_forest_") != null || cn.find("_lumber_") != null
                         || cn.find("_swamp_") != null;
-            if (isWild) num++;
+            local isBigCity = cn.find("city_state") != null
+                           || cn.find("large_") != null && !isWild;
+            local num = isWild ? 2 : isBigCity ? 0 : 1;
+            if (num == 0) return;
 
             q.create = @(__original) function () {
                 __original();
@@ -116,14 +161,44 @@ mod.queue(">mod_reforged", ">mod_background_perks",
             }
         }
 
-        // Pack Leader's fearless beasts feel morale like anyone - they can be shaken down to
+        // Beast Aura's fearless beasts feel morale like anyone - they can be shaken down to
         // Breaking and suffer for it - but the roll can never push them into Fleeing. We cap the
         // negative change so the state floors at Breaking instead of routing them off the field.
+        // Fearless comes either permanently (racial.druid_fearless on the druid's own beasts) or
+        // by proximity (the Beast Aura effect, while an aura source is in range).
         q.checkMorale = @(__original) function( _change, _difficulty, _type = this.Const.MoraleCheckType.Default, _showIconBeforeMoraleIcon = "", _noNewLine = false ) {
-            if (_change < 0 && getSkills().hasSkill("racial.druid_fearless")) {
-                _change = Math.max(_change, Const.MoraleState.Breaking - getMoraleState());
+            if (_change < 0) {
+                local aura = getSkills().getSkillByID("effects.druid_beast_aura");
+                local fearless = getSkills().hasSkill("racial.druid_fearless")
+                              || (aura != null && aura.isAuraActive());
+                if (fearless) _change = Math.max(_change, Const.MoraleState.Breaking - getMoraleState());
             }
             return __original(_change, _difficulty, _type, _showIconBeforeMoraleIcon, _noNewLine);
+        }
+    })
+
+    // Beastform's equipment ban: a transformed druid cannot equip heavy shields, helmets or body
+    // armor, nor any ranged weapon (see ::Const.Druid.beastformAllows). We refuse the equip at the
+    // container so it is enforced everywhere - inventory screen, tactical swaps and AI alike.
+    mod.hook("scripts/items/item_container", function (q) {
+        q.equip = @(__original) function (_item) {
+            local actor = m.Actor;
+            if (_item != null && actor != null && !actor.isNull()
+                && actor.getSkills().hasSkill("perk.druid.beastform")
+                && !::Const.Druid.beastformAllows(_item)) {
+                return false;
+            }
+            return __original(_item);
+        }
+    })
+
+    // Implicit-group exclusion safety net: never let a blocked perk be unlocked, whatever path
+    // (UI dialog, DynamicPerks, AI). The character screen also greys blocked perks out via the
+    // druid_blocked flag stamped below + the isPerkUnlockable override in druid.js.
+    mod.hook("scripts/entity/tactical/player", function (q) {
+        q.unlockPerk = @(__original) function (_id) {
+            if (::Const.Druid.isPerkBlocked(_id, getSkills())) return false;
+            return __original(_id);
         }
     })
 
@@ -136,9 +211,14 @@ mod.queue(">mod_reforged", ">mod_background_perks",
             q.convertEntityToUIData = @(__original) function(_entity, _activeEntity) {
                 local result = __original(_entity, _activeEntity);
                 if (_entity != null && _entity.getSkills().hasSkill("background.hackflows_druid")) {
+                    local skills = _entity.getSkills();
                     local perks = ::Const.Perks.Perks.map(@(row) clone row);
                     foreach (perk in ::Const.Perks.Druid) {
-                        perks[perk.Row].push(perk);
+                        // Clone so the per-entity druid_blocked flag never leaks onto the shared
+                        // perk definition; the JS tree reads it to grey out blocked perks.
+                        local p = clone perk;
+                        p.druid_blocked <- ::Const.Druid.isPerkBlocked(perk.ID, skills);
+                        perks[perk.Row].push(p);
                     }
                     result.druid_perkTree <- perks;
                 } else {

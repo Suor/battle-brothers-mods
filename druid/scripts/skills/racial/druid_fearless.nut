@@ -1,4 +1,4 @@
-// Pack Leader's beasts know their master for the alpha: they can be shaken but never routed.
+// Beast Aura's beasts know their master for the alpha: they can be shaken but never routed.
 // This is a marker skill - mod_druid hooks actor.checkMorale to floor a fearless beast's morale
 // at Breaking, so morale effects still bite but the roll can never drop it into Fleeing.
 this.druid_fearless <- this.inherit("scripts/skills/skill", {

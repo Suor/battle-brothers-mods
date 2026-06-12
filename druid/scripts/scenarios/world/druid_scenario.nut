@@ -3,27 +3,47 @@ local Player = ::std.Player, Rand = ::std.Rand;
 this.druid_scenario <- this.inherit("scripts/scenarios/world/starting_scenario", {
     m = {
         WoodsFolk = null
+        ExcludedDraft = null
     },
     function create()
     {
         this.m.ID = "scenario.druid";
-        this.m.Name = "Proper Druid";
-        this.m.Description = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]You learned to speak with the green things and the beasts that walk beneath the canopy. Now you walk the world with them at your back.\n\n[color=#bcad8c]Player Character:[/color] This druid is you. Should you fall, no beast will answer for the others.\n[color=#bcad8c]Children of the Wild:[/color] You begin with rough woodsfolk rather than trained soldiers.\n[color=#bcad8c]Call of the Wild:[/color] From the first day you can summon a beast fitting the battlefield to fight at your side.[/p]";
+        this.m.Name = "The Wolf and the Bear";
+        this.m.Description = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]The wild was in your blood before you had words for it. The green things and the beasts that walk beneath the canopy know their own, and they have always known you. Now two of you walk the world with the wild at your back.\n\n[color=#bcad8c]The Wolf and the Bear:[/color] You begin as a pair, both walkers of the wild paths - one who has taken the beast's shape to fight tooth and claw, and one who calls the beasts and mends his fellows' wounds. Should the player character fall, no beast will answer for the others.\n[color=#bcad8c]Children of the Wild:[/color] You begin with rough woodsfolk rather than trained soldiers; hunters and poachers will not march under your banner, nor take your coin.\n[color=#bcad8c]Call of the Wild:[/color] From the first day you can summon a beast fitting the battlefield to fight at your side.[/p]";
         this.m.Difficulty = 1;
         this.m.Order = 50;
         this.m.IsFixedLook = true;
 
+        // Woodsfolk fillers - no hunters or poachers (they don't keep a druid's company).
         this.m.WoodsFolk = [
-            "hunter_background"
-            "poacher_background"
             "wildman_background"
             "fisherman_background"
         ];
+        // Backgrounds a druid's warband will not recruit.
+        this.m.ExcludedDraft = ["hunter_background", "poacher_background"];
     }
 
     function isValid()
     {
         return true;
+    }
+
+    // Grant a perk outright (scenario heroes start with one already taken), bypassing the tier
+    // gate but keeping the bookkeeping straight so the tree reads it as unlocked.
+    function grantPerk(_bro, _script)
+    {
+        _bro.getSkills().add(::new(_script));
+        _bro.m.PerkPointsSpent++;
+        if (_bro.m.PerkPoints > 0) _bro.m.PerkPoints--;
+        _bro.getSkills().update();
+    }
+
+    // Hunters and poachers won't take a druid's coin.
+    function onUpdateDraftList( _list )
+    {
+        for (local i = _list.len() - 1; i >= 0; i--) {
+            if (this.m.ExcludedDraft.find(_list[i]) != null) _list.remove(i);
+        }
     }
 
     function onSpawnAssets()
@@ -32,33 +52,39 @@ this.druid_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
 
         this.World.Assets.getStash().add(::new("scripts/items/supplies/strange_meat_item"));
         this.World.Assets.getStash().add(::new("scripts/items/supplies/bread_item"));
-        this.World.Assets.getStash().add(::new("scripts/items/weapons/hunting_bow"));
         this.World.Assets.getStash().add(::new("scripts/items/weapons/woodcutters_axe"));
 
-        local druid = roster.create("scripts/entity/tactical/player");
-        druid.setStartValuesEx([::Druid.BackgroundScript]);
-        druid.setPlaceInFormation(4 + 9);
-        druid.getSkills().add(::new("scripts/skills/traits/player_character_trait"));
-        druid.getFlags().set("IsPlayerCharacter", true);
-        druid.m.XP = ::Const.LevelXP[2 - 1]; // Level 2
-        druid.updateLevel();
-        druid.setTitle("the Greenmantle");
+        // The Bear (player character): a summoner and healer who walks the path of Nature and
+        // starts with Regrowth. Resolve-leaning talents to anchor the line and weather morale.
+        local bear = roster.create("scripts/entity/tactical/player");
+        bear.setStartValuesEx([::Druid.BackgroundScript]);
+        bear.setPlaceInFormation(4 + 9);
+        bear.getSkills().add(::new("scripts/skills/traits/player_character_trait"));
+        bear.getFlags().set("IsPlayerCharacter", true);
+        Player.giveLevels(bear, 2); // level 1 -> level 3
+        bear.setTitle("the Greenmantle");
+        Player.clearTalents(bear);
+        bear.m.Talents[::Const.Attributes.Bravery] = Rand.int(2, 3);
+        Player.addTalents(bear, 2, {probs = [30 40 30]});
+        this.grantPerk(bear, "scripts/skills/perks/perk_druid_regrowth");
 
-        // Druid talents: at least one combat-leaning star, plus a couple more.
-        Player.clearTalents(druid);
-        local combatSkill = Rand.choice([
-            ::Const.Attributes.MeleeSkill
-            ::Const.Attributes.MeleeDefense
-            ::Const.Attributes.RangedDefense
-        ], [60 20 20]);
-        druid.m.Talents[combatSkill] = Rand.int(2, 3);
-        Player.addTalents(druid, 2, {probs = [30 40 30]});
+        // The Wolf: a fighter who has taken the beast's shape and starts with Beastform.
+        // Melee-leaning talents for a tooth-and-claw frontliner.
+        local wolf = roster.create("scripts/entity/tactical/player");
+        wolf.setStartValuesEx([::Druid.BackgroundScript]);
+        wolf.setPlaceInFormation(4);
+        Player.giveLevels(wolf, 2); // level 1 -> level 3
+        Player.clearTalents(wolf);
+        wolf.m.Talents[::Const.Attributes.MeleeSkill] = Rand.int(2, 3);
+        wolf.m.Talents[::Const.Attributes.MeleeDefense] = Rand.int(1, 2);
+        Player.addTalents(wolf, 1, {probs = [30 40 30]});
+        this.grantPerk(wolf, "scripts/skills/perks/perk_druid_beastform");
 
-        // Three woodsfolk to start.
-        for (local i = 0; i < 3; i++) {
+        // Two woodsfolk to fill the line.
+        for (local i = 0; i < 2; i++) {
             local bro = roster.create("scripts/entity/tactical/player");
             bro.setStartValuesEx(this.m.WoodsFolk);
-            bro.setPlaceInFormation(3 + i);
+            bro.setPlaceInFormation(3 + i * 2);
         }
     }
 
