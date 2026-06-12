@@ -135,7 +135,7 @@ def.Aliases <- {
     // HeroicScenarioPack
     "background.adventurous_noble_southern": "background.adventurous_noble"
     "background.belly_dancer_origin":        "background.belly_dancer"
-    "trait.halfbreed":                       "necro.regeneration"
+    "trait.halfbreed":                       "perk.necro.regeneration"
     // Fantasy Bros
     "background.xxherosp":                   "background.adventurous_noble"
     "background.xxheroroyal":                "background.adventurous_noble"
@@ -416,6 +416,7 @@ def.Titles <- [
     ]}
     {ru = "Двулицый", en = "Two-Face", factors = [
         ["trait.legend_double_tongued"],
+        ["background.hackflows_con_artist"],  // мошенник о двух лицах
     ]}
     {ru = "Лежебока", en = "Lazybones", factors = [
         ["attr.Initiative.low"],  // медленно двигается = ленив
@@ -483,6 +484,10 @@ def.Titles <- [
         {ru = "Отречённый", en = "the Renounced"},
     ], factors = [
         ["background.oathbreaker"],
+        ["background.paladin", "trait.drunkard"],  // спившийся паладин; жив без "Follow excludes"
+        ["background.monk", "trait.drunkard"],     // брат-пьяница, позор обители
+        ["background.deserter", "trait.craven"],   // бежал с поля — и не стыдится
+        ["background.disowned_noble", "trait.drunkard"],  // отречённый роднёй, утешается вином
     ]}
     {ru = "Правдоруб", en = "the Truth-cutter", factors = [
         ["background.hackflows_dissenter"],
@@ -569,7 +574,8 @@ def.Titles <- [
         ["trait.dumb", "trait.pessimist"],  // вечно рассуждает о тлене перед боем
     ]}
     {ru = "Лицемер", en = "the Hypocrite", factors = [
-        ["background.monk", "trait.disloyal"],  // на словах святой, на деле — первый в лут
+        ["background.monk", "trait.disloyal"],  // на словах святой, на деле — первый в лут; жив без "Follow excludes"
+        ["group.peaceful", "trait.bloodthirsty"],  // мирный с виду, кровожадный внутри
     ]}
     {ru = "Звездочёт", en = "the Stargazer", factors = [
         ["trait.short_sighted"],   // слепо пялится в небо
@@ -938,6 +944,7 @@ def.Titles <- [
     ]}
     {ru = "Трубочист", en = "the Chimney Sweep", factors = [
         ["weapon.firearm", "trait.dumb"],  // вечно с чёрной от пороха мордой
+        ["background.miner", "trait.tiny"],  // мелкий и чумазый — хоть в дымоход
     ]}
     {ru = "Гроза Орков", en = "the Orc Terror", factors = [
         ["trait.fear_greenskins", "attr.Bravery.low"],   // ironic: бледнеет при слове «зеленокожий»
@@ -1221,7 +1228,8 @@ def.Titles <- [
         ["attr.Initiative.low", "trait.night_owl"],  // медленный ночной наблюдатель
     ]}
     {ru = "Жук", en = "the Beetle", factors = [
-        ["trait.tiny", "trait.tough"],  // маленький, но крепкий
+        ["trait.tiny", "trait.tough"],  // маленький, но крепкий; жив без "Follow excludes"
+        ["trait.tiny", "attr.Hitpoints.high"],  // мелкий, а не раздавишь
     ]}
     {ru = "Крот", en = "the Mole", factors = [
         ["background.miner", "trait.night_owl"],  // шахтёр в темноте
@@ -1441,8 +1449,9 @@ def.Titles <- [
         ["trait.dumb", "trait.optimist"],      // тёплый, но тупой
     ]}
     {ru = "Отбивная", en = "the Cutlet", factors = [
-        ["trait.survivor", "trait.ailing"],     // бьют все, а он живёт
+        ["trait.survivor", "trait.ailing"],     // бьют все, а он живёт; жив без "Follow excludes"
         ["background.brawler", "trait.ailing"],
+        ["background.brawler", "trait.survivor"],  // вечно отбивают, а он встаёт
     ]}
     {ru = "Обуза", en = "the Deadweight", factors = [
         ["trait.clumsy", "trait.fainthearted"],      // тащить тяжело, а бросить жалко
@@ -1576,7 +1585,7 @@ def.Titles <- [
         ["attr.Stamina.low", "attr.Hitpoints.low"],
     ]}
     {ru = "Пёрышко", en = "the Feather", factors = [
-        ["trait.legend_light"],
+        ["trait.legend_light"],        ["trait.tiny", "attr.Initiative.high"],  // лёгкий и порхает
     ]}
     {ru = "Фантом", en = "the Phantom", factors = [
         ["trait.night_owl", "background.thief"],
@@ -1778,7 +1787,8 @@ def.Titles <- [
         ["background.hackflows_con_artist"],
     ]}
     {ru = "Тамада", en = "the Toastmaster", factors = [
-        ["background.minstrel", "trait.dumb"],  // тупой бард, мешающий шуточками
+        ["background.minstrel", "trait.dumb"],  // тупой бард, мешающий шуточками; жив без "Follow excludes"
+        ["background.minstrel", "trait.drunkard"],  // и спеть, и выпить, и тост поднять
     ]}
     {ru = "Леший", en = "the Woodsprite", factors = [
         ["background.wildman"],                   // лесной дикарь-параноик
@@ -1995,6 +2005,7 @@ def.Titles <- [
     {ru = "Залп", en = "the Volley", factors = [
         ["weapon.firearm"],
         ["weapon.firearm", "trait.brute"],
+        ["type.ranged", "trait.impatient"],  // не целится — лупит всё сразу
     ]}
     {ru = "Рогатина", en = "the Boar Spear", factors = [
         ["weapon.spear", "trait.hate_beasts"],
@@ -2118,7 +2129,8 @@ def.Titles <- [
         ["background.hackflows_painter", "trait.tiny"],
     ]}
     {ru = "Маляр", en = "the Dauber", factors = [
-        ["background.hackflows_painter", "trait.dumb"],
+        ["background.hackflows_painter", "trait.dumb"],  // жив без "Follow excludes"
+        ["background.hackflows_painter", "trait.clumsy"],  // художник с руками не оттуда
     ]}
     {ru = "Тяпка", en = "the Hoe", factors = [
         ["background.hackflows_gardener", "trait.dumb"],
@@ -2198,8 +2210,9 @@ def.Titles <- [
         ["injury.missing_nose", "trait.insecure"],
     ]}
     {ru = "Хрящ", en = "the Gristle", factors = [
-        ["trait.iron_jaw", "trait.tiny"],
+        ["trait.iron_jaw", "trait.tiny"],  // оба — живы без "Follow excludes"
         ["trait.tough", "trait.tiny"],
+        ["trait.iron_lungs", "trait.tiny"],  // мелкий и жилистый, не угрызёшь
     ]}
     {ru = "Бирюк", en = "the Loner", factors = [
         ["trait.paranoid", "perk.lone_wolf"],

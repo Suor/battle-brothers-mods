@@ -13,6 +13,14 @@
 // 2. starting perks as factors
 // 3. add simple existing factors like armor, offhand
 
+// Settings for `prob` — my mods and Bro Studio config (see calc_prob.py)
+local PROB = {
+    mods = "xbe,reforged,background_perks,necro,druid,heroic,lone_chosen,north,offp"
+    extra_trait = 1     // Bro Studio extra traits per bro
+    perma_chance = 0.05 // Bro Studio permanent injury chance
+    strict = true       // Bro Studio "Follow excludes" checkbox
+}
+
 ::Nicknames <- {};
 if (!("Hooks" in getroottable())) ::Hooks <- {function hasMod(_id) {return false}};
 dofile("nicknames/titles.nut", true);
@@ -188,6 +196,11 @@ function cmdCheck() {
                 local r = checkFactor(factor);
                 foreach (e in r.errors)   errors.push(label + ": " + e);
                 foreach (w in r.warnings) warnings.push(label + ": " + w);
+                // Variant factors (southern, origin, rf_*) are aliased into
+                // canonical ones and should never be used directly
+                if (factor in ::Nicknames.Aliases)
+                    errors.push(label + ": " + factor + " is an alias source, use "
+                        + ::Nicknames.Aliases[factor] + " instead");
             }
             local bgs = backgroundsIn(combo);
             if (bgs.len() > 1)
@@ -630,6 +643,16 @@ function cmdLoadNew(filename) {
     }
 }
 
+// Chances to roll each title: vanilla vs my mods and settings (PROB above).
+// The probability model lives in calc_prob.py, this just shells out to it.
+function cmdProb(_what) {
+    system("python3 calc_prob.py --" + _what
+        + " --mods '" + PROB.mods + "'"
+        + " --extra-trait " + PROB.extra_trait
+        + " --perma " + PROB.perma_chance
+        + (PROB.strict ? "" : " --loose"));
+}
+
 // ── Dispatch ──────────────────────────────────────────────────────────────────
 
 local cmd = vargv.len() > 0 ? vargv[0] : "";
@@ -640,6 +663,8 @@ switch (cmd) {
     case "stats": cmdStats(); break;
     case "new": cmdNew(vargv.len() > 1 ? vargv[1] : "new_titles.md"); break;
     case "load-new": cmdLoadNew(vargv.len() > 1 ? vargv[1] : "new_titles.md"); break;
+    case "prob": cmdProb("titles"); break;
+    case "factor-prob": cmdProb("factors"); break;
     default:
         print("Usage: squirrel tools.nut <command>\n");
         print("Commands:\n");
@@ -648,4 +673,6 @@ switch (cmd) {
         print("  stats           show title and factor array counts\n");
         print("  new [file]      check new_titles.md proposals vs titles.nut (default: new_titles.md)\n");
         print("  load-new [file] add new titles from new_titles.md into titles.nut (default: new_titles.md)\n");
+        print("  prob            show vanilla/modded chances per title and factor combo\n");
+        print("  factor-prob     show vanilla/modded chances per individual factor\n");
 }

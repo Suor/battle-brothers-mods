@@ -20,8 +20,10 @@ So it has:
     - Northern Expansion
     - HeroicScenarioPack
     - [Proper Necro][necro]
+    - Proper Druid
     - Lone Chosen
     - Cultist Origin
+    - Of Flesh and Faith Plus
 
 Russian localization included - need to install [Rosetta][] and it's dependencies.
 
