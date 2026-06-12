@@ -80,6 +80,10 @@ SQ=0.6 "$S/compose_active.sh" framed_gen.png gfx/<mod>/active_foo
 
 # Background / origin:
 SUBJ=78 "$S/compose_background.sh" subject.png gfx/<mod>/background_foo
+
+# Background with a custom glow (bright blue, e.g. weapon-mastery style) — or no glow at all:
+GLOWCOL='#3a6cc0' GLOW=2.2 "$S/compose_background.sh" subject.png gfx/<mod>/background_foo
+GLOW=0                     "$S/compose_background.sh" subject.png gfx/<mod>/background_foo   # solid disc
 ```
 
 Common env knobs (all scripts): `HEAD`/`SUBJ`/`SQ` = subject size, `YOFF` = vertical nudge,
@@ -119,9 +123,12 @@ may differ where a subject deliberately crosses the rim (`over` mode). In `clip`
 - **BACK UP BEFORE REDOING.** When re-rendering or fixing an icon, FIRST snapshot the current `out/`
   to `bak/<timestamp>/` — never clobber the previous version in place. A tuning pass can break what
   worked (a glow change can spill past the rim); without a backup the prior good version is gone.
-- **Workspace layout** (per mod, under `gfx/<mod>/_gen/<batch>/`, never `/tmp`):
-  - `out/` — FINAL icons **and** their previews (`_*_preview.png`). This is what the user reviews.
-  - `wip/` — intermediate: codex subjects, prompt `.txt`, logs, comparison sheets, `ref/` vanilla refs.
+- **Workspace layout** (per mod, under `gfx/<mod>/_gen/<batch>/`, never `/tmp`). The batch dir is the
+  NON-final workspace (the final dir is `gfx/<mod>/`); its **root is the review surface** — anything you
+  want the user to look at lives there, not buried in `wip/`:
+  - batch-dir **root** — candidate icons (`vN_*.png`) and comparison sheets (`_cmp_*.png`) for review.
+  - `out/` — FINAL icons **and** their previews (`_*_preview.png`).
+  - `wip/` — raw intermediates ONLY: codex subjects, prompt `.txt`, logs, scratch, `ref/` vanilla refs.
   - `bak/<timestamp>/` — snapshots of `out/` taken before each re-render.
 - **Perks/effects are circles; actives are squares.** A round subject dropped into a square is NOT a
   proper active icon — active art fills the whole panel and bleeds to the metal border.
@@ -130,7 +137,11 @@ may differ where a subject deliberately crosses the rim (`over` mode). In `clip`
 - **8-bit RGBA on the final write.** The game engine (WebCore) can't read 16-bit PNGs, and source
   brushes are often 16-bit. The scripts force `-depth 8 -define png:color-type=6`.
 - **Background subjects depict the concept (an object/emblem), never a head/face** — it's a small
-  icon. Vanilla origin discs are not solid black; they carry a soft grey centre glow.
+  icon. Vanilla origin discs are not solid black; they carry a soft **centre-out** radial glow
+  (brightest in the middle, fading to near-black at the rim — measure from the centre, not the edge,
+  or you'll miss it). `compose_background.sh` synthesizes it: `GLOWCOL`/`GLOW` tune colour and
+  strength, `GLOW=0` gives a flat solid disc. Some icons want a custom glow (weapon masteries use a
+  much brighter blue).
 - **Determine geometry from existing vanilla icons** rather than guessing; compare against real
   `base/data_001/gfx/ui/...` art and the reference images in `assets/`.
 - **Stay on the task.** Don't apply unrelated code fixes or pull stale TODOs from old handoffs while

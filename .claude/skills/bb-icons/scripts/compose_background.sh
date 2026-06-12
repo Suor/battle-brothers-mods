@@ -17,7 +17,12 @@
 #
 # Usage: compose_background.sh <subject_art.png> <out_base> [template.png]
 #   env: SUBJ = subject size %% of icon (default 80), YOFF = vertical offset px (+=down, default 0)
-#        GLOW = 0 to disable the centre glow (default on), DISCR = disc interior radius (default 23)
+#        GLOW = centre-glow PRESET: background (default) | perk | trait | mastery | none.
+#               'none' (or 0/off/solid) = flat solid disc. Presets differ because vanilla discs do:
+#               backgrounds have a bright grey glow, perks/traits a faint warm lift, masteries a blue burst.
+#        GLOW_COLOR / GLOW_POWER = override the preset's peak colour / strength for a custom glow,
+#               e.g. GLOW_COLOR='#3a6cc0' GLOW_POWER=1.3 for a brighter blue than the mastery preset.
+#        DISCR = disc interior radius (default 23)
 #        USM/SHP/SAT/CON = sharpen/colour knobs
 set -euo pipefail
 D="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -26,7 +31,9 @@ TEMPLATE="${3:-$D/assets/background_template.png}"
 SIZE=56; FUZZ=22%
 # Vanilla origin subjects FILL the disc nearly edge-to-edge (they tuck right under the gold ring), so
 # SUBJ defaults large. Narrow subjects (an upright hourglass) still won't reach the sides — that's fine.
-SUBJ="${SUBJ:-88}"; YOFF="${YOFF:-0}"; GLOW="${GLOW:-1}"
+SUBJ="${SUBJ:-88}"; YOFF="${YOFF:-0}"
+# Glow preset -> GLOW_COLOR + GLOW_POWER (either overridable). See scripts/_glow.sh.
+source "$D/scripts/_glow.sh"; GLOW="${GLOW:-background}"; glow_preset "$GLOW"
 USM="${USM:-1.5x1.2+1.6+0}"; SHP="${SHP:-0x0.8}"; SAT="${SAT:-100}"; CON="${CON:-0}"
 # Disc interior radius. The template's gold ring runs r~23.5..25; clip at 24 so the subject tucks just
 # UNDER the gold inner edge (like vanilla) instead of leaving a hard dark step short of the ring.
@@ -44,10 +51,12 @@ magick "$TEMPLATE" -strip -resize "${SIZE}x${SIZE}" "$tmp/bg.png" 2>/dev/null
 # fade smoothly under the gold ring — a hard clip here leaves a choppy concentric edge inside the rim.
 magick -size "${SIZE}x${SIZE}" xc:none -fill white -draw "circle $C,$C $C,$RP" -blur 0x0.7 "$tmp/disc_mask.png"
 
-# 1) Warm radial glow lifting the disc centre, clipped to the interior, laid over the template.
-if [[ "$GLOW" != "0" ]]; then
-  magick -size "${SIZE}x${SIZE}" radial-gradient:'#2e2a24'-'none' \
-    "$tmp/disc_mask.png" -alpha set -compose dstin -composite "$tmp/glow.png"
+# 1) Radial glow lifting the disc centre, clipped to the interior, laid over the template. Colour and
+#    strength come from the GLOW preset (or GLOW_COLOR/GLOW_POWER overrides). GLOW_POWER=0 -> no glow.
+if awk "BEGIN{exit !($GLOW_POWER>0)}"; then
+  magick -size "${SIZE}x${SIZE}" radial-gradient:"${GLOW_COLOR}"-'none' \
+    "$tmp/disc_mask.png" -alpha set -compose dstin -composite \
+    -channel A -evaluate multiply "$GLOW_POWER" +channel "$tmp/glow.png"
   magick "$tmp/bg.png" "$tmp/glow.png" -gravity center -compose over -composite "$tmp/bg.png"
 fi
 
