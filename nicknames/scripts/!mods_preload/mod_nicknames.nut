@@ -74,7 +74,7 @@ def.buildFactorSet <- function(_bro) {
     foreach (attr, br in def.BaseAttrRanges) {
         local low = br[0] + changeAttrs[attr][0], high =  br[1] + changeAttrs[attr][1];
         local stars = _bro.m.Talents[::Const.Attributes[attr == "Stamina" ? "Fatigue" : attr]];
-        if (stars > 0 && props[attr] >= high - stars)
+        if (stars > 0 && props[attr] >= high - stars + 1)
             set["attr." + attr + ".high"] <- true;
         if (stars == 0 && props[attr] <= low)
             set["attr." + attr + ".low"] <- true;

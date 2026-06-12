@@ -21,7 +21,7 @@ function attrLimit(bro, attr, isHigh) {
     local br = def.BaseAttrRanges[attr];
     local changeAttrs = bro.getBackground().onChangeAttributes();
     local stars = bro.m.Talents[::Const.Attributes[attr == "Stamina" ? "Fatigue" : attr]];
-    return isHigh ? br[1] + changeAttrs[attr][1] - stars : br[0] + changeAttrs[attr][0];
+    return isHigh ? br[1] + changeAttrs[attr][1] - stars + 1 : br[0] + changeAttrs[attr][0];
 }
 
 // Vanilla background .m.Titles are used
@@ -101,13 +101,20 @@ function withProp(overrides) {
     foreach (k, v in overrides) p[k] <- v;
     return p;
 }
-// attr.Stamina.high: stars=1, limit = base_high(100) + bgChange - stars(1)
+// attr.Stamina.high: stars=1, limit = base_high(100) + bgChange - stars(1) + 1
 // talents index: Hitpoints=0, Stamina=1
 local broHighStamina = makeBro("background.farmhand", null, [], [0, 1, 0, 0, 0, 0, 0, 0],
-    withProp({Stamina = 109}));
-assertEq(attrLimit(broHighStamina, "Stamina", true), 109);
+    withProp({Stamina = 110}));
+assertEq(attrLimit(broHighStamina, "Stamina", true), 110);
 assertIn("the Workhorse", candidateTitles(broHighStamina));
 print("attr.Stamina.high triggers OK\n");
+
+// attr.Stamina.high does NOT trigger one below the limit (109 with 1 star)
+local broAlmostHighStamina = makeBro("background.farmhand", null, [], [0, 1, 0, 0, 0, 0, 0, 0],
+    withProp({Stamina = 109}));
+if (candidateTitles(broAlmostHighStamina).find("the Workhorse") != null)
+    throw "the Workhorse should not appear one below the high limit";
+print("attr.Stamina.high: one below limit → no trigger OK\n");
 
 // attr.Stamina.high does NOT trigger without a talent
 local broHighStaminaNoTalent = makeBro("background.farmhand", null, [], null,
