@@ -580,7 +580,13 @@ local pairs = [
     {en = "Thanohsa", ru = "Тханохса"}
     {en = "Chalertes", ru = "Халертес"}
     {en = "Nethithea", ru = "Нетитея"}
+    {en = "Ogg-Sattoth", ru = "Огг-Саттот"}
+    {en = "Kha-Athlu", ru = "Кха-Атлу"}
     {en = "Shaggaruth", ru = "Шаггарут"}
+    {en = "Gla-Oth", ru = "Гла-От"}
+    {en = "Gu-Shogg", ru = "Гу-Шогг"}
+    {en = "Chtan-Nahitil", ru = "Хтан-Нахитиль"}
+    {en = "Xa-Shutar", ru = "Кса-Шутар"}
     {en = "Thohochoth", ru = "Тхохохот"}
     {en = "Naccorath", ru = "Наккорат"}
     {en = "Xapocathlu", ru = "Ксапокатлу"}
