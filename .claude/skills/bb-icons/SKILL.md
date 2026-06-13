@@ -116,6 +116,20 @@ may differ where a subject deliberately crosses the rim (`over` mode). In `clip`
 
 ## Hard-won rules (from real sessions — don't relearn these)
 
+- **Validate against the reference BEFORE presenting — don't offload judgement.** When matching a
+  reference (a vanilla icon, a target colour, a prior good icon), build a sheet of *reference + your
+  candidate(s) + already-rejected attempts* and check it YOURSELF first: does the colour match, the
+  coverage/balance, the texture? Only then surface options — and lead with what's wrong with each, don't
+  just ask the user to "pick one". A whole session was burned re-showing candidates the reference would
+  have rejected at a glance. Use `cmp_sheet.sh` (reference first).
+- **Sample colours from the reference — never eyeball a hex.** A glow/tint colour copied "by eye"
+  (`#a82a18`) was wrong for three rounds; the real one (sampled: `#5b1110`) was a purer, deeper red.
+  Pull the actual numbers with `sample_color.sh <ref>` (palette) or `sample_color.sh <ref> x,y` (pixel)
+  and reuse those exact values — don't invent a new hex each iteration.
+- **Build comparison sheets with `cmp_sheet.sh`, never raw `montage … -label`.** In ImageMagick `-label`
+  is a setting that attaches to the *next* image read, so `\( img -resize X -label 'L' \)` captions the
+  WRONG tile (off by one) — you then collect feedback against the wrong picture. `cmp_sheet.sh` uses
+  `-set label` (captions the image already in memory) so tiles and labels always align.
 - **Never redraw the rim/frame.** Compose onto the real game blank. Codex-drawn rims are too thin;
   hand-drawn discs leave grey junk around the circle and a border that doesn't match vanilla.
 - **Never overwrite an existing/vetted icon** with something unvetted. Write to a new name or to a
@@ -147,8 +161,21 @@ may differ where a subject deliberately crosses the rim (`over` mode). In `clip`
 - **Stay on the task.** Don't apply unrelated code fixes or pull stale TODOs from old handoffs while
   doing icons.
 
+## Shell gotchas (this toolchain runs under zsh)
+- The Bash tool's shell is **zsh**, which does NOT word-split unquoted `$VAR`. `env $OPTS cmd` where
+  `OPTS="USM=… SHP=…"` passes the whole string as ONE arg. Inline the assignments (`env USM=… SHP=… cmd`)
+  or split explicitly (`${=OPTS}`).
+- `cp`/`mv` may be aliased to interactive (`-i`) and will hang a batch on a prompt — use `\cp -f` / `\mv -f`.
+- `codex exec` for an image-EDIT task hangs reading stdin — always redirect `< /dev/null`. (Plain
+  generation runs are fine without it.)
+- Under `set -e`, `(( n++ ))` returns the *old* value as exit status, so it aborts the script when `n` was
+  0 — use `n=$((n+1))`. And `-compose minus` computes `second - first` (operand order is reversed from
+  what you'd expect).
+
 ## Files
 - `scripts/` — the pipeline (compose_*, reframe, preview, check_*, median_frame).
+- `scripts/cmp_sheet.sh` — labelled comparison sheet (alignment-safe; use instead of raw `montage -label`).
+- `scripts/sample_color.sh` — sample colours from a reference (palette or exact pixels) to match by number.
 - `assets/` — canonical game frames: perk/trait/active blanks (from AC) + the vanilla background
   template. These are the source of truth for rims; the scripts default to them.
 - `references/codex_prompts.md` — full, copy-pasteable codex prompt templates.
