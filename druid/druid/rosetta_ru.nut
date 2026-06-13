@@ -13,6 +13,7 @@ local pairs = [
     }
     // en = "body"
     // en = "head"
+    // en = "hair"
     // en = "injury"
     // en = "armor"
     // FILE: scripts/config/z_druid.nut
@@ -58,7 +59,7 @@ local pairs = [
     }
     {
         en = "Beastform"
-        ru = "Звериный облик"
+        ru = "Форма зверя"
     }
     {
         // Tooltip = "Take the shape of the beast for good: " + green("+10% Melee Skill") + ", "
@@ -71,7 +72,7 @@ local pairs = [
     }
     {
         en = "Beast Aura"
-        ru = "Звериная аура"
+        ru = "Аура зверя"
     }
     {
         // Tooltip = "Beasts know you for their alpha. Your beasts keep to your side instead of"
@@ -83,7 +84,7 @@ local pairs = [
     }
     {
         en = "Beast Rage"
-        ru = "Звериная ярость"
+        ru = "Ярость зверя"
     }
     {
         // Tooltip = "Blood feeds a rising fury: stacking melee damage, Resolve and Initiative and"
@@ -103,6 +104,23 @@ local pairs = [
         en = "Envenomed fang and sting: your beasts' bites poison the prey - or, once you walk in Beastform, your own. A weakening venom that blurs sight and slows the foe."
         ru = "Ядовитый клык и жало: укусы ваших зверей отравляют добычу - а в зверином облике и ваши собственные удары. Ослабляющий яд мутит зрение и замедляет врага."
     }
+    // Lock reasons shown by DPF's perk tooltip (perkBlockReason / verifyPrerequisites).
+    {
+        en = "Locked because this character walks the path of the Beast"
+        ru = "Закрыто: этот персонаж идёт путём Зверя"
+    }
+    {
+        en = "Locked because this character walks the path of Nature"
+        ru = "Закрыто: этот персонаж идёт путём Природы"
+    }
+    {
+        en = "Locked because it requires Beastform"
+        ru = "Закрыто: требуется Звериный облик"
+    }
+    {
+        en = "Locked because Venom and Beast Rage are mutually exclusive"
+        ru = "Закрыто: Яд и Звериная ярость несовместимы"
+    }
     // en = "wolf"
     // en = "direwolf"
     // en = "spider"
@@ -119,12 +137,16 @@ local pairs = [
         ru = "Волк и Медведь"
     }
     {
-        en = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]The wild was in your blood before you had words for it. The green things and the beasts that walk beneath the canopy know their own, and they have always known you. Now two of you walk the world with the wild at your back.\n\n[color=#bcad8c]The Wolf and the Bear:[/color] You begin as a pair, both walkers of the wild paths - one who has taken the beast's shape to fight tooth and claw, and one who calls the beasts and mends his fellows' wounds. Should the player character fall, no beast will answer for the others.\n[color=#bcad8c]Children of the Wild:[/color] You begin with rough woodsfolk rather than trained soldiers; hunters and poachers will not march under your banner, nor take your coin.\n[color=#bcad8c]Call of the Wild:[/color] From the first day you can summon a beast fitting the battlefield to fight at your side.[/p]"
-        ru = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]Дикое было в вашей крови ещё до того, как у вас появились для него слова. Зелень и звери, что бродят под пологом леса, чуют своего - и всегда чуяли вас. Теперь по миру странствуют двое, и дикая чаща идёт за вами.\n\n[color=#bcad8c]Волк и Медведь:[/color] Вы начинаете вдвоём, оба - странники диких троп: один принял звериный облик и бьётся клыком и когтем, другой призывает зверей и врачует раны собратьев. Если падёт игровой персонаж, ни один зверь не заменит остальных.\n[color=#bcad8c]Дети дикой природы:[/color] Вы начинаете с грубым лесным людом, а не с обученными солдатами; охотники и браконьеры не встанут под ваше знамя и не возьмут вашу монету.\n[color=#bcad8c]Зов дикой природы:[/color] С первого же дня вы можете призвать зверя, подходящего полю боя, сражаться на вашей стороне.[/p]"
+        en = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]The wild was in your blood before you had words for it. The green things and the beasts that walk beneath the canopy know their own, and they have always known you. Now two of you walk the world with the wild at your back.\n\n[color=#bcad8c]The Wolf and the Bear:[/color] You begin as a pair, both walkers of the wild paths - one who has taken the beast's shape to fight tooth and claw, and one who calls the beasts and mends his fellows' wounds.\n[color=#bcad8c]Player Characters:[/color] Don't let both the Wolf and the Bear die.\n[color=#bcad8c]Children of the Wild:[/color] You begin with rough woodsfolk rather than trained soldiers, and will hire no hunters or poachers.[/p]"
+        ru = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]Дикое было в вашей крови ещё до того, как у вас появились для него слова. Зелень и звери, что бродят под пологом леса, чуют своего - и всегда чуяли вас. Теперь по миру странствуют двое, и дикая чаща идёт за вами.\n\n[color=#bcad8c]Волк и Медведь:[/color] Вы начинаете вдвоём, оба - странники диких троп: один принял звериный облик и бьётся клыком и когтем, другой призывает зверей и врачует раны собратьев.\n[color=#bcad8c]Игровые персонажи:[/color] Вы проиграете, лишь если погибнут оба - и Волк, и Медведь.\n[color=#bcad8c]Дети дикой природы:[/color] Вы начинаете с грубым лесным людом, а не с обученными солдатами, и не нанимаете охотников и браконьеров.[/p]"
     }
     {
-        en = "the Greenmantle"
-        ru = "Зелёный Плащ"
+        en = "the Bear"
+        ru = "Медведь"
+    }
+    {
+        en = "the Wolf"
+        ru = "Волк"
     }
     // FILE: scripts/skills/actives/druid_entangle.nut
     {

@@ -1,4 +1,5 @@
-// Venom (ungrouped, adaptive). As a Supporter it is a passive flag read by druid_summon_beast to
+// FIX: this is unreadable unstructured blob of text
+// Venom (ungrouped, adaptive). On the Nature path it is a passive flag read by druid_summon_beast to
 // give summoned beasts envenomed bites. Once the druid walks in Beastform it turns on the druid
 // himself: at the start of each battle he gains the same weakening poison-coat, so his own melee
 // hits poison the prey. (Venom and Beast Rage are mutually exclusive - see isPerkBlocked.)
@@ -19,7 +20,7 @@ this.perk_druid_venom <- this.inherit("scripts/skills/skill", {
     function onCombatStarted() {
         local actor = this.m.Container.getActor();
         if (::std.Util.isNull(actor)) return;
-        // Fighter variant: a Beastform druid carries the venom himself. The racial coat is
+        // Beast variant: a Beastform druid carries the venom himself. The racial coat is
         // removed after battle, so it is reapplied each combat.
         if (this.m.Container.hasSkill("perk.druid.beastform")
             && !this.m.Container.hasSkill("racial.druid_venom")) {

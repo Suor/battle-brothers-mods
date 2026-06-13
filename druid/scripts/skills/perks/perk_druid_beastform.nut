@@ -1,4 +1,4 @@
-// Beastform - the Fighter gate. A one-time, permanent transformation: physical bonuses in
+// Beastform - the Beast-group gate. A one-time, permanent transformation: physical bonuses in
 // exchange for losing heavy shields, helmets, body armor and all ranged weapons. The equipment
 // ban is enforced by the item_container.equip hook in mod_druid; here we apply the stat bonuses,
 // strip anything now forbidden, and (if Fantasy Bros assets are present) take on a beast look.

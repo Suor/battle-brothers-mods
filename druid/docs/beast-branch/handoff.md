@@ -55,10 +55,20 @@ Entangle R4, Venom⟷Beast Rage R5, Apex R6.
 - `brushes` was added to SOURCES in the `Makefile`.
 
 ### Perk icons
-Real icons made with the `bb-icons` skill (codex subjects → `compose_perk.sh`): Beastform = clawed
-paw, Beast Aura = howling wolf + green nimbus, Beast Rage = roaring maw. Workspace:
-`gfx/druid/_gen/beastbranch/` (`wip/` subjects+prompts+refs, `out/` finals+previews). Installed over
-the placeholders at `gfx/druid/perk_beast*.png` (+`_sw`).
+Made with the `bb-icons` skill (codex subjects → `compose_perk.sh`). Workspace:
+`gfx/druid/_gen/beastbranch/` (`wip/` subjects+prompts+refs, `out/` finals, `bak/redo1/` pre-redo
+snapshot, `_cmp_*`/`_present_*` review sheets at the batch root). Current installed state at
+`gfx/druid/perk_beast*.png` (+`_sw`):
+- **Beast Aura** = the old **Pack Leader** wolf-head icon, reused as-is (the perk was folded in).
+- **Beast Rage** = **bloodied open maw** (`rage_C_maw`), chosen to differ from Apex's frontal head and
+  from the wolf-profile (`rage_B`). NB: the earlier choice was made off a *mislabelled* comparison sheet
+  (the `-label` off-by-one bug); the user's "last option" was the maw, not the profile — now corrected.
+- **Beastform** = clawed paw, claws pulled inside the rim, arm feathered off at the bottom. **The disc
+  background is NOT finalised** — see Open. Currently installed = smooth deep-red glow
+  (`bfY_3_glowonly`); the user then iterated toward a *blood-splatter* disc and that is unresolved.
+
+Red target colour for Beastform is sampled from vanilla **overflow** (`base/.../perks/perk_62.png`):
+deep pure red `#5b1110` (mid) / `#910b0b` (bright) — use `sample_color.sh`, don't eyeball.
 
 ## Gotchas / decisions worth knowing
 - **Equip ban is enforced at `item_container.equip`** (returns false) so it covers UI, tactical and
@@ -69,12 +79,26 @@ the placeholders at `gfx/druid/perk_beast*.png` (+`_sw`).
   "stay near master" behaviour would be needed instead.
 - **`isPerkBlocked` is the one source of truth**; consulted by both the JS UI gate and the squirrel
   `unlockPerk` safety net. DynamicPerks path only gets the squirrel net (no greying).
-- **`bb-icons/scripts/compose_perk.sh` is locally WIP-broken** (`DISCGLOW: unbound variable`, stale
-  refs after a glow-preset refactor). I did NOT edit it — worked around with `GLOW=none DISCGLOW=0`.
-  Fix that script before the next icon batch.
-- Bash **cwd persists between calls** here; `cd` once and relative paths stick.
+- **`bb-icons/scripts/compose_perk.sh` glow is FIXED.** Step 4 referenced the dead `DISCGLOW` var and a
+  stale `glow.png` after the glow-preset refactor (hence `unbound variable` + glowless perks). Now the
+  disc-glow/halo are composited inside their own env-driven creation blocks (`GLOW_POWER>0` / `HALO==1`);
+  step 4 is just "subject on top". Also added an **`XOFF`** env (mirror of `YOFF`) to nudge the subject
+  horizontally. New skill helpers: **`cmp_sheet.sh`** (alignment-safe labelled comparison montages — use
+  instead of raw `montage -label`) and **`sample_color.sh`** (sample reference colours by number).
+- Bash **cwd persists between calls** here; `cd` once and relative paths stick. The shell is **zsh** —
+  see the skill's "Shell gotchas" (unquoted `$VAR` doesn't word-split; `\cp -f`; codex edit needs
+  `< /dev/null`).
 
 ## Open / follow-up
+- **Finalise the Beastform disc (blood-splatter).** Installed icon lags the user's last direction (it's
+  the smooth-glow `bfY_3_glowonly`). The user wants a **blood-splatter** disc like vanilla overflow:
+  *more red than black, red weighted to the right (not top), distinct shapes with crisp edges — NOT a
+  smooth red→black halftone, NOT tiny messy patches, NOT a solid red disc, NOT a clean left/right split.*
+  Closest candidate so far = `bfY_*` (red-dominant painterly mottle via a dark→bright-red CLUT ramp over
+  low-freq noise, ~70% red). Rejected approaches (don't repeat): synthesized smooth radial glow, codex
+  inpaint of overflow (too much halftone + small patches), solidified (no black), big synth blobs, sparse
+  droplets (too little red), strong spatial bias (clean split). Validate the next attempt with
+  `cmp_sheet.sh` against `perk_62` + these rejects before showing.
 - **Q5 balance pass (in-game):** Beastform bonuses, Rage formula/threshold (~10), Aura Resolve
   (~10) and radius (~2), Apex strength. All in `::Const.Druid` for easy tuning.
 - **In-game verification:** start "The Wolf and the Bear"; check the two druids' perks/talents, the

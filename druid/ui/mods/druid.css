@@ -1,6 +1,6 @@
 /* Druid perk tree styling. */
 
-/* Perks closed off by the implicit Supporter/Fighter choice: dimmed and washed out so the
+/* Perks closed off by the implicit Nature/Beast choice: dimmed and washed out so the
    player reads them as "not on this build", distinct from merely tier-locked perks. */
 .l-perk-container.druid-blocked .perk-image-layer {
     opacity: 0.3;

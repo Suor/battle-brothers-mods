@@ -1,4 +1,4 @@
-// Beast Rage (Fighter) - modelled on Reforged's perk_rf_feral_rage, but written for plain vanilla
+// Beast Rage (Beast group) - modelled on Reforged's perk_rf_feral_rage, but written for plain vanilla
 // (no Reforged helpers) and with two changes from the design (plan.md, user-requests.md):
 //   - damage reduction is replaced with per-stack hitpoint regeneration each turn;
 //   - a melee miss also feeds the rage (+1 stack).
@@ -85,6 +85,13 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
         {
             this.dropShield(actor);
         }
+    }
+
+    // While the rage is at its height the beast suffers no shield in hand - the equip ban is
+    // enforced by the item_container.equip hook in mod_druid.
+    function bansShield()
+    {
+        return this.m.RageStacks >= ::Const.Druid.Rage.ShieldDropThreshold;
     }
 
     function dropShield( _actor )

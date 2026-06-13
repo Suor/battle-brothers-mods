@@ -65,6 +65,14 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
         }
     }
 
+    // Entity IDs are not stable across battles, so a stale BearerID could point at an unrelated
+    // actor next fight - drop it together with the effect it tracks.
+    function onCombatFinished()
+    {
+        this.skill.onCombatFinished();
+        this.m.BearerID = null;
+    }
+
     function onUse(_user, _targetTile)
     {
         if (!_targetTile.IsOccupiedByActor) return false;

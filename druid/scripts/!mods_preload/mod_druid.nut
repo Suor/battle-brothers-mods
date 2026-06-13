@@ -34,12 +34,6 @@ mod.queue(">mod_reforged", ">mod_background_perks",
     def.msu.Registry.addModSource(msd.GitHubTags, upd.github, {Prefix = upd.tagPrefix});
     def.msu.Registry.setUpdateSource(msd.GitHubTags);
 
-    // TODO: do we really need it?
-    ::MSU.Skills.addEvent("onSummonBeast", function (_beast) {});
-
-    ::Hooks.registerJS("ui/mods/druid.js");
-    ::Hooks.registerCSS("ui/mods/druid.css");
-
     if ("BgPerks" in getroottable()) {
         ::std.Table.extend(::BgPerks.chances.hackflows_druid, {
             "druid.entangle": 5
@@ -83,7 +77,8 @@ mod.queue(">mod_reforged", ">mod_background_perks",
         local head = _actor.getSprite("head");
         body.setBrush("druid_beast_body_0" + ::Math.rand(1, 2));
         head.setBrush("druid_beast_head_0" + ::Math.rand(1, 3));
-        _actor.getSprite("hair").setBrush("druid_beast_hair_0" + ::Math.rand(1, 5));
+        if (_actor.hasSprite("hair"))
+            _actor.getSprite("hair").setBrush("druid_beast_hair_0" + ::Math.rand(1, 5));
         if (_actor.hasSprite("injury_body"))
             _actor.getSprite("injury_body").setBrush(body.getBrush().Name + "_injured");
         head.varyColor(0.05, 0.05, 0.05);
@@ -98,7 +93,7 @@ mod.queue(">mod_reforged", ">mod_background_perks",
         def.BackgroundScript = "hackflows/druid_background";
 
         mod.hook("scripts/skills/backgrounds/hackflows/druid_background", function (q) {
-            ::include("druid/scripts/skills/backgrounds/druid_background");
+            ::include("scripts/skills/backgrounds/druid_background");
             foreach (name, member in ::Druid.BackgroundMethods) {
                 if (typeof member != "function") continue;
                 if (q.contains(name, true)) q[name] = @(__original) member; // replace existing method
@@ -143,8 +138,10 @@ mod.queue(">mod_reforged", ">mod_background_perks",
         q.onActorKilled = @(__original) function(_actor, _tile, _skill) {
             local master = this.druid_master();
             if (master != null && ::std.Actor.isAlive(master)) {
+                // Always lower the flag: leaving it up would silence on-kill effects for everyone.
                 def.FakeKill = true;
-                master.onActorKilled(_actor, _tile, _skill);
+                try { master.onActorKilled(_actor, _tile, _skill); }
+                catch (err) { def.FakeKill = false; throw err; }
                 def.FakeKill = false;
             }
             __original(_actor, _tile, _skill);
@@ -180,21 +177,29 @@ mod.queue(">mod_reforged", ">mod_background_perks",
     // Beastform's equipment ban: a transformed druid cannot equip heavy shields, helmets or body
     // armor, nor any ranged weapon (see ::Const.Druid.beastformAllows). We refuse the equip at the
     // container so it is enforced everywhere - inventory screen, tactical swaps and AI alike.
+    // Beast Rage at its height also refuses a shield until the rage cools below the threshold.
     mod.hook("scripts/items/item_container", function (q) {
         q.equip = @(__original) function (_item) {
             local actor = m.Actor;
-            if (_item != null && actor != null && !actor.isNull()
-                && actor.getSkills().hasSkill("perk.druid.beastform")
-                && !::Const.Druid.beastformAllows(_item)) {
-                return false;
+            if (_item != null && actor != null && !actor.isNull()) {
+                local skills = actor.getSkills();
+                if (skills.hasSkill("perk.druid.beastform")
+                    && !::Const.Druid.beastformAllows(_item)) {
+                    return false;
+                }
+                if (_item.isItemType(::Const.Items.ItemType.Shield)) {
+                    local rage = skills.getSkillByID("perk.druid.beast_rage");
+                    if (rage != null && rage.bansShield()) return false;
+                }
             }
             return __original(_item);
         }
     })
 
     // Implicit-group exclusion safety net: never let a blocked perk be unlocked, whatever path
-    // (UI dialog, DynamicPerks, AI). The character screen also greys blocked perks out via the
-    // druid_blocked flag stamped below + the isPerkUnlockable override in druid.js.
+    // (UI dialog, DynamicPerks, AI). The character screen also greys blocked perks out: under
+    // DPF natively via verifyPrerequisites on the perk defs (see z_druid.nut), otherwise via
+    // the druid_blocked flag stamped below + the isPerkUnlockable override in druid.js.
     mod.hook("scripts/entity/tactical/player", function (q) {
         q.unlockPerk = @(__original) function (_id) {
             if (::Const.Druid.isPerkBlocked(_id, getSkills())) return false;
@@ -202,10 +207,14 @@ mod.queue(">mod_reforged", ">mod_background_perks",
         }
     })
 
-    // If DynamicPerks is installed we add perks via a special perk group (see druid_pg).
-    // Otherwise inject our perk rows straight into the background's perk tree.
+    // If DynamicPerks is installed we add perks via a special perk group (see druid_pg) and its
+    // verifyPrerequisites lock covers the UI. Otherwise inject our perk rows straight into the
+    // background's perk tree and carry the exclusion to the UI ourselves (druid.js + druid.css).
     if (!("DynamicPerks" in getroottable())) {
         ::DynamicPerks <- "druid_placeholder"; // needed to fool mod_plan_perks
+
+        ::Hooks.registerJS("ui/mods/druid.js");
+        ::Hooks.registerCSS("ui/mods/druid.css");
 
         mod.hook("scripts/ui/global/data_helper", function (q) {
             q.convertEntityToUIData = @(__original) function(_entity, _activeEntity) {
@@ -215,8 +224,10 @@ mod.queue(">mod_reforged", ">mod_background_perks",
                     local perks = ::Const.Perks.Perks.map(@(row) clone row);
                     foreach (perk in ::Const.Perks.Druid) {
                         // Clone so the per-entity druid_blocked flag never leaks onto the shared
-                        // perk definition; the JS tree reads it to grey out blocked perks.
+                        // perk definition; the JS tree reads it to grey out blocked perks. The
+                        // verifyPrerequisites function must not cross the JS boundary - drop it.
                         local p = clone perk;
+                        delete p.verifyPrerequisites;
                         p.druid_blocked <- ::Const.Druid.isPerkBlocked(perk.ID, skills);
                         perks[perk.Row].push(p);
                     }

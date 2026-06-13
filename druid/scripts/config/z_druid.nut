@@ -2,9 +2,9 @@
 // ::Const.Druid - Druid runtime config: beast pools, group exclusion rules, Beastform/Rage tunables.
 //
 // The tree splits into two mutually exclusive groups (see docs/beast-branch/plan.md):
-//   Supporter: Regrowth, Hatch, Entangling Roots, Apex Predators
-//   Fighter:   Beastform (gate) -> Beast Aura, Beast Rage
-//   Venom:     ungrouped, adapts to whichever side you commit to
+//   Nature: Regrowth, Hatch, Entangling Roots, Apex Predators
+//   Beast:  Beastform (gate) -> Beast Aura, Beast Rage
+//   Venom:  ungrouped, adapts to whichever side you commit to
 // The group is chosen implicitly by the first group perk taken; ::Const.Druid.isPerkBlocked
 // enforces the exclusion (see mod_druid.nut for where it is consulted).
 
@@ -12,6 +12,14 @@
 
 local function addPerk(perk) {
     perk.Unlocks <- perk.Row;
+    // DPF's native lock: its isPerkUnlockable consults this and the perk tooltip shows the
+    // reason. Without DPF nothing calls it; the druid_blocked path in mod_druid.nut applies.
+    perk.verifyPrerequisites <- function (_player, _tooltip) {
+        local reason = ::Const.Druid.perkBlockReason(this.ID, _player.getSkills());
+        if (reason == null) return true;
+        _tooltip.push({id = 3, type = "hint", icon = "ui/icons/icon_locked.png", text = reason});
+        return false;
+    }
     ::Const.Perks.Druid.push(perk);
     ::Const.Perks.LookupMap[perk.ID] <- perk;
 }
@@ -23,7 +31,7 @@ local function red(text) {
     return ::Const.UI.getColorized(text + "", ::Const.UI.Color.NegativeValue)
 }
 
-// --- Supporter group -------------------------------------------------------
+// --- Nature group ----------------------------------------------------------
 addPerk({
     ID = "perk.druid.regrowth"
     Script = "scripts/skills/perks/perk_druid_regrowth"
@@ -64,7 +72,7 @@ addPerk({
     Row = 6
 })
 
-// --- Fighter group ---------------------------------------------------------
+// --- Beast group -----------------------------------------------------------
 addPerk({
     ID = "perk.druid.beastform"
     Script = "scripts/skills/perks/perk_druid_beastform"
@@ -105,6 +113,7 @@ addPerk({
     ID = "perk.druid.venom"
     Script = "scripts/skills/perks/perk_druid_venom"
     Name = "Venom"
+    # FIX: if Beastform is picked it should only work on you. Fix the text and how it works too.
     Tooltip = "Envenomed fang and sting: your beasts' bites poison the prey - or, once you walk"
             + " in Beastform, your own. A weakening venom that blurs sight and slows the foe."
     Icon = "druid/perk_venom.png"
@@ -184,18 +193,19 @@ local T = ::Const.World.TerrainType;
     }
 
     GroupPerks = {
-        Supporter = ["perk.druid.regrowth", "perk.druid.hatch", "perk.druid.entangle",
-                     "perk.druid.apex"]
-        Fighter = ["perk.druid.beastform", "perk.druid.beast_aura", "perk.druid.beast_rage"]
+        Nature = ["perk.druid.regrowth", "perk.druid.hatch", "perk.druid.entangle",
+                  "perk.druid.apex"]
+        Beast = ["perk.druid.beastform", "perk.druid.beast_aura", "perk.druid.beast_rage"]
     }
 
-    // The implicit-group exclusion rule. Returns true when _perkID may NOT be taken given the
-    // perks _skills already holds. Single source of truth, consulted by both the UI gate
-    // (data_helper) and the unlock guard (player.unlockPerk).
-    function isPerkBlocked(_perkID, _skills) {
+    // The implicit-group exclusion rule. Returns a reason string when _perkID may NOT be taken
+    // given the perks _skills already holds, null when it may. Single source of truth: feeds
+    // verifyPrerequisites (DPF lock + tooltip), the data_helper UI gate and the unlock guard
+    // (player.unlockPerk) via isPerkBlocked.
+    function perkBlockReason(_perkID, _skills) {
         local has = @(id) _skills.hasSkill(id);
-        local hasSupporter = false;
-        foreach (id in ::Const.Druid.GroupPerks.Supporter) if (has(id)) { hasSupporter = true; break; }
+        local hasNature = false;
+        foreach (id in ::Const.Druid.GroupPerks.Nature) if (has(id)) { hasNature = true; break; }
         local hasBeastform = has("perk.druid.beastform");
 
         switch (_perkID) {
@@ -203,17 +213,24 @@ local T = ::Const.World.TerrainType;
         case "perk.druid.hatch":
         case "perk.druid.entangle":
         case "perk.druid.apex":
-            return hasBeastform;                       // Supporter perks closed once you turn Beast
+            // Nature perks closed once you turn Beast
+            return hasBeastform ? "Locked because this character walks the path of the Beast" : null;
         case "perk.druid.beastform":
-            return hasSupporter;                       // Beastform closed once you took any Nature perk
+            // Beastform closed once you took any Nature perk
+            return hasNature ? "Locked because this character walks the path of Nature" : null;
         case "perk.druid.beast_aura":
-            return !hasBeastform;                       // gated by Beastform
+            return hasBeastform ? null : "Locked because it requires Beastform";
         case "perk.druid.beast_rage":
-            return !hasBeastform || has("perk.druid.venom");  // gated by Beastform, excl. Venom
+            if (!hasBeastform) return "Locked because it requires Beastform";
+            return has("perk.druid.venom") ? "Locked because Venom and Beast Rage are mutually exclusive" : null;
         case "perk.druid.venom":
-            return has("perk.druid.beast_rage");        // Venom <-> Beast Rage are exclusive
+            return has("perk.druid.beast_rage") ? "Locked because Venom and Beast Rage are mutually exclusive" : null;
         }
-        return false;
+        return null;
+    }
+
+    function isPerkBlocked(_perkID, _skills) {
+        return ::Const.Druid.perkBlockReason(_perkID, _skills) != null;
     }
 
     // Whether a Beastform druid may equip _item. Heavy shields/helmets/armor and any ranged

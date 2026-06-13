@@ -1,8 +1,8 @@
-// Beast Aura (Fighter) - absorbs the old Pack Leader. Its chief worth is the change of behaviour:
-// the druid's own beasts keep to his side (the leash is wired at summon time in druid_summon_beast,
-// which reads this perk), and any allied beast near him stands fearless and emboldened (the
+// Beast Aura (Beast group) - any allied beast near him stands fearless and emboldened (the
 // druid_beast_aura_effect carried by beasts reads this perk as the aura source).
 //
+// FIX: should only affect beast unleashed or summoned by the owner of the perk. Not any ally AI character with
+//      protect behavior
 // The modest TargetAttractionMult bump marks the druid as a VIP so the AI's ai_protect behaviour
 // keeps the leashed beasts close.
 this.perk_druid_beast_aura <- this.inherit("scripts/skills/skill", {

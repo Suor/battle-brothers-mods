@@ -177,7 +177,7 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         // Every summon carries the aura receiver, so it is emboldened by any aura source in range.
         beast.getSkills().add(this.new("scripts/skills/effects/druid_beast_aura_effect"));
 
-        // Venom (Supporter variant): the druid's beasts hunt with envenomed bites. In Beastform
+        // Venom (Nature variant): the druid's beasts hunt with envenomed bites. In Beastform
         // the venom rides the druid's own attacks instead (see perk_druid_venom), not his beasts'.
         if (_user.getSkills().hasSkill("perk.druid.venom")
             && !_user.getSkills().hasSkill("perk.druid.beastform")) {
@@ -199,7 +199,6 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         // Cooldown 2 = ready again every other turn (used turn N -> ready turn N+2). Without the
         // Hatch perk this is never decremented, so it acts as a once-per-battle lock.
         this.m.Cooldown = 2;
-        _user.getSkills().onSummonBeast(beast);
         return true;
     }
 });

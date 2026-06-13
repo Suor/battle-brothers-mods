@@ -23,6 +23,7 @@ local def = {
             "trait.gluttonous"
             "trait.greedy"
             "trait.hate_beasts"
+            "trait.fear_beasts"
             "trait.impatient"
             "trait.insecure"
             "trait.night_blind",
