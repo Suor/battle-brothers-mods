@@ -121,10 +121,9 @@ local conds = {};
 mod.queue("<mod_reforged", function () {
     if (!::Hooks.hasMod("mod_reforged")) return;
 
-    ::mods_hookDescendants("items/shields/shield", function (cls) {
-        local create = cls.create;
-        cls.create = function () {
-            create();
+    mod.hookTree("scripts/items/shields/shield", function (q) {
+        q.create = @(__original) function () {
+            __original();
             if (!(ClassName in conds)) {
                 conds[ClassName] <- {cond = m.Condition, condMax = m.ConditionMax}
             }
