@@ -25,10 +25,12 @@ Entangle R4, Venom⟷Beast Rage R5, Apex R6.
   balance placeholders.
 - `scripts/skills/perks/perk_druid_beastform.nut` — passive transform: `onUpdate` stat mults;
   `onAdded` → `::Druid.applyBeastform` (strip forbidden gear + beast look).
-- `scripts/skills/perks/perk_druid_beast_aura.nut` — VIP attraction bump (leash) + `onCombatStarted`
-  tags allied beasts with the aura effect.
-- `scripts/skills/effects/druid_beast_aura_effect.nut` — carried by beasts; grants Resolve +
-  fearless while a Beast-Aura druid is within `Aura.Range`.
+- `scripts/skills/perks/perk_druid_beast_aura.nut` — VIP attraction bump (leash). The aura effect is
+  carried only by the druid's own summons (added in `druid_summon_beast`), so the perk no longer tags
+  every allied beast on combat start.
+- `scripts/skills/effects/druid_beast_aura_effect.nut` — carried by the druid's own beasts; grants
+  Resolve + fearless while that beast's own master (`druid_master`) holds Beast Aura and stands within
+  `Aura.Range`. Scoped to the owner's pack — other brothers' beasts are never emboldened.
 - `scripts/skills/perks/perk_druid_beast_rage.nut` — feral-rage clone (vanilla-safe): regen instead
   of damage reduction, +1 stack on miss, shield-drop + roar at `Rage.ShieldDropThreshold`.
 - `scripts/skills/perks/perk_druid_venom.nut` — adds the venom coat to the druid himself in
@@ -104,8 +106,10 @@ deep pure red `#5b1110` (mid) / `#910b0b` (bright) — use `sample_color.sh`, do
 - **In-game verification:** start "The Wolf and the Bear"; check the two druids' perks/talents, the
   greyed-out closed path, equip ban + relocation on taking Beastform, the beast look, Rage stacks +
   shield drop, the summon leash, and that hunters/poachers don't appear for hire.
-- **Beast Aura aura→other bros' AC beasts:** covered via `onCombatStarted` tagging all PlayerAnimals;
-  confirm AC-unleashed beasts actually land in that faction.
+- **Beast Aura is owner-scoped:** only the druid's own summons carry the aura effect and only their
+  own master emboldens them (per the FIX in `perk_druid_beast_aura`). Other brothers' war dogs / AC
+  beasts are deliberately *not* emboldened any more. If the druid ever unleashes war-dog *items*, they
+  won't get the aura either (no `druid_master` is stamped on a thrown war dog) — wire that in if wanted.
 - **Beast stat scaling with level / beast perks at thresholds** — deferred (plan §Скейлинг).
 - **AC integration** for beast scaling/looks — still a README "plans" item.
 - Decide whether to commit `build_beast_brush.sh` and the `_gen/` workspace.

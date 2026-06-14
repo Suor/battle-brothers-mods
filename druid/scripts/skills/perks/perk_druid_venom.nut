@@ -1,8 +1,9 @@
-// FIX: this is unreadable unstructured blob of text
-// Venom (ungrouped, adaptive). On the Nature path it is a passive flag read by druid_summon_beast to
-// give summoned beasts envenomed bites. Once the druid walks in Beastform it turns on the druid
-// himself: at the start of each battle he gains the same weakening poison-coat, so his own melee
-// hits poison the prey. (Venom and Beast Rage are mutually exclusive - see isPerkBlocked.)
+// Venom (ungrouped, adapts to your path). The behaviour lives elsewhere:
+//   - Nature side: a passive flag read by druid_summon_beast (envenomed bite for the summons);
+//     this file is inert there.
+//   - Beast side (Beastform): onCombatStarted (below) puts the coat on the druid himself instead,
+//     and his summons stop getting it.
+// Venom and Beast Rage are mutually exclusive (see isPerkBlocked).
 this.perk_druid_venom <- this.inherit("scripts/skills/skill", {
     m = {}
     function create() {

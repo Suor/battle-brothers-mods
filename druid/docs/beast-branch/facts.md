@@ -21,7 +21,7 @@
   (`mods/druid/scripts/skills/actives/druid_summon_beast.nut:3,72`). Призывает зверя по биому
   (uncommanded). Общий для всех друидов.
 - **Regrowth** — пер-тёрн хил на одного союзника, x2 на животных, один носитель за раз, не на
-  нежить (`scripts/skills/actives/druid_regrowth.nut`, `scripts/skills/effects/druid_regeneration_effect.nut`).
+  нежить (`scripts/skills/actives/druid_regrowth.nut`, `scripts/skills/effects/druid_regrowth_effect.nut`).
 - **Venom** — укусы призванных зверей накладывают ослабляющий poison-coat (дебафф зрения +
   замедление, не урон, не истощается — 99 атак) (`scripts/skills/racial/druid_venom.nut`).
   Наследует `poison_coat_effect` (гоблинская логика).

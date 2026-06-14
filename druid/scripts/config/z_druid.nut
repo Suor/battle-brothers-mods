@@ -113,9 +113,9 @@ addPerk({
     ID = "perk.druid.venom"
     Script = "scripts/skills/perks/perk_druid_venom"
     Name = "Venom"
-    # FIX: if Beastform is picked it should only work on you. Fix the text and how it works too.
-    Tooltip = "Envenomed fang and sting: your beasts' bites poison the prey - or, once you walk"
-            + " in Beastform, your own. A weakening venom that blurs sight and slows the foe."
+    Tooltip = "Envenomed fang and sting: a weakening venom that blurs sight and slows the foe."
+            + " Your summoned beasts hunt with it - but once you walk in Beastform it is yours"
+            + " alone, riding your own bite instead of theirs."
     Icon = "druid/perk_venom.png"
     IconDisabled = "druid/perk_venom_sw.png"
     Row = 5

@@ -61,7 +61,7 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
         local bearer = ::Tactical.getEntityByID(this.m.BearerID);
         this.m.BearerID = null;
         if (!::std.Util.isNull(bearer)) {
-            bearer.getSkills().removeByID("effects.druid_regeneration");
+            bearer.getSkills().removeByID("effects.druid_regrowth");
         }
     }
 
@@ -80,7 +80,7 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
         if (!this.isViableTarget(_user, target)) return false;
 
         this.clearExisting();
-        target.getSkills().add(::new("scripts/skills/effects/druid_regeneration_effect"));
+        target.getSkills().add(::new("scripts/skills/effects/druid_regrowth_effect"));
         this.m.BearerID = target.getID();
         target.setDirty(true);
 

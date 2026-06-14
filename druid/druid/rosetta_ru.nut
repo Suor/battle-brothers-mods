@@ -67,8 +67,8 @@ local pairs = [
         //         + " But you can no longer bear heavy shields, helmets or armor, nor ranged weapons."
         //         + "\n" + red("Taking it closes the path of Nature.")
         mode = "pattern"
-        en = "Take the shape of the beast for good: <open:tag>+10% Melee Skill<close:tag>, <open:tag>+10% Melee Defense<close:tag> and <open:tag>+20% Hitpoints<close:tag>. But you can no longer bear heavy shields, helmets or armor, nor ranged weapons.\n<open:tag>Taking it closes the path of Nature.<close:tag>"
-        ru = "Навсегда примите облик зверя: <open:tag>+10% к навыку ближнего боя<close:tag>, <open:tag>+10% к защите в ближнем бою<close:tag> и <open:tag>+20% к здоровью<close:tag>. Но вы больше не сможете носить тяжёлые щиты, шлемы и броню, а также дальнобойное оружие.\n<open:tag>Взяв его, вы закроете путь Природы.<close:tag>"
+        en = "Take the shape of the beast for good: <o1:tag>+10% Melee Skill<c1:tag>, <o2:tag>+10% Melee Defense<c2:tag> and <o3:tag>+20% Hitpoints<c3:tag>. But you can no longer bear heavy shields, helmets or armor, nor ranged weapons.\n<o4:tag>Taking it closes the path of Nature.<c4:tag>"
+        ru = "Навсегда примите облик зверя: <o1:tag>+10% к навыку ближнего боя<c1:tag>, <o2:tag>+10% к защите в ближнем бою<c2:tag> и <o3:tag>+20% к здоровью<c3:tag>. Но вы больше не сможете носить тяжёлые щиты, шлемы и броню, а также дальнобойное оружие.\n<o4:tag>Взяв его, вы закроете путь Природы.<c4:tag>"
     }
     {
         en = "Beast Aura"
@@ -99,10 +99,11 @@ local pairs = [
         ru = "Яд"
     }
     {
-        // Tooltip = "Envenomed fang and sting: your beasts' bites poison the prey - or, once you walk"
-        //         + " in Beastform, your own. A weakening venom that blurs sight and slows the foe."
-        en = "Envenomed fang and sting: your beasts' bites poison the prey - or, once you walk in Beastform, your own. A weakening venom that blurs sight and slows the foe."
-        ru = "Ядовитый клык и жало: укусы ваших зверей отравляют добычу - а в зверином облике и ваши собственные удары. Ослабляющий яд мутит зрение и замедляет врага."
+        // Tooltip = "Envenomed fang and sting: a weakening venom that blurs sight and slows the foe."
+        //         + " Your summoned beasts hunt with it - but once you walk in Beastform it is yours"
+        //         + " alone, riding your own bite instead of theirs."
+        en = "Envenomed fang and sting: a weakening venom that blurs sight and slows the foe. Your summoned beasts hunt with it - but once you walk in Beastform it is yours alone, riding your own bite instead of theirs."
+        ru = "Ядовитый клык и жало: ослабляющий яд мутит зрение и замедляет врага. С ним охотятся ваши призванные звери - но в зверином облике он лишь ваш, ложась на ваш укус, а не на их."
     }
     // Lock reasons shown by DPF's perk tooltip (perkBlockReason / verifyPrerequisites).
     {
@@ -253,12 +254,18 @@ local pairs = [
         en = "An alpha of the wild stands near. This beast is emboldened and will not flee the field while the aura holds."
         ru = "Рядом стоит вожак дикой природы. Этот зверь воодушевлён и не покинет поле боя, пока держится аура."
     }
-    // FILE: scripts/skills/effects/druid_regeneration_effect.nut
+    // FILE: scripts/skills/effects/druid_regrowth_effect.nut
     {
         // return "Nature mends this character, restoring " + heal + " hitpoints at the start of each turn.";
         mode = "pattern"
         en = "Nature mends this character, restoring <n:int> hitpoints at the start of each turn."
         ru = "Природа исцеляет бойца, восстанавливая <n> ОЗ в начале каждого хода."
+    }
+    {
+        // return "Nature mends this beast, restoring " + heal + " hitpoints at the start of each turn.";
+        mode = "pattern"
+        en = "Nature mends this beast, restoring <n:int> hitpoints at the start of each turn."
+        ru = "Природа исцеляет зверя, восстанавливая <n> ОЗ в начале каждого хода."
     }
     {
         // ::Const.UI.getColorizedEntityName(actor) + " heals for " + healed + " hitpoints"
