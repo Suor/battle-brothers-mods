@@ -15,6 +15,8 @@ page.add(::MSU.Class.BooleanSetting("traitsSoso", true, "Add so-so traits",
     "Allow adding traits having both significant upsides and downsides"));
 page.add(::MSU.Class.BooleanSetting("traitsStupid", false, "Stupid Mode",
     "Compensate each bad or so-so trait added with a good one"));
+page.add(::MSU.Class.BooleanSetting("traitsExcludes", true, "Respect excludes",
+    "Skip traits excluded by the background or other traits, e.g. no drunkard paladins"));
 
 page.add(::MSU.Class.SettingsDivider("traitsDiv"));
 // page.add(::MSU.Class.SettingsTitle("traitsTitle", "Repeat"));
@@ -32,6 +34,7 @@ mod.addTraits <- function (_player, _num, _opts = null) {
         bad = mod.conf("traitsBad")
         soso = mod.conf("traitsSoso")
         stupid = mod.conf("traitsStupid")
+        excludes = mod.conf("traitsExcludes")
     }, _opts || {})
 
     return Player.addTraits(_player, _num, _opts);

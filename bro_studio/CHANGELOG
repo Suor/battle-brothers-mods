@@ -1,3 +1,7 @@
+- new "Follow excludes" checkbox on the Traits page, on by default: extra
+  traits respect background and trait excludes, e.g. a paladin won't roll
+  drunkard, nor anyone tiny + huge
+
 1.3.1
 - improve Legends compat
 

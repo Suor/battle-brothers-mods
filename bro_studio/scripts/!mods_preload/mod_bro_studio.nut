@@ -1,7 +1,7 @@
 local mod = ::BroStudio <- {
     ID = "mod_bro_studio"
     Name = "Bro Studio"
-    Version = "1.3.1"
+    Version = "1.3.2"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/677"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/bro_studio"
@@ -11,7 +11,7 @@ local mod = ::BroStudio <- {
 }
 
 local mh = ::Hooks.register(mod.ID, mod.Version, mod.Name);
-mh.require("stdlib >= 2.2", "mod_msu >= 1.6.0");
+mh.require("stdlib >= 2.6", "mod_msu >= 1.6.0");
 mh.conflictWith("mod_vap", "mod_ultrabros");
 mh.queue(">stdlib", ">mod_msu", ">mod_legends", function () {
     local Rand = ::std.Rand.using(::std.rng); // Use non Math rng generator to preserve seeds better

@@ -232,6 +232,14 @@ local pairs = [
         ru = "Компенсировать каждую плохую или спорную черту хорошей"
     }
     {
+        en = "Respect excludes"
+        ru = "Учитывать несовместимости"
+    }
+    {
+        en = "Skip traits excluded by the background or other traits, e.g. no drunkard paladins"
+        ru = "Пропускать черты, несовместимые с происхождением или другими чертами — никаких паладинов-пьяниц"
+    }
+    {
         en = "Repeat each N-th level"
         ru = "Повторять каждый N-й уровень"
     }
