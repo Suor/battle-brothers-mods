@@ -1,8 +1,10 @@
 this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
     m = {
-        // Turns until the summon is ready again (0 = ready). Without the Hatch perk the count is
-        // never ticked down (see onTurnStart), so a single use locks it for the rest of the battle.
-        Cooldown = 0
+        // Summons left this battle. Without Hatch you get the one (once per battle). Hatch banks a
+        // fresh charge every third turn (4, 7, 10...), so they stockpile instead of forcing a rush.
+        Charges = 1
+        // Rounds the druid has acted this battle, counted in onTurnStart - drives the Hatch refill.
+        Round = 0
     },
     function create()
     {
@@ -33,14 +35,23 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
     function getTooltip()
     {
         local charge;
-        if (this.m.Cooldown > 0) {
-            // Without Hatch the cooldown never ticks down (see onTurnStart), so the summon is just spent.
-            charge = this.hasHatch()
-                ? "Recharges in " + ::std.Text.negative(this.m.Cooldown)
-                    + (this.m.Cooldown == 1 ? " turn" : " turns")
-                : "Spent for this battle";
+        if (this.hasHatch()) {
+            // Rounds until the next Hatch charge banks (charges arrive on rounds 4, 7, 10...), so
+            // away is always 1..3; 1 reads as "next turn" rather than "in 1 turn".
+            local next = 4;
+            while (next <= this.m.Round) next += 3;
+            local away = next - this.m.Round;
+            if (this.m.Charges > 0) {
+                charge = "Has " + ::std.Text.positive(this.m.Charges) + " charge" + ::std.Text.plural(this.m.Charges)
+                       + (away == 1 ? ", gains next turn"
+                                    : ", gains next in " + ::std.Text.positive(away) + " turns");
+            } else {
+                charge = away == 1
+                    ? "Next charge next turn"
+                    : "Next charge in " + ::std.Text.positive(away) + " turn" + ::std.Text.plural(away);
+            }
         } else {
-            charge = this.hasHatch() ? "Ready - recharges every other turn" : "Ready - once per battle";
+            charge = this.m.Charges > 0 ? "Ready - once per battle" : "Spent for this battle";
         }
 
         local tooltip = this.getDefaultUtilityTooltip();
@@ -60,15 +71,16 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
 
     function isUsable()
     {
-        return this.skill.isUsable() && this.m.Cooldown == 0;
+        return this.skill.isUsable() && this.m.Charges > 0;
     }
 
-    // Only the Hatch perk lets the summon recharge; otherwise the cooldown set on use never
-    // ticks down, so the call stays spent until the next battle.
+    // Only the Hatch perk refills the summon: every third round (turns 4, 7, 10...) it banks a
+    // fresh charge, so an unused call is never wasted. Without Hatch the lone charge never returns.
     function onTurnStart()
     {
         this.skill.onTurnStart();
-        if (this.hasHatch()) this.m.Cooldown = this.Math.max(0, this.m.Cooldown - 1);
+        this.m.Round++;
+        if (this.hasHatch() && this.m.Round >= 4 && (this.m.Round - 4) % 3 == 0) this.m.Charges++;
     }
 
     function onVerifyTarget(_originTile, _targetTile)
@@ -78,13 +90,15 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
 
     function onCombatStarted()
     {
-        this.m.Cooldown = 0;
+        this.m.Charges = 1;
+        this.m.Round = 0;
     }
 
     function onCombatFinished()
     {
         this.skill.onCombatFinished();
-        this.m.Cooldown = 0;
+        this.m.Charges = 1;
+        this.m.Round = 0;
     }
 
     // Which world terrain are we fighting on? Falls back to the default pool.
@@ -136,15 +150,17 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         local biomes = ::Const.Druid.Biomes;
         local beastType;
         local boostApex = false;
+        local hasApex = _user.getSkills().hasSkill("perk.druid.apex");
 
-        // Below the unlock level the wilds answer with a plain Wolf, whatever the biome; the full
-        // biome variety (and Apex, later still) only opens up once the druid has grown into it.
-        if (_user.getLevel() < biomes.UnlockLevel) {
+        // A plain Wolf still answers most calls early on, the wild biome variety creeping in as the
+        // druid grows (see ::Const.Druid.wolfChance). Apex closes the door on the common wolf for
+        // good - every call now brings a greater beast.
+        if (!hasApex && ::Math.rand(1, 100) <= ::Const.Druid.wolfChance(_user.getLevel())) {
             beastType = biomes.Starter;
         } else {
             beastType = this.pickBeastType();
             // Apex: swap to a greater beast where one exists, otherwise rear a bigger specimen.
-            if (_user.getSkills().hasSkill("perk.druid.apex")) {
+            if (hasApex) {
                 if (beastType in biomes.ApexMap) beastType = biomes.ApexMap[beastType];
                 else boostApex = true;
             }
@@ -163,19 +179,9 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         beast.m.druid_Summoned = true;
         beast.setFaction(this.Const.Faction.PlayerAnimals);
 
-        // Beast Aura: the druid's own beasts arrive emboldened - they start Confident and, thanks
-        // to the fearless racial, never break or flee. Unlike MoraleState.Ignore they still react
-        // to the battle and reap the Confident combat bonus. They also gain the ai_protect
-        // behaviour, so they keep to the druid's side instead of chasing off after the foe.
-        if (_user.getSkills().hasSkill("perk.druid.beast_aura")) {
-            beast.getSkills().add(this.new("scripts/skills/racial/druid_fearless"));
-            beast.setMoraleState(this.Const.MoraleState.Confident);
-            local agent = beast.getAIAgent();
-            if (agent != null && agent.getBehavior(this.Const.AI.Behavior.ID.Protect) == null)
-                agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_protect"));
-        }
-        // Every summon carries the aura receiver, so it is emboldened by any aura source in range.
-        beast.getSkills().add(this.new("scripts/skills/effects/druid_beast_aura_effect"));
+        // Beast Aura: the druid's own beasts arrive emboldened - Confident, fearless and leashed to
+        // his side. The aura receiver rides on every summon regardless. See ::Druid.emboldenBeast.
+        ::Druid.emboldenBeast(_user, beast);
 
         // Venom (Nature variant): the druid's beasts hunt with envenomed bites. In Beastform
         // the venom rides the druid's own attacks instead (see perk_druid_venom), not his beasts'.
@@ -196,9 +202,7 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         // Voice the call with the summoned beast's own cry instead of a fixed bark.
         beast.playSound(::Const.Sound.ActorEvent.Idle, ::Const.Sound.Volume.Skill);
 
-        // Cooldown 2 = ready again every other turn (used turn N -> ready turn N+2). Without the
-        // Hatch perk this is never decremented, so it acts as a once-per-battle lock.
-        this.m.Cooldown = 2;
+        this.m.Charges--;
         return true;
     }
 });

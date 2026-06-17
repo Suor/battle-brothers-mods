@@ -21,8 +21,8 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
         this.m.Icon = perk.Icon;
         this.m.IconDisabled = perk.IconDisabled;
 
-        this.m.Type = this.Const.SkillType.Perk | this.Const.SkillType.StatusEffect;
-        this.m.Order = this.Const.SkillOrder.Perk;
+        this.m.Type = ::Const.SkillType.Perk | ::Const.SkillType.StatusEffect;
+        this.m.Order = ::Const.SkillOrder.Perk;
     }
 
     function isHidden()
@@ -50,38 +50,45 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
             { id = 2, type = "description", text = this.getDescription() }
             {
                 id = 10, type = "text", icon = "ui/icons/regular_damage.png",
-                text = "[color=" + this.Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackDamageMult * 100).tointeger() + "%[/color] Melee Damage"
+                text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackDamagePct) + "%[/color] Melee Damage"
             }
             {
                 id = 11, type = "text", icon = "ui/icons/special.png",
-                text = "[color=" + this.Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackHpRegen) + "[/color] Hitpoints regenerated each turn"
+                text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackHpRegen) + "[/color] Hitpoints regenerated each turn"
             }
             {
                 id = 12, type = "text", icon = "ui/icons/bravery.png",
-                text = "[color=" + this.Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackResolve) + "[/color] Resolve"
+                text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackResolve) + "[/color] Resolve"
             }
             {
                 id = 13, type = "text", icon = "ui/icons/initiative.png",
-                text = "[color=" + this.Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackInitiative) + "[/color] Initiative"
+                text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackInitiative) + "[/color] Initiative"
+            }
+            {
+                id = 15, type = "text", icon = "ui/icons/fatigue.png",
+                text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s / 2) + "[/color] Fatigue Recovery per turn"
             }
             {
                 id = 14, type = "text", icon = "ui/icons/melee_defense.png",
-                text = "[color=" + this.Const.UI.Color.NegativeValue + "]" + (s * R.PerStackMeleeDefense) + "[/color] Melee Defense"
+                text = "[color=" + ::Const.UI.Color.NegativeValue + "]" + (s * R.PerStackMeleeDefense) + "[/color] Melee Defense"
             }
         ];
     }
 
     function addRage( _r )
     {
+        local threshold = ::Const.Druid.Rage.ShieldDropThreshold;
+        local wasBelow = this.m.RageStacks < threshold;
         this.m.RageStacks += _r;
         local actor = this.getContainer().getActor();
-        if (!actor.isHiddenToPlayer())
+        // Only announce when the rage boils over at full stacks - the steady drip of stacks is silent.
+        if (wasBelow && this.m.RageStacks >= threshold && !actor.isHiddenToPlayer())
         {
-            this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(actor) + " gains rage!");
+            ::Tactical.EventLog.log(::Const.UI.getColorizedEntityName(actor) + " gains rage!");
         }
 
         // At the height of the rage the beast tears off its own shield and roars.
-        if (!this.m.ShieldDropped && this.m.RageStacks >= ::Const.Druid.Rage.ShieldDropThreshold)
+        if (!this.m.ShieldDropped && this.m.RageStacks >= threshold)
         {
             this.dropShield(actor);
         }
@@ -98,9 +105,9 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
     {
         this.m.ShieldDropped = true;
         local items = _actor.getItems();
-        local shield = items.getItemAtSlot(this.Const.ItemSlot.Offhand);
+        local shield = items.getItemAtSlot(::Const.ItemSlot.Offhand);
         local roared = false;
-        if (shield != null && shield.isItemType(this.Const.Items.ItemType.Shield))
+        if (shield != null && shield.isItemType(::Const.Items.ItemType.Shield))
         {
             items.unequip(shield);
             items.addToBag(shield);  // keep it - just out of hand for the rest of the fight
@@ -108,10 +115,10 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
         }
         if (!_actor.isHiddenToPlayer())
         {
-            this.Sound.play(this.m.SoundOnUse[this.Math.rand(0, this.m.SoundOnUse.len() - 1)],
-                this.Const.Sound.Volume.Actor, _actor.getPos());
+            ::Sound.play(this.m.SoundOnUse[::Math.rand(0, this.m.SoundOnUse.len() - 1)],
+                ::Const.Sound.Volume.Actor, _actor.getPos());
             if (roared)
-                this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(_actor) + " tears off the shield with a roar!");
+                ::Tactical.EventLog.log(::Const.UI.getColorizedEntityName(_actor) + " tears off the shield with a roar!");
         }
     }
 
@@ -119,10 +126,12 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
     {
         this.m.IsHidden = this.m.RageStacks == 0;
         local R = ::Const.Druid.Rage;
-        _properties.MeleeDamageMult *= 1.0 + this.m.RageStacks * R.PerStackDamageMult;
+        _properties.MeleeDamageMult *= 1.0 + this.m.RageStacks * R.PerStackDamagePct / 100.0;
         _properties.Bravery += this.m.RageStacks * R.PerStackResolve;
         _properties.Initiative += this.m.RageStacks * R.PerStackInitiative;
         _properties.MeleeDefense += this.m.RageStacks * R.PerStackMeleeDefense;
+        // The fury also keeps the beast's wind up - half a point of stamina regen per stack.
+        _properties.FatigueRecoveryRate += this.m.RageStacks / 2;
     }
 
     function onTurnStart()
@@ -135,9 +144,9 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
             local heal = this.m.RageStacks * R.PerStackHpRegen;
             local hp = actor.getHitpoints();
             local max = actor.getHitpointsMax();
-            if (hp < max) actor.setHitpoints(this.Math.min(max, hp + heal));
+            if (hp < max) actor.setHitpoints(::Math.min(max, hp + heal));
         }
-        this.m.RageStacks = this.Math.max(0, this.m.RageStacks + R.StacksPerTurn);
+        this.m.RageStacks = ::Math.max(0, this.m.RageStacks + R.StacksPerTurn);
     }
 
     function onTargetHit( _skill, _targetEntity, _bodyPart, _damageInflictedHitpoints, _damageInflictedArmor )

@@ -9,13 +9,8 @@ this.druid_regrowth_effect <- this.inherit("scripts/skills/skill", {
         this.m.ID = "effects.druid_regrowth";
         this.m.Name = "Regrowth";
         this.m.Description = "";  // built per-bearer in getDescription()
-        // Reuse the round regrowth perk icon, same as druid_beast_aura_effect reuses a perk icon.
         this.m.Icon = "druid/perk_regrowth.png";
-        // FIX: make a regrowth mini version
-        // RES: m.IconMini (and spawnIcon below) resolve brush-atlas sprites, not PNG paths; a custom
-        //   regrowth mini needs brush tooling we don't have, so it stays the vanilla regeneration
-        //   mini (status_effect_79 = the regen effect) for now.
-        this.m.IconMini = "status_effect_79_mini";
+        this.m.IconMini = "druid_regrowth_mini";
         this.m.Type = ::Const.SkillType.StatusEffect;
         this.m.Order = ::Const.SkillOrder.Last;
         this.m.IsActive = false;
@@ -51,7 +46,7 @@ this.druid_regrowth_effect <- this.inherit("scripts/skills/skill", {
         actor.setDirty(true);
 
         if (!actor.isHiddenToPlayer()) {
-            spawnIcon("status_effect_79", actor.getTile());
+            spawnIcon("druid_regrowth", actor.getTile());
             ::Tactical.EventLog.log(
                 ::Const.UI.getColorizedEntityName(actor) + " heals for " + healed + " hitpoints"
             );

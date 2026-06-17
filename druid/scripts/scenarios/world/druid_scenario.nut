@@ -66,7 +66,7 @@ this.druid_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
         wolf.getSkills().add(::new("scripts/skills/traits/player_character_trait"));
         wolf.getFlags().set("IsPlayerCharacter", true);
         Player.giveLevels(wolf, 2); // level 1 -> level 3
-        bear.setTitle("the Wolf");
+        wolf.setTitle("the Wolf");
         Player.clearTalents(wolf);
         wolf.m.Talents[::Const.Attributes.MeleeSkill] = Rand.int(2, 3);
         wolf.m.Talents[::Const.Attributes.MeleeDefense] = Rand.int(1, 2);
@@ -140,7 +140,12 @@ this.druid_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
     }
 
     function onInit() {
-        this.World.Assets.m.BrothersMax = 12;
+        local assets = this.World.Assets;
+        assets.m.BrothersMax = 12;
+        // The Wolf-and-the-Bear band travels quicker through any forests
+        // Q: inline constants?
+        foreach (terrain, _ in ::Const.Druid.Forest.Terrain)
+            assets.m.TerrainTypeSpeedMult[terrain] *= ::Const.Druid.Forest.SpeedMult;
     }
 
     function onCombatFinished() {

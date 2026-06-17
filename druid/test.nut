@@ -107,9 +107,28 @@ print("beastformAllows OK\n");
 // --- config sanity ----------------------------------------------------------
 
 eq(Druid.Biomes.Starter, "wolf", "starter beast is a plain wolf");
-eq(Druid.Biomes.UnlockLevel, 5, "biome variety unlocks at level 5");
 eq(Druid.GroupPerks.Nature.len(), 4, "four Nature perks");
 eq(Druid.GroupPerks.Beast.len(), 3, "three Beast perks");
 
+// Rage's melee-damage bonus is whole percent per stack, so the tooltip shows the exact figure the
+// onUpdate multiplier applies - no float truncation turning +20% into +19%.
+eq(Druid.Rage.PerStackDamagePct * 10, 20, "10 rage stacks -> +20% melee damage");
+
 print("config OK\n");
+
+// --- wolfChance: plain-wolf odds taper off as the druid grows --------------
+
+// Assert the curve's shape, not each step, so retuning the intermediate odds doesn't break it:
+// starts at the 95% cap, never rises, and settles on the 5% floor.
+eq(Druid.wolfChance(1), 95, "lvl 1 -> 95% wolf (cap)");
+eq(Druid.wolfChance(20), 5, "high level -> 5% wolf (floor)");
+local prev = 95;
+for (local lvl = 1; lvl <= 20; lvl++) {
+    local c = Druid.wolfChance(lvl);
+    if (c > prev) throw "test failed: wolfChance must not rise (lvl " + lvl + ": " + c + " > " + prev + ")";
+    if (c < 5 || c > 95) throw "test failed: wolfChance out of [5,95] at lvl " + lvl + ": " + c;
+    prev = c;
+}
+
+print("wolfChance OK\n");
 print("Tests OK\n");

@@ -45,46 +45,8 @@ mod.queue(">mod_reforged", ">mod_background_perks",
         })
     }
 
-    // Beastform's permanent transformation: shed any newly-forbidden gear and take the beast look.
-    // Relocation follows perma's missing_hand: drop on the ground mid-battle, else to the bag, else
-    // to the stash - so nothing is ever lost. (Beastform is taken in the world, so usually the bag.)
-    def.relocateItem <- function (_actor, _item) {
-        local items = _actor.getItems();
-        items.unequip(_item);
-        if ("State" in ::Tactical && !::Tactical.State.isBattleEnded() && _actor.isPlacedOnMap()) {
-            _item.drop(_actor.getTile());
-        } else if (items.hasEmptySlot(::Const.ItemSlot.Bag)) {
-            items.addToBag(_item);
-        } else {
-            ::World.Assets.getStash().makeEmptySlots(1);
-            ::World.Assets.getStash().add(_item);
-        }
-    }
-    def.applyBeastform <- function (_actor) {
-        local items = _actor.getItems();
-        foreach (slot in [::Const.ItemSlot.Mainhand, ::Const.ItemSlot.Offhand, ::Const.ItemSlot.Body,
-                          ::Const.ItemSlot.Head, ::Const.ItemSlot.Accessory, ::Const.ItemSlot.Ammo]) {
-            local item = items.getItemAtSlot(slot);
-            if (item == null || ::Const.Druid.beastformAllows(item)) continue;
-            def.relocateItem(_actor, item);
-        }
-        def.applyBeastformLook(_actor);
-    }
-    // The beast look ships with the mod (brushes/druid_beast.brush + gfx/druid_beast.png, vendored
-    // from Fantasy Brothers' Baku set), so no Fantasy Brothers dependency.
-    def.applyBeastformLook <- function (_actor) {
-        local body = _actor.getSprite("body");
-        local head = _actor.getSprite("head");
-        body.setBrush("druid_beast_body_0" + ::Math.rand(1, 2));
-        head.setBrush("druid_beast_head_0" + ::Math.rand(1, 3));
-        if (_actor.hasSprite("hair"))
-            _actor.getSprite("hair").setBrush("druid_beast_hair_0" + ::Math.rand(1, 5));
-        if (_actor.hasSprite("injury_body"))
-            _actor.getSprite("injury_body").setBrush(body.getBrush().Name + "_injured");
-        head.varyColor(0.05, 0.05, 0.05);
-        body.Color = head.Color;
-        _actor.setDirty(true);
-    }
+    // Shared helpers (relocateItem, applyBeastform[Look], emboldenBeast, isDruidScenario).
+    ::include("druid/helpers");
 
 
     // If More Backgrounds and Events present we repurpose it's druid background.
@@ -172,6 +134,22 @@ mod.queue(">mod_reforged", ">mod_background_perks",
             }
             return __original(_change, _difficulty, _type, _showIconBeforeMoraleIcon, _noNewLine);
         }
+
+        // A falling beast stokes any allied Beast Rage: hard (OwnBeastDeath) for its own master,
+        // a flicker (AllyBeastDeath) for every other raging brother on the field.
+        q.onDeath = @(__original) function( _killer, _skill, _tile, _fatalityType ) {
+            __original(_killer, _skill, _tile, _fatalityType);
+            if (!isAlliedWithPlayer() || !::Const.Druid.isAnimal(this)) return;
+            if (!("State" in ::Tactical) || ::Tactical.State.isBattleEnded()) return;
+            local master = this.druid_master();
+            foreach (bro in ::Tactical.Entities.getInstancesOfFaction(::Const.Faction.Player)) {
+                if (!::std.Actor.isAlive(bro)) continue;
+                local rage = bro.getSkills().getSkillByID("perk.druid.beast_rage");
+                if (rage == null) continue;
+                local own = master != null && !master.isNull() && master.getID() == bro.getID();
+                rage.addRage(own ? ::Const.Druid.Rage.OwnBeastDeath : ::Const.Druid.Rage.AllyBeastDeath);
+            }
+        }
     })
 
     // Beastform's equipment ban: a transformed druid cannot equip heavy shields, helmets or body
@@ -193,6 +171,43 @@ mod.queue(">mod_reforged", ">mod_background_perks",
                 }
             }
             return __original(_item);
+        }
+    })
+
+    // Beast Aura reaches the druid's unleashed companions too: a war dog or wolf he slips from its
+    // leash joins his pack - emboldened, fearless and kept to his side - just like a summoned beast.
+    // Vanilla wardog/wolf items keep the spawned beast in m.Entity (no getEntity() getter).
+    foreach (script in ["scripts/skills/actives/unleash_wardog", "scripts/skills/actives/unleash_wolf"]) {
+        mod.hook(script, function (q) {
+            q.onUse = @(__original) function (_user, _targetTile) {
+                local ok = __original(_user, _targetTile);
+                if (ok && "Item" in m && m.Item != null) def.adoptUnleashed(_user, m.Item.m.Entity);
+                return ok;
+            }
+        })
+    }
+
+    // Animal Companions (the AC mod, Adam's hooks) has its own unleash skill; its item does expose
+    // getEntity(). Only hook it when AC is actually installed.
+    if (("mods_getRegisteredMod" in getroottable()) && ::mods_getRegisteredMod("mod_AC") != null) {
+        mod.hook("scripts/companions/onequip/companions_unleash", function (q) {
+            q.onUse = @(__original) function (_user, _targetTile) {
+                local ok = __original(_user, _targetTile);
+                if (ok && "Item" in m && m.Item != null) def.adoptUnleashed(_user, m.Item.getEntity());
+                return ok;
+            }
+        })
+    }
+
+    // Forest vision bonus for the Wolf-and-the-Bear origin: the band sees farther beneath the canopy.
+    // (The matching forest travel-speed bonus is set in druid_scenario.onInit via the asset_manager's
+    // TerrainTypeSpeedMult array; vision has no such origin hook, so it stays a hook here.)
+    mod.hook("scripts/entity/world/player_party", function (q) {
+        q.getVisionRadius = @(__original) function () {
+            local r = __original();
+            if ((getTile().Type in ::Const.Druid.Forest.Terrain) && def.isDruidScenario())
+                r = r * ::Const.Druid.Forest.VisionMult;
+            return r;
         }
     })
 

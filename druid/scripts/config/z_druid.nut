@@ -47,7 +47,7 @@ addPerk({
     ID = "perk.druid.hatch"
     Script = "scripts/skills/perks/perk_druid_hatch"
     Name = "Hatch"
-    Tooltip = "Will summon " + green("every other turn") + ", not once per battle."
+    Tooltip = "Banks a fresh summon charge " + green("every third turn") + ", not just once per battle."
     Icon = "druid/perk_hatch.png"
     IconDisabled = "druid/perk_hatch_sw.png"
     Row = 3
@@ -129,9 +129,8 @@ local T = ::Const.World.TerrainType;
     // call always yields a plain Wolf (see druid_summon_beast.onUse). Apex upgrades these
     // per ApexMap.
     Biomes = {
-        // Until this character level the wilds answer with a common Wolf only, whatever the
-        // biome; from here the full biome variety (direwolf, spider, schrat...) opens up.
-        UnlockLevel = 5
+        // The plain Wolf the wilds answer with early on; the biome variety (direwolf, spider,
+        // schrat...) creeps in as the druid grows - see wolfChance() and druid_summon_beast.onUse.
         Starter = "wolf"
 
         Pools = {
@@ -175,21 +174,42 @@ local T = ::Const.World.TerrainType;
     // swapped for per-stack hitpoint regen, with an extra stack granted on a melee miss.
     Rage = {
         PerStackHpRegen = 2
-        PerStackDamageMult = 0.02
+        PerStackDamagePct = 2
         PerStackResolve = 2
         PerStackInitiative = 2
         PerStackMeleeDefense = -1
         StacksPerTurn = -3
         ShieldDropThreshold = 10
+        // A beast's death stokes the rage: hard for the druid's own kin, a flicker for any other
+        // allied beast that falls (see the actor.onDeath hook in mod_druid).
+        OwnBeastDeath = 3
+        AllyBeastDeath = 1
     }
 
     // Beast Aura tunables (Q5).
     Aura = {
         Range = 2
         Resolve = 10
-        // Modest target-attraction bump so the AI's protect behaviour leashes beasts to the
-        // druid; a side cost is that foes weigh him a touch heavier as a target.
-        TargetAttractionMult = 1.25
+        // The leash is the necromancer's own trick: his beasts carry ai_protect (added in
+        // emboldenBeast) and he reads as a strong VIP, so they cluster to guard him instead of
+        // charging off. The game's necromancer marks himself at TargetAttractionMult 3.0 to make
+        // his zombie bodyguards stay - anything much lower and the protect urge loses to engaging,
+        // so we match it. Beast Aura sits on the melee (Beastform) druid, who wants the foe's eyes
+        // on him anyway, so the side cost of being a juicier target is no real downside.
+        TargetAttractionMult = 3.0
+    }
+
+    // The Wolf-and-the-Bear origin walks the wild paths: its band slips quicker through the trees
+    // and sees farther beneath the canopy. Scenario-only - see the world hooks in mod_druid.
+    Forest = {
+        SpeedMult = 1.35
+        VisionMult = 1.4
+        Terrain = {
+            [T.Forest] = true,
+            [T.SnowyForest] = true,
+            [T.LeaveForest] = true,
+            [T.AutumnForest] = true,
+        }
     }
 
     GroupPerks = {
@@ -244,6 +264,19 @@ local T = ::Const.World.TerrainType;
         if (_item.isItemType(IT.Helmet) && fatigue > B.HelmetFatigueMax) return false;
         if (_item.isItemType(IT.Armor)  && fatigue > B.BodyFatigueMax)   return false;
         return true;
+    }
+
+    // Chance (percent) a summon answers as a plain Wolf rather than a biome beast, by druid level.
+    // The wild variety creeps in as he grows; Apex drives this to 0 (see druid_summon_beast.onUse),
+    // so every call then brings a greater beast.
+    function wolfChance(_level)
+    {
+        if (_level <= 3) return 95;
+        if (_level == 4) return 85;
+        if (_level == 5) return 50;
+        if (_level == 6) return 15;
+        if (_level == 7) return 10;
+        return 5;
     }
 
     function isAnimal(_actor)

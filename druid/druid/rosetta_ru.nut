@@ -34,10 +34,10 @@ local pairs = [
         ru = "Выводок"
     }
     {
-        // Tooltip = "Will summon " + green("every other turn") + ", not once per battle."
+        // Tooltip = "Banks a fresh summon charge " + green("every third turn") + ", not just once per battle."
         mode = "pattern"
-        en = "Will summon <open:tag>every other turn<close:tag>, not once per battle."
-        ru = "Призывает <open:tag>через ход<close:tag>, а не раз за бой."
+        en = "Banks a fresh summon charge <open:tag>every third turn<close:tag>, not just once per battle."
+        ru = "Копит новый заряд призыва <open:tag>каждый третий ход<close:tag>, а не лишь раз за бой."
     }
     {
         en = "Entangling Roots"
@@ -162,6 +162,19 @@ local pairs = [
         en = "Has a range of <range:int_tag> tiles"
         ru = "Дальность - <range> клеток"
     }
+    {
+        // text = "Recharges in " + ::std.Text.negative(this.m.Cooldown) + " turn" + Text.plural(this.m.Cooldown)
+        plural = "n"
+        en = "Recharges in <n:int_tag> turn<_:word>"
+        n1 = "Восстановится через <n> ход"
+        n2 = "Восстановится через <n> хода"
+        n5 = "Восстановится через <n> ходов"
+    }
+    {
+        // text = this.m.Cooldown > 0 ? "Recharges in ..." : "Ready"
+        en = "Ready"
+        ru = "Готов"
+    }
     // FILE: scripts/skills/actives/druid_regrowth.nut
     {
         // this.m.Description = "Channel nature's vigor into an ally, mending their wounds turn"
@@ -188,40 +201,43 @@ local pairs = [
         ru = "Призывает зверя окрестных земель на свободную клетку рядом с вами. Он будет охотиться на врагов, но в остальном не подчиняется приказам."
     }
     {
-        // charge = this.hasHatch()
-        //     ? "Recharges in " + ::std.Text.negative(this.m.Cooldown)
-        //         + (this.m.Cooldown == 1 ? " turn" : " turns")
-        //     : "Spent for this battle";
-        mode = "pattern"
-        en = "Recharges in <n:int_tag> turn"
-        ru = "Восстановится через <n> ход"
-    }
-    {
-        // charge = this.hasHatch()
-        //     ? "Recharges in " + ::std.Text.negative(this.m.Cooldown)
-        //         + (this.m.Cooldown == 1 ? " turn" : " turns")
-        //     : "Spent for this battle";
-        mode = "pattern"
-        en = "Recharges in <n:int_tag> turns"
-        ru = "Восстановится через <n> хода"
-    }
-    {
-        // charge = this.hasHatch()
-        //     ? "Recharges in " + ::std.Text.negative(this.m.Cooldown)
-        //         + (this.m.Cooldown == 1 ? " turn" : " turns")
-        //     : "Spent for this battle";
+        // charge = this.m.Charges > 0 ? "Ready - once per battle" : "Spent for this battle";
         en = "Spent for this battle"
         ru = "Истрачен на этот бой"
     }
     {
-        // charge = this.hasHatch() ? "Ready - recharges every other turn" : "Ready - once per battle";
-        en = "Ready - recharges every other turn"
-        ru = "Готов - восстанавливается через ход"
-    }
-    {
-        // charge = this.hasHatch() ? "Ready - recharges every other turn" : "Ready - once per battle";
+        // charge = this.m.Charges > 0 ? "Ready - once per battle" : "Spent for this battle";
         en = "Ready - once per battle"
         ru = "Готов - один раз за бой"
+    }
+    {
+        // charge = "Has " + positive(Charges) + " charge" + plural + ", gains next turn"   (Hatch, has charges, next round)
+        plural = "n"
+        en = "Has <n:int_tag> charge<_:word>, gains next turn"
+        n1 = "Есть <n> заряд, следующий через ход"
+        n2 = "Есть <n> заряда, следующий через ход"
+        n5 = "Есть <n> зарядов, следующий через ход"
+    }
+    {
+        // charge = "Has " + positive(Charges) + " charge" + plural + ", gains next in " + positive(away) + " turns"   (Hatch, has charges; away is 2..3)
+        plural = "n"
+        en = "Has <n:int_tag> charge<_:word>, gains next in <m:int_tag> turns"
+        n1 = "Есть <n> заряд, следующий через <m> хода"
+        n2 = "Есть <n> заряда, следующий через <m> хода"
+        n5 = "Есть <n> зарядов, следующий через <m> хода"
+    }
+    {
+        // charge = "Next charge next turn"   (Hatch, spent, next round)
+        en = "Next charge next turn"
+        ru = "Следующий заряд через ход"
+    }
+    {
+        // charge = "Next charge in " + positive(away) + " turn" + Text.plural(away)   (Hatch, spent; away is 2..3)
+        plural = "n"
+        en = "Next charge in <n:int_tag> turn<_:word>"
+        n1 = "Следующий заряд через <n> ход"
+        n2 = "Следующий заряд через <n> хода"
+        n5 = "Следующий заряд через <n> ходов"
     }
     // FILE: scripts/skills/backgrounds/druid_background.nut
     {
@@ -287,16 +303,16 @@ local pairs = [
         ru = "Вкус крови и упоение убийством ввергают зверя во всё более глубокую ярость. Каждый удар в ближнем бою, каждое убийство, каждый полученный удар - и даже промах - питает ярость, а разгоревшись однажды, она должна питаться, чтобы не угаснуть."
     }
     {
-        // text = "[color=" + this.Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackDamageMult * 100).tointeger() + "%[/color] Melee Damage"
+        // text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackDamagePct) + "%[/color] Melee Damage"
         mode = "pattern"
-        en = "[color=<this.Const.UI.Color.PositiveValue>]+<s*R.PerStackDamageMult*100.tointeger()>%[/color] Melee Damage"
-        ru = "[color=<this.Const.UI.Color.PositiveValue>]+<s*R.PerStackDamageMult*100.tointeger()>%[/color] к урону в ближнем бою"
+        en = "<bonus:val_tag> Melee Damage"
+        ru = "<bonus> к урону в ближнем бою"
     }
     {
         // text = "[color=" + this.Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackHpRegen) + "[/color] Hitpoints regenerated each turn"
         mode = "pattern"
-        en = "[color=<this.Const.UI.Color.PositiveValue>]+<s*R.PerStackHpRegen>[/color] Hitpoints regenerated each turn"
-        ru = "[color=<this.Const.UI.Color.PositiveValue>]+<s*R.PerStackHpRegen>[/color] здоровья восстанавливается каждый ход"
+        en = "<bonus:val_tag> Hitpoints regenerated each turn"
+        ru = "<bonus> ОЗ восстанавливается каждый ход"
     }
     {
         // this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(actor) + " gains rage!");
