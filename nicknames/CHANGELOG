@@ -1,8 +1,8 @@
 0.6.0
-- require dependencies properly
-- added several namelike titles
-- avoid repeating titles smarter
 - added "the" to most titles
+- avoid repeating titles smarter
+- added several namelike titles
+- require dependencies properly
 
 0.5.2
 - improve Legends compat
