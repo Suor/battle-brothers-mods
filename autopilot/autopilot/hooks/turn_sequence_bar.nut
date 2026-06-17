@@ -124,6 +124,17 @@ mod.hook("scripts/ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_ba
         }
     }
 
+    // A stale entry can linger in CurrentEntities after its actor leaves the map; clicking that
+    // portrait would feed a tileless/dead entity to the camera natives and crash the engine.
+    q.onEntityClicked = @(__original) function (_entityId) {
+        local entry = this.findEntityByID(this.m.CurrentEntities, _entityId);
+        if (entry != null && !::std.Actor.isValidTarget(entry.entity)) {
+            ::logInfo("autopilot: onEntityClicked ignored, invalid entity: " + entry.entity.getName());
+            return;
+        }
+        return __original(_entityId);
+    }
+
     q.convertEntityToUIData = @(__original) function (_entity, isLastEntity = false) {
         local ret = __original(_entity);
         // Either auto controlled player or non-player entity

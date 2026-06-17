@@ -148,6 +148,21 @@ mod.hook("scripts/ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_ba
         }
         return result;
     }
+    // Unfreeze the turn bar after a JS/SQ desync. onEntityEntersFirstSlot returns null when JS
+    // asks to promote an entity squirrel no longer has - which happens when the active entity
+    // dies on its own turn (e.g. a delayed riposte): initNextTurn advances the squirrel queue and
+    // sets IsLocked, but the JS-side removeEntity never lands, so JS keeps the dead entity in the
+    // first slot. Its promotion returns null, onEntityEnteredFirstSlotFully never fires, IsLocked
+    // stays true and the battle hangs. Drop the ghost on the JS side so it advances to the next,
+    // real entity and the lock clears. (Self-healing: chains over several ghosts if needed.)
+    q.onEntityEntersFirstSlot = @(__original) function (_entityId) {
+        local res = __original(_entityId);
+        if (res == null && this.findEntityByID(this.m.AllEntities, _entityId) == null) {
+            ::logWarning("autopilot: turn bar JS/SQ desync, dropping ghost id=" + _entityId);
+            this.m.JSHandle.call("removeEntity", _entityId);
+        }
+        return res;
+    }
 })
 
 mod.hook("scripts/ai/tactical/behavior", function (q) {
