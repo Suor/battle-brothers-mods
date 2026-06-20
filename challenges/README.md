@@ -16,7 +16,20 @@ Reduce equipment drops from enemies. This is only about weapons, shields, armors
 
 ## Hiring
 
-**Hiring Requirement** — you need to have this multiple of a brother's hiring cost in gold to even see him in the draft list. Very cheap brothers (beggars, cripples, etc.) are always available regardless.
+**Hiring Requirement** — you need to have this multiple of a brother's hiring cost in gold to even see him in the draft list. Very cheap brothers (beggars, cripples, etc.) are always available regardless.<br>
+**No Tryout** — removes the Try out option, so you hire men blind without ever seeing their hidden traits.<br>
+
+
+## Gear
+
+**Allowed Shields** — restrict which shields your brothers may equip: All, Light (light shields and bucklers), Bucklers (bucklers only), or None. Enemies still use theirs, and you can still loot and sell the banned ones.<br>
+**No Two-Handed Swords** — your brothers can't equip two-handed swords.<br>
+**No Two-Handed Hammers** — your brothers can't equip two-handed hammers.<br>
+
+
+## Followers
+
+A checkbox per retinue follower (Blacksmith, Bounty Hunter, Cartographer, Cook, Drill Sergeant, Lookout, Paymaster, Recruiter, Scavenger, Scout, Surgeon, Trader). Tick any to hide that follower from the retinue hire list.
 
 
 ## Costs

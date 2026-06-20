@@ -1,14 +1,18 @@
 local def = ::Challenges, mod = def.mh;
 local Array = ::std.Array;
+local add = def.addGear;
 
 // Settings
-def.add(::MSU.Class.SettingsTitle("hiringTitle", "Hiring"));
-def.add(::Challenges.SliderSetting("hiringRequirement", 0,
+add(::MSU.Class.SettingsTitle("hiringTitle", "Hiring"));
+add(::Challenges.SliderSetting("hiringRequirement", 0,
     [0, 5, 10, 20],
     ["off" "5x" "10x" "20x"],
     "Hiring Requirement",
     "You need to have this multiple of a bro's hiring cost in gold to even see him."
     + " Cheap bros like beggars and cripples are always there for you though."));
+add(::MSU.Class.SettingsSpacer("hiringSpacer", "35rem", "8rem"));
+add(::MSU.Class.BooleanSetting("noTryout", false, "No Tryout",
+    "Removes the Try out option, so you hire men blind without ever seeing their hidden traits."));
 
 // Guaranteed cheap bros: never filtered out regardless of gold requirement.
 // Just to not end up with noone to hire at all.

@@ -4,14 +4,14 @@ local Debug = ::std.Debug.with({prefix = "loot: "});
 // Settings
 local add = def.addPage("Loot");
 add(::Challenges.SliderSetting("weaponDropChance", 1.0,
-    [1.0, 0.75, 0.5, 0.25, 0.1, 0.0],
-    ["100%" "75%" "50%" "25%" "10%" "0%"],
+    [1.0, 0.5, 0.25, 0.1, 0.05, 0.0],
+    ["100%" "50%" "25%" "10%" "5%" "0%"],
     "Weapon & Shield Drop Chance",
     "Chance for weapons and shields to drop when enemies die. "
     + "Does not affect other item types."));
 add(::Challenges.SliderSetting("armorDropChance", 1.0,
-    [1.0, 0.75, 0.5, 0.25, 0.1, 0.0],
-    ["100%" "75%" "50%" "25%" "10%" "0%"],
+    [1.0, 0.5, 0.25, 0.1, 0.05, 0.0],
+    ["100%" "50%" "25%" "10%" "5%" "0%"],
     "Armor & Helmet Drop Chance",
     "Chance for armor and helmets to drop when enemies die. "
     + "Does not affect other item types."));

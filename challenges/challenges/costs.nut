@@ -1,7 +1,6 @@
 local def = ::Challenges, mod = def.mh;
 
 // Settings
-def.add(::MSU.Class.SettingsDivider("costsDiv"));
 def.add(::MSU.Class.SettingsTitle("costsTitle", "Costs"));
 def.add(::Challenges.SliderSetting("foodPriceMult", 1,
     [1, 2, 3, 5, 10, 20],
