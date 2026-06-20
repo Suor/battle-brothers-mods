@@ -45,7 +45,7 @@ mod.queue(">mod_reforged", ">mod_background_perks",
         })
     }
 
-    // Shared helpers (relocateItem, applyBeastform[Look], emboldenBeast, isDruidScenario).
+    // Shared helpers (relocateItem, applyBeastform[Look], onBeastJoinedPack, isDruidScenario).
     ::include("druid/helpers");
 
 
@@ -97,6 +97,15 @@ mod.queue(">mod_reforged", ">mod_background_perks",
             return null;
         }
 
+        // Beast Aura rides every allied animal, not just the druid's own pack: hang the receiver on
+        // each animal as it hits the map (covers summons, unleashed dogs, anything). The effect
+        // self-scopes - inert unless allied with an aura druid near. Idempotent against a re-place.
+        q.onPlacedOnMap = @(__original) function() {
+            __original();
+            if (::Const.Druid.isAnimal(this) && getSkills().getSkillByID("effects.druid_beast_aura") == null)
+                getSkills().add(::new("scripts/skills/effects/druid_beast_aura_effect"));
+        }
+
         q.onActorKilled = @(__original) function(_actor, _tile, _skill) {
             local master = this.druid_master();
             if (master != null && ::std.Actor.isAlive(master)) {
@@ -120,17 +129,15 @@ mod.queue(">mod_reforged", ">mod_background_perks",
             }
         }
 
-        // Beast Aura's fearless beasts feel morale like anyone - they can be shaken down to
-        // Breaking and suffer for it - but the roll can never push them into Fleeing. We cap the
-        // negative change so the state floors at Breaking instead of routing them off the field.
-        // Fearless comes either permanently (racial.druid_fearless on the druid's own beasts) or
-        // by proximity (the Beast Aura effect, while an aura source is in range).
+        // A beast under an active Beast Aura feels morale like anyone - it can be shaken down to
+        // Breaking and suffer for it - but the roll can never push it into Fleeing. We cap the
+        // negative change so the state floors at Breaking instead of routing it off the field.
+        // Fearlessness is purely by proximity: only while an aura source stands in range.
         q.checkMorale = @(__original) function( _change, _difficulty, _type = this.Const.MoraleCheckType.Default, _showIconBeforeMoraleIcon = "", _noNewLine = false ) {
             if (_change < 0) {
                 local aura = getSkills().getSkillByID("effects.druid_beast_aura");
-                local fearless = getSkills().hasSkill("racial.druid_fearless")
-                              || (aura != null && aura.isAuraActive());
-                if (fearless) _change = Math.max(_change, Const.MoraleState.Breaking - getMoraleState());
+                if (aura != null && aura.isAuraActive())
+                    _change = Math.max(_change, Const.MoraleState.Breaking - getMoraleState());
             }
             return __original(_change, _difficulty, _type, _showIconBeforeMoraleIcon, _noNewLine);
         }
@@ -176,24 +183,23 @@ mod.queue(">mod_reforged", ">mod_background_perks",
 
     // Beast Aura reaches the druid's unleashed companions too: a war dog or wolf he slips from its
     // leash joins his pack - emboldened, fearless and kept to his side - just like a summoned beast.
-    // Vanilla wardog/wolf items keep the spawned beast in m.Entity (no getEntity() getter).
-    foreach (script in ["scripts/skills/actives/unleash_wardog", "scripts/skills/actives/unleash_wolf"]) {
+    // druid_master records who loosed it (the rage onDeath hook credits the right brother); only then
+    // does his own Beast Aura embolden it. Vanilla wardog/wolf items hold the beast in m.Entity;
+    // Animal Companions' own unleash skill exposes getEntity() instead, so hook it too when AC is on.
+    local unleashSkills = ["scripts/skills/actives/unleash_wardog", "scripts/skills/actives/unleash_wolf"];
+    if (::Hooks.hasMod("mod_AC")) unleashSkills.push("scripts/companions/onequip/companions_unleash");
+    foreach (script in unleashSkills) {
         mod.hook(script, function (q) {
             q.onUse = @(__original) function (_user, _targetTile) {
                 local ok = __original(_user, _targetTile);
-                if (ok && "Item" in m && m.Item != null) def.adoptUnleashed(_user, m.Item.m.Entity);
-                return ok;
-            }
-        })
-    }
-
-    // Animal Companions (the AC mod, Adam's hooks) has its own unleash skill; its item does expose
-    // getEntity(). Only hook it when AC is actually installed.
-    if (("mods_getRegisteredMod" in getroottable()) && ::mods_getRegisteredMod("mod_AC") != null) {
-        mod.hook("scripts/companions/onequip/companions_unleash", function (q) {
-            q.onUse = @(__original) function (_user, _targetTile) {
-                local ok = __original(_user, _targetTile);
-                if (ok && "Item" in m && m.Item != null) def.adoptUnleashed(_user, m.Item.getEntity());
+                if (ok && "Item" in m && m.Item != null) {
+                    local beast = ("getEntity" in m.Item) ? m.Item.getEntity() : m.Item.m.Entity;
+                    if (!::std.Util.isNull(beast)) {
+                        beast.m.druid_master <- ::MSU.asWeakTableRef(_user);
+                        if (_user.getSkills().hasSkill("perk.druid.beast_aura"))
+                            ::Druid.onBeastJoinedPack(_user, beast);
+                    }
+                }
                 return ok;
             }
         })

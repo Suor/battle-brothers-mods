@@ -119,26 +119,50 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         return pool[::Math.rand(0, pool.len() - 1)];
     }
 
-    // Apex specimen of a beast that has no greater cousin to swap into (spider, schrat, serpent):
-    // tougher, more skilled and harder-hitting. Beasts that do have a greater cousin (direwolf,
-    // hyena) are swapped to it in onUse() and never reach here.
-    function makeApex(_beast)
+    // Greater Beasts upgrade for a beast with no greater cousin to swap into (spider, schrat,
+    // serpent): reared bigger and meaner in place. Shares the Frenzied recipe (+5 Melee Skill,
+    // x1.25 damage, +20 Bravery, Relentless) with the swapped-in direwolves/hyenas, plus
+    // per-beast tuning on top.
+    function makeApex(_beast, _type)
     {
         // Bump the base stats and let the skill container rebuild CurrentProperties; writing
         // CurrentProperties directly would just be clobbered by the next update().
         local b = _beast.m.BaseProperties;
-        b.Hitpoints += 20;
         b.MeleeSkill += 5;
         b.DamageTotalMult *= 1.25;
-        _beast.getSkills().update();
+        b.Bravery += 20;
+
+        local skills = _beast.getSkills();
+        // Serpents already carry Relentless, so guard against a duplicate.
+        if (!skills.hasSkill("perk.relentless"))
+            skills.add(this.new("scripts/skills/perks/perk_relentless"));
+
+        switch (_type) {
+            case "spider":
+                b.Hitpoints = 100;
+                b.MeleeDefense += 10;
+                skills.add(this.new("scripts/skills/perks/perk_nine_lives"));
+                break;
+            case "schrat_small":
+                b.Hitpoints = 100;
+                skills.add(this.new("scripts/skills/perks/perk_hold_out"));
+                break;
+            case "serpent":
+                b.Hitpoints += 20;
+                b.Initiative = 90;  // Dodge turns the raised Initiative into +Melee/Ranged Defense.
+                skills.add(this.new("scripts/skills/perks/perk_dodge"));
+                break;
+        }
+
+        skills.update();
         _beast.setHitpoints(_beast.getHitpointsMax());
 
         // Spiders expose a native size knob that scales every body part and keeps it grounded.
         // For the rest we scale the body sprites ourselves.
+        local mult = 1.2;  // TODO: vary a bit?
         try {
-            _beast.setSize(1.1);  // TODO: vary a bit?
+            _beast.setSize(mult);
         } catch (error) {
-            local mult = 1.25;
             foreach (part in ::Druid.BodySprites) {
                 if (_beast.hasSprite(part)) _beast.getSprite(part).Scale *= mult;
             }
@@ -172,16 +196,16 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
             ::logError("druid: failed to spawn '" + beastType + "' at " + tile.X + "," + tile.Y);
             return false;
         }
-        if (boostApex) this.makeApex(beast);
+        if (boostApex) this.makeApex(beast, beastType);
 
         beast.m.druid_master <- ::MSU.asWeakTableRef(_user);
         // Set before setFaction so the onFactionChanged hook flips the body sprites.
         beast.m.druid_Summoned = true;
         beast.setFaction(this.Const.Faction.PlayerAnimals);
 
-        // Beast Aura: the druid's own beasts arrive emboldened - Confident, fearless and leashed to
-        // his side. The aura receiver rides on every summon regardless. See ::Druid.emboldenBeast.
-        ::Druid.emboldenBeast(_user, beast);
+        // Beast Aura: the druid's own beasts arrive Confident and leashed to his side; the aura
+        // receiver (fearlessness by proximity) rides every animal already. See onBeastJoinedPack.
+        ::Druid.onBeastJoinedPack(_user, beast);
 
         // Venom (Nature variant): the druid's beasts hunt with envenomed bites. In Beastform
         // the venom rides the druid's own attacks instead (see perk_druid_venom), not his beasts'.

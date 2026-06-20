@@ -2,7 +2,7 @@
 // ::Const.Druid - Druid runtime config: beast pools, group exclusion rules, Beastform/Rage tunables.
 //
 // The tree splits into two mutually exclusive groups (see docs/beast-branch/plan.md):
-//   Nature: Regrowth, Hatch, Entangling Roots, Apex Predators
+//   Nature: Regrowth, Hatch, Entangling Roots, Greater Beasts
 //   Beast:  Beastform (gate) -> Beast Aura, Beast Rage
 //   Venom:  ungrouped, adapts to whichever side you commit to
 // The group is chosen implicitly by the first group perk taken; ::Const.Druid.isPerkBlocked
@@ -64,7 +64,7 @@ addPerk({
 addPerk({
     ID = "perk.druid.apex"
     Script = "scripts/skills/perks/perk_druid_apex"
-    Name = "Apex Predators"
+    Name = "Greater Beasts"
     Tooltip = "Your call reaches greater beasts. Direwolves and hyenas answer frenzied,"
             + " spiders bloated and broodmother-sized, and young schrats rise full-grown."
     Icon = "druid/perk_apex.png"
@@ -125,9 +125,9 @@ addPerk({
 local T = ::Const.World.TerrainType;
 ::Const.Druid <- {
     // Beast pools per battlefield. Values are enemy entity script base names under
-    // scripts/entity/tactical/enemies/. Below BiomeUnlockLevel the pool is ignored and the
-    // call always yields a plain Wolf (see druid_summon_beast.onUse). Apex upgrades these
-    // per ApexMap.
+    // scripts/entity/tactical/enemies/. A low-level call mostly yields a plain Wolf, the biome
+    // pool creeping in as the druid grows (see wolfChance() and druid_summon_beast.onUse). Apex
+    // upgrades these per ApexMap.
     Biomes = {
         // The plain Wolf the wilds answer with early on; the biome variety (direwolf, spider,
         // schrat...) creeps in as the druid grows - see wolfChance() and druid_summon_beast.onUse.
@@ -190,13 +190,10 @@ local T = ::Const.World.TerrainType;
     Aura = {
         Range = 2
         Resolve = 10
-        // The leash is the necromancer's own trick: his beasts carry ai_protect (added in
-        // emboldenBeast) and he reads as a strong VIP, so they cluster to guard him instead of
-        // charging off. The game's necromancer marks himself at TargetAttractionMult 3.0 to make
-        // his zombie bodyguards stay - anything much lower and the protect urge loses to engaging,
-        // so we match it. Beast Aura sits on the melee (Beastform) druid, who wants the foe's eyes
-        // on him anyway, so the side cost of being a juicier target is no real downside.
-        TargetAttractionMult = 3.0
+        // The leash: the druid's beasts carry ai_protect (onBeastJoinedPack) and he reads as a VIP
+        // (TargetAttractionMult > 1.0), so they cluster to guard him instead of charging off. The
+        // side cost is drawing more enemy eyes, kept modest at 2.0.
+        TargetAttractionMult = 2.0
     }
 
     // The Wolf-and-the-Bear origin walks the wild paths: its band slips quicker through the trees

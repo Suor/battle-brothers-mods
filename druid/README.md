@@ -20,7 +20,7 @@ Nature (supporter):
 - **Regrowth** - bestow a steady heal on a single living ally, doubled for animals; only one can carry it at a time
 - **Hatch** - the summon recharges every other turn instead of once per battle
 - **Entangling Roots** - root an enemy in place
-- **Apex Predators** - wolves answer as direwolves, hyenas come frenzied, spiders
+- **Greater Beasts** - wolves answer as direwolves, hyenas come frenzied, spiders
   broodmother-sized, young schrats rise full-grown
 
 Beast (fighter):

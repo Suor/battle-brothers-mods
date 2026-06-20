@@ -43,45 +43,25 @@ def.applyBeastformLook <- function (_actor) {
     _actor.setDirty(true);
 }
 
-// The Beast Aura package for a beast of the druid's own pack. Every such beast carries the aura
-// receiver regardless; when its master actually holds Beast Aura it also arrives Confident and
-// fearless and is leashed to his side. Shared by summoned beasts and unleashed war dogs/wolves.
-// The master (m.druid_master) must be set on the beast before this runs.
-def.emboldenBeast <- function (_user, _beast, _confident = true) {
-    local skills = _beast.getSkills();
-    if (skills.getSkillByID("effects.druid_beast_aura") == null)
-        skills.add(::new("scripts/skills/effects/druid_beast_aura_effect"));
+// Make a beast part of the druid's pack: if the master holds the Beast Aura perk it arrives
+// Confident and leashed to his side. Fearlessness rides the Beast Aura receiver by proximity (on
+// every allied animal, actor.onPlacedOnMap). m.druid_master must already be set on the beast.
+def.onBeastJoinedPack <- function (_user, _beast, _confident = true) {
     if (!_user.getSkills().hasSkill("perk.druid.beast_aura")) return;
 
-    // Confident (and, via the fearless racial, never breaking) - unlike MoraleState.Ignore the
-    // beast still reacts to the battle and reaps the Confident combat bonus.
-    if (!skills.hasSkill("racial.druid_fearless"))
-        skills.add(::new("scripts/skills/racial/druid_fearless"));
+    // Confident gives the combat bonus without MoraleState.Ignore, so the beast still reacts to
+    // battle.
     if (_confident) _beast.setMoraleState(::Const.MoraleState.Confident);
 
-    // Leash: turn the beast into a bodyguard of its master, exactly as the game's own
-    // zombie/direwolf bodyguard agents do - their only trick over the plain agent is the
-    // ai_protect behaviour. A normal beast agent (wolf, spider...) lacks it, so add it. On its
-    // own ai_protect does nothing (regular bandits carry it too); it only fires when a high-
-    // TargetAttractionMult VIP ally is near - here the druid, marked by his Beast Aura (see
-    // ::Const.Druid.Aura.TargetAttractionMult). The beast is emboldened after its agent was
-    // built, so finalize the behaviour list as agent.create() does after onAddBehaviors().
+    // Leash: ai_protect makes the beast guard a high-TargetAttractionMult VIP ally - the druid,
+    // marked by his Beast Aura (::Const.Druid.Aura.TargetAttractionMult) - just as the game's
+    // zombie/direwolf bodyguards do. Plain beast agents lack it, so add it and re-finalize the
+    // behaviour list, as agent.create() does after onAddBehaviors().
     local agent = _beast.getAIAgent();
     if (agent != null && agent.getBehavior(::Const.AI.Behavior.ID.Protect) == null) {
         agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_protect"));
         agent.finalizeBehaviors();
     }
-}
-
-// Adopt a freshly unleashed beast into the druid's pack. druid_master records who loosed it (the
-// rage onDeath hook reads it to credit the right brother), so it's stamped for any unleash; only a
-// druid's own Beast Aura then emboldens/fearless/leashes the beast - a plain houndmaster's companion
-// is left untouched. The caller resolves the entity (vanilla items expose m.Entity, AC's getEntity()).
-def.adoptUnleashed <- function (_user, _beast) {
-    if (::std.Util.isNull(_beast)) return;
-    _beast.m.druid_master <- ::MSU.asWeakTableRef(_user);
-    if (_user.getSkills().hasSkill("perk.druid.beast_aura"))
-        ::Druid.emboldenBeast(_user, _beast);
 }
 
 // The forest bonuses (faster travel, longer sight under the canopy) belong to the Wolf-and-the-

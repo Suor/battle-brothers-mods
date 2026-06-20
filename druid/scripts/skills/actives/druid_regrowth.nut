@@ -84,6 +84,8 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
         this.m.BearerID = target.getID();
         target.setDirty(true);
 
+        this.spawnIcon("druid_regrowth", _targetTile);
+
         if (!target.isHiddenToPlayer()) {
             ::Tactical.EventLog.log(
                 ::Const.UI.getColorizedEntityName(target) + " is wreathed in healing growth"

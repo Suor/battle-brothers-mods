@@ -48,8 +48,8 @@ local pairs = [
         ru = "Поднимает из земли извивающиеся корни, оплетающие врага на месте."
     }
     {
-        en = "Apex Predators"
-        ru = "Высшие хищники"
+        en = "Greater Beasts"
+        ru = "Грозные твари"
     }
     {
         // Tooltip = "Your call reaches greater beasts. Direwolves and hyenas answer frenzied,"
@@ -214,9 +214,9 @@ local pairs = [
         // charge = "Has " + positive(Charges) + " charge" + plural + ", gains next turn"   (Hatch, has charges, next round)
         plural = "n"
         en = "Has <n:int_tag> charge<_:word>, gains next turn"
-        n1 = "Есть <n> заряд, следующий через ход"
-        n2 = "Есть <n> заряда, следующий через ход"
-        n5 = "Есть <n> зарядов, следующий через ход"
+        n1 = "Есть <n> заряд, ещё один в следующем ходу"
+        n2 = "Есть <n> заряда, ещё один в следующем ходу"
+        n5 = "Есть <n> зарядов, ещё один в следующем ходу"
     }
     {
         // charge = "Has " + positive(Charges) + " charge" + plural + ", gains next in " + positive(away) + " turns"   (Hatch, has charges; away is 2..3)
@@ -229,7 +229,7 @@ local pairs = [
     {
         // charge = "Next charge next turn"   (Hatch, spent, next round)
         en = "Next charge next turn"
-        ru = "Следующий заряд через ход"
+        ru = "Будет заряд в следующем ходу"
     }
     {
         // charge = "Next charge in " + positive(away) + " turn" + Text.plural(away)   (Hatch, spent; away is 2..3)
@@ -325,15 +325,6 @@ local pairs = [
         mode = "pattern"
         en = "<this.Const.UI.getColorizedEntityName(_actor)> tears off the shield with a roar!"
         ru = "<this.Const.UI.getColorizedEntityName(_actor)> с рыком срывает щит!"
-    }
-    // FILE: scripts/skills/racial/druid_fearless.nut
-    {
-        en = "Fearless"
-        ru = "Бесстрашие"
-    }
-    {
-        en = "This beast knows its master for the alpha. It may be shaken in the thick of battle, but it will never flee the field."
-        ru = "Этот зверь признаёт в хозяине вожака. В горниле боя его можно поколебать, но он никогда не побежит с поля боя."
     }
     // FILE: scripts/skills/racial/druid_venom.nut
     {

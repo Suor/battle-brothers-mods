@@ -1,7 +1,7 @@
 0.2.0
 - the perk tree splits into two mutually exclusive paths, chosen implicitly by the first
   group perk taken (the closed path is greyed out in the tree):
-  - Nature (Supporter): Regrowth, Hatch, Entangling Roots, Apex Predators
+  - Nature (Supporter): Regrowth, Hatch, Entangling Roots, Greater Beasts
   - Beast (Fighter): Beastform (gate) -> Beast Aura, Beast Rage
   - Venom is ungrouped and adapts to whichever path you commit to
 - Beastform: a one-time permanent transformation - physical bonuses, but no heavy shields,
