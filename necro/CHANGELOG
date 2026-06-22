@@ -1,3 +1,9 @@
+0.5.1
+- fixed loot lost on double raise
+- fixed arena giving raised loot
+- rebalanced hiring costs and wages in Necro origin
+- dropped support for pre 1.5.1 Battle Brothers (some code around loot)
+
 0.5.0
 - down Raise Undead range to 3, Necrotic Reach makes it 6
 - trigger morale checks for Necro when a posessed is hit/dies
