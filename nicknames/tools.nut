@@ -45,7 +45,10 @@ local KNOWN = {
         "fear_undead", "fragile", "gluttonous", "greedy", "hesitant", "insecure",
         "irrational", "night_blind", "pessimist", "short_sighted", "superstitious",
         "legend_fear_nobles", "legend_frail", "legend_appetite_donkey", "legend_fear_dark",
-        "legend_predictable", "legend_slack"
+        "legend_predictable", "legend_slack",
+        // North Expansion (background.chosen aliases into trait.chosen)
+        "champion", "chosen", "destined", "duel_fighter", "feral", "moonkissed",
+        "shieldmaster", "skald", "wolfmaster"  // thrall aliases into background.slave
     ]
     background = [
         // vanilla
@@ -427,9 +430,14 @@ function parseBoldTitles(filename) {
             if (q1 == null) break;
             local q2 = rest.find("`", q1 + 1);
             if (q2 == null) break;
-            factors.push(rest.slice(q1 + 1, q2));
+            // Only real factors (ns.value) have a dot; skips prose backticks
+            // like the `факторы` template placeholder or `setting = false` notes.
+            local tok = rest.slice(q1 + 1, q2);
+            if (tok.find(".") != null) factors.push(tok);
             k = q2 + 1;
         }
+        // Skip prose/template bold lines that carry no real factors
+        if (factors.len() == 0) continue;
         result.push({ru = ru, en = en, factors = factors});
     }
     return result;

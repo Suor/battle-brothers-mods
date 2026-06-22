@@ -159,6 +159,18 @@ local broFallbackPerk = makeBro("background.farmhand", null, [], null, null, 5, 
 assertIn("the Pedant", candidateTitles(broFallbackPerk));
 print("aliases: BgPerks fallback perk matches canonical perk titles OK\n");
 
+// ── North Expansion traits ───────────────────────────────────────────────────
+
+// trait.skald inspires allies → woven into the Bannerman
+local broSkald = makeBro("background.sellsword", null, ["trait.skald"]);
+assertIn("the Bannerman", candidateTitles(broSkald));
+print("NE: trait.skald matches the Bannerman OK\n");
+
+// trait.chosen → the Chosen
+local broChosen = makeBro("background.sellsword", null, ["trait.chosen"]);
+assertIn("the Chosen", candidateTitles(broChosen));
+print("NE: trait.chosen matches the Chosen OK\n");
+
 // ── group.* tests ────────────────────────────────────────────────────────────
 
 // group.pauper: beggar is in the pauper list
@@ -201,6 +213,18 @@ local cultistDirectCandidates = candidateTitles(cultistBro);
 foreach (t in cultistDirectCandidates)
     assertIn(t, cultistCandidates);
 print("aliases: cultist_commander matches cultist titles OK\n");
+
+// background.chosen now aliases into trait.chosen (not wildman) → the Chosen
+local broBgChosen = makeBro("background.chosen");
+assert("trait.chosen" in def.buildFactorSet(broBgChosen));
+assertIn("the Chosen", candidateTitles(broBgChosen));
+print("aliases: background.chosen matches the Chosen OK\n");
+
+// trait.thrall (NE) aliases into background.slave → the Brand
+local broThrall = makeBro("background.sellsword", null, ["trait.thrall"]);
+assert("background.slave" in def.buildFactorSet(broThrall));
+assertIn("the Brand", candidateTitles(broThrall));
+print("aliases: trait.thrall matches slave titles OK\n");
 
 // background.xxherosp should match titles for background.adventurous_noble
 local broXXherosp = makeBro("background.xxherosp");
