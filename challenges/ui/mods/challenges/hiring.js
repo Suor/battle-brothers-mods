@@ -14,3 +14,16 @@
         }
     };
 })();
+
+// "No Firing" challenge: hide the Dismiss button on the character screen, so a brother who joined
+// the company can never be fired. Runs after vanilla updateControls, which is what shows the button
+// for non-player brothers when you have more than one.
+(function () {
+    var orig = CharacterScreenLeftPanelHeaderModule.prototype.updateControls;
+    CharacterScreenLeftPanelHeaderModule.prototype.updateControls = function (_data) {
+        orig.call(this, _data);
+        if (this.mDismissButton && MSU.getSettingValue("mod_challenges", "noFiring")) {
+            this.mDismissButton.removeClass('display-block').addClass('display-none');
+        }
+    };
+})();

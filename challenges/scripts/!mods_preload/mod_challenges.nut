@@ -14,7 +14,7 @@ mod.require("stdlib", "mod_msu >= 1.6.0");
 // ">mod_necro": wrap outside necro's isDroppedAsLoot, which briefly stamps Player then restores it.
 mod.queue(">mod_msu", ">mod_EIMO", ">mod_consume", ">mod_smartLoot", ">mod_necro", function () {
     ::Hooks.registerJS("ui/mods/challenges/loot_panel.js");
-    ::Hooks.registerJS("ui/mods/challenges/hire_dialog.js");
+    ::Hooks.registerJS("ui/mods/challenges/hiring.js");
     ::Hooks.registerCSS("ui/mods/challenges/loot_panel.css");
 
     def.Mod <- ::MSU.Class.Mod(def.ID, def.Version, def.Name);

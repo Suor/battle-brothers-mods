@@ -13,6 +13,8 @@ add(::Challenges.SliderSetting("hiringRequirement", 0,
 add(::MSU.Class.SettingsSpacer("hiringSpacer", "35rem", "8rem"));
 add(::MSU.Class.BooleanSetting("noTryout", false, "No Tryout",
     "Removes the Try out option, so you hire men blind without ever seeing their hidden traits."));
+add(::MSU.Class.BooleanSetting("noFiring", false, "No Firing",
+    "Removes the Dismiss button, so you can never fire a brother once he has joined the company."));
 
 // Guaranteed cheap bros: never filtered out regardless of gold requirement.
 // Just to not end up with noone to hire at all.
