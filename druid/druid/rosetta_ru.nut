@@ -87,12 +87,12 @@ local pairs = [
         ru = "Ярость зверя"
     }
     {
-        // Tooltip = "Blood feeds a rising fury: stacking melee damage, Resolve and Initiative and"
-        //         + " " + green("healing") + " each turn, at the cost of Melee Defense. At its height"
+        // Tooltip = "Blood feeds a rising fury: stacking melee damage, resolve and"
+        //         + " " + green("healing") + " each turn, at the cost of defense. At its height"
         //         + " you tear off your own shield and roar."
         mode = "pattern"
-        en = "Blood feeds a rising fury: stacking melee damage, Resolve and Initiative and <open:tag>healing<close:tag> each turn, at the cost of Melee Defense. At its height you tear off your own shield and roar."
-        ru = "Кровь питает растущую ярость: накапливает урон в ближнем бою, Решимость, Инициативу и <open:tag>исцеление<close:tag> каждый ход - ценой защиты в ближнем бою. На пике вы срываете собственный щит и издаёте рык."
+        en = "Blood feeds a rising fury: stacking melee damage, resolve and <open:tag>healing<close:tag> each turn, at the cost of defense. At its height you tear off your own shield and roar."
+        ru = "Кровь питает растущую ярость: накапливает урон в ближнем бою, Решимость и <open:tag>исцеление<close:tag> каждый ход - ценой защиты. На пике вы срываете собственный щит и издаёте рык."
     }
     {
         en = "Venom"
@@ -138,8 +138,8 @@ local pairs = [
         ru = "Волк и Медведь"
     }
     {
-        en = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]The wild was in your blood before you had words for it. The green things and the beasts that walk beneath the canopy know their own, and they have always known you. Now two of you walk the world with the wild at your back.\n\n[color=#bcad8c]The Wolf and the Bear:[/color] You begin as a pair, both walkers of the wild paths - one who has taken the beast's shape to fight tooth and claw, and one who calls the beasts and mends his fellows' wounds.\n[color=#bcad8c]Player Characters:[/color] Don't let both the Wolf and the Bear die.\n[color=#bcad8c]Children of the Wild:[/color] You begin with rough woodsfolk rather than trained soldiers, and will hire no hunters or poachers.[/p]"
-        ru = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]Дикое было в вашей крови ещё до того, как у вас появились для него слова. Зелень и звери, что бродят под пологом леса, чуют своего - и всегда чуяли вас. Теперь по миру странствуют двое, и дикая чаща идёт за вами.\n\n[color=#bcad8c]Волк и Медведь:[/color] Вы начинаете вдвоём, оба - странники диких троп: один принял звериный облик и бьётся клыком и когтем, другой призывает зверей и врачует раны собратьев.\n[color=#bcad8c]Игровые персонажи:[/color] Вы проиграете, лишь если погибнут оба - и Волк, и Медведь.\n[color=#bcad8c]Дети дикой природы:[/color] Вы начинаете с грубым лесным людом, а не с обученными солдатами, и не нанимаете охотников и браконьеров.[/p]"
+        en = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]The wild was in your blood before you had words for it. The green things and the beasts that walk beneath the canopy know their own, and they have always known you. Now two of you walk the world with the wild at your back.\n\n[color=#bcad8c]The Wolf and the Bear:[/color] You begin as a pair, both walkers of the wild paths - one who has taken the beast's shape to fight tooth and claw, and one who calls the beasts and mends his fellows' wounds.\n[color=#bcad8c]Player Characters:[/color] Don't let both the Wolf and the Bear die.\n[color=#bcad8c]Woodwise:[/color] Your band travels swiftly through forests and sees farther beneath the canopy.[/p]"
+        ru = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]Дикое было в вашей крови ещё до того, как у вас появились для него слова. Зелень и звери, что бродят под пологом леса, чуют своего - и всегда чуяли вас. Теперь по миру странствуют двое, и дикая чаща идёт за вами.\n\n[color=#bcad8c]Волк и Медведь:[/color] Вы начинаете вдвоём, оба - странники диких троп: один принял звериный облик и бьётся клыком и когтем, другой призывает зверей и врачует раны собратьев.\n[color=#bcad8c]Игровые персонажи:[/color] Вы проиграете, лишь если погибнут оба - и Волк, и Медведь.\n[color=#bcad8c]Лесное чутьё:[/color] В лесу ваш отряд идёт скорым шагом и видит дальше под пологом крон.[/p]"
     }
     {
         en = "the Bear"
@@ -239,6 +239,15 @@ local pairs = [
         n2 = "Следующий заряд через <n> хода"
         n5 = "Следующий заряд через <n> ходов"
     }
+    // Apex (Greater Beasts) renames for beasts grown in place - see makeApex().
+    {
+        en = "Giant Webknecht"
+        ru = "Гигантский сетеплёт"
+    }
+    {
+        en = "Great Serpent"
+        ru = "Великий аспид"
+    }
     // FILE: scripts/skills/backgrounds/druid_background.nut
     {
         en = "the Druid"
@@ -272,15 +281,15 @@ local pairs = [
     }
     // FILE: scripts/skills/effects/druid_regrowth_effect.nut
     {
-        // return "Nature mends this character, restoring " + heal + " hitpoints at the start of each turn.";
+        // return "Nature mends this character, restoring " + Text.positive(heal) + " hitpoints at the start of each turn.";
         mode = "pattern"
-        en = "Nature mends this character, restoring <n:int> hitpoints at the start of each turn."
+        en = "Nature mends this character, restoring <n:int_tag> hitpoints at the start of each turn."
         ru = "Природа исцеляет бойца, восстанавливая <n> ОЗ в начале каждого хода."
     }
     {
-        // return "Nature mends this beast, restoring " + heal + " hitpoints at the start of each turn.";
+        // return "Nature mends this beast, restoring " + Text.positive(heal) + " hitpoints at the start of each turn.";
         mode = "pattern"
-        en = "Nature mends this beast, restoring <n:int> hitpoints at the start of each turn."
+        en = "Nature mends this beast, restoring <n:int_tag> hitpoints at the start of each turn."
         ru = "Природа исцеляет зверя, восстанавливая <n> ОЗ в начале каждого хода."
     }
     {
@@ -307,6 +316,12 @@ local pairs = [
         mode = "pattern"
         en = "<bonus:val_tag> Melee Damage"
         ru = "<bonus> к урону в ближнем бою"
+    }
+    {
+        // text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackMaxHp) + "[/color] Maximum Hitpoints"
+        mode = "pattern"
+        en = "<bonus:val_tag> Maximum Hitpoints"
+        ru = "<bonus> к максимуму ОЗ"
     }
     {
         // text = "[color=" + this.Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackHpRegen) + "[/color] Hitpoints regenerated each turn"

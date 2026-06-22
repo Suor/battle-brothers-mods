@@ -205,9 +205,9 @@ mod.queue(">mod_reforged", ">mod_background_perks",
         })
     }
 
-    // Forest vision bonus for the Wolf-and-the-Bear origin: the band sees farther beneath the canopy.
-    // (The matching forest travel-speed bonus is set in druid_scenario.onInit via the asset_manager's
-    // TerrainTypeSpeedMult array; vision has no such origin hook, so it stays a hook here.)
+    // Forest vision bonus for the Wolf-and-the-Bear origin: the band sees farther beneath the
+    // canopy. (The matching travel-speed bonus rides MSU's origin callback - see
+    // druid_scenario.getMovementSpeedMult; vision has no such origin hook, so it stays here.)
     mod.hook("scripts/entity/world/player_party", function (q) {
         q.getVisionRadius = @(__original) function () {
             local r = __original();

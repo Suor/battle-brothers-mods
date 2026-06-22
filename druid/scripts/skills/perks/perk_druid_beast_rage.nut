@@ -53,6 +53,10 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
                 text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackDamagePct) + "%[/color] Melee Damage"
             }
             {
+                id = 9, type = "text", icon = "ui/icons/health.png",
+                text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackMaxHp) + "[/color] Maximum Hitpoints"
+            }
+            {
                 id = 11, type = "text", icon = "ui/icons/special.png",
                 text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackHpRegen) + "[/color] Hitpoints regenerated each turn"
             }
@@ -60,10 +64,10 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
                 id = 12, type = "text", icon = "ui/icons/bravery.png",
                 text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackResolve) + "[/color] Resolve"
             }
-            {
-                id = 13, type = "text", icon = "ui/icons/initiative.png",
-                text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackInitiative) + "[/color] Initiative"
-            }
+            // {
+            //     id = 13, type = "text", icon = "ui/icons/initiative.png",
+            //     text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackInitiative) + "[/color] Initiative"
+            // }
             {
                 id = 15, type = "text", icon = "ui/icons/fatigue.png",
                 text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s / 2) + "[/color] Fatigue Recovery per turn"
@@ -127,8 +131,9 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
         this.m.IsHidden = this.m.RageStacks == 0;
         local R = ::Const.Druid.Rage;
         _properties.MeleeDamageMult *= 1.0 + this.m.RageStacks * R.PerStackDamagePct / 100.0;
+        _properties.Hitpoints += this.m.RageStacks * R.PerStackMaxHp;
         _properties.Bravery += this.m.RageStacks * R.PerStackResolve;
-        _properties.Initiative += this.m.RageStacks * R.PerStackInitiative;
+        // _properties.Initiative += this.m.RageStacks * R.PerStackInitiative;
         _properties.MeleeDefense += this.m.RageStacks * R.PerStackMeleeDefense;
         // The fury also keeps the beast's wind up - half a point of stamina regen per stack.
         _properties.FatigueRecoveryRate += this.m.RageStacks / 2;

@@ -100,8 +100,8 @@ addPerk({
     ID = "perk.druid.beast_rage"
     Script = "scripts/skills/perks/perk_druid_beast_rage"
     Name = "Beast Rage"
-    Tooltip = "Blood feeds a rising fury: stacking melee damage, Resolve and Initiative and"
-            + " " + green("healing") + " each turn, at the cost of Melee Defense. At its height"
+    Tooltip = "Blood feeds a rising fury: stacking melee damage, resolve and"
+            + " " + green("healing") + " each turn, at the cost of defense. At its height"
             + " you tear off your own shield and roar."
     Icon = "druid/perk_beast_rage.png"
     IconDisabled = "druid/perk_beast_rage_sw.png"
@@ -174,6 +174,7 @@ local T = ::Const.World.TerrainType;
     // swapped for per-stack hitpoint regen, with an extra stack granted on a melee miss.
     Rage = {
         PerStackHpRegen = 2
+        PerStackMaxHp = 2
         PerStackDamagePct = 2
         PerStackResolve = 2
         PerStackInitiative = 2
@@ -199,7 +200,7 @@ local T = ::Const.World.TerrainType;
     // The Wolf-and-the-Bear origin walks the wild paths: its band slips quicker through the trees
     // and sees farther beneath the canopy. Scenario-only - see the world hooks in mod_druid.
     Forest = {
-        SpeedMult = 1.35
+        SpeedMult = 2.4
         VisionMult = 1.4
         Terrain = {
             [T.Forest] = true,

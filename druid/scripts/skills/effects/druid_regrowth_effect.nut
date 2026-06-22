@@ -19,17 +19,20 @@ this.druid_regrowth_effect <- this.inherit("scripts/skills/skill", {
         this.m.IsHidden = false;
     }
 
-    // Beasts and animals knit back twice as fast.
+    // Beasts and animals knit back twice as fast - and so does a druid who has taken Beastform,
+    // his flesh now half-beast itself.
     function getHealPerTurn( _actor )
     {
-        return ::Const.Druid.isAnimal(_actor) ? this.m.HealPerTurn * 2 : this.m.HealPerTurn;
+        local doubled = ::Const.Druid.isAnimal(_actor)
+                     || _actor.getSkills().hasSkill("perk.druid.beastform");
+        return doubled ? this.m.HealPerTurn * 2 : this.m.HealPerTurn;
     }
 
     // The effect always rides an actor, so the description states that actor's exact rate.
     function getDescription()
     {
         local actor = getContainer().getActor();
-        local heal = getHealPerTurn(actor);
+        local heal = ::std.Text.positive(getHealPerTurn(actor));
         if (::Const.Druid.isAnimal(actor))
             return "Nature mends this beast, restoring " + heal + " hitpoints at the start of each turn.";
         return "Nature mends this character, restoring " + heal + " hitpoints at the start of each turn.";

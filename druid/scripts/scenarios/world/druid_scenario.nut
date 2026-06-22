@@ -2,23 +2,17 @@ local Player = ::std.Player, Rand = ::std.Rand;
 
 this.druid_scenario <- this.inherit("scripts/scenarios/world/starting_scenario", {
     m = {
-        WoodsFolk = null
         ExcludedDraft = null
     },
     function create()
     {
         this.m.ID = "scenario.druid";
         this.m.Name = "The Wolf and the Bear";
-        this.m.Description = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]The wild was in your blood before you had words for it. The green things and the beasts that walk beneath the canopy know their own, and they have always known you. Now two of you walk the world with the wild at your back.\n\n[color=#bcad8c]The Wolf and the Bear:[/color] You begin as a pair, both walkers of the wild paths - one who has taken the beast's shape to fight tooth and claw, and one who calls the beasts and mends his fellows' wounds.\n[color=#bcad8c]Player Characters:[/color] Don't let both the Wolf and the Bear die.\n[color=#bcad8c]Children of the Wild:[/color] You begin with rough woodsfolk rather than trained soldiers, and will hire no hunters or poachers.[/p]";
+        this.m.Description = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]The wild was in your blood before you had words for it. The green things and the beasts that walk beneath the canopy know their own, and they have always known you. Now two of you walk the world with the wild at your back.\n\n[color=#bcad8c]The Wolf and the Bear:[/color] You begin as a pair, both walkers of the wild paths - one who has taken the beast's shape to fight tooth and claw, and one who calls the beasts and mends his fellows' wounds.\n[color=#bcad8c]Player Characters:[/color] Don't let both the Wolf and the Bear die.\n[color=#bcad8c]Woodwise:[/color] Your band travels swiftly through forests and sees farther beneath the canopy.[/p]";
         this.m.Difficulty = 1;
         this.m.Order = 50;
         this.m.IsFixedLook = true;
 
-        // Woodsfolk fillers - no hunters or poachers (they don't keep a druid's company).
-        this.m.WoodsFolk = [
-            "wildman_background"
-            "fisherman_background"
-        ];
         // Backgrounds a druid's warband will not recruit.
         this.m.ExcludedDraft = ["hunter_background", "poacher_background"];
     }
@@ -38,11 +32,11 @@ this.druid_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
 
     function onSpawnAssets()
     {
-        local roster = this.World.getPlayerRoster();
+        local roster = ::World.getPlayerRoster();
 
-        this.World.Assets.getStash().add(::new("scripts/items/supplies/strange_meat_item"));
-        this.World.Assets.getStash().add(::new("scripts/items/supplies/bread_item"));
-        this.World.Assets.getStash().add(::new("scripts/items/weapons/woodcutters_axe"));
+        ::World.Assets.getStash().add(::new("scripts/items/supplies/strange_meat_item"));
+        ::World.Assets.getStash().add(::new("scripts/items/supplies/bread_item"));
+        ::World.Assets.getStash().add(::new("scripts/items/weapons/woodcutters_axe"));
 
         // The Bear: a summoner and healer who walks the path of Nature and starts with
         // Regrowth. Resolve-leaning talents to anchor the line and weather morale.
@@ -72,57 +66,55 @@ this.druid_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
         wolf.m.Talents[::Const.Attributes.MeleeDefense] = Rand.int(1, 2);
         Player.addTalents(wolf, 1, {probs = [30 40 30]});
         wolf.unlockPerk("perk.druid.beastform");
-
-        // Two woodsfolk to fill the line.
-        for (local i = 0; i < 2; i++) {
-            local bro = roster.create("scripts/entity/tactical/player");
-            bro.setStartValuesEx(this.m.WoodsFolk);
-            bro.setPlaceInFormation(3 + i * 2);
-        }
     }
 
     function onSpawnPlayer()
     {
-        local randomVillage;
-
-        for( local i = 0; i != this.World.EntityManager.getSettlements().len(); i++ )
+        // Start the woods-folk band beside a forest (lumber) village if there is one; otherwise
+        // fall back to the first reachable non-military town as vanilla does.
+        // We don't skip size 1 villages though.
+        local randomVillage = null, fallback = null;
+        foreach (s in ::World.EntityManager.getSettlements())
         {
-            randomVillage = this.World.EntityManager.getSettlements()[i];
-
-            if (!randomVillage.isMilitary() && !randomVillage.isIsolatedFromRoads() && randomVillage.getSize() >= 2)
+            if (s.isMilitary() || s.isIsolatedFromRoads()) continue;
+            if (fallback == null) fallback = s;
+            if (s.ClassName.find("_forest_") != null || s.ClassName.find("_lumber_") != null)
             {
+                randomVillage = s;
                 break;
             }
         }
+        if (randomVillage == null) randomVillage = fallback;
 
         local randomVillageTile = randomVillage.getTile();
-        local navSettings = this.World.getNavigator().createSettings();
-        navSettings.ActionPointCosts = this.Const.World.TerrainTypeNavCost_Flat;
+        local navSettings = ::World.getNavigator().createSettings();
+        navSettings.ActionPointCosts = ::Const.World.TerrainTypeNavCost_Flat;
 
         do
         {
-            local x = this.Math.rand(this.Math.max(2, randomVillageTile.SquareCoords.X - 8), this.Math.min(this.Const.World.Settings.SizeX - 2, randomVillageTile.SquareCoords.X + 8));
-            local y = this.Math.rand(this.Math.max(2, randomVillageTile.SquareCoords.Y - 8), this.Math.min(this.Const.World.Settings.SizeY - 2, randomVillageTile.SquareCoords.Y + 8));
+            local x = ::Math.rand(
+                ::Math.max(2, randomVillageTile.SquareCoords.X - 9),
+                ::Math.min(::Const.World.Settings.SizeX - 2, randomVillageTile.SquareCoords.X + 9));
+            local y = ::Math.rand(
+                ::Math.max(2, randomVillageTile.SquareCoords.Y - 9),
+                ::Math.min(::Const.World.Settings.SizeY - 2, randomVillageTile.SquareCoords.Y + 9));
 
-            if (!this.World.isValidTileSquare(x, y))
+            if (!::World.isValidTileSquare(x, y))
             {
             }
             else
             {
-                local tile = this.World.getTileSquare(x, y);
+                local tile = ::World.getTileSquare(x, y);
 
                 if (tile.IsOccupied)
                 {
                 }
-                else if (tile.getDistanceTo(randomVillageTile) <= 5)
-                {
-                }
-                else if (!tile.HasRoad)
+                else if (tile.getDistanceTo(randomVillageTile) <= 6)
                 {
                 }
                 else
                 {
-                    local path = this.World.getNavigator().findPath(tile, randomVillageTile, navSettings, 0);
+                    local path = ::World.getNavigator().findPath(tile, randomVillageTile, navSettings, 0);
 
                     if (!path.isEmpty())
                     {
@@ -134,22 +126,28 @@ this.druid_scenario <- this.inherit("scripts/scenarios/world/starting_scenario",
         }
         while (1);
 
-        this.World.State.m.Player = this.World.spawnEntity("scripts/entity/world/player_party", randomVillageTile.Coords.X, randomVillageTile.Coords.Y);
-        this.World.Assets.updateLook(11);
-        this.World.getCamera().setPos(this.World.State.m.Player.getPos());
+        ::World.State.m.Player = ::World.spawnEntity("scripts/entity/world/player_party", randomVillageTile.Coords.X, randomVillageTile.Coords.Y);
+        ::World.Assets.updateLook(11);
+        ::World.getCamera().setPos(::World.State.m.Player.getPos());
     }
 
     function onInit() {
-        local assets = this.World.Assets;
-        assets.m.BrothersMax = 12;
-        // The Wolf-and-the-Bear band travels quicker through any forests
-        // Q: inline constants?
-        foreach (terrain, _ in ::Const.Druid.Forest.Terrain)
-            assets.m.TerrainTypeSpeedMult[terrain] *= ::Const.Druid.Forest.SpeedMult;
+        ::World.Assets.m.BrothersMax = 12;
+    }
+
+    // Forest travel-speed bonus. MSU drives the movement pipeline and calls the origin's
+    // getMovementSpeedMult every update (player_party.getOriginMovementSpeedMult), so we make
+    // it terrain-aware here rather than touching the asset_manager's TerrainTypeSpeedMult array
+    // (which MSU no longer reads).
+    function getMovementSpeedMult() {
+        local player = ::World.State.getPlayer();
+        if (!::std.Util.isNull(player) && (player.getTile().Type in ::Const.Druid.Forest.Terrain))
+            return ::Const.Druid.Forest.SpeedMult;
+        return 1.0;
     }
 
     function onCombatFinished() {
-        local roster = this.World.getPlayerRoster().getAll();
+        local roster = ::World.getPlayerRoster().getAll();
         return ::std.Array.any(roster, @(bro) bro.getFlags().get("IsPlayerCharacter"));
     }
 });

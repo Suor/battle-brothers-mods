@@ -133,24 +133,26 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         b.Bravery += 20;
 
         local skills = _beast.getSkills();
-        // Serpents already carry Relentless, so guard against a duplicate.
-        if (!skills.hasSkill("perk.relentless"))
-            skills.add(this.new("scripts/skills/perks/perk_relentless"));
+        skills.add(::new("scripts/skills/perks/perk_relentless")); // Everybody gets relentless
 
+        // An alternative to _frenzied versions
         switch (_type) {
             case "spider":
                 b.Hitpoints = 100;
                 b.MeleeDefense += 10;
-                skills.add(this.new("scripts/skills/perks/perk_nine_lives"));
+                skills.add(::new("scripts/skills/perks/perk_nine_lives"));
+                _beast.setName("Giant Webknecht");
                 break;
             case "schrat_small":
                 b.Hitpoints = 100;
-                skills.add(this.new("scripts/skills/perks/perk_hold_out"));
+                skills.add(::new("scripts/skills/perks/perk_hold_out"));
+                // _beast.setName("Schrat");
                 break;
             case "serpent":
                 b.Hitpoints += 20;
                 b.Initiative = 90;  // Dodge turns the raised Initiative into +Melee/Ranged Defense.
-                skills.add(this.new("scripts/skills/perks/perk_dodge"));
+                skills.add(::new("scripts/skills/perks/perk_dodge"));
+                _beast.setName("Great Serpent");
                 break;
         }
 
@@ -159,7 +161,7 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
 
         // Spiders expose a native size knob that scales every body part and keeps it grounded.
         // For the rest we scale the body sprites ourselves.
-        local mult = 1.2;  // TODO: vary a bit?
+        local mult = ::std.Rand.float(1.1, 1.2);
         try {
             _beast.setSize(mult);
         } catch (error) {
@@ -211,7 +213,7 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         // the venom rides the druid's own attacks instead (see perk_druid_venom), not his beasts'.
         if (_user.getSkills().hasSkill("perk.druid.venom")
             && !_user.getSkills().hasSkill("perk.druid.beastform")) {
-            beast.getSkills().add(this.new("scripts/skills/racial/druid_venom"));
+            beast.getSkills().add(::new("scripts/skills/racial/druid_venom"));
         }
 
         beast.getSprite("socket").setBrush(_user.getSprite("socket").getBrush().Name);

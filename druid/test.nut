@@ -113,6 +113,7 @@ eq(Druid.GroupPerks.Beast.len(), 3, "three Beast perks");
 // Rage's melee-damage bonus is whole percent per stack, so the tooltip shows the exact figure the
 // onUpdate multiplier applies - no float truncation turning +20% into +19%.
 eq(Druid.Rage.PerStackDamagePct * 10, 20, "10 rage stacks -> +20% melee damage");
+eq(Druid.Rage.PerStackMaxHp * 10, 20, "10 rage stacks -> +20 maximum hitpoints");
 
 print("config OK\n");
 
