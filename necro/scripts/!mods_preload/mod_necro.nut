@@ -93,6 +93,7 @@ mod.queue(">mod_reforged", function () {
     })
     mod.hook("scripts/entity/tactical/actor", function (q) {
         q.m.necro_RaisedByPlayer <- false;
+        q.m.necro_UsedToBePlayer <- false;  // raised from a fallen brother — his gear stays ours
         q.necro_master <- function () {
             if ("necro_master" in m && !m.necro_master.isNull()) return m.necro_master;
             return null;
@@ -107,14 +108,8 @@ mod.queue(">mod_reforged", function () {
             __original(_actor, _tile, _skill);
         }
         q.onResurrected = @(__original) function (_info) {
-            if (_info.Faction == ::Const.Faction.PlayerAnimals) {
-                m.necro_RaisedByPlayer = true
-                // Since later we always drop for player animals we need to calc IsDroppedAsLoot here
-                foreach (slot in [::Const.ItemSlot.Head, ::Const.ItemSlot.Body]) {
-                    local piece = _info.Items.getItemAtSlot(slot);
-                    if (piece) piece.m.IsDroppedAsLoot = piece.isDroppedAsLoot();
-                }
-            }
+            m.necro_RaisedByPlayer = _info.Faction == ::Const.Faction.PlayerAnimals;
+            m.necro_UsedToBePlayer = _info.IsPlayer;
             if ("necro_master" in _info) {
                 m.necro_master <- _info.necro_master; // Track necro
                 if (::std.Actor.isAlive(m.necro_master))
@@ -146,53 +141,54 @@ mod.queue(">mod_reforged", function () {
         q.onDeath = @(__original) function (_killer, _skill, _tile, _fatalityType) {
             masterCheckMorale(this, ::Const.Morale.OnHitBaseDifficulty);
             __original(_killer, _skill, _tile, _fatalityType);
+            // Do not loose stuff after double raise
+            if (_tile != null) {
+                local corpse = _tile.Properties.get("Corpse");
+                if (m.necro_UsedToBePlayer) corpse.IsPlayer = true;
+            }
         }
     })
 
-    // TODO: move this thing to fixes? will need to gather zombie loot instead of chopping them.
-    // Want to get loot when zombies raised by us, so that necromancer won't be a loot destroyer
+    // Player-allied actors don't drop loot by default; force it on for our raised undead.
     mod.hook("scripts/items/item_container", function (q) {
-        // This is needed for 1.5.0 and whatever places with old style dropAll(), or not.
-        q.dropAll = @(__original) function(_tile, _killer, _flip = false) {
-            ::logInfo("necro: in hooked dropAll");
-            if (this.m.Actor.m.necro_RaisedByPlayer) {
-                ::logInfo("necro: dropAll " + m.Actor.getName());
-
-                // They dropped already once so rolls had their say,
-                // use Player/Blacksmith and whatnot to maximize chance to save them
-                this.onFactionChanged(::Const.Faction.Player)
-
-                // It's just too hard to jump through all the dropAll conditions so we duplicate
-                local tile = _tile, emergency = false;
-                if (tile == null && this.m.Actor.isPlacedOnMap()) {
-                    tile = this.m.Actor.getTile();
-                    emergency = true;
-                }
-                if (tile == null) return;
-
-                foreach (item in this.getAllItems()) {
-                    if (item == null || item == -1) continue;
-                    if (item.isChangeableInBattle() || emergency) item.drop(_tile);
-                    // Items not dropped go into corpse and later collected or reused from there
-                }
-            } else {
-                __original(_tile, _killer, _flip);
-            }
-        }
         if (q.contains("canDropItems")) {
             q.canDropItems = @(__original) function (_killer) {
-                if (!this.m.Actor.m.necro_RaisedByPlayer) return __original(_killer);
-
-                ::logInfo("necro: canDropItems " + m.Actor.getName());
-
-                // They dropped already once so rolls had their say,
-                // use Player/Blacksmith and whatnot to maximize chance to save them
-                this.onFactionChanged(::Const.Faction.Player)
-
-                return true;
+                return this.m.Actor.m.necro_RaisedByPlayer ? true : __original(_killer);
             }
         }
     })
+
+    // Refreshed on equip/bag. Two independent traits: a fallen brother's gear reverts to Player
+    // faction (it's ours, whoever raised him); an undead we raised gets the player-chances flag.
+    local function refreshRaisedLoot(_item) {
+        local c = _item.m.Container;
+        local a = c != null && !::std.Util.isNull(c.m.Actor) ? c.m.Actor : null;
+        if (a == null) { _item.m.necro_RaisedLoot = false; return; }
+        if (a.m.necro_UsedToBePlayer) _item.m.LastEquippedByFaction = ::Const.Faction.Player;
+        _item.m.necro_RaisedLoot = a.m.necro_RaisedByPlayer;
+    }
+    mod.hook("scripts/items/item", function (q) {
+        q.m.necro_RaisedLoot <- false;
+        q.onEquip = @(__original) function () { __original(); refreshRaisedLoot(this); }
+        q.onPutIntoBag = @(__original) function () { __original(); refreshRaisedLoot(this); }
+    })
+
+    // Raised loot drops with player-owned chances; restore the real faction before returning so
+    // arena and the challenges cap still treat it as enemy loot, not the player's own.
+    local function raisedLootChanceHook(q) {
+        q.isDroppedAsLoot = @(__original) function () {
+            if (!this.m.necro_RaisedLoot) return __original();
+            local realFaction = this.m.LastEquippedByFaction;
+            this.m.LastEquippedByFaction = ::Const.Faction.Player;
+            local res = __original();
+            this.m.LastEquippedByFaction = realFaction;
+            return res;
+        }
+    }
+    mod.hook("scripts/items/weapons/weapon", raisedLootChanceHook);
+    mod.hook("scripts/items/shields/shield", raisedLootChanceHook);
+    mod.hook("scripts/items/armor/armor", raisedLootChanceHook);
+    mod.hook("scripts/items/helmets/helmet", raisedLootChanceHook);
 
     // If DynamicPerks is installed then we'll add our perks via a special perk group
     if (!("DynamicPerks" in getroottable())) {
