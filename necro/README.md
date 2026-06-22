@@ -7,6 +7,12 @@ Following the idea of [Recrutable Necromancer](old) this adds a Necromancer back
 - a dedicated origin
 - loot and XP not lost anymore when zombie kills
 
+Plans:
+
+- an event with a undead uprising to start chopping their heads
+- more events
+- special mechanics for origin or all necros
+
 Russian localization included - need to install [Rosetta][] and it's dependencies.
 
 
@@ -23,12 +29,6 @@ Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHo
 
 To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
 
-
-## Plans
-
-- an event with a undead uprising to start chopping their heads
-- more events
-- special mechanics for origin or all necros
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/775
 [ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
