@@ -3,6 +3,10 @@ export
 
 SHELL := /bin/bash
 
+# Files that go into a release/install zip: git-tracked + non-ignored untracked,
+# plus generated i_* includes. Keeps gitignored junk and build artifacts out.
+list_sources = { git ls-files --cached --others --exclude-standard -- $(SOURCES); find $(SOURCES) -name 'i_*' -type f; } | sort -u
+
 .ONESHELL:
 zip: include check
 	@set -e;
@@ -11,7 +15,7 @@ zip: include check
 	MODIFIED=$$( git diff $$LAST_TAG --quiet $(SOURCES) || echo _MODIFIED);
 	NAME=$$(echo $$LAST_TAG | perl -pE 's/^$(TAG_NAME)-/$(MOD_NAME)_/');
 	FILENAME=mod_$$([[ "$$NAME" != "" ]] && echo $$NAME || echo $(MOD_NAME))$${MODIFIED}.zip;
-	zip --filesync -r "$${FILENAME}" $(SOURCES);
+	$(list_sources) | zip --filesync -@ "$${FILENAME}";
 
 clean:
 	@set -e;
@@ -21,7 +25,7 @@ clean:
 install: include check
 	@set -e;
 	FILENAME=${DATA_DIR}mod_$(MOD_NAME)_TMP.zip;
-	zip --filesync -r "$${FILENAME}" $(SOURCES);
+	$(list_sources) | zip --filesync -@ "$${FILENAME}";
 
 check-compile:
 	@set -e
