@@ -46,7 +46,7 @@ Safe to add or remove midgame. Should be compatible with everything.
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHooks][], [stdlib][] and [MSU][].
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHooks][] and [stdlib][]. [MSU][] is optional — if installed, enables weapon-type-based nicknames.
 
 To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
 

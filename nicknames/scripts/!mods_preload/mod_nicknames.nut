@@ -17,7 +17,7 @@ local def = ::Nicknames <- {
 }
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
-mod.require("stdlib >= 2.5", "mod_msu >= 1.6.0");
+mod.require("stdlib >= 2.5");
 mod.conflictWith("mod_renamer");
 mod.queue(">mod_msu", function () {
     if (!::Hooks.hasMod("mod_msu")) return;
