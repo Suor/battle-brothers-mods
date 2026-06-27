@@ -1,3 +1,9 @@
+0.7.0
+- more titles
+- more Northern Expansion titles and factors
+- made high-attribute titles are rarer, factor combos better tuned
+- MSU is now optional, only needed for weapon-type titles
+
 0.6.0
 - added "the" to most titles
 - avoid repeating titles smarter
