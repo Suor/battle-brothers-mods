@@ -1745,7 +1745,7 @@
 				local nameMod = "\nmod_AC=";
 				local findMod = _cn.find(nameMod);
 
-				if (findMod != null)
+				if (findMod != null && _cn.find("0x00000000") == null)
 				{
 					local slicedName = _cn.slice(0, findMod);
 					local slicedDetails = _cn.slice(findMod + nameMod.len());
@@ -1773,7 +1773,7 @@
 					this.m.Attributes.RangedSkill = arrayAttributes[5].tointeger();
 					this.m.Attributes.MeleeDefense = arrayAttributes[6].tointeger();
 					this.m.Attributes.RangedDefense = arrayAttributes[7].tointeger();
-			
+
 					slicedDetails = slicedDetails.slice(findQuirks + nameQuirks.len());
 					local arrayQuirks = split(slicedDetails, ",");
 					this.m.Quirks.resize(arrayQuirks.len());
