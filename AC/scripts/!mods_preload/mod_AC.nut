@@ -2,8 +2,10 @@
 ::mods_queue("mod_AC", null, function()
 {
 	///// extends maximum tooltip height in order to fit companion details and makes sure long tooltips don't go outside of the window
-	::mods_registerCSS("companions_tooltip.css");
-	::mods_registerJS("companions_tooltip.js");
+	if (!::mods_getRegisteredMod("mod_nested_tooltips")) {
+		::mods_registerCSS("companions_tooltip.css");
+		::mods_registerJS("companions_tooltip.js");
+	}
 
 
 	///// make companions heal their wounds at the same time as brothers heal theirs
