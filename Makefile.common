@@ -11,7 +11,7 @@ list_sources = { git ls-files --cached --others --exclude-standard -- $(SOURCES)
 zip: include check
 	@set -e;
 	grep --color -rin "debug = true" $(SOURCES) && echo "Debug statements found" && exit;
-	LAST_TAG=$$(git tag | grep $(TAG_NAME) | tail -1);
+	LAST_TAG=$$(git tag | grep "^$(TAG_NAME)-[0-9]" | tail -1);
 	MODIFIED=$$( git diff $$LAST_TAG --quiet $(SOURCES) || echo _MODIFIED);
 	NAME=$$(echo $$LAST_TAG | perl -pE 's/^$(TAG_NAME)-/$(MOD_NAME)_/');
 	FILENAME=mod_$$([[ "$$NAME" != "" ]] && echo $$NAME || echo $(MOD_NAME))$${MODIFIED}.zip;
