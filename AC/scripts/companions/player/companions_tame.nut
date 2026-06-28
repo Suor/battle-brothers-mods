@@ -229,7 +229,9 @@ this.companions_tame <- this.inherit("scripts/skills/skill", {
 
 		if (this.Math.rand(1, 1000) <= chance * 10)
 		{
-			this.Tactical.EventLog.logEx(this.Const.UI.getColorizedEntityName(actor) + " successfully tamed " + this.Const.UI.getColorizedEntityName(target));
+			this.Tactical.EventLog.logEx(this.Const.UI.getColorizedEntityName(actor)
+				+ " successfully tamed " + this.Const.UI.getColorizedEntityName(target)
+				+ ". Chance was merely " + format("%.1f", chance) + "%");
 			local loot = this.new("scripts/items/accessory/wardog_item");
 			loot.setType(this.Const.Companions.getType(target));
 			local ET = _targetTile.getEntity().m.Type;
@@ -289,7 +291,9 @@ this.companions_tame <- this.inherit("scripts/skills/skill", {
 		}
 		else
 		{
-			this.Tactical.EventLog.logEx(this.Const.UI.getColorizedEntityName(actor) + " failed to tame " + this.Const.UI.getColorizedEntityName(target));
+			this.Tactical.EventLog.logEx(this.Const.UI.getColorizedEntityName(actor)
+				+ " failed to tame " + this.Const.UI.getColorizedEntityName(target)
+				+ ". Chance was merely " + format("%.1f", chance) + "%");
 			this.spawnIcon("status_effect_111", _targetTile);
 			target.getFlags().add("taming_protection");
 			target.m.Skills.add(this.new("scripts/companions/player/companions_taming_protection"));
