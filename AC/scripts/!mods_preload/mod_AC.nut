@@ -210,7 +210,7 @@
 						items.equip(this.new("scripts/items/weapons/dagger"));
 					}
 					else if (rr == 2)
-					{	
+					{
 						items.equip(this.new("scripts/items/weapons/shortsword"));
 					}
 					else if (rr == 3)
@@ -1389,10 +1389,10 @@
 				{
 					foreach(i, quirk in this.m.Quirks)
 					{
-						local getQuirk = this.new(quirk);
-						knownQuirks.push(getQuirk.m.Name);
+						local getQuirk = new(quirk);
+						knownQuirks.push(getQuirk.getName());
 					}
-			
+
 					knownQuirks.sort();
 					foreach(i, quirk in knownQuirks)
 					{
