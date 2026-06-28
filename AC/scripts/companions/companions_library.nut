@@ -7,28 +7,6 @@ gt.Const.Companions.TameChance <- {
 	Default = 30.00,
 	Beastmaster = 45.00
 };
-gt.Const.Companions.TameList <- [
-	"Wardog",
-	"Armored Wardog",
-	"mod_AC_WardogArmorHeavy",
-	"Warhound",
-	"Armored Warhound",
-	"mod_AC_WarhoundArmorHeavy",
-	"Wolf",
-	"Direwolf",
-	"Frenzied Direwolf",
-	"Hyena",
-	"Frenzied Hyena",
-	"Webknecht",
-	"Serpent",
-	"Nachzehrer",
-	"Alp",
-	"Unhold",
-	"Armored Unhold",
-	"Schrat",
-	"Lindwurm",
-	"mod_AC_TomeReanimation"
-];
 gt.Const.Companions.TypeList <- {
 	Wardog = 0,
 	WardogArmor = 1,
@@ -51,6 +29,36 @@ gt.Const.Companions.TypeList <- {
 	Noodle = 18,
 	TomeReanimation = 19
 };
+local tl = Const.Companions.TypeList;
+gt.Const.Companions.ClassToType <- {
+	wardog = tl.Wardog
+	armored_wardog = tl.WardogArmor
+	// ..." = // "mod_AC_WardogArmorHeavy",
+	warhound = tl.Warhound //"Warhound",
+	// ..." = //"Armored Warhound",
+	// ..." = //"mod_AC_WarhoundArmorHeavy",
+	warwolf = tl.Warwolf // "Wolf",
+	direwolf = tl.Direwolf // "Direwolf",
+	direwolf_high = tl.DirewolfFrenzied
+	hyena = tl.Hyena // ""Hyena",
+	hyena_high = tl.HyenaFrenzied // "Frenzied Hyena",
+	spider = tl.Spider
+	serpent = tl.Snake //"Serpent",
+	ghoul = tl.Nacho // "Nachzehrer",
+	alp = tl.Alp // "Alp",
+	unhold = tl.Unhold // "Unhold",
+	unhold_bog = tl.Unhold
+	unhold_armored = tl.UnholdArmor //"Armored Unhold",
+	unhold_frost = tl.Unhold
+	unhold_frost_armored = tl.UnholdArmor
+	schrat = tl.Schrat //"Schrat",
+	lindwurm = tl.Noodle // "Lindwurm",
+	// mod_AC_TomeReanimation =
+}
+gt.Const.Companions.getType <- function (_target) {
+	if (!(_target.ClassName in gt.Const.Companions.ClassToType)) return null;
+	return gt.Const.Companions.ClassToType[_target.ClassName];
+}
 gt.Const.Companions.Library <- [
 	{
 		ID = "accessory.wardog",

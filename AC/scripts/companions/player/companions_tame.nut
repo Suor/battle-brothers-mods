@@ -88,9 +88,8 @@ this.companions_tame <- this.inherit("scripts/skills/skill", {
 		return chance;
 	}
 
-	function hasMaxTamed(check)
+	function hasMaxTamed(type)
 	{
-		local type = this.Const.Companions.Library[check].Type;
 		local matchNum = 0;
 		local size = this.Tactical.getMapSize();
 		for( local x = 0; x < size.X; x = ++x )
@@ -198,13 +197,13 @@ this.companions_tame <- this.inherit("scripts/skills/skill", {
 			return false;
 		}
 
-		local tamable = this.Const.Companions.TameList.find(target.getName());
+		local type = this.Const.Companions.getType(target);
 
-		if (tamable == null)
+		if (type == null)
 		{
 			return false;
 		}
-		if (tamable != null && hasMaxTamed(tamable))
+		if (type != null && hasMaxTamed(type))
 		{
 			return false;
 		}
@@ -229,8 +228,7 @@ this.companions_tame <- this.inherit("scripts/skills/skill", {
 		{
 			this.Tactical.EventLog.logEx(this.Const.UI.getColorizedEntityName(actor) + " successfully tamed " + this.Const.UI.getColorizedEntityName(target));
 			local loot = this.new("scripts/items/accessory/wardog_item");
-			loot.setType(this.Const.Companions.Library[this.Const.Companions.TameList.find(target.getName())].Type);
-
+			loot.setType(this.Const.Companions.getType(target));
 			local ET = _targetTile.getEntity().m.Type;
 			local ETC = this.Const.EntityType;
 
