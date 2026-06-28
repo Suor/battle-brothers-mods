@@ -1,0 +1,15 @@
+2.0 (changes from the base mod)
+
+- tame chance formula expanded — now accounts for target's injuries, stun, taunt, and low morale, and scales with player level (double at level 11)
+- tame chance shown in combat log
+- fixed crash on loading corrupted save
+- Russian localization (needs Rosetta)
+
+Compatibility:
+
+- creature identified by class now:
+    - makes things work with translated game
+    - generally more mod and future compatible
+- work with Northern Expansion direwolf
+- avoid conflicts with Nested Tooltips mod
+- double tame chance for the Proper Druid / XBE druid background

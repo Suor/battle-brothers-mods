@@ -1,4 +1,4 @@
-::mods_registerMod("mod_AC", 1.26, "Accessory Companions");
+::mods_registerMod("mod_AC", 2.0, "Accessory Companions (fixed by hackflow)");
 ::mods_queue("mod_AC", null, function()
 {
 	if (::mods_getRegisteredMod("stupid_game")) {
