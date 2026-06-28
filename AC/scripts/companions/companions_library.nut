@@ -3,9 +3,10 @@ if (!("Companions" in gt.Const))
 {
 	gt.Const.Companions <- {};
 }
+// these are x10, I don't change it to proper percentage to not confuse Autopilot New tame behavior
 gt.Const.Companions.TameChance <- {
-	Default = 30.00,
-	Beastmaster = 45.00
+	Default = 30.0
+	Beastmaster = 45.0 // not used anymore
 };
 gt.Const.Companions.TypeList <- {
 	Wardog = 0,

@@ -1,6 +1,11 @@
 ::mods_registerMod("mod_AC", 1.26, "Accessory Companions");
 ::mods_queue("mod_AC", null, function()
 {
+	if (::mods_getRegisteredMod("stupid_game")) {
+		this.Const.Companions.TameChance.Default *= 5;
+		this.Const.Companions.TameChance.Beastmaster *= 5;
+	}
+
 	///// extends maximum tooltip height in order to fit companion details and makes sure long tooltips don't go outside of the window
 	if (!::mods_getRegisteredMod("mod_nested_tooltips")) {
 		::mods_registerCSS("companions_tooltip.css");

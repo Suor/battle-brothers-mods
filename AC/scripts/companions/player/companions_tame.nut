@@ -74,16 +74,26 @@ this.companions_tame <- this.inherit("scripts/skills/skill", {
 		this.m.IsHidden = this.isHidden();
 	}
 
-	function getHitchance(_targetEntity)
+	function getHitchance(_target)
 	{
-		local tameDefault = this.Const.Companions.TameChance.Default / 10.0;
-		local tameBeastmaster = this.Const.Companions.TameChance.Beastmaster / 10.0;
-		local chance = this.getContainer().getActor().getSkills().hasSkill("background.companions_beastmaster") ? (1.0 - _targetEntity.getHitpointsPct()) * tameBeastmaster : (1.0 - _targetEntity.getHitpointsPct()) * tameDefault;
+		local chance = (1.0 - _target.getHitpointsPct()) * Const.Companions.TameChance.Default / 10;
+		local actor = this.getContainer().getActor();
+		if (actor.getSkills().hasSkill("background.companions_beastmaster")) chance *= 1.5;
+		if (actor.getSkills().hasSkill("background.hackflows_druid")) chance *= 2;
 
-		if (_targetEntity.getCurrentProperties().IsRooted)
-		{
-			chance *= 1.25;
-		}
+		// Effects
+		local effects = _target.getSkills().getAllSkillsOfType(Const.SkillType.Injury).len();
+		if (_target.getCurrentProperties().IsRooted) effects++;
+		if (_target.getSkills().hasSkill("effects.stunned")) effects++;
+		if (_target.getSkills().hasSkill("effects.taunted")) effects++;
+		chance *= 1 + 0.25 * effects;
+
+		// Morale
+		local badMorale = Const.MoraleState.Steady - _target.getMoraleState();
+		if (badMorale > 0) chance *= 1 + 0.2 * badMorale;
+
+		// Player level, double on level 11
+		if (::std.Util.isKindOf(actor, "player")) chance *= 1 + (actor.getLevel() - 1) * 0.1;
 
 		return chance;
 	}
@@ -213,18 +223,11 @@ this.companions_tame <- this.inherit("scripts/skills/skill", {
 
 	function onUse(_user, _targetTile)
 	{
-		local tameDefault = this.Const.Companions.TameChance.Default;
-		local tameBeastmaster = this.Const.Companions.TameChance.Beastmaster;
 		local actor = this.getContainer().getActor();
 		local target = _targetTile.getEntity();
-		local chance = actor.getSkills().hasSkill("background.companions_beastmaster") ? (1.0 - target.getHitpointsPct()) * tameBeastmaster : (1.0 - target.getHitpointsPct()) * tameDefault;
+		local chance = this.getHitchance(target);
 
-		if (target.getCurrentProperties().IsRooted)
-		{
-			chance *= 1.25;
-		}
-
-		if (this.Math.rand(1, 1000) <= chance)
+		if (this.Math.rand(1, 1000) <= chance * 10)
 		{
 			this.Tactical.EventLog.logEx(this.Const.UI.getColorizedEntityName(actor) + " successfully tamed " + this.Const.UI.getColorizedEntityName(target));
 			local loot = this.new("scripts/items/accessory/wardog_item");
