@@ -1035,6 +1035,12 @@
 					this.m.ID = "accessory.warwolf";
 					this.setType(this.Const.Companions.TypeList.Warwolf);
 				}
+				// This comes from Northern Expansion mod
+				if (this.isKindOf(this, "direwolf_item"))
+				{
+					this.m.ID = "accessory.direwolf";
+					this.setType(this.Const.Companions.TypeList.Direwolf);
+				}
 			}
 
 			o.getType <- function()
