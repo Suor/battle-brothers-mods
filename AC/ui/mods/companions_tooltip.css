@@ -1,0 +1,8 @@
+.tooltip-module.is-full-width
+{
+	max-width: 30.0rem;
+    width: 30.0rem;
+    background-image: url("coui://gfx/ui/skin/tooltip_315_bottom_ac.png");
+    background-size: 31.5rem 72rem;
+    background-position: bottom;
+}
