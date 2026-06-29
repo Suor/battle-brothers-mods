@@ -36,14 +36,16 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
     }
 
     function snh_log(_entity, _msg) {
-        if (::Const.AI.VerboseMode) this.logInfo("step_n_hit[" + _entity.getName() + "]: " + _msg);
+        if (::Const.AI.VerboseMode) ::logInfo("step_n_hit[" + _entity.getName() + "]: " + _msg);
     }
     function snh_bail(_entity, _reason) {
-        this.snh_log(_entity, "skip: " + _reason);
-        return ::Const.AI.Behavior.Score.Zero;
+        snh_log(_entity, "skip: " + _reason);
+        return 0;
     }
 
     function onEvaluate(_entity) {
+        local Debug = ::Const.AI.VerboseMode ? ::std.Debug.with({prefix = "step_n_hit: "})
+                                             : ::std.Debug.noop();
         this.m.TargetTile = null;
         this.m.TargetActor = null;
         this.m.Skill = null;
@@ -51,22 +53,22 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
 
         // Silent skips for bros that aren't this behavior's audience — these fire on every roster
         // eval, no signal to log.
-        if (_entity.m._autopilot.ranged) return ::Const.AI.Behavior.Score.Zero;
-        if (_entity.getIdealRange() != 2) return ::Const.AI.Behavior.Score.Zero;
+        if (_entity.m._autopilot.ranged) return 0;
+        if (_entity.getIdealRange() != 2) return 0;
 
-        if (!_entity.isArmedWithMeleeWeapon()) return this.snh_bail(_entity, "no melee weapon");
-        if (_entity.getActionPoints() < ::Const.Movement.AutoEndTurnBelowAP) return this.snh_bail(_entity, "AP below auto-end threshold");
-        if (!this.getAgent().hasKnownOpponent()) return this.snh_bail(_entity, "no known opponent");
-        if (_entity.getMoraleState() == ::Const.MoraleState.Fleeing) return this.snh_bail(_entity, "fleeing");
-        if (_entity.getCurrentProperties().IsRooted) return this.snh_bail(_entity, "rooted");
+        if (!_entity.isArmedWithMeleeWeapon()) return snh_bail(_entity, "no melee weapon");
+        if (_entity.getActionPoints() < ::Const.Movement.AutoEndTurnBelowAP) return snh_bail(_entity, "AP below auto-end threshold");
+        if (!this.getAgent().hasKnownOpponent()) return snh_bail(_entity, "no known opponent");
+        if (_entity.getMoraleState() == ::Const.MoraleState.Fleeing) return snh_bail(_entity, "fleeing");
+        if (_entity.getCurrentProperties().IsRooted) return snh_bail(_entity, "rooted");
 
         local myTile = _entity.getTile();
         if (myTile.getZoneOfControlCountOtherThan(_entity.getAlliedFactions()) > 0) {
-            return this.snh_bail(_entity, "in opponent ZoC (would AoO on leave)");
+            return snh_bail(_entity, "in opponent ZoC (would AoO on leave)");
         }
 
         local skill = this.snh_pickAttackSkill(_entity);
-        if (skill == null) return ::Const.AI.Behavior.Score.Zero;  // logged inside picker
+        if (skill == null) return 0;  // logged inside picker
 
         local apForAttack = skill.getActionPointCost();
         local fullAP = _entity.getActionPoints();
@@ -129,18 +131,7 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
                 candidates.push({Tile = destTile, Target = target, Skill = skill, Score = s});
             }
         }
-
-        if (candidates.len() == 0) {
-            this.snh_log(_entity, "no candidates (examined=" + examined
-                + " rej notEmpty=" + rejNotEmpty + " occupied=" + rejOccupied
-                + " zoc=" + rejZoc + " skillUsable=" + rejSkillUsable
-                + " danger=" + rejDanger + " noPath=" + rejNoPath
-                + " costIncomplete=" + rejCostIncomplete + " wrongEnd=" + rejWrongEnd
-                + " overBudget=" + rejOverBudget + " targetValue=" + rejTargetValue
-                + ") myDanger=" + myDanger + " skill=" + skill.getID()
-                + " fullAP=" + fullAP + " fullFat=" + fullFat + " apForAttack=" + apForAttack);
-            return ::Const.AI.Behavior.Score.Zero;
-        }
+        if (candidates.len() == 0) return 0;
 
         // Weighted-random pick (same shape as ai_attack_bow / better_attack_default), but with
         // a stronger pow so tile-quality differences (height, terrain effects) dominate.
@@ -150,6 +141,7 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
         local threshold = maxScore * ::Const.AI.Behavior.AttackRangedScoreCutoff;
         local weights = candidates.map(@(c) c.Score < threshold ? 0 : ::Math.pow(c.Score, pow));
         local choice = ::std.Rand.choice(candidates, weights);
+        Debug.logRepr("picked", choice);
 
         this.m.TargetTile = choice.Tile;
         this.m.TargetActor = choice.Target;
@@ -159,12 +151,9 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
         local fatigueMult = this.getFatigueScoreMult(choice.Skill);
         local finalScore = ::Math.max(0, ::Const.AI.Behavior.Score.AP_StepNHit
                                           * choice.Score * behaviorMult * fatigueMult);
-        this.snh_log(_entity, "picked dest=(" + choice.Tile.SquareCoords.X + ","
-            + choice.Tile.SquareCoords.Y + ") target=" + choice.Target.getName()
-            + " skill=" + choice.Skill.getID() + " innerScore=" + choice.Score
-            + " mult(behavior=" + behaviorMult + " fatigue=" + fatigueMult
-            + ") finalScore=" + finalScore
-            + " candidates=" + candidates.len() + " maxInner=" + maxScore);
+        // snh_log(_entity, "picked dest=(" + choice.Tile.SquareCoords.X + ","
+        //     + choice.Tile.SquareCoords.Y + ") target=" + choice.Target.getName()
+        //     + " skill=" + choice.Skill.getID());
         return finalScore;
     }
 
@@ -172,14 +161,6 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
         local navigator = this.Tactical.getNavigator();
 
         if (this.m.IsFirstExecuted) {
-            this.snh_log(_entity, "execute: target=("
-                + this.m.TargetTile.SquareCoords.X + ","
-                + this.m.TargetTile.SquareCoords.Y + ") attacking="
-                + this.m.TargetActor.getName()
-                + " ap=" + _entity.getActionPoints()
-                + " fat=" + _entity.getFatigue() + "/" + _entity.getFatigueMax()
-                + " skillAP=" + this.m.Skill.getActionPointCost()
-                + " skillFat=" + this.m.Skill.getFatigueCost());
             this.getAgent().adjustCameraToTarget(this.m.TargetTile);
 
             this.m.IsFirstExecuted = false;
@@ -191,8 +172,7 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
 
             local settings = this.snh_buildSettings(_entity, navigator);
             if (!navigator.findPath(_entity.getTile(), this.m.TargetTile, settings, 0)) {
-                this.logWarning("step_n_hit[" + _entity.getName()
-                    + "]: failed to plan path, skipping");
+                ::logWarning("step_n_hit[" + _entity.getName() + "]: failed to plan path, skipping");
                 this.m.TargetTile = null;
                 this.m.TargetActor = null;
                 this.m.Skill = null;
@@ -206,9 +186,6 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
         if (this.m.IsMoving) {
             if (!navigator.travel(_entity, _entity.getActionPoints(),
                     _entity.getFatigueMax() - _entity.getFatigue())) {
-                this.snh_log(_entity, "execute: travel finished at ("
-                    + _entity.getTile().SquareCoords.X + ","
-                    + _entity.getTile().SquareCoords.Y + ")");
                 this.m.IsMoving = false;
                 return false;
             }
@@ -220,8 +197,6 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
         if (::std.Actor.isValidTarget(target) && skill != null
             && skill.isUsableOn(target.getTile()))
         {
-            this.snh_log(_entity, "execute: attacking " + target.getName()
-                + " with " + skill.getID());
             skill.use(target.getTile());
             this.getAgent().declareAction();
             if (skill.getDelay() != 0) {
@@ -233,7 +208,7 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
             // state so we can pin down where the prediction diverged from reality.
             local myTile = _entity.getTile();
             local tgtTile = target != null ? target.getTile() : null;
-            this.logWarning("step_n_hit[" + _entity.getName()
+            ::logWarning("step_n_hit[" + _entity.getName()
                 + "]: post-move skip attack (target.alive="
                 + (target != null ? ::std.Actor.isAlive(target) : "null-target")
                 + " skill=" + (skill != null ? skill.getID() : "null")
@@ -300,7 +275,7 @@ this.autopilot_step_n_hit <- ::inherit("scripts/ai/tactical/behaviors/ai_attack_
         }
 
         if (candidates.len() == 0) {
-            this.snh_log(_entity, "no usable 2-reach melee attack");
+            snh_log(_entity, "no usable 2-reach melee attack");
             return null;
         }
 
