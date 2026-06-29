@@ -13,5 +13,6 @@ local def = {
     }
 }
 
-this.necro_pg <- ::DynamicPerks != "necro_placeholder"
-    ? ::inherit(::DynamicPerks.Class.SpecialPerkGroup, def) : def;
+// A string value is a placeholder (ours or a sibling mod's); the real DynamicPerks is a table.
+local hasDPF = ("DynamicPerks" in getroottable()) && typeof ::DynamicPerks != "string";
+this.necro_pg <- hasDPF ? ::inherit(::DynamicPerks.Class.SpecialPerkGroup, def) : def;

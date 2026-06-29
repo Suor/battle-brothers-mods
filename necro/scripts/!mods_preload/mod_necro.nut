@@ -190,9 +190,11 @@ mod.queue(">mod_reforged", ">mod_msu", function () {
     mod.hook("scripts/items/armor/armor", raisedLootChanceHook);
     mod.hook("scripts/items/helmets/helmet", raisedLootChanceHook);
 
-    // If DynamicPerks is installed then we'll add our perks via a special perk group
-    if (!("DynamicPerks" in getroottable())) {
-        ::DynamicPerks <- "necro_placeholder"; // needed to fool mod_plan_perks
+    // If DynamicPerks is installed then we'll add our perks via a special perk group.
+    // Need to check its type too to distinguish it from a placholder from say druid mod.
+    if (!("DynamicPerks" in getroottable()) || typeof ::DynamicPerks != "table") {
+        if (!("DynamicPerks" in getroottable()))
+            ::DynamicPerks <- "necro_placeholder"; // needed to fool mod_plan_perks
 
         // Add perk tree to bros data
         mod.hook("scripts/ui/global/data_helper", function (q) {
@@ -211,8 +213,6 @@ mod.queue(">mod_reforged", ">mod_msu", function () {
                         perks[perk.Row].push(perk);
                     }
                     result.necro_perkTree <- perks;
-                } else {
-                    result.necro_perkTree <- ::Const.Perks.Perks;
                 }
                 return result;
             }
