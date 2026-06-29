@@ -59,13 +59,11 @@ this.autopilot_summon_beast <- this.inherit("scripts/ai/tactical/behavior", {
             return score * 2;
         }
 
-        // FIX: use getIdealRange()
-        // A melee bro waits for a close foe; a ranged bro keeps his distance, so a foe rarely
-        // gets within 4 - screen him far earlier or he'd never get to summon at all.
-        local reach = _entity.hasRangedWeapon() ? 7 : 4;
-        if (nearest > reach) return 0;
+        // Do not summon too soon, so that a beast won't need to run by itself, wasting AP
+        local ideal = _entity.getIdealRange();
+        if (nearest > ideal) return 0;
         // Closer foe -> bigger payoff for committing the one summon now
-        score *= 1.0 + (reach - nearest).tofloat() / reach;
+        score *= 1.0 + (ideal - nearest).tofloat() / ideal;
         if (debug) ::logInfo("summon: single, nearest=" + nearest + " score=" + score);
         return score;
     }
