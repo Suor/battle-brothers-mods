@@ -28,7 +28,8 @@ add(::Challenges.SliderSetting("lootGoldComp", 1.0,
     "Gold received for each equipment piece that does not drop due to the settings above. "
     + "Accounts for item condition."));
 add(::MSU.Class.BooleanSetting("chooseAtRandom", false, "Choose At Random",
-    "If enabled loot will be capped for you behind the scenes randomly."));
+    "When off you pick which drops to keep within the cap on the loot screen. "
+    + "When on the cap is applied for you at random, preferring more valuable items."));
 add(::MSU.Class.BooleanSetting("protectNamed", true, "Protect Named Items",
     "Named and legendary items always drop regardless of other loot settings."));
 

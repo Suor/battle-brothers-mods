@@ -23,7 +23,7 @@ def.banFollowerSetting <- function (_id) { return "ban_" + _id; }
 add(::MSU.Class.SettingsTitle("followersTitle", "Followers"));
 foreach (f in def.Followers) {
     add(::MSU.Class.BooleanSetting(def.banFollowerSetting(f[0]), false, "No " + f[1],
-        "Hides The " + f[1] + " from the retinue hire list."));
+        "Hides the " + f[1] + " from the retinue hire list."));
 }
 
 // Drop followers banned via their per-follower checkbox from the retinue hire list. Only known
