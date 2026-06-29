@@ -1,3 +1,5 @@
+_images
+_screenshots
 .env
 *.zip
 __pycache__
