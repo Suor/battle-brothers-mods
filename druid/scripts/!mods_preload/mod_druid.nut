@@ -231,8 +231,10 @@ mod.queue(">mod_reforged", ">mod_background_perks",
     // If DynamicPerks is installed we add perks via a special perk group (see druid_pg) and its
     // verifyPrerequisites lock covers the UI. Otherwise inject our perk rows straight into the
     // background's perk tree and carry the exclusion to the UI ourselves (druid.js + druid.css).
-    if (!("DynamicPerks" in getroottable())) {
-        ::DynamicPerks <- "druid_placeholder"; // needed to fool mod_plan_perks
+    // NOTE: using typeof to distinguish real DynamicPerks from our or necro placeholder.
+    if (!("DynamicPerks" in getroottable()) || typeof ::DynamicPerks == "string") {
+        if (!("DynamicPerks" in getroottable()))
+            ::DynamicPerks <- "druid_placeholder"; // needed to fool mod_plan_perks
 
         ::Hooks.registerJS("ui/mods/druid.js");
         ::Hooks.registerCSS("ui/mods/druid.css");
@@ -259,8 +261,6 @@ mod.queue(">mod_reforged", ">mod_background_perks",
                         perks[perk.Row].push(p);
                     }
                     result.druid_perkTree <- perks;
-                } else {
-                    result.druid_perkTree <- ::Const.Perks.Perks;
                 }
                 return result;
             }

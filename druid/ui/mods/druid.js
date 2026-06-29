@@ -8,6 +8,11 @@ CharacterScreenPerksModule.prototype.loadPerkTreesWithBrotherData = function (_b
     if (_brother.druid_perkTree) {
         this.resetPerkTree(this.mPerkTree);
         this.onPerkTreeLoaded(null, _brother.druid_perkTree);
+        this.mPerkTree.druidTree = true; // tag so we only ever restore the stock tree from our own
+    } else if (this.mPerkTree && this.mPerkTree.druidTree) {
+        // Leaving a druid: rebuild the stock tree so its extra rows don't linger for the next bro.
+        // Keyed on our own tag, never on another mod's custom tree (necro), to avoid clobbering it.
+        this.onPerkTreeLoaded(null, this.mDataSource.getPerkTrees());
     }
     Druid.CharacterScreenPerksModule_loadPerkTreesWithBrotherData.call(this, _brother);
     if (_brother.druid_perkTree) {
