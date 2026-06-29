@@ -238,11 +238,17 @@ mod.queue(">mod_reforged", ">mod_background_perks",
         ::Hooks.registerCSS("ui/mods/druid.css");
 
         mod.hook("scripts/ui/global/data_helper", function (q) {
+            // Disallow some masterties so that perk row 4 won't be too long
+            local keepMasteries = {};
+            foreach (w in ["axe" "spear" "polearm" "dagger" "bow" "throwing" "mace" "flail"])
+                keepMasteries["perk.mastery." + w] <- true;
+
             q.convertEntityToUIData = @(__original) function(_entity, _activeEntity) {
                 local result = __original(_entity, _activeEntity);
                 if (_entity != null && _entity.getSkills().hasSkill("background.hackflows_druid")) {
                     local skills = _entity.getSkills();
                     local perks = ::Const.Perks.Perks.map(@(row) clone row);
+                    perks[3] = perks[3].filter(@(_, p) p.ID in keepMasteries);
                     foreach (perk in ::Const.Perks.Druid) {
                         // Clone so the per-entity druid_blocked flag never leaks onto the shared
                         // perk definition; the JS tree reads it to grey out blocked perks. The

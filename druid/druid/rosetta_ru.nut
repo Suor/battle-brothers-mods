@@ -16,6 +16,14 @@ local pairs = [
     // en = "hair"
     // en = "injury"
     // en = "armor"
+    // en = "axe"
+    // en = "spear"
+    // en = "polearm"
+    // en = "dagger"
+    // en = "bow"
+    // en = "throwing"
+    // en = "mace"
+    // en = "flail"
     // FILE: scripts/config/z_druid.nut
     {
         en = "Regrowth"
