@@ -92,7 +92,7 @@ local pairs = [
         //         + " you tear off your own shield and roar."
         mode = "pattern"
         en = "Blood feeds a rising fury: stacking melee damage, resolve and <open:tag>healing<close:tag> each turn, at the cost of defense. At its height you tear off your own shield and roar."
-        ru = "Кровь питает растущую ярость: накапливает урон в ближнем бою, Решимость и <open:tag>исцеление<close:tag> каждый ход - ценой защиты. На пике вы срываете собственный щит и издаёте рык."
+        ru = "Кровь питает растущую ярость: накапливает урон в ближнем бою, решимость и <open:tag>исцеление<close:tag> каждый ход - ценой защиты. На пике вы срываете собственный щит и издаёте рык."
     }
     {
         en = "Venom"
@@ -138,8 +138,8 @@ local pairs = [
         ru = "Волк и Медведь"
     }
     {
-        en = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]The wild was in your blood before you had words for it. The green things and the beasts that walk beneath the canopy know their own, and they have always known you. Now two of you walk the world with the wild at your back.\n\n[color=#bcad8c]The Wolf and the Bear:[/color] You begin as a pair, both walkers of the wild paths - one who has taken the beast's shape to fight tooth and claw, and one who calls the beasts and mends his fellows' wounds.\n[color=#bcad8c]Player Characters:[/color] Don't let both the Wolf and the Bear die.\n[color=#bcad8c]Woodwise:[/color] Your band travels swiftly through forests and sees farther beneath the canopy.[/p]"
-        ru = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]Дикое было в вашей крови ещё до того, как у вас появились для него слова. Зелень и звери, что бродят под пологом леса, чуют своего - и всегда чуяли вас. Теперь по миру странствуют двое, и дикая чаща идёт за вами.\n\n[color=#bcad8c]Волк и Медведь:[/color] Вы начинаете вдвоём, оба - странники диких троп: один принял звериный облик и бьётся клыком и когтем, другой призывает зверей и врачует раны собратьев.\n[color=#bcad8c]Игровые персонажи:[/color] Вы проиграете, лишь если погибнут оба - и Волк, и Медведь.\n[color=#bcad8c]Лесное чутьё:[/color] В лесу ваш отряд идёт скорым шагом и видит дальше под пологом крон.[/p]"
+        en = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]The wild was in your blood before you had words for it. Now two of you walk the world with the wild at your back.\n\n[color=#bcad8c]The Wolf and the Bear:[/color] You begin as a pair - one who has taken the beast's shape to fight tooth and claw, and one who calls the beasts and mends his fellows' wounds.\n[color=#bcad8c]Player Characters:[/color] Don't let both the Wolf and the Bear die.\n[color=#bcad8c]Woodwise:[/color] Your band travels swiftly through forests and sees farther beneath the canopy.[/p]"
+        ru = "[p=c][img]gfx/ui/events/event_25.png[/img][/p][p]Дикое было в вашей крови ещё до того, как у вас появились для него слова. Теперь по миру странствуют двое, и дикая чаща идёт за вами.\n\n[color=#bcad8c]Волк и Медведь:[/color] Вы начинаете вдвоём: один принял звериный облик и бьётся клыком и когтем, другой призывает зверей и врачует раны собратьев.\n[color=#bcad8c]Игровые персонажи:[/color] Вы проиграете, лишь если погибнут оба - и Волк, и Медведь.\n[color=#bcad8c]Лесное чутьё:[/color] В лесу ваш отряд идёт скорым шагом и видит дальше под пологом крон.[/p]"
     }
     {
         en = "the Bear"
@@ -242,7 +242,7 @@ local pairs = [
     // Apex (Greater Beasts) renames for beasts grown in place - see makeApex().
     {
         en = "Giant Webknecht"
-        ru = "Гигантский сетеплёт"
+        ru = "Сетеплёт-гигант"
     }
     {
         en = "Great Serpent"
@@ -302,8 +302,8 @@ local pairs = [
     {
         // return this.m.RageStacks > 1 ? this.m.Name + " (x" + this.m.RageStacks + ")" : this.m.Name;
         mode = "pattern"
-        en = "<this.m.Name> (x<this.m.RageStacks>)"
-        ru = "<this.m.Name> (x<this.m.RageStacks>)"
+        en = "<name:str_tag> (x<stacks:int_tag>)"
+        ru = "<name> (x<stacks>)"
     }
     {
         // return "The taste of blood and the thrill of the kill drive this beast into a deepening fury. "
@@ -332,14 +332,14 @@ local pairs = [
     {
         // this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(actor) + " gains rage!");
         mode = "pattern"
-        en = "<this.Const.UI.getColorizedEntityName(actor)> gains rage!"
-        ru = "<this.Const.UI.getColorizedEntityName(actor)> приходит в ярость!"
+        en = "<actor:str_tag> gains rage!"
+        ru = "<actor> приходит в ярость!"
     }
     {
         // this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(_actor) + " tears off the shield with a roar!");
         mode = "pattern"
-        en = "<this.Const.UI.getColorizedEntityName(_actor)> tears off the shield with a roar!"
-        ru = "<this.Const.UI.getColorizedEntityName(_actor)> с рыком срывает щит!"
+        en = "<actor:str_tag> tears off the shield with a roar!"
+        ru = "<actor> с рыком срывает щит!"
     }
     // FILE: scripts/skills/racial/druid_venom.nut
     {
