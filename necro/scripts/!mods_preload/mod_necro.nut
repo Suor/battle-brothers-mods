@@ -24,7 +24,7 @@ local def = ::Necro <- {
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("mod_msu >= 1.6.0", "stdlib >= 2.1");
-mod.queue(">mod_reforged", function () {
+mod.queue(">mod_reforged", ">mod_msu", function () {
     ::include("necro/rosetta_ru");
 
     local Util = ::std.Util, Debug = ::std.Debug.with({prefix = "necro: "});
