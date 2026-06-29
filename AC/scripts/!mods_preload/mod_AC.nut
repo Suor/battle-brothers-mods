@@ -1532,7 +1532,11 @@
 				if (this.getContainer() != null && !this.getContainer().isNull() && this.getContainer().getActor() != null && !this.getContainer().getActor().isNull() && this.getContainer().getActor().m.Type == this.Const.EntityType.Player && this.m.Type != this.Const.Companions.TypeList.TomeReanimation)
 				{
 					local actor = this.getContainer().getActor();
-					if (actor.getSkills().hasSkill("background.companions_beastmaster"))
+					if (actor.getSkills().hasSkill("background.hackflows_druid"))
+					{
+						_xp = _xp * (1.2 + (actor.getLevel() / 50.0));
+					}
+					else if (actor.getSkills().hasSkill("background.companions_beastmaster"))
 					{
 						_xp = _xp * (1.15 + (actor.getLevel() / 66.667));
 					}

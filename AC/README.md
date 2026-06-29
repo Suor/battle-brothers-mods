@@ -13,14 +13,14 @@ Lets you tame beasts as companions, level your companions up and have them gain 
 - Webknechts may also drop from eggs
 - Beasts take wounds in battle and heal up on the world map over time. Their current health shows in the tooltip.
 - Companions gain experience from kills (their own, a brother's or another companion's) without
-  reducing the brothers' share, and don't need to be unleashed to do so. They learn faster if equipped by Houndmaster or Beastmaster.
+  reducing the brothers' share, and don't need to be unleashed to do so. They learn faster if equipped by Houndmaster, Beastmaster or Druid.
 - On level up they grow their preferred and two random attributes and pick a random quirk; at level 11 beasts get the **Good Boy/Girl** quirk that scales their base damage.
 - Beasts can be re-leashed to remove them from the field, but only unleashed once per battle.
   "Super beasts" (unhold, schrat, lindwurm) only start acting the round after being unleashed.
 - Equipped companions add to the party's strength, scaling with their level.
 -  number of companions of each type is limited: only one Lindwurm, Unhold and Schrat at a time, up to 6 wolves, 12 dogs and such.
 
-## Learnable Quirks
+## Quirks
 
 On level up a companion may gain one quirk from a curated pool: combat perks (e.g. Colossus,
 Nine Lives, Adrenaline, Executioner, Dodge, Steel Brow, Backstabber, Relentless, Berserk,
@@ -40,7 +40,7 @@ Huge and Lucky, and special effects like Rage, Poisonous, Healthy, Soften Blows 
 Is safe to add midgame, cannot remove. Plays nice with:
 
 - Reforged
-- [Autopilot New][autopilot]
+- [Autopilot New][autopilot] - will tame, unleash and raise undead
 - [Proper Druid][druid] and [More Backgrounds and Events (Updated)][xbe] - druid have a higher taming chance
 - [North Expansion][north-expansion] - a wolf pet becomes a companion
 - [More Love For Dogs][love]
