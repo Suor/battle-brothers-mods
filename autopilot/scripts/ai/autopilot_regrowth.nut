@@ -34,10 +34,10 @@ this.autopilot_regrowth <- this.inherit("scripts/ai/tactical/behavior", {
         local myTile = _entity.getTile(), bestWound = 0.0;
         foreach (ally in this.getAgent().getKnownAllies()) {
             if (!::std.Actor.isAlive(ally)) continue;
-            if (ally.getSkills().hasSkill("effects.druid_regeneration")) continue;
+            if (ally.getSkills().hasSkill("effects.druid_regrowth")) continue;
             local allyTile = ally.getTile();
-            if (myTile.getDistanceTo(allyTile) > this.m.Skill.getMaxRange()) continue;
-            if (!this.m.Skill.onVerifyTarget(myTile, allyTile)) continue;
+            // isUsableOn also checks target-tile visibility, which use() requires but onVerifyTarget doesn't.
+            if (!this.m.Skill.isUsableOn(allyTile, myTile)) continue;
 
             local wound = 1.0 - ally.getHitpointsPct();
             if (wound > bestWound) {
