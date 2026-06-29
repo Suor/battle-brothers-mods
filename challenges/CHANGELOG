@@ -1,6 +1,12 @@
-- hiring challenges: No Tryout (hire blind)
-- gear challenges: Allowed Shields (All/Light/Bucklers/None), No Two-Handed Swords, No Two-Handed Hammers
-- followers challenges: per-follower toggles to hide retinue followers
+0.5.0
+- added No Tryout and No Firing challenges
+- added no particular follower checkboxes
+- added Allowed Shields (All/Light/Bucklers/None), No Two-Handed Swords/Hammers
+- added Enemy scaling
+- allow choosing capped loot: choose items in loot screen, see compensation if any
+- loot: drop-chance steps reworked (50/25/10/5% instead of 75/50/25/10%)
+- do not cap tools
+- fixed loot disappearing on second drop messing capped counter, i.e. when it's picked up
 
 0.1.0
 - initial public version

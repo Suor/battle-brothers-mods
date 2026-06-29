@@ -11,6 +11,7 @@ Reduce equipment drops from enemies. This is only about weapons, shields, armors
 **Armor & Helmet Drop Chance** — chance for armor and helmets to drop when enemies die.<br>
 **Max Equipment Drops Per Battle** — hard cap on total equipment pieces that can drop in a single battle.<br>
 **Gold Compensation** — gold received per blocked item, proportional to its value. Full by default.<br>
+**Choose At Random** — when off you pick which drops to keep within the cap on the loot screen; when on the cap is applied for you at random, more valuable items are preferred.<br>
 **Protect Named Items** — named and legendary items always drop regardless of the settings above. On by default.<br>
 
 
@@ -18,6 +19,7 @@ Reduce equipment drops from enemies. This is only about weapons, shields, armors
 
 **Hiring Requirement** — you need to have this multiple of a brother's hiring cost in gold to even see him in the draft list. Very cheap brothers (beggars, cripples, etc.) are always available regardless.<br>
 **No Tryout** — removes the Try out option, so you hire men blind without ever seeing their hidden traits.<br>
+**No Firing** — removes the Dismiss button, so you can never let a brother go once he has joined.<br>
 
 
 ## Gear

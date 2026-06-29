@@ -1,7 +1,7 @@
 local def = ::Challenges <- {
     ID = "mod_challenges"
     Name = "Challenges"
-    Version = "0.2.0"
+    Version = "0.5.0"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/1010"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/challenges"
