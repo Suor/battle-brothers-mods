@@ -200,7 +200,7 @@ local T = ::Const.World.TerrainType;
     // The Wolf-and-the-Bear origin walks the wild paths: its band slips quicker through the trees
     // and sees farther beneath the canopy. Scenario-only - see the world hooks in mod_druid.
     Forest = {
-        SpeedMult = 2.4
+        SpeedMult = 1.6 // 0.64 is base for forests, 0.64 * 1.6 is a little bit over 1.0
         VisionMult = 1.4
         Terrain = {
             [T.Forest] = true,
