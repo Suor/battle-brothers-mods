@@ -7,35 +7,35 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
     },
     function create()
     {
-        this.m.ID = "actives.druid_regrowth";
-        this.m.Name = "Regrowth";
-        this.m.Description = "Channel nature's vigor into an ally, mending their wounds turn"
+        m.ID = "actives.druid_regrowth";
+        m.Name = "Regrowth";
+        m.Description = "Channel nature's vigor into an ally, mending their wounds turn"
                            + " after turn, double for beasts and animals. One bearer at a"
                            + " time, and never the undead.";
-        this.m.Icon = "druid/active_regrowth.png";
-        this.m.IconDisabled = "druid/active_regrowth_sw.png";
-        this.m.SoundOnUse = [
+        m.Icon = "druid/active_regrowth.png";
+        m.IconDisabled = "druid/active_regrowth_sw.png";
+        m.SoundOnUse = [
             "sounds/enemies/unhold_regenerate_01.wav"
         ];
-        this.m.Type = ::Const.SkillType.Active;
-        this.m.Order = ::Const.SkillOrder.UtilityTargeted;
-        this.m.IsActive = true;
-        this.m.IsTargeted = true;
-        this.m.IsStacking = false;
-        this.m.IsAttack = false;
-        this.m.IsRanged = false;
-        this.m.IsUsingHitchance = false;
-        this.m.IsTargetingActor = true;
-        this.m.IsDoingForwardMove = false;
-        this.m.ActionPointCost = 5;
-        this.m.FatigueCost = 20;
-        this.m.MinRange = 1;
-        this.m.MaxRange = 4;
+        m.Type = ::Const.SkillType.Active;
+        m.Order = ::Const.SkillOrder.UtilityTargeted;
+        m.IsActive = true;
+        m.IsTargeted = true;
+        m.IsStacking = false;
+        m.IsAttack = false;
+        m.IsRanged = false;
+        m.IsUsingHitchance = false;
+        m.IsTargetingActor = true;
+        m.IsDoingForwardMove = false;
+        m.ActionPointCost = 5;
+        m.FatigueCost = 20;
+        m.MinRange = 1;
+        m.MaxRange = 4;
     }
 
     function getTooltip()
     {
-        return this.getDefaultUtilityTooltip();
+        return getDefaultUtilityTooltip();
     }
 
     function isViableTarget(_user, _target)
@@ -43,23 +43,25 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
         return ::std.Actor.isValidTarget(_target)
             && _target.getID() != _user.getID()
             && _target.isAlliedWith(_user)
-            && !_target.getFlags().has("undead");
+            && !_target.getFlags().has("undead")
+            // Never double up Regrowth - one bearer can't carry two druids' growth at once.
+            && !_target.getSkills().hasSkill("effects.druid_regrowth");
     }
 
     function onVerifyTarget(_originTile, _targetTile)
     {
-        if (!this.skill.onVerifyTarget(_originTile, _targetTile)) return false;
+        if (!skill.onVerifyTarget(_originTile, _targetTile)) return false;
         if (!_targetTile.IsOccupiedByActor) return false;
-        return this.isViableTarget(this.getContainer().getActor(), _targetTile.getEntity());
+        return isViableTarget(getContainer().getActor(), _targetTile.getEntity());
     }
 
     // Strip Regrowth from this druid's current bearer so only one ally carries ours.
     // Other druids' Regrowth is left alone, even on the same side.
     function clearExisting()
     {
-        if (this.m.BearerID == null) return;
-        local bearer = ::Tactical.getEntityByID(this.m.BearerID);
-        this.m.BearerID = null;
+        if (m.BearerID == null) return;
+        local bearer = ::Tactical.getEntityByID(m.BearerID);
+        m.BearerID = null;
         if (!::std.Util.isNull(bearer)) {
             bearer.getSkills().removeByID("effects.druid_regrowth");
         }
@@ -69,22 +71,22 @@ this.druid_regrowth <- this.inherit("scripts/skills/skill", {
     // actor next fight - drop it together with the effect it tracks.
     function onCombatFinished()
     {
-        this.skill.onCombatFinished();
-        this.m.BearerID = null;
+        skill.onCombatFinished();
+        m.BearerID = null;
     }
 
     function onUse(_user, _targetTile)
     {
         if (!_targetTile.IsOccupiedByActor) return false;
         local target = _targetTile.getEntity();
-        if (!this.isViableTarget(_user, target)) return false;
+        if (!isViableTarget(_user, target)) return false;
 
-        this.clearExisting();
+        clearExisting();
         target.getSkills().add(::new("scripts/skills/effects/druid_regrowth_effect"));
-        this.m.BearerID = target.getID();
+        m.BearerID = target.getID();
         target.setDirty(true);
 
-        this.spawnIcon("druid_regrowth", _targetTile);
+        spawnIcon("druid_regrowth", _targetTile);
 
         if (!target.isHiddenToPlayer()) {
             ::Tactical.EventLog.log(
