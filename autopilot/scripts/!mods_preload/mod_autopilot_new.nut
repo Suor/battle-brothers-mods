@@ -59,6 +59,7 @@ mod.queue(">mod_msu", ">mod_reforged", ">mod_sellswords", ">mod_fantasybro", fun
     ::include("autopilot/verbose");
     ::Hooks.registerJS("ui/mods/autopilot_new.js");
     ::Hooks.registerCSS("ui/mods/autopilot_new.css");
+    ::include("autopilot/rosetta_ru");
 
     // ::include("autopilot/debug");
 
