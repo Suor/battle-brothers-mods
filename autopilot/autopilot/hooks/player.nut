@@ -82,6 +82,8 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_pickup_weapon"));
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_line_breaker"));
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_rally"));
+        // Bandit-only behavior; Reforged hangs Throw Pocket Sand and shield bash off it
+        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_distract"));
         // Disabled since doesn't consult offhand/backpack at all
         // agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_throw_bomb"));
 
