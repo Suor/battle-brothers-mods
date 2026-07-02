@@ -68,12 +68,13 @@ Russian localization included — need to install [Rosetta][] and its dependenci
 
 ## Install
 
-Download a zip and put it into the `data` dir. Requires [modhooks][] of version 20 or newer.
+Download a zip from [NexusMods][] and put it into the `data` dir. Requires [modhooks][] of version 20 or newer.
 
 To use the built-in Russian translation also install [Rosetta][] and the Russian translation
 of the game itself (data_014 and fonts). Once that is done the mod switches to Russian
 automatically.
 
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/1054
 [original]: https://www.nexusmods.com/battlebrothers/mods/314
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
