@@ -114,7 +114,9 @@ mh.queue(">stdlib", ">mod_msu", ">mod_legends", function () {
         q.updateLevel = @(__original) function () {
             local level = m.Level;
             __original();
-            onLevels(this, level);
+            // During scenario setup the post-spawn loop grants the bonus once for all
+            // levels; skip here so scenarios leveling via updateLevel aren't double-counted.
+            if (!starting) onLevels(this, level);
         }
 
         q.getAttributeLevelUpValues = @(__original) function () {
