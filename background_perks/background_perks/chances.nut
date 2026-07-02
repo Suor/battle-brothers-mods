@@ -93,7 +93,8 @@
     }
 
     butcher = {
-        "mastery.cleaver": 50
+        "mastery.cleaver": 35
+        "mastery.dagger": 10
         "coup_de_grace": 20
         "crippling_strikes": 20
         "hackflows.bloody_harvest": 10
