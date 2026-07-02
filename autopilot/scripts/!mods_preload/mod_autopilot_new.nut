@@ -83,4 +83,6 @@ mod.queue(">mod_msu", ">mod_reforged", ">mod_sellswords", ">mod_fantasybro", fun
         def.quickSwitch = false;
     }
     if (::Hooks.hasMod("mod_quickly_swap_items")) def.quickSwitch = false;
+    // Extra Keybinds has its own item swap (f1-f4), don't duplicate buttons/hotkeys
+    if (::Hooks.hasMod("mod_extra_keybinds")) def.quickSwitch = false;
 })
