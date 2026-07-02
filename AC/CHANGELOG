@@ -1,3 +1,7 @@
+2.1
+- removed unintended dep in stdlib (made Tame not work unless stdlib installed)
+- made druid give XP bonus to companions
+
 2.0 (changes from the base mod)
 
 - tame chance formula expanded — now accounts for target's injuries, stun, taunt, and low morale, and scales with player level (double at level 11)
