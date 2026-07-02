@@ -93,7 +93,7 @@ this.companions_tame <- this.inherit("scripts/skills/skill", {
 		if (badMorale > 0) chance *= 1 + 0.2 * badMorale;
 
 		// Player level, double on level 11
-		if (::std.Util.isKindOf(actor, "player")) chance *= 1 + (actor.getLevel() - 1) * 0.1;
+		try {chance *= 1 + (actor.getLevel() - 1) * 0.1} catch (e) {}
 
 		return chance;
 	}
