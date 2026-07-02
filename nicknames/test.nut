@@ -39,6 +39,13 @@ def.fillTitle(broVanillaTrait)
 assertIn(broVanillaTrait.getTitle(), ["VanillaTraitTitle"]);
 print("vanilla trait m.Titles OK\n");
 
+// Trait/background without a .m.Titles field don't blow up (modded content)
+local broNoTitles = makeBro("background.unknown_bg", null,
+    [{id = "trait.unknown", titles = null}], null, null, 5, null);
+candidateTitles(broNoTitles);
+def.fillTitle(broNoTitles);
+print("missing m.Titles is tolerated OK\n");
+
 // Single-factor title: trait.tiny should produce Shorty, Little, Ant, etc.
 local broTiny = makeBro("background.farmhand", null, ["trait.tiny"]);
 local tinyTitles = candidateTitles(broTiny);

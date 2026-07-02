@@ -163,9 +163,11 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
                     return traitList.map(function(t) {
                         local _id     = typeof t == "string" ? t : t.id;
                         local _titles = typeof t == "string" ? [] : t.titles;
+                        local m = {}, b = {};
+                        if (_titles != null) { m.Titles <- _titles; b.Titles <- _titles; }
                         return {
-                            m = {Titles = _titles}
-                            b = {Titles = _titles}
+                            m = m
+                            b = b
                             function getID() {return _id}
                         };
                     });
@@ -180,7 +182,6 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
             local _bgProps   = bgProps;
             local bg = {
                 m = {
-                    Titles = _bgTitles,
                     DailyCost = _dailyCost,
                     IsNoble = false,
                     IsCombatBackground = false,
@@ -190,6 +191,7 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
                 function getID() {return _bgId}
                 function onChangeAttributes() {return _attrs}
             };
+            if (_bgTitles != null) bg.m.Titles <- _bgTitles;
             if (_bgProps != null) foreach (k, v in _bgProps) bg.m[k] <- v;
             return bg;
         }

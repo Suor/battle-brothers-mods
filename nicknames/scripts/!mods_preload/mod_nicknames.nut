@@ -185,14 +185,17 @@ def.buildCandidates <- function (_bro) {
     // 2. Vanilla trait .m.Titles
     foreach (skill in _bro.getSkills().getAllSkillsOfType(::Const.SkillType.Trait)) {
         if (skill.getID().find("trait.") != 0) continue;
+        if (!::std.Util.isIn("Titles", skill.m)) continue;
         // TODO: remove the 0.8 factor once we have more our titles
         foreach (t in skill.m.Titles)
             candidates.push({title = t, weight = def.Weights.trait * 0.8});
     }
 
     // 3. Vanilla background .m.Titles
-    foreach (t in _bro.getBackground().m.Titles)
-        candidates.push({title = t, weight = def.Weights.background * 0.8});
+    local bg = _bro.getBackground();
+    if (::std.Util.isIn("Titles", bg.m))
+        foreach (t in bg.m.Titles)
+            candidates.push({title = t, weight = def.Weights.background * 0.8});
 
     return candidates;
 }
