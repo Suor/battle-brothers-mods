@@ -1,3 +1,8 @@
+1.6.2
+- use level up changes for potential perk
+- fixed occasional crash
+- fixed MSU order request
+
 1.6.1
 - fixed a bug with replacing Promised Potential
 - moved to Modern Hooks

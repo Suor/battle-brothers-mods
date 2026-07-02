@@ -3,7 +3,8 @@ if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("
 
 local rosetta = {
     version = "0.2.0"
-    mod = {id = "mod_hackflow_perks", version = "1.6.1"}
+    // FIX: use ::HackflowsPerks.ID .Version
+    mod = {id = "mod_hackflow_perks", version = "1.6.2"}
     author = "hackflow"
     lang = "ru"
 }
