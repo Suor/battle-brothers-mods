@@ -7,7 +7,6 @@
 this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
     m = {
         RageStacks = 0,
-        ShieldDropped = false,
         SoundOnUse = [
             "sounds/enemies/orc_rage_01.wav",
             "sounds/enemies/orc_rage_02.wav",
@@ -52,10 +51,10 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
                 id = 10, type = "text", icon = "ui/icons/regular_damage.png",
                 text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackDamagePct) + "%[/color] Melee Damage"
             }
-            {
-                id = 9, type = "text", icon = "ui/icons/health.png",
-                text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackMaxHp) + "[/color] Maximum Hitpoints"
-            }
+            // {
+            //     id = 9, type = "text", icon = "ui/icons/health.png",
+            //     text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackMaxHp) + "[/color] Maximum Hitpoints"
+            // }
             {
                 id = 11, type = "text", icon = "ui/icons/special.png",
                 text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackHpRegen) + "[/color] Hitpoints regenerated each turn"
@@ -85,17 +84,9 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
         local wasBelow = this.m.RageStacks < threshold;
         this.m.RageStacks += _r;
         local actor = this.getContainer().getActor();
-        // Only announce when the rage boils over at full stacks - the steady drip of stacks is silent.
-        if (wasBelow && this.m.RageStacks >= threshold && !actor.isHiddenToPlayer())
-        {
-            ::Tactical.EventLog.log(::Const.UI.getColorizedEntityName(actor) + " gains rage!");
-        }
 
         // At the height of the rage the beast tears off its own shield and roars.
-        if (!this.m.ShieldDropped && this.m.RageStacks >= threshold)
-        {
-            this.dropShield(actor);
-        }
+        if (wasBelow && this.m.RageStacks >= threshold) this.dropShield(actor);
     }
 
     // While the rage is at its height the beast suffers no shield in hand - the equip ban is
@@ -107,21 +98,21 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
 
     function dropShield( _actor )
     {
-        this.m.ShieldDropped = true;
         local items = _actor.getItems();
         local shield = items.getItemAtSlot(::Const.ItemSlot.Offhand);
-        local roared = false;
+        local dropped = false;
         if (shield != null && shield.isItemType(::Const.Items.ItemType.Shield))
         {
             items.unequip(shield);
+            // TODO: real drop?
             items.addToBag(shield);  // keep it - just out of hand for the rest of the fight
-            roared = true;
+            dropped = true;
         }
         if (!_actor.isHiddenToPlayer())
         {
             ::Sound.play(this.m.SoundOnUse[::Math.rand(0, this.m.SoundOnUse.len() - 1)],
                 ::Const.Sound.Volume.Actor, _actor.getPos());
-            if (roared)
+            if (dropped)
                 ::Tactical.EventLog.log(::Const.UI.getColorizedEntityName(_actor) + " tears off the shield with a roar!");
         }
     }
@@ -131,7 +122,7 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
         this.m.IsHidden = this.m.RageStacks == 0;
         local R = ::Const.Druid.Rage;
         _properties.MeleeDamageMult *= 1.0 + this.m.RageStacks * R.PerStackDamagePct / 100.0;
-        _properties.Hitpoints += this.m.RageStacks * R.PerStackMaxHp;
+        // _properties.Hitpoints += this.m.RageStacks * R.PerStackMaxHp;
         _properties.Bravery += this.m.RageStacks * R.PerStackResolve;
         // _properties.Initiative += this.m.RageStacks * R.PerStackInitiative;
         _properties.MeleeDefense += this.m.RageStacks * R.PerStackMeleeDefense;
@@ -182,6 +173,5 @@ this.perk_druid_beast_rage <- this.inherit("scripts/skills/skill", {
     {
         this.skill.onCombatFinished();
         this.m.RageStacks = 0;
-        this.m.ShieldDropped = false;
     }
 })
