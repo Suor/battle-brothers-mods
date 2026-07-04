@@ -141,6 +141,8 @@ mod.hook("scripts/entity/tactical/player", function (q) {
 
         // Load behaviors for any skills, which declare those. Mostly Reforged stuff.
         foreach (skill in this.getSkills().getSkillsByFunction(@(s) s.m.AIBehaviorID)) {
+            // Reforged tags throw_net with AIBehaviorID, which would sneak it past the "nets" toggle
+            if (!::Autopilot.conf("nets") && skill.m.AIBehaviorID == ::Const.AI.Behavior.ID.ThrowNet) continue;
             agent.addBehavior(::new(::MSU.AI.getBehaviorScriptFromID(skill.m.AIBehaviorID)));
         }
 
