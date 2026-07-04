@@ -24,6 +24,7 @@ So it has:
     - Lone Chosen
     - Cultist Origin
     - Of Flesh and Faith Plus
+    - Black Pyramid
 
 Russian localization included - need to install [Rosetta][] and it's dependencies.
 

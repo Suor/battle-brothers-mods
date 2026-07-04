@@ -108,6 +108,8 @@
 //   hackflows: "hackflows.balance", "hackflows.battle_flow", "hackflows.bloody_harvest",
 //              "hackflows.flesh_on_the_bones", "hackflows.full_force", "hackflows.stabilized"
 //   necro:     "necro.blood_sucking", "necro.mind_meld", "necro.regeneration", "necro.soul_link"
+//   Black Pyramid: "elem_fire_affinity", "elem_ice_affinity", "elem_thunder_affinity"
+//                  (innate, granted at generation ~1% — no background_perks needed)
 // NOTE: other perks may be mapped into these via background_perks/background_perks/fallbacks.nut
 //
 // cost.high  (daily >= 20),  cost.low  (daily <= 10)
@@ -749,6 +751,27 @@ def.Titles <- [
         {ru = "Чеснок", en = "the Garlic"},
     ], factors = [
         ["trait.fear_undead"],  // молится — авось поможет
+    ]}
+    // Black Pyramid — стихийные фобии (одна на бро, ~15% при генерации)
+    {ru = "Палёный", en = "the Singed", factors = [
+        ["trait.elem_fear_fire"],   // обжёгся раз — теперь шарахается огня
+    ]}
+    {ru = "Мерзляк", en = "Shivers", factors = [
+        ["trait.elem_fear_ice"],
+    ]}
+    {ru = "Гроза", en = "the Storm", factors = [
+        ["trait.elem_fear_thunder"],  // ironic: сам прячется от грозы
+    ]}
+    // Black Pyramid — врождённое сродство к стихии (редкое, ~1%); игрок вряд ли
+    // догадается почему — и хорошо
+    {ru = "Саламандра", en = "the Salamander", factors = [
+        ["perk.elem_fire_affinity"],  // в огне не горит
+    ]}
+    {ru = "Мороз", en = "Frost", factors = [
+        ["perk.elem_ice_affinity"],
+    ]}
+    {ru = "Искра", en = "the Spark", factors = [
+        ["perk.elem_thunder_affinity"],
     ]}
 
     {ru = "Стрела", en = "the Arrow", factors = [

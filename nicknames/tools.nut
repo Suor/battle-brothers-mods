@@ -15,7 +15,7 @@
 
 // Settings for `prob` — my mods and Bro Studio config (see calc_prob.py)
 local PROB = {
-    mods = "xbe,reforged,background_perks,necro,druid,heroic,lone_chosen,north,offp"
+    mods = "xbe,reforged,background_perks,necro,druid,heroic,lone_chosen,north,offp,black_pyramid"
     extra_trait = 1     // Bro Studio extra traits per bro
     perma_chance = 0.05 // Bro Studio permanent injury chance
     strict = true       // Bro Studio "Follow excludes" checkbox
@@ -48,7 +48,9 @@ local KNOWN = {
         "legend_predictable", "legend_slack",
         // North Expansion (background.chosen aliases into trait.chosen)
         "champion", "chosen", "destined", "duel_fighter", "feral", "moonkissed",
-        "shieldmaster", "skald", "wolfmaster"  // thrall aliases into background.slave
+        "shieldmaster", "skald", "wolfmaster",  // thrall aliases into background.slave
+        // Black Pyramid / Elemental — phobia granted at generation (15%)
+        "elem_fear_fire", "elem_fear_ice", "elem_fear_thunder"
     ]
     background = [
         // vanilla
@@ -100,7 +102,9 @@ local KNOWN = {
         "hackflows.balance", "hackflows.battle_flow", "hackflows.bloody_harvest",
         "hackflows.flesh_on_the_bones", "hackflows.full_force", "hackflows.stabilized",
         // necro perks
-        "necro.blood_sucking", "necro.mind_meld", "necro.regeneration", "necro.soul_link"
+        "necro.blood_sucking", "necro.mind_meld", "necro.regeneration", "necro.soul_link",
+        // Black Pyramid / Elemental — innate affinity perk granted at generation (~1%)
+        "elem_fire_affinity", "elem_ice_affinity", "elem_thunder_affinity"
     ]
     injury = [
         "brain_damage", "broken_elbow_joint", "broken_knee",

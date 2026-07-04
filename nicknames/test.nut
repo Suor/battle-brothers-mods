@@ -95,6 +95,13 @@ local broNoPerk = makeBro("background.farmhand");
 if (candidateTitles(broNoPerk).find("the Pedant") != null) throw "the Pedant should not appear without perk.student";
 print("titles: perk factor absent → no match OK\n");
 
+// Black Pyramid elemental factors: phobia trait + innate affinity perk
+local broPhobia = makeBro("background.farmhand", null, ["trait.elem_fear_fire"]);
+assertIn("the Singed", candidateTitles(broPhobia));
+local broAffinity = makeBro("background.farmhand", null, [], null, null, 5, [], ["perk.elem_fire_affinity"]);
+assertIn("the Salamander", candidateTitles(broAffinity));
+print("titles: Black Pyramid elemental factors OK\n");
+
 // ── attr.high / attr.low tests ───────────────────────────────────────────────
 
 // Helpers: explicit baseProps so we can tweak one stat at a time

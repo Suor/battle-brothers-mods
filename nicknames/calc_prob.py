@@ -104,7 +104,7 @@ BGPERKS_CHANCES = BBM / "mods/background_perks/background_perks/chances.nut"
 BGPERKS_FALLBACKS = BBM / "mods/background_perks/background_perks/fallbacks.nut"
 
 KNOWN_MODS = ("xbe", "reforged", "background_perks", "necro", "druid",
-              "heroic", "lone_chosen", "north", "offp")
+              "heroic", "lone_chosen", "north", "offp", "black_pyramid")
 NECRO = BBM / "mods/necro"
 DRUID = BBM / "mods/druid"
 HEROIC = BBM / "3rdparty/HeroicScenarioPack"
@@ -166,6 +166,23 @@ NORTH_ORIGIN_CAMP_SHARE = 0.75
 # (one rand(1,100) roll; NEM mod settings defaults).
 NORTH_THRALL_CHANCE = 0.05
 NORTH_CHOSEN_CHANCE = 0.10
+
+# Black Pyramid / Elemental Reforged assigns these in its setStartValuesEx hook
+# (mod_elemental/hooks/register_traits.nut), not through the trait/perk pools:
+#  1. a phobia (15% total, one element, uniform over the non-excluded ones)
+#  2. an innate affinity perk (~1%): 10% to roll an element branch, then 10% to
+#     gain the perk, but never for the feared element.
+BP_ELEMENTS = ("fire", "ice", "thunder")
+BP_FEAR_CHANCE = 0.15
+BP_FEAR_EXCLUDED_BG = {
+    "fire":    ("background.monk",),
+    "thunder": ("background.anatomist",),
+    "ice":     ("background.wildman", "background.barbarian", "background.slave_barbarian"),
+}
+BP_BRANCH_CHANCE = 0.10   # chance to roll an elemental branch (then uniform over 3)
+BP_AFFINITY_ROLL = 0.10   # conditional chance the branch grants the innate perk
+BP_AFFINITY_EXCLUDED_BG = ("background.swordmaster", "background.rf_renowned_swordmaster")
+BP_AFFINITY_FACTORS = frozenset("perk.elem_%s_affinity" % e for e in BP_ELEMENTS)
 
 
 # ── Squirrel source parsing helpers ──────────────────────────────────────────
@@ -1028,6 +1045,24 @@ def load_data(mods=KNOWN_MODS):
             "trait.thrall": camp_frac * NORTH_THRALL_CHANCE,
             "trait.chosen": camp_frac * NORTH_CHOSEN_CHANCE}
 
+    # Black Pyramid phobia (special_traits) + innate affinity (elem_affinity),
+    # both granted at generation regardless of background — see the constants.
+    d.elem_affinity = {}
+    if "black_pyramid" in d.mods:
+        for bg in d.backgrounds.values():
+            eligible = [e for e in BP_ELEMENTS
+                        if bg.id not in BP_FEAR_EXCLUDED_BG.get(e, ())]
+            fear = d.special_traits.setdefault(bg.script, {})
+            for e in eligible:
+                fear["trait.elem_fear_" + e] = BP_FEAR_CHANCE / len(eligible)
+            if bg.id in BP_AFFINITY_EXCLUDED_BG:
+                continue
+            aff = d.elem_affinity.setdefault(bg.script, {})
+            for e in BP_ELEMENTS:
+                p_feared = fear.get("trait.elem_fear_" + e, 0.0)
+                aff["perk.elem_%s_affinity" % e] = (
+                    BP_BRANCH_CHANCE / len(BP_ELEMENTS) * (1 - p_feared) * BP_AFFINITY_ROLL)
+
     mass = sum(d.draft_prob.values())
     for script in d.draft_prob:
         d.draft_prob[script] /= mass
@@ -1337,7 +1372,7 @@ def calcFactorsProb(factors, mods=KNOWN_MODS, extra_trait=1, traits_strict=True,
     data = load_data(tuple(sorted(set(mods))))
 
     bg_sets, traits, injuries, attrs, perks, weapons = [], set(), set(), [], [], []
-    groups, types, costs = set(), set(), set()
+    groups, types, costs, elem_affinity = set(), set(), set(), []
     for f in factors:
         prefix = f.split(".", 1)[0]
         if prefix == "background":
@@ -1350,6 +1385,8 @@ def calcFactorsProb(factors, mods=KNOWN_MODS, extra_trait=1, traits_strict=True,
         elif prefix == "attr":
             _, attr, kind = f.split(".")
             attrs.append((attr, kind))
+        elif f in BP_AFFINITY_FACTORS:
+            elem_affinity.append(f)
         elif prefix == "perk":
             perks.append(f[len("perk."):])
         elif prefix == "weapon":
@@ -1427,6 +1464,8 @@ def calcFactorsProb(factors, mods=KNOWN_MODS, extra_trait=1, traits_strict=True,
             p *= _attr_prob(bg, attr, kind)
         for perk in perks:
             p *= _perk_prob(bg, perk, data, days)
+        for perk in elem_affinity:
+            p *= data.elem_affinity.get(bg.script, {}).get(perk, 0.0)
         for wtype in weapons:
             p *= _weapon_prob(bg, wtype, data, days)
         total += p
@@ -1527,6 +1566,21 @@ def _selftest():
     p_both = calcFactorsProb(["trait.thrall", "trait.chosen"], mods=("north",))
     ok &= check("thrall + chosen exclusive = 0", p_both == 0.0)
 
+    p_fear = calcFactorsProb(["trait.elem_fear_fire"], mods=("black_pyramid",))
+    p_fear_v = calcFactorsProb(["trait.elem_fear_fire"], mods=())
+    ok &= check("black_pyramid phobia ~5%%: %.4f" % p_fear, 0.03 < p_fear < 0.06)
+    ok &= check("phobia is black_pyramid-only = 0: %.6f" % p_fear_v, p_fear_v == 0.0)
+    p_two_fears = calcFactorsProb(["trait.elem_fear_fire", "trait.elem_fear_ice"],
+                                  mods=("black_pyramid",))
+    ok &= check("one phobia per bro, two = 0", p_two_fears == 0.0)
+    p_monk_fire = calcFactorsProb(["background.monk", "trait.elem_fear_fire"],
+                                  mods=("black_pyramid",))
+    ok &= check("monk never fears fire = 0", p_monk_fire == 0.0)
+    p_aff = calcFactorsProb(["perk.elem_fire_affinity"], mods=("black_pyramid",))
+    p_aff_v = calcFactorsProb(["perk.elem_fire_affinity"], mods=())
+    ok &= check("black_pyramid affinity ~0.3%%: %.5f" % p_aff, 0.001 < p_aff < 0.006)
+    ok &= check("affinity is black_pyramid-only = 0: %.6f" % p_aff_v, p_aff_v == 0.0)
+
     p_oath = calcFactorsProb(["background.oathbreaker"], mods=("offp",))
     ok &= check("offp oathbreaker > 0: %.7f" % p_oath, p_oath > 0.0)
     p_pal = calcFactorsProb(["background.paladin"], mods=("offp",))
@@ -1592,6 +1646,7 @@ def cmd_factors(args):
         + ["cost.high", "cost.low"]
         + sorted(data.perm_injuries)
         + ["perk." + k for k in sorted(perk_keys) if not k.startswith("mastery.")]
+        + sorted(set(p for v in data.elem_affinity.values() for p in v))
         + ["weapon." + w for w in sorted(WEAPON_TYPES)]
     )
     print("// 1 in N, vanilla -> with mods, '-' = never")
