@@ -6,7 +6,7 @@ Some modification for playing Battle Brothers as autobattler. Also requires spec
 - Cheap Meat (because bros die)
 - Bro Studio (for bros to die less)
 - Tweaks and Fixes: Survivor Nine Lives (tnf_survivorNineLives, for same reason)
-- Less Severe Permanent Injuries
+- Hackflow's Permanent Injuries
 - 18 Bros in Battle
 
 Plus any other you like, including Reforged and Legends.
