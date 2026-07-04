@@ -2,28 +2,44 @@
 
 A collection of mods to make Battle Brothers more fun and comfy. Written by me or fixed by me. You can also take a look at [my Nexus Mods page][nexus-mods], which have releases of many of these.
 
+## New Content
+
 | Name | Description |
 ---|---
-[Autopilot New](autopilot) | Makes bros use more skills smarter and fixes some crashes. Compatible with Swifter. My version of [Adam's Autopilot][autopilot-old].
-[Better Beast Loot](mod_beast_loot) | Better loot from beasts, makes them worth fighting.
-[Bro Renamer](renamer) | Autochange each bro title to his profession + roman number.
-**[Bro Studio](bro_studio)** | Customize bro level ups: talents, perk points, traits, attribute gain.
-[Camps and Artifacts (Reworked)](camps_and_artifacts) | Adds extra strong lairs and artifacts. A fixed version of the old [Extended Camps][camps-old].
-[Cheap Meat](cheap_meat) | Cheaper bros and tryots.
-[Cook and Blacksmith Fix](heal_repair_fix) | Fixes Cook and Blacksmith speeding up healing and repairing.
-**[Elite Few - Master Bros](elite_few)** | A rewrite of the old [The Elite Few - Master Bros][elite-few-old], aimed at better compatibility with other mods and newer DLCs. Plus some fixes.
-[Events and Ambitions Delayed Fix](events_delayed_fix) | Removes unpredicatably long delays before events and ambitions are fired.
-[Fun Facts](fun_facts) | Collects and shows some fun facts about your bros.
-**[Hackflow's Permanent Injuries](perma)** | Less severe, more balanced and more fun permanent injuries.
+[Accessory Companions (Fixed)](AC) | Tame beasts as companions, level them up and have them gain new attributes and skills. A fixed and improved version of [the original][ac-old] by Vazl.
+[Camps and Artifacts (Reworked)](camps_and_artifacts) | Adds extra strong lairs and artifacts. A fixed and extended version of the old [Extended Camps][camps-old].
 **[Hackflow's Perks](hackflows_perks)** | Adds several perks either collected or newly crafted.
 [Immortal Warriors](immortal_warriors) | Get several warriors who are reborn after death.
-[Retinue Promotions](retinue_ups) | Allows promoting followers to make them extra useful.
-[Starting Perks by Background](background_perks) | Gives brothers a chance to have certain perks unlocked from start depending on their background. A rewrite of the [old mod][background-perks-old] by CleverFool.
-**[Standout Enemies](standout_enemies)** | Randomly adds some quirks to the most common enemies making fighting them less repetitive and more fun.
-[Veteran Attrs and Perks](mod_vap) | Veterans will sometimes get better than just 1 for attributes they have talents in. Also gives extra perks for them at certain levels.
-[More Blood](more_blood) | Makes it more Tarantino style. A compatible variant of older [More Blood][more-blood-old] mod.
+**[Nicknames for Everyone](nicknames)** | Gives every brother a nickname that fits who he is, earned by background, traits, attributes, talents, perks or injuries.
+[Proper Druid](druid) | A hedge-mage background calling the beasts of the wild to fight at his side. With two custom perk paths and a dedicated origin.
 [Proper Necro](necro) | A hirable Necromancer, with custom perks and an origin.
+**[Standout Enemies](standout_enemies)** | Randomly adds some quirks to the most common enemies making fighting them less repetitive and more fun.
+
+## Gameplay and Balance
+
+| Name | Description |
+---|---
+[Better Beast Loot](mod_beast_loot) | Better loot from beasts, makes them worth fighting.
+**[Bro Studio](bro_studio)** | Customize bro level ups: talents, perk points, traits, attribute gain.
+[Challenges](challenges) | Configurable challenges to make runs harder and more unique: less loot, blind or restricted hiring, gear bans and more.
+[Cheap Meat](cheap_meat) | Cheaper bros and tryots.
+**[Elite Few - Master Bros](elite_few)** | A rewrite of the old [The Elite Few - Master Bros][elite-few-old], aimed at better compatibility with other mods and newer DLCs. Plus some fixes.
+**[Hackflow's Permanent Injuries](perma)** | Less severe, more balanced and more fun permanent injuries.
+**[Retinue Promotions](retinue_ups)** | Allows promoting followers to make them extra useful.
+[Starting Perks by Background](background_perks) | Gives brothers a chance to have certain perks unlocked from start depending on their background. A rewrite of the [old mod][background-perks-old] by CleverFool.
 [Useful Things](useful) | Makes some weaker things more useful, like 2h flails and named goblin weapons.
+
+## Fixes and Convenience
+
+| Name | Description |
+---|---
+**[Autopilot New](autopilot)** | Automate repeating orders or turn BB into Autobattler.
+[Bro Renamer](renamer) | Autochange each bro title to his profession + roman number.
+[Cook and Blacksmith Fix](heal_repair_fix) | Fixes Cook and Blacksmith speeding up healing and repairing.
+[Events and Ambitions Delayed Fix](events_delayed_fix) | Removes unpredicatably long delays before events and ambitions are fired.
+**[Fun Facts](fun_facts)** | Collects and shows some fun facts about your bros.
+[Hackflow's Translations](translations) | Russian translations for a handful of third-party mods, works via [Rosetta][rosetta].
+[More Blood](more_blood) | Makes it more Tarantino style. A compatible variant of older [More Blood][more-blood-old] mod.
 
 <!-- renamer -->
 
@@ -116,7 +132,9 @@ find path/to/mod/ -name \*.nut -exec python migrate_hooks.py {} -i \;
 [nexus-mods]: https://www.nexusmods.com/battlebrothers/users/97435548?tab=user+files
 [zip]: https://github.com/Suor/battle-brothers-mods/archive/refs/heads/master.zip
 
+[ac-old]: https://www.nexusmods.com/battlebrothers/mods/314
 [autopilot-old]: https://www.nexusmods.com/battlebrothers/mods/62
+[rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
 [camps-old]: https://www.nexusmods.com/battlebrothers/mods/195
 [elite-few-old]: https://www.nexusmods.com/battlebrothers/mods/253
 [background-perks-old]: https://www.nexusmods.com/battlebrothers/mods/70
