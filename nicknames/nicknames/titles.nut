@@ -3163,4 +3163,243 @@ def.Titles <- [
         ["trait.chosen", "trait.lucky"],
         ["trait.cocky", "trait.lucky"],
     ]}
+    {ru = "Подай-Принеси", en = "Fetch-and-Carry", factors = [
+        ["background.squire"],
+        ["background.servant"],
+        ["background.messenger", "trait.insecure"],
+    ]}
+    {ru = "Перстень", en = "the Signet", factors = [
+        ["group.noble"],
+        ["group.noble", "trait.greedy"],
+    ]}
+    {ru = "Староста", en = "the Village Elder", factors = [
+        ["background.militia", "perk.rally_the_troops"],
+        ["group.lowborn", "trait.bright"],
+    ]}
+    {ru = "Писарь", en = "the Scribe", factors = [
+        ["background.historian"],
+        ["trait.bright", "group.lowborn"],
+    ]}
+    {ru = "Школяр", en = "the Schoolboy", factors = [
+        ["perk.student"],
+        ["background.apprentice", "trait.bright"],
+    ]}
+    {ru = "Аршин", en = "the Yardstick", factors = [
+        ["background.tailor", "trait.huge"],
+        ["trait.huge", "trait.hesitant"],
+    ]}
+    {ru = "Точило", en = "the Whetstone", factors = [
+        ["background.hackflows_blacksmith", "weapon.sword"],
+        ["trait.paranoid", "weapon.sword"],
+    ]}
+    {ru = "Хомут", en = "the Yoke", factors = [
+        ["background.slave", "attr.Stamina.high"],
+        ["background.farmhand", "trait.determined"],
+    ]}
+    {ru = "Кнут", en = "the Knout", factors = [
+        ["background.slave", "trait.brute"],
+        ["background.manhunter"],
+    ]}
+    {ru = "Опилки", en = "the Sawdust", factors = [
+        ["background.hackflows_carpenter", "trait.dumb"],
+        ["background.lumberjack", "trait.dumb"],
+    ]}
+    {ru = "Флюгер", en = "the Weathervane", factors = [
+        ["trait.disloyal", "trait.craven"],
+        ["background.hackflows_roofer"],
+    ]}
+    {ru = "Ломоть", en = "the Slice", factors = [
+        ["background.disowned_noble"],
+        ["trait.huge", "trait.gluttonous"],
+    ]}
+    {ru = "Куку", en = "the Cuckoo", factors = [
+        ["background.bastard"],
+        ["trait.irrational", "trait.optimist"],
+        ["trait.irrational", "trait.dumb"],
+        ["injury.brain_damage"],
+    ]}
+    {ru = "Большой Куш", en = "the Windfall", factors = [
+        ["background.gambler", "trait.lucky"],
+        ["trait.greedy", "trait.lucky"],
+    ]}
+    {ru = "Недолёт", en = "Short Shot", factors = [
+        ["type.ranged", "attr.RangedSkill.low"],
+        ["weapon.throwing", "attr.RangedSkill.low"],
+        ["type.ranged", "trait.short_sighted"],
+        ["weapon.bow", "trait.fragile"],
+    ]}
+    {ru = "Волынка", en = "the Bagpipe", factors = [
+        ["weapon.musical"],
+        ["trait.hesitant", "trait.pessimist"],
+    ]}
+    {ru = "Скалка", en = "the Rolling Pin", factors = [
+        ["background.hackflows_cook", "weapon.mace"],
+        ["weapon.mace", "trait.impatient"],
+    ]}
+    {ru = "Спиногрыз", en = "the Backbiter", factors = [
+        ["perk.backstabber", "trait.tiny"],
+        ["perk.backstabber", "trait.weasel"],
+    ]}
+    {ru = "Полторы Руки", en = "Hand-and-a-Half", factors = [
+        ["injury.missing_hand"],
+        ["injury.missing_finger"],
+    ]}
+    {ru = "Пятки", en = "Quickheels", factors = [
+        ["trait.craven", "attr.Initiative.high"],
+        ["trait.swift", "trait.craven"],
+    ]}
+    {ru = "Каша", en = "the Porridge", factors = [
+        ["injury.brain_damage", "trait.optimist"],
+        ["trait.dumb", "trait.gluttonous"],
+    ]}
+    {ru = "Ладан", en = "the Incense", factors = [
+        ["trait.fear_undead"],
+        ["trait.ailing", "attr.Hitpoints.low"],
+    ]}
+    {ru = "Гнида", en = "the Nit", factors = [
+        ["trait.dastard"],
+        ["trait.dastard", "trait.tiny"],
+    ]}
+    {ru = "Рассол", en = "the Brine", factors = [
+        ["trait.drunkard", "trait.survivor"],
+        ["trait.drunkard", "trait.tough"],
+    ]}
+    {ru = "Голова", en = "the Brains", factors = [
+        ["trait.bright", "perk.rally_the_troops"],
+        ["trait.dumb", "trait.cocky"],
+    ]}
+    {ru = "Дядька", en = "the Uncle", factors = [
+        ["background.retired_soldier", "trait.teamplayer"],
+        ["background.swordmaster", "trait.loyal"],
+    ]}
+    {ru = "Зверёныш", en = "the Wildling", factors = [
+        ["trait.feral"],
+        ["background.wildman", "trait.tiny"],
+    ]}
+    {ru = "Росомаха", en = "the Wolverine", factors = [
+        ["trait.feral", "trait.bloodthirsty"],
+        ["trait.bloodthirsty", "trait.tough"],
+    ]}
+    {ru = "Шатун", en = "the Rogue Bear", factors = [
+        ["background.hackflows_drifter", "trait.brute"],
+        ["trait.night_owl", "trait.brute"],
+    ]}
+    {ru = "Пельмень", en = "the Meatball", factors = [
+        ["trait.fat", "trait.tiny"],
+        ["background.hackflows_cook", "trait.fat"],
+    ]}
+    {ru = "Килька", en = "the Sprat", factors = [
+        ["background.fisherman", "trait.tiny"],
+        ["background.fisherman", "trait.fragile"],
+    ]}
+    {ru = "Закуска", en = "the Snack", factors = [
+        ["trait.tiny", "attr.Hitpoints.low"],
+        ["trait.tiny", "trait.drunkard"],
+        ["trait.gluttonous", "trait.drunkard"],
+    ]}
+    {ru = "Сивуха", en = "the Rotgut", factors = [
+        ["trait.drunkard", "trait.dumb"],
+        ["trait.drunkard", "group.pauper"],
+    ]}
+    {ru = "Забулдыга", en = "the Sot", factors = [
+        ["background.vagabond", "trait.drunkard"],
+        ["background.hackflows_drifter", "trait.drunkard"],
+    ]}
+    {ru = "Магарыч", en = "the Bottle Fee", factors = [
+        ["trait.greedy", "trait.drunkard"],
+        ["background.peddler", "trait.drunkard"],
+    ]}
+    {ru = "Сопля", en = "the Snot", factors = [
+        ["trait.fragile", "trait.tiny"],
+        ["trait.insecure", "attr.Hitpoints.low"],
+    ]}
+    {ru = "Прыщ", en = "the Pimple", factors = [
+        ["trait.tiny", "trait.cocky"],
+        ["trait.tiny", "trait.impatient"],
+    ]}
+    {ru = "Мешок Костей", en = "Bag o' Bones", factors = [
+        ["attr.Hitpoints.low", "trait.tough"],
+        ["attr.Hitpoints.low", "trait.athletic"],
+        ["attr.Hitpoints.low", "trait.survivor"],
+    ]}
+    {ru = "Тяп-Ляп", en = "Slapdash", factors = [
+        ["trait.clumsy"],
+        ["background.hackflows_carpenter", "trait.clumsy"],
+    ]}
+    {ru = "Замах", en = "the Big Swing", factors = [
+        ["trait.huge", "attr.MeleeSkill.low"],
+        ["trait.strong", "attr.MeleeSkill.low"],
+    ]}
+    {ru = "Козья Морда", en = "the Goat Face", factors = [
+        ["perk.fearsome"],
+        ["perk.fearsome", "trait.dumb"],
+        ["perm.missing_nose"],
+    ]}
+    {ru = "Сивый Мерин", en = "the Fibber", factors = [
+        ["trait.legend_double_tongued"],
+        ["background.retired_soldier", "trait.cocky"],
+    ]}
+    {ru = "Сонная Муха", en = "the Drowsy Fly", factors = [
+        ["attr.Initiative.low", "trait.hesitant"],
+        ["attr.Initiative.low", "trait.legend_slack"],
+    ]}
+    {ru = "Эй-Ты", en = "Hey-You", factors = [
+        ["cost.low", "trait.insecure"],
+        ["cost.low", "type.melee", "attr.MeleeSkill.low"],
+        ["cost.low", "type.ranged", "attr.RangedSkill.low"],
+    ]}
+    {ru = "Оболтус", en = "the Lout", factors = [
+        ["trait.dumb", "trait.legend_slack"],
+        ["trait.dumb", "trait.optimist"],
+    ]}
+    {ru = "Тетеря", en = "the Slowcoach", factors = [
+        ["injury.missing_ear", "attr.Initiative.low"],
+        ["attr.Initiative.low", "trait.dumb"],
+    ]}
+    {ru = "Шапка", en = "the Cap", factors = [
+        ["background.thief", "trait.paranoid"],
+        ["background.thief", "trait.superstitious"],
+    ]}
+    {ru = "Свистопляс", en = "the Hullabaloo", factors = [
+        ["background.juggler", "trait.drunkard"],
+        ["background.minstrel", "trait.irrational"],
+    ]}
+    {ru = "Лоботряс", en = "the Layabout", factors = [
+        ["trait.legend_slack", "trait.strong"],
+        ["trait.legend_slack"],
+        ["trait.strong", "attr.Initiative.low"],
+        ["trait.huge", "attr.Initiative.low"],
+    ]}
+    {ru = "Король", en = "the King", factors = [
+        ["trait.cocky", "group.pauper"],
+    ]}
+    {ru = "Принцесса", en = "the Princess", factors = [
+        ["group.noble", "trait.insecure"],
+        ["group.noble", "trait.fragile"],
+    ]}
+    {ru = "Зубодёр", en = "the Tooth-Puller", factors = [
+        ["background.hackflows_surgeon", "trait.brute"],
+        ["background.hackflows_torturer"],
+    ]}
+    {ru = "Свинопас", en = "the Swineherd", factors = [
+        ["background.shepherd", "trait.dumb"],
+        ["background.farmhand", "trait.dumb"],
+    ]}
+    {ru = "Портянка", en = "the Footwrap", factors = [
+        ["background.hackflows_cobbler"],
+        ["group.pauper", "attr.Stamina.high"],
+    ]}
+    {ru = "Кабысдох", en = "the Deathdodger", factors = [
+        ["trait.ailing", "trait.survivor"],
+        ["trait.ailing", "perk.nine_lives"],
+    ]}
+    {ru = "Слон", en = "the Elephant", factors = [
+        ["trait.huge", "trait.clumsy"],
+        ["trait.huge", "attr.Stamina.high"],
+    ]}
+    {ru = "Горец", en = "the Highlander", factors = [
+        ["background.wildman", "trait.sure_footing"],
+        ["perk.nine_lives", "weapon.sword"],
+        ["trait.survivor", "weapon.sword"],
+    ]}
 ];
