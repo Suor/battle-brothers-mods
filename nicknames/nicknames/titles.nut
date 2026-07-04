@@ -48,6 +48,9 @@
 //   champion, chosen, destined, duel_fighter, feral, moonkissed, shieldmaster,
 //   skald, wolfmaster   (thrall is aliased into background.slave)
 //
+// trait.* (Black Pyramid / Elemental) — one phobia granted at generation (~15%)
+//   elem_fear_fire, elem_fear_ice, elem_fear_thunder
+//
 //
 // background.*  (vanilla)
 //   assassin, farmhand, daytaler, sellsword, militia, servant, mason, miller, poacher, ratcatcher,
@@ -2841,13 +2844,12 @@ def.Titles <- [
         ["trait.bloodthirsty", "trait.irrational"],
     ]}
     {ru = "Клеймо", en = "the Brand", factors = [
-        ["background.slave"],  // тралл попадает сюда через алиас trait.thrall → background.slave
+        ["background.slave"],
         ["background.killer_on_the_run"],
         ["background.thief"],
     ]}
     {ru = "Ошейник", en = "the Collar", factors = [
         ["background.slave", "trait.brute"],
-        ["background.slave", "trait.loyal"],
         ["background.houndmaster"],
         ["background.manhunter"],
     ]}
@@ -2908,7 +2910,7 @@ def.Titles <- [
     {ru = "Учитель", en = "the Teacher", factors = [
         ["background.swordmaster"],
         ["background.historian"],
-        ["background.retired_soldier", "perk.rally_the_troops"],
+        ["background.retired_soldier"],
     ]}
     {ru = "Тетива", en = "the Bowstring", factors = [
         ["background.bowyer"],
@@ -2956,7 +2958,8 @@ def.Titles <- [
     {ru = "Подворотня", en = "the Back Alley", factors = [
         ["background.hackflows_myrmidon"],
         ["background.thief"],
-        ["background.brawler", "trait.weasel"],
+        ["perk.backstabber"],
+        ["background.brawler", "perk.backstabber"],
     ]}
     {ru = "Крапива", en = "the Nettle", factors = [
         ["background.hackflows_gardener"],
@@ -3043,13 +3046,13 @@ def.Titles <- [
         ["perk.fearsome", "trait.cocky"],
     ]}
     {ru = "Тень", en = "the Shade", factors = [
-        ["perk.backstabber"],
         ["background.assassin"],
         ["trait.loyal", "perk.footwork"],
     ]}
     {ru = "Манок", en = "the Bird Call", factors = [
-        ["background.hunter", "perk.taunt"],
-        ["background.hackflows_falconer", "perk.taunt"],
+        ["perk.taunt"],
+        ["background.hunter"],
+        ["background.hackflows_falconer"],
     ]}
     {ru = "Скорлупа", en = "the Eggshell", factors = [
         ["perk.battle_forged", "attr.Hitpoints.low"],
@@ -3065,7 +3068,6 @@ def.Titles <- [
         ["background.lumberjack", "trait.bloodthirsty"],
     ]}
     {ru = "Заговорённый", en = "the Charmed", factors = [
-        ["attr.RangedDefense.high"],
         ["trait.lucky", "attr.RangedDefense.high"],
         ["trait.superstitious", "trait.lucky"],
     ]}
@@ -3108,7 +3110,7 @@ def.Titles <- [
     ]}
     {ru = "Горбушка", en = "the Crust", factors = [
         ["trait.tough", "group.pauper"],
-        ["background.beggar", "trait.tough"],
+        ["background.beggar", "trait.fat"],
     ]}
     {ru = "Ложка", en = "the Spoon", factors = [
         ["trait.gluttonous"],
