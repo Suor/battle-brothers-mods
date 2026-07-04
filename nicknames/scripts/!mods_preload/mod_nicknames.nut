@@ -1,7 +1,7 @@
 local def = ::Nicknames <- {
     ID = "mod_nicknames"
     Name = "Nicknames for Everyone"
-    Version = "0.7.0"
+    Version = "0.7.1"
     Updates = {
         nexus = "https://www.nexusmods.com/battlebrothers/mods/1013"
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/nicknames"
