@@ -38,7 +38,7 @@ Tested with:
 - Heroic Scenario Pack
 - Fantasy Brothers (only some custom skills will be used)
 - [Proper Necromancer][necro] (uses Raise Undead and Possess)
-- [Druid][druid] (summon, root and regrowth)
+- [Proper Druid][druid] (summon, entangle and regrowth)
 - NgGH Magic Origins
 
 

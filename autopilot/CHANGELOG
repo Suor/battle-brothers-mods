@@ -1,3 +1,10 @@
+2.9.0
+- added russian translation
+- use throw sand (Reforged)
+- do not show quick buttons if Extra Keybinds is installed
+- fixed net thrown even when disabled
+- fixed another hang up
+
 2.8.0
 - added step_n_hit behavior to make 2-tile/backrow bros more active
 - swap quivers

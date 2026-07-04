@@ -2,7 +2,7 @@ if (!("Rosetta" in getroottable())) return;
 if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.4.0")) return;
 
 local rosetta = {
-    mod = {id = "mod_autopilot_new", version = "2.8.0"}
+    mod = {id = ::Autopilot.ID, version = ::Autopilot.Version}
     author = "hackflow"
     lang = "ru"
 }
