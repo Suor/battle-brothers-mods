@@ -29,31 +29,35 @@ local pairs = [
         en = "Regrowth"
         ru = "Живица"
     }
+    // FIX: extract Taking at closes ... into concat
     {
         // Tooltip = "Knit an ally's wounds turn after turn, double for beasts and animals."
         //         + " One bearer at a time."
         //         + "\n" + red("Taking it closes the path of the Beast.")
         mode = "pattern"
-        en = "Knit an ally's wounds turn after turn, double for beasts and animals. One bearer at a time.\n<open:tag>Taking it closes the path of the Beast.<close:tag>"
-        ru = "Затягивает раны союзника ход за ходом, вдвое быстрее всякому зверью. Лишь один носитель за раз.\n<open:tag>Взяв его, вы закроете путь Зверя.<close:tag>"
+        en = "Knit an ally's wounds for <o1:tag>10<c1:tag> hitpoints per turn, double for beasts. One bearer at a time.\n<o2:tag>Taking it closes the path of the Beast.<c2:tag>"
+        ru = "Затягивает раны союзника на <o1:tag>10<c1:tag> ОЗ за ход, зверям - вдвойне. Лишь один носитель за раз.\n<o2:tag>Взяв его, вы закроете путь Зверя.<c2:tag>"
     }
     {
         en = "Hatch"
         ru = "Выводок"
     }
     {
-        // Tooltip = "Banks a fresh summon charge " + green("every third turn") + ", not just once per battle."
+        // Tooltip = "Summon beast is no longer once per battle."
+        //         + " Banks an extra summon charge " + green("every third turn") + "."
+        //         + "\n" + red("Taking it closes the path of the Beast.")
         mode = "pattern"
-        en = "Banks a fresh summon charge <open:tag>every third turn<close:tag>, not just once per battle."
-        ru = "Копит новый заряд призыва <open:tag>каждый третий ход<close:tag>, а не лишь раз за бой."
+        en = "Summon beast is no longer once per battle. Banks an extra summon charge <o1:tag>every third turn<c1:tag>.\n<o2:tag>Taking it closes the path of the Beast.<c2:tag>"
+        ru = "Призыв зверя теперь не раз за бой. Получает дополнительный заряд призыва <o1:tag>каждый третий ход<c1:tag>.\n<o2:tag>Взяв его, вы закроете путь Зверя.<c2:tag>"
     }
     {
         en = "Entangling Roots"
         ru = "Оплетающие корни"
     }
     {
-        en = "Call writhing roots from the earth to root an enemy in place."
-        ru = "Поднимает из земли извивающиеся корни, оплетающие врага на месте."
+        mode = "pattern"
+        en = "Call entangling roots to bind an enemy in place.\n<open:tag>Taking it closes the path of the Beast.<close:tag>"
+        ru = "Призывает оплетающие корни, чтобы сковать врага на месте.\n<open:tag>Взяв его, вы закроете путь Зверя.<close:tag>"
     }
     {
         en = "Greater Beasts"
@@ -61,46 +65,47 @@ local pairs = [
     }
     {
         // Tooltip = "Your call reaches greater beasts. Direwolves and hyenas answer frenzied,"
-        //         + " spiders bloated and broodmother-sized, and young schrats rise full-grown."
-        en = "Your call reaches greater beasts. Direwolves and hyenas answer frenzied, spiders bloated and broodmother-sized, and young schrats rise full-grown."
-        ru = "Твой зов достигает более грозных тварей. Лютоволки и гиены приходят бешеными, пауки раздуваются до размеров матки, а юные шраты встают в полный рост."
+        //         + " other creatures come bigger and more fierce."
+        //         + "\n" + red("Taking it closes the path of the Beast.")
+        mode = "pattern"
+        en = "Your call reaches greater beasts. Direwolves and hyenas answer frenzied, other creatures come bigger and more fierce.\n<open:tag>Taking it closes the path of the Beast.<close:tag>"
+        ru = "Твой зов достигает более грозных тварей. Лютоволки и гиены приходят бешеными, прочие твари - крупнее и злее.\n<open:tag>Взяв его, вы закроете путь Зверя.<close:tag>"
     }
     {
         en = "Beastform"
         ru = "Форма зверя"
     }
     {
-        // Tooltip = "Take the shape of the beast for good: " + green("+10% Melee Skill") + ", "
-        //         + green("+10% Melee Defense") + " and " + green("+20% Hitpoints") + "."
-        //         + " But you can no longer bear heavy shields, helmets or armor, nor ranged weapons."
+        // Tooltip = "Take the shape of the beast for good: " + green("+10% Melee Skill and Defense")
+        //         + " and " + green("+20% Hitpoints") + "."
+        //         + " But you can no longer bear heavy shields, helmets or armor, nor use ranged weapons."
         //         + "\n" + red("Taking it closes the path of Nature.")
         mode = "pattern"
-        en = "Take the shape of the beast for good: <o1:tag>+10% Melee Skill<c1:tag>, <o2:tag>+10% Melee Defense<c2:tag> and <o3:tag>+20% Hitpoints<c3:tag>. But you can no longer bear heavy shields, helmets or armor, nor ranged weapons.\n<o4:tag>Taking it closes the path of Nature.<c4:tag>"
-        ru = "Навсегда примите облик зверя: <o1:tag>+10% к навыку ближнего боя<c1:tag>, <o2:tag>+10% к защите в ближнем бою<c2:tag> и <o3:tag>+20% к здоровью<c3:tag>. Но вы больше не сможете носить тяжёлые щиты, шлемы и броню, а также дальнобойное оружие.\n<o4:tag>Взяв его, вы закроете путь Природы.<c4:tag>"
+        en = "Take the shape of the beast for good: <o1:tag>+10% Melee Skill and Defense<c1:tag> and <o2:tag>+20% Hitpoints<c2:tag>. But you can no longer bear heavy shields, helmets or armor, nor use ranged weapons.\n<o3:tag>Taking it closes the path of Nature.<c3:tag>"
+        ru = "Навсегда примите облик зверя: <o1:tag>+10% к навыку и защите в ближнем бою<c1:tag> и <o2:tag>+20% к здоровью<c2:tag>. Но вы больше не сможете носить тяжёлые щиты, шлемы и броню, а также пользоваться дальнобойным оружием.\n<o3:tag>Взяв его, вы закроете путь Природы.<c3:tag>"
     }
     {
         en = "Beast Aura"
         ru = "Аура зверя"
     }
     {
-        // Tooltip = "Beasts know you for their alpha. Your beasts keep to your side instead of"
-        //         + " chasing the foe, and any allied beast near you stands " + green("fearless")
-        //         + " and emboldened."
-        mode = "pattern"
-        en = "Beasts know you for their alpha. Your beasts keep to your side instead of chasing the foe, and any allied beast near you stands <open:tag>fearless<close:tag> and emboldened."
-        ru = "Звери признают в вас вожака. Ваши звери держатся рядом, а не гонятся за врагом, и любой союзный зверь возле вас стоит <open:tag>бесстрашно<close:tag> и воодушевлён."
+        // Tooltip = "Beasts know you for their alpha. They keep to your side, act confidently"
+        //         + " and never run while close to you."
+        en = "Beasts know you for their alpha. They keep to your side, act confidently and never run while close to you."
+        ru = "Звери признают в вас вожака. Они держатся рядом, ведут себя уверенно и не бегут, пока вы близко."
     }
     {
         en = "Beast Rage"
         ru = "Ярость зверя"
     }
     {
-        // Tooltip = "Blood feeds a rising fury: stacking melee damage, resolve and"
-        //         + " " + green("healing") + " each turn, at the cost of defense. At its height"
-        //         + " you tear off your own shield and roar."
+        // Tooltip = "Blood feeds a rising fury: stacking melee damage, resolve,"
+        //         + " " + green("regeneration") + " and fatigue recovery, at the cost of defense."
+        //         + " At its height you tear off your own shield and roar."
+        //         + "\n" + red("Taking it closes off Venom.")
         mode = "pattern"
-        en = "Blood feeds a rising fury: stacking melee damage, resolve and <open:tag>healing<close:tag> each turn, at the cost of defense. At its height you tear off your own shield and roar."
-        ru = "Кровь питает растущую ярость: накапливает урон в ближнем бою, решимость и <open:tag>исцеление<close:tag> каждый ход - ценой защиты. На пике вы срываете собственный щит и издаёте рык."
+        en = "Blood feeds a rising fury: stacking melee damage, resolve, <o1:tag>regeneration<c1:tag> and fatigue recovery, at the cost of defense. At its height you tear off your own shield and roar.\n<o2:tag>Taking it closes off Venom.<c2:tag>"
+        ru = "Кровь питает растущую ярость: накапливает урон в ближнем бою, решимость, <o1:tag>регенерацию<c1:tag> и восстановление выносливости - ценой защиты. На пике вы срываете собственный щит и издаёте рык.\n<o2:tag>Взяв его, вы закроете Яд.<c2:tag>"
     }
     {
         en = "Venom"
@@ -108,10 +113,11 @@ local pairs = [
     }
     {
         // Tooltip = "Envenomed fang and sting: a weakening venom that blurs sight and slows the foe."
-        //         + " Your summoned beasts hunt with it - but once you walk in Beastform it is yours"
+        //         + " Your beasts hunt with it - but once you walk in Beastform it is yours"
         //         + " alone, riding your own bite instead of theirs."
-        en = "Envenomed fang and sting: a weakening venom that blurs sight and slows the foe. Your summoned beasts hunt with it - but once you walk in Beastform it is yours alone, riding your own bite instead of theirs."
-        ru = "Ядовитый клык и жало: ослабляющий яд мутит зрение и замедляет врага. С ним охотятся ваши призванные звери - но в зверином облике он лишь ваш, ложась на ваш укус, а не на их."
+        mode = "pattern"
+        en = "Your beasts bite with a weakening venom that blurs the foe's sight and slows it. In Beastform you carry it yourself instead.\n<open:tag>Taking it closes off Beast Rage.<close:tag>"
+        ru = "Укус ваших зверей несёт ослабляющий яд: мутит врагу зрение и замедляет его. В зверином облике яд несёте вы сами, а не звери.\n<open:tag>Взяв его, вы закроете Ярость зверя.<close:tag>"
     }
     // Lock reasons shown by DPF's perk tooltip (perkBlockReason / verifyPrerequisites).
     {
@@ -325,24 +331,24 @@ local pairs = [
         en = "<bonus:val_tag> Melee Damage"
         ru = "<bonus> к урону в ближнем бою"
     }
-    {
-        // text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackMaxHp) + "[/color] Maximum Hitpoints"
-        mode = "pattern"
-        en = "<bonus:val_tag> Maximum Hitpoints"
-        ru = "<bonus> к максимуму ОЗ"
-    }
+    // {
+    //     // text = "[color=" + ::Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackMaxHp) + "[/color] Maximum Hitpoints"
+    //     mode = "pattern"
+    //     en = "<bonus:val_tag> Maximum Hitpoints"
+    //     ru = "<bonus> к максимуму ОЗ"
+    // }
     {
         // text = "[color=" + this.Const.UI.Color.PositiveValue + "]+" + (s * R.PerStackHpRegen) + "[/color] Hitpoints regenerated each turn"
         mode = "pattern"
         en = "<bonus:val_tag> Hitpoints regenerated each turn"
         ru = "<bonus> ОЗ восстанавливается каждый ход"
     }
-    {
-        // this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(actor) + " gains rage!");
-        mode = "pattern"
-        en = "<actor:str_tag> gains rage!"
-        ru = "<actor> приходит в ярость!"
-    }
+    // {
+    //     // this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(actor) + " gains rage!");
+    //     mode = "pattern"
+    //     en = "<actor:str_tag> gains rage!"
+    //     ru = "<actor> приходит в ярость!"
+    // }
     {
         // this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(_actor) + " tears off the shield with a roar!");
         mode = "pattern"
@@ -351,8 +357,8 @@ local pairs = [
     }
     // FILE: scripts/skills/racial/druid_venom.nut
     {
-        en = "This beast hunts with envenomed fang and sting. A deep bite poisons the prey, blurring its sight and slowing it until the venom fades."
-        ru = "Этот зверь охотится ядовитым клыком и жалом. Глубокий укус отравляет добычу, мутит ей зрение и замедляет, пока яд не выветрится."
+        en = "This beast hunts with envenomed fangs. A bite poisons the prey, blurring its sight and slowing it until the venom fades."
+        ru = "Этот зверь охотится ядовитыми клыками. Укус отравляет добычу, мутит ей зрение и замедляет, пока яд не выветрится."
     }
 ]
 ::Rosetta.add(rosetta, pairs);

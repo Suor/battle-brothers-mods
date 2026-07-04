@@ -36,8 +36,8 @@ addPerk({
     ID = "perk.druid.regrowth"
     Script = "scripts/skills/perks/perk_druid_regrowth"
     Name = "Regrowth"
-    Tooltip = "Knit an ally's wounds turn after turn, double for beasts and animals."
-            + " One bearer at a time."
+    Tooltip = "Knit an ally's wounds for " + green(10) + " hitpoints per turn, double for"
+            + " beasts. One bearer at a time."
             + "\n" + red("Taking it closes the path of the Beast.")
     Icon = "druid/perk_regrowth.png"
     IconDisabled = "druid/perk_regrowth_sw.png"
@@ -47,7 +47,9 @@ addPerk({
     ID = "perk.druid.hatch"
     Script = "scripts/skills/perks/perk_druid_hatch"
     Name = "Hatch"
-    Tooltip = "Banks a fresh summon charge " + green("every third turn") + ", not just once per battle."
+    Tooltip = "Summon beast is no longer once per battle."
+            + " Banks an extra summon charge " + green("every third turn") + "."
+            + "\n" + red("Taking it closes the path of the Beast.")
     Icon = "druid/perk_hatch.png"
     IconDisabled = "druid/perk_hatch_sw.png"
     Row = 3
@@ -56,7 +58,8 @@ addPerk({
     ID = "perk.druid.entangle"
     Script = "scripts/skills/perks/perk_druid_entangle"
     Name = "Entangling Roots"
-    Tooltip = "Call writhing roots from the earth to root an enemy in place."
+    Tooltip = "Call entangling roots to bind an enemy in place."
+            + "\n" + red("Taking it closes the path of the Beast.")
     Icon = "druid/perk_entangle.png"
     IconDisabled = "druid/perk_entangle_sw.png"
     Row = 4
@@ -66,7 +69,8 @@ addPerk({
     Script = "scripts/skills/perks/perk_druid_apex"
     Name = "Greater Beasts"
     Tooltip = "Your call reaches greater beasts. Direwolves and hyenas answer frenzied,"
-            + " spiders bloated and broodmother-sized, and young schrats rise full-grown."
+            + " other creatures come bigger and more fierce."
+            + "\n" + red("Taking it closes the path of the Beast.")
     Icon = "druid/perk_apex.png"
     IconDisabled = "druid/perk_apex_sw.png"
     Row = 6
@@ -77,9 +81,9 @@ addPerk({
     ID = "perk.druid.beastform"
     Script = "scripts/skills/perks/perk_druid_beastform"
     Name = "Beastform"
-    Tooltip = "Take the shape of the beast for good: " + green("+10% Melee Skill") + ", "
-            + green("+10% Melee Defense") + " and " + green("+20% Hitpoints") + "."
-            + " But you can no longer bear heavy shields, helmets or armor, nor ranged weapons."
+    Tooltip = "Take the shape of the beast for good: " + green("+10% Melee Skill and Defense")
+            + " and " + green("+20% Hitpoints") + "."
+            + " But you can no longer bear heavy shields, helmets or armor, nor use ranged weapons."
             + "\n" + red("Taking it closes the path of Nature.")
     Icon = "druid/perk_beastform.png"
     IconDisabled = "druid/perk_beastform_sw.png"
@@ -89,9 +93,8 @@ addPerk({
     ID = "perk.druid.beast_aura"
     Script = "scripts/skills/perks/perk_druid_beast_aura"
     Name = "Beast Aura"
-    Tooltip = "Beasts know you for their alpha. Your beasts keep to your side instead of"
-            + " chasing the foe, and any allied beast near you stands " + green("fearless")
-            + " and emboldened."
+    Tooltip = "Beasts know you for their alpha. They keep to your side, act confidently"
+            + " and never run while close to you."
     Icon = "druid/perk_beast_aura.png"
     IconDisabled = "druid/perk_beast_aura_sw.png"
     Row = 3
@@ -100,9 +103,10 @@ addPerk({
     ID = "perk.druid.beast_rage"
     Script = "scripts/skills/perks/perk_druid_beast_rage"
     Name = "Beast Rage"
-    Tooltip = "Blood feeds a rising fury: stacking melee damage, resolve and"
-            + " " + green("healing") + " each turn, at the cost of defense. At its height"
-            + " you tear off your own shield and roar."
+    Tooltip = "Blood feeds a rising fury: stacking melee damage, resolve,"
+            + " " + green("regeneration") + " and fatigue recovery, at the cost of defense."
+            + " At its height you tear off your own shield and roar."
+            + "\n" + red("Taking it closes off Venom.")
     Icon = "druid/perk_beast_rage.png"
     IconDisabled = "druid/perk_beast_rage_sw.png"
     Row = 5
@@ -113,9 +117,9 @@ addPerk({
     ID = "perk.druid.venom"
     Script = "scripts/skills/perks/perk_druid_venom"
     Name = "Venom"
-    Tooltip = "Envenomed fang and sting: a weakening venom that blurs sight and slows the foe."
-            + " Your summoned beasts hunt with it - but once you walk in Beastform it is yours"
-            + " alone, riding your own bite instead of theirs."
+    Tooltip = "Your beasts bite with a weakening venom that blurs the foe's sight"
+            + " and slows it. In Beastform you carry it yourself instead."
+            + "\n" + red("Taking it closes off Beast Rage.")
     Icon = "druid/perk_venom.png"
     IconDisabled = "druid/perk_venom_sw.png"
     Row = 5
@@ -172,6 +176,7 @@ local T = ::Const.World.TerrainType;
 
     // Beast Rage tunables (Q5). Like Reforged's perk_rf_feral_rage but damage reduction is
     // swapped for per-stack hitpoint regen, with an extra stack granted on a melee miss.
+    // TODO: move to rage file
     Rage = {
         PerStackHpRegen = 2
         PerStackMaxHp = 2

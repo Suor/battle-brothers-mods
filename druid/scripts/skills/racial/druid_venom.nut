@@ -18,6 +18,6 @@ this.druid_venom <- this.inherit("scripts/skills/racial/goblin_ambusher_racial",
 
     function getDescription()
     {
-        return "This beast hunts with envenomed fang and sting. A deep bite poisons the prey, blurring its sight and slowing it until the venom fades.";
+        return "This beast hunts with envenomed fangs. A bite poisons the prey, blurring its sight and slowing it until the venom fades.";
     }
 });
