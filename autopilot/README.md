@@ -118,4 +118,4 @@ Fixes:
 [original]: https://www.nexusmods.com/battlebrothers/mods/62
 
 [necro]: https://www.nexusmods.com/battlebrothers/mods/775
-[druid]: https://github.com/Suor/battle-brothers-mods/tree/master/druid
+[druid]: https://www.nexusmods.com/battlebrothers/mods/1061

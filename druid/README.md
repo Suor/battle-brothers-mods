@@ -33,7 +33,7 @@ Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHo
 - druid world map figure for scenario
 - some more werewolf graphics for Beastform transformation?
 
-[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/...
+[NexusMods]: https://www.nexusmods.com/battlebrothers/mods/1061
 [ModernHooks]: https://www.nexusmods.com/battlebrothers/mods/685
 [MSU]: https://www.nexusmods.com/battlebrothers/mods/479
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676

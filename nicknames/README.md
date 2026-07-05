@@ -20,7 +20,7 @@ So it has:
     - Northern Expansion
     - HeroicScenarioPack
     - [Proper Necro][necro]
-    - Proper Druid
+    - [Proper Druid][druid]
     - Lone Chosen
     - Cultist Origin
     - Of Flesh and Faith Plus
@@ -64,3 +64,4 @@ To use built-in russian translation will also need to install [Rosetta][] and th
 [elite_few]: https://www.nexusmods.com/battlebrothers/mods/665
 [xbe]: https://www.nexusmods.com/battlebrothers/mods/769
 [necro]: https://www.nexusmods.com/battlebrothers/mods/775
+[druid]: https://www.nexusmods.com/battlebrothers/mods/1061

@@ -82,5 +82,5 @@ automatically.
 [autopilot]: https://www.nexusmods.com/battlebrothers/mods/675
 [xbe]: https://www.nexusmods.com/battlebrothers/mods/769
 [north-expansion]: https://www.nexusmods.com/battlebrothers/mods/720
-[druid]: https://www.nexusmods.com/battlebrothers/mods/...
+[druid]: https://www.nexusmods.com/battlebrothers/mods/1061
 [love]: https://www.nexusmods.com/battlebrothers/mods/686
