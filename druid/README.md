@@ -13,8 +13,9 @@ back together, or take the beast's own shape to fight tooth and claw at the head
     - [Accessory Companions][ac] - unleashed companions join your pack under the Beast Aura
     - [Starting Perks By Background][background_perks]
     - Reforged
+    - [Proper Necromancer][necro]
 
-Russian localization included - need to install [Rosetta][] and it's dependencies.
+Russian localization included - need to install [Rosetta][] and its dependencies.
 
 
 ## Compatibility
@@ -41,3 +42,4 @@ Download a zip from [NexusMods][] and put it into `data` dir. Requires [ModernHo
 [xbe]: https://www.nexusmods.com/battlebrothers/mods/769
 [ac]: https://www.nexusmods.com/battlebrothers/mods/314
 [background_perks]: https://www.nexusmods.com/battlebrothers/mods/661
+[necro]: https://www.nexusmods.com/battlebrothers/mods/775

@@ -1,4 +1,9 @@
-0.2.0
+0.5.0
+- rebalances, renames and rewordings
+- adapt to work in vanilla
+- made compatible with Proper Necro
+
+0.2.0 (RC)
 - the perk tree splits into two mutually exclusive paths, chosen implicitly by the first
   group perk taken (the closed path is greyed out in the tree):
   - Nature (Supporter): Regrowth, Hatch, Entangling Roots, Greater Beasts
