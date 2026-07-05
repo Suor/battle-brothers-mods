@@ -1,3 +1,7 @@
+0.5.2
+- made it compatible with druid
+- fixed occasional load order crash
+
 0.5.1
 - fixed loot lost on double raise
 - fixed arena giving raised loot
