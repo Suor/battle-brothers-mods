@@ -292,6 +292,8 @@ local inEvent = false;
 mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ultrabros", function () {
     ::include("nicknames/titles");
     ::include("nicknames/rosetta_auto");
+    // ::include("nicknames/bench");
+
     local function hookScreen1(q) {  // events/event
         q.setScreen = @(__original) function (_screen) {
             inEvent = true; __original(_screen); inEvent = false;
