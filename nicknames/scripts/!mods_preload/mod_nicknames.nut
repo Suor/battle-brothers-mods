@@ -284,9 +284,28 @@ def.logOut <- function () {
 // Hooks
 local starting = false;
 
+// Bros spawned by an event/contract are only half-configured when setStartValuesEx() returns
+// (their talents/traits/own title are set afterwards), so we defer their title to onHired().
+// True while a screen of such an interaction is being processed — matches how mod_elite_few detects it.
+local inEvent = false;
+
 mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ultrabros", function () {
     ::include("nicknames/titles");
     ::include("nicknames/rosetta_auto");
+    local function hookScreen1(q) {  // events/event
+        q.setScreen = @(__original) function (_screen) {
+            inEvent = true; __original(_screen); inEvent = false;
+        }
+    }
+    local function hookScreen2(q) {  // contracts/contract, encounters/encounter
+        q.setScreen = @(__original) function (_screen, _restartIfAlreadyActive = true) {
+            inEvent = true; __original(_screen, _restartIfAlreadyActive); inEvent = false;
+        }
+    }
+    mod.hook("scripts/events/event", hookScreen1);
+    mod.hook("scripts/contracts/contract", hookScreen2);
+    if (::Hooks.hasMod("mod_legends"))
+        mod.hook("scripts/encounters/encounter", hookScreen2);
 
     // Need to handle that separately to not overwrite the scenario based title
     mod.hook("scripts/states/world_state", function (q) {
@@ -310,17 +329,25 @@ mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ul
                 function (_backgrounds, _addTraits = true, _gender = -1, _addEquipment = true)
             {
                 __original(_backgrounds, _addTraits, _gender, _addEquipment);
-                if (!starting) def.fillTitle(this);
+                if (starting) return;
+                if (inEvent) { ::logInfo("nicknames: deferring title of event bro " + this.getName() + " to onHired"); return; }
+                def.fillTitle(this);
             }
         } else {
             q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
                 __original(_backgrounds, _addTraits);
-                if (!starting) def.fillTitle(this);
+                if (starting) return;
+                if (inEvent) { ::logInfo("nicknames: deferring title of event bro " + this.getName() + " to onHired"); return; }
+                def.fillTitle(this);
             }
         }
 
         q.onHired = @(__original) function () {
             __original();
+            if (this.getTitle() == "") {
+                ::logInfo("nicknames: filling deferred title of " + this.getName() + " on hire");
+                def.fillTitle(this);
+            }
             local title = this.getTitle();
             if (title == null || title == "") return;
             local state = def.loadState();

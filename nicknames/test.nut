@@ -166,6 +166,13 @@ if (candidateTitles(broLowHPWithTalent).find("the Runt") != null)
     throw "the Runt should not appear when bro has hitpoints talent";
 print("attr.Hitpoints.low: has talent → no trigger OK\n");
 
+// King's Guard event bro: setStartValuesEx(..., false) leaves m.Talents = []
+// (fillTalentValues is skipped), so indexing it must not blow up.
+local broNoTalents = makeBro("background.cripple", null, [], []);
+candidateTitles(broNoTalents);
+def.fillTitle(broNoTalents);
+print("empty m.Talents (King's Guard event) tolerated OK\n");
+
 // ── BgPerks.fallbacks → perk aliases ─────────────────────────────────────────
 
 // perk.rf_promised_potential is a fallback for perk.student → should match Pedant
