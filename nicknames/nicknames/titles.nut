@@ -45,8 +45,9 @@
 //              NOT dumb, NOT cocky, NOT pushy.
 //
 // trait.* (North Expansion)
-//   champion, chosen, destined, duel_fighter, feral, moonkissed, shieldmaster,
-//   skald, wolfmaster   (thrall is aliased into background.slave)
+//   chosen, feral   (thrall is aliased into background.slave)
+//   champion/destined (player-character only), shieldmaster/wolfmaster
+//   (event bros with a hardcoded title) never reach a nickname — not used
 //
 // trait.* (Black Pyramid / Elemental) — one phobia granted at generation (~15%)
 //   elem_fear_fire, elem_fear_ice, elem_fear_thunder
@@ -541,7 +542,6 @@ def.Titles <- [
     {ru = "Барабан", en = "the Drum", factors = [
         ["trait.cocky", "attr.Bravery.high"],              // громкий, звонкий голос
         ["perk.rally_the_troops"],                         // бьёт в барабан — ведёт за собой
-        ["trait.skald", "attr.Bravery.high"],              // задаёт ритм боя
         ["attr.Hitpoints.high", "attr.MeleeDefense.low"],  // сам принимает удары
     ]}
     {ru = "Пиявка", en = "the Leech", factors = [
@@ -853,7 +853,6 @@ def.Titles <- [
         ["background.hackflows_bodyguard", "attr.MeleeDefense.high"],  // телохранитель — прикрывает
         ["attr.MeleeDefense.high", "attr.Hitpoints.high"],
         ["perk.shield_expert"],  // mastered the shield
-        ["trait.shieldmaster"],  // мастер боя со щитом
     ]}
 
     {ru = "Быстрые ноги", en = "Quickfeet", factors = [
@@ -885,8 +884,6 @@ def.Titles <- [
     ]}
     {ru = "Дуэлянт", en = "the Duelist", factors = [
         ["perk.duelist"],
-        ["trait.champion"],     // прославленный мастер поединков
-        ["trait.duel_fighter"], // закалён в схватках один на один
         ["background.hackflows_myrmidon"],
         ["attr.MeleeSkill.high", "attr.MeleeDefense.high"],  // воюет один на один
         ["perk.anticipation"],         // reads enemy moves like a duelist
@@ -910,7 +907,6 @@ def.Titles <- [
     ]}
     {ru = "Затычка", en = "the Plug", factors = [
         ["perk.shield_expert", "attr.MeleeDefense.high"],
-        ["trait.shieldmaster", "attr.MeleeDefense.high"],
         ["attr.Hitpoints.high", "attr.MeleeDefense.high"],
     ]}
     {ru = "Кремень", en = "the Flint", factors = [
@@ -1020,7 +1016,6 @@ def.Titles <- [
     ], factors = [
         ["trait.lucky"],
         ["trait.lucky", "trait.survivor"],  // выжил — повезло
-        ["trait.destined"],  // знает, что не здесь и не сейчас ему суждено пасть
     ]}
     {ru = "Горемыка", en = "the Wretch", factors = [
         ["attr.Hitpoints.low", "attr.Bravery.low"],  // слабый и пугливый — вечно мается
@@ -1036,7 +1031,6 @@ def.Titles <- [
     {ru = "Живучий", en = "Hard to Kill", factors = [
         ["trait.survivor"],
         ["trait.survivor", "attr.Hitpoints.high"],
-        ["trait.destined"],                     // ему просто не суждено умереть
         ["perk.nine_lives"],                    // literally hard to kill
         ["perk.hold_out"],                      // refuses to go down
         ["perk.hackflows.flesh_on_the_bones"],  // extra flesh to soak damage
@@ -1114,7 +1108,6 @@ def.Titles <- [
     ]}
     {ru = "Волк", en = "the Wolf", factors = [
         ["trait.bloodthirsty", "attr.MeleeSkill.high"],
-        ["trait.wolfmaster"],  // неразлучен со своим лютоволком
         ["background.hunter"],
     ]}
     {ru = "Кабан", en = "the Boar", factors = [
@@ -1133,7 +1126,6 @@ def.Titles <- [
     ]}
     {ru = "Сова", en = "the Owl", factors = [
         ["trait.night_owl"],
-        ["trait.moonkissed"],  // оживает ночью, под луной
         ["trait.bright"],  // мудрый/наблюдательный
     ]}
     {ru = "Самородок", en = "the Natural", factors = [
@@ -1208,7 +1200,6 @@ def.Titles <- [
         ["background.houndmaster", "trait.brave"],   // привык быть вожаком стаи
         ["background.houndmaster", "trait.strong"],
         ["background.houndmaster", "attr.Bravery.high"],
-        ["trait.wolfmaster"],  // при нём лютоволк — вожак своей стаи
     ]}
     {ru = "Чертёнок", en = "the Imp", factors = [
         ["trait.tiny", "trait.bright"],
@@ -1290,7 +1281,6 @@ def.Titles <- [
     ]}
     {ru = "Сыч", en = "the Screech Owl", factors = [
         ["trait.night_owl"],  // маленькая мрачная сова
-        ["trait.moonkissed", "trait.night_owl"],  // ночной боец, лучше всего во тьме
     ]}
     {ru = "Бес", en = "the Fiend", factors = [
         ["trait.tiny", "trait.bloodthirsty"],  // мелкий, злой, проказник
@@ -1728,12 +1718,10 @@ def.Titles <- [
         ["perk.rally_the_troops"],  // rallies the company
         ["perk.rally_the_troops", "background.militia"],          // the sergeant of the militia
         ["perk.rally_the_troops", "background.retired_soldier"],  // old soldier leading by example
-        ["trait.skald"],  // скальд — его доблесть воодушевляет соседей
     ]}
     {ru = "Дудочник", en = "the Pied Piper", factors = [
         ["background.minstrel"],
         ["background.minstrel", "trait.optimist"],  // весёлый — и дудит
-        ["trait.skald"],  // северный бард, поёт под бой
     ]}
     {ru = "Вилы", en = "the Pitchfork", factors = [
         ["background.farmhand"],
@@ -3277,7 +3265,7 @@ def.Titles <- [
         ["background.wildman", "trait.tiny"],
     ]}
     {ru = "Росомаха", en = "the Wolverine", factors = [
-        ["trait.feral", "trait.bloodthirsty"],
+        ["trait.feral"],
         ["trait.bloodthirsty", "trait.tough"],
     ]}
     {ru = "Шатун", en = "the Rogue Bear", factors = [

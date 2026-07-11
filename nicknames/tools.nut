@@ -47,8 +47,10 @@ local KNOWN = {
         "legend_fear_nobles", "legend_frail", "legend_appetite_donkey", "legend_fear_dark",
         "legend_predictable", "legend_slack",
         // North Expansion (background.chosen aliases into trait.chosen)
-        "champion", "chosen", "destined", "duel_fighter", "feral", "moonkissed",
-        "shieldmaster", "skald", "wolfmaster",  // thrall aliases into background.slave
+        "chosen", "feral",  // thrall aliases into background.slave; NEM's other
+        // specials never reach a nickname: champion/destined only on the
+        // player-character, shieldmaster/wolfmaster/moonkissed/duel_fighter on
+        // already-titled bros, skald is never granted
         // Black Pyramid / Elemental — phobia granted at generation (15%)
         "elem_fear_fire", "elem_fear_ice", "elem_fear_thunder"
     ]

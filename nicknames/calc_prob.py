@@ -26,6 +26,10 @@ factors (see mod_nicknames.nut buildFactorSet). Models:
   volunteers list, ...) are added as a small extra share of new bros, from
   each event's cooldown and rough campaign-pace constants (see below);
   scenario starting bros too — one scenario per campaign, picked uniformly.
+  A scenario bro handed a fixed trait imperatively (e.g. NEM's feral wildman,
+  its rolled traits wiped) is modeled as a fixed bundle: the sole source of its
+  out-of-pool traits, only ever with exactly the traits added, so such a trait
+  scores only when one such bro provably carries every requested factor.
 - heroic (HeroicScenarioPack) and lone_chosen contribute their backgrounds,
   scenarios and (chosen-origin-gated) volunteer events; north (NEM)
   contributes its recruit events, the barbarian raiders scenario and hires at
@@ -525,29 +529,50 @@ def _parse_reforged_weapon_types():
 
 
 def _parse_scenario_bros(scenario_dirs):
-    """[(bg script name, expected starting bros per campaign)].
+    """([(bg script, expected starting bros per campaign)], fixed-bro profiles, n).
 
     Each setStartValuesEx([...]) call in a scenario spawns one starting bro
     picking uniformly from the listed backgrounds; the scenario itself is
     assumed to be picked uniformly among all known ones.
+
+    Some scenarios also hand a specific bros[N] a fixed trait imperatively
+    (bros[N].getSkills().add(...new("scripts/skills/traits/X_trait"))), usually
+    after wiping its rolled traits — e.g. NEM's barbarian raiders makes a
+    wildman feral. Such bros come back as profiles (bg script, all traits added
+    inline, expected count) so out-of-pool traits, unreachable through the
+    generation machinery, can be modeled — see load_data.
     """
-    per_scenario = []
+    per_scenario, raw_profiles = [], []
     for d in scenario_dirs:
         for path in sorted(d.glob("**/*_scenario.nut")):
             text = _read(path)
-            bros = []
-            for m in re.finditer(r"setStartValuesEx\(\s*\[", text):
+            bros, idx_bg = [], {}
+            for m in re.finditer(
+                    r"(?:bros\[(\d+)\]\s*\.\s*)?setStartValuesEx\(\s*\[", text):
                 block = _array_block(text[m.start():], r"\(\s*\[")
                 scripts = [s.split("/")[-1] for s in _strings(block or "")]
-                if scripts:
-                    bros.append(scripts)
+                if not scripts:
+                    continue
+                bros.append(scripts)
+                if m.group(1) is not None:
+                    idx_bg[int(m.group(1))] = scripts
             per_scenario.append(bros)
+            idx_traits = {}
+            for m in re.finditer(
+                    r'bros\[(\d+)\]\s*\.\s*getSkills\(\)\s*\.\s*add\('
+                    r'\s*(?:this\.)?new\(\s*"scripts/skills/traits/(\w+)_trait"', text):
+                idx_traits.setdefault(int(m.group(1)), set()).add("trait." + m.group(2))
+            for idx, tids in idx_traits.items():
+                for bg in idx_bg.get(idx, []):
+                    raw_profiles.append((bg, frozenset(tids), 1.0 / len(idx_bg[idx])))
     out = {}
     for bros in per_scenario:
         for scripts in bros:
             for s in scripts:
                 out[s] = out.get(s, 0.0) + 1.0 / len(scripts) / len(per_scenario)
-    return sorted(out.items()), len(per_scenario)
+    n = len(per_scenario)
+    profiles = [(bg, tids, count / n) for bg, tids, count in raw_profiles]
+    return sorted(out.items()), profiles, n
 
 
 _EQUIP_RE = re.compile(
@@ -1005,7 +1030,7 @@ def load_data(mods=KNOWN_MODS):
         scenario_dirs.append(NORTH / "scripts/scenarios/world")
     if "offp" in d.mods:
         scenario_dirs.append(OFFP / "scripts/scenarios/world")
-    scenario_bros, n_scenarios = _parse_scenario_bros(scenario_dirs)
+    scenario_bros, scenario_profiles, n_scenarios = _parse_scenario_bros(scenario_dirs)
 
     # north (NEM): hiring at barbarian camps (its origin only), their draft
     # list is 4x barbarian + 1x wildman (barbarian_locations_hook.nut)
@@ -1063,12 +1088,31 @@ def load_data(mods=KNOWN_MODS):
                 aff["perk.elem_%s_affinity" % e] = (
                     BP_BRANCH_CHANCE / len(BP_ELEMENTS) * (1 - p_feared) * BP_AFFINITY_ROLL)
 
+    d.trait_excl = _parse_traits()
+    d.trait_pool = sorted(d.trait_excl)
+
+    # Hand-crafted scenario bros (see _parse_scenario_bros) can carry traits the
+    # generation machinery never produces (feral, ...). Their trait pool is
+    # wiped and replaced with a fixed set, so such a bro is the ONLY source of
+    # its out-of-pool traits and only ever in that exact bundle. Model each as a
+    # fixed profile whose share of its background's recruits is the bro's draft
+    # mass over the background total (draft_prob is still pre-normalization here,
+    # like the camp fraction above).
+    pool = set(d.trait_pool)
+    d.scenario_fixed = []
+    for script, tids, count in scenario_profiles:
+        bg = d.backgrounds.get(script)
+        pre = d.draft_prob.get(script, 0.0)
+        if bg is None or pre <= 0.0 or tids <= pool:
+            continue
+        d.scenario_fixed.append((script, bg.id, tids, (count / total_bros) / pre))
+    d.scenario_fixed_traits = frozenset(t for _, _, tids, _ in d.scenario_fixed
+                                        for t in tids if t not in pool)
+
     mass = sum(d.draft_prob.values())
     for script in d.draft_prob:
         d.draft_prob[script] /= mass
 
-    d.trait_excl = _parse_traits()
-    d.trait_pool = sorted(d.trait_excl)
     d.bad_traits, d.soso_traits = _parse_stdlib_trait_kinds()
     d.aliases = _parse_aliases()
     d.paupers = _parse_paupers()
@@ -1439,6 +1483,19 @@ def calcFactorsProb(factors, mods=KNOWN_MODS, extra_trait=1, traits_strict=True,
     if len(special) > 1:
         return 0.0  # one roll per hire — thrall and chosen are exclusive
 
+    # Traits only hand-crafted scenario bros carry (feral, ...): such a bro is a
+    # fixed bundle, so a combo scores only when one provably holds every factor.
+    if traits & data.scenario_fixed_traits:
+        if (special or perks or weapons or attrs or elem_affinity
+                or injuries or groups or costs or types):
+            return 0.0  # nothing else is readable off the fixed bro
+        wanted_ids = set.intersection(*bg_sets) if bg_sets else None
+        total = 0.0
+        for script, bg_id, tids, share in data.scenario_fixed:
+            if traits <= tids and (wanted_ids is None or bg_id in wanted_ids):
+                total += data.draft_prob.get(script, 0.0) * share
+        return total
+
     bad_traits = traits - set(data.trait_pool)
     if bad_traits:
         warn("traits not in the assignable pool, probability is 0: %s"
@@ -1548,10 +1605,13 @@ def _selftest():
     ok &= check("heroic prodigal son boosts belly_dancer via alias: %.5f > %.5f"
                 % (p_dancer, p_dancer_v), p_dancer > 1.1 * p_dancer_v > 0.0)
 
-    p_wild = calcFactorsProb(["background.wildman"], mods=("lone_chosen",))
-    p_wild_v = calcFactorsProb(["background.wildman"], mods=())
-    ok &= check("lone_chosen scenario adds chosen to wildman alias: %.5f > %.5f"
-                % (p_wild, p_wild_v), p_wild > p_wild_v > 0.0)
+    # lone_chosen's aspirant volunteer event makes the vanilla-absent aspirant
+    # background recruitable (its chosen scenario bro is the player character
+    # with a hardcoded title, so it contributes no titleable recruit)
+    p_asp = calcFactorsProb(["background.aspirant"], mods=("lone_chosen",))
+    p_asp_v = calcFactorsProb(["background.aspirant"], mods=())
+    ok &= check("lone_chosen aspirant volunteer recruitable: %.6f (vanilla %.6f)"
+                % (p_asp, p_asp_v), p_asp > 0.0 and p_asp_v == 0.0)
 
     p_barb = calcFactorsProb(["background.barbarian"], mods=("north",))
     p_barb_v = calcFactorsProb(["background.barbarian"], mods=())
@@ -1565,6 +1625,20 @@ def _selftest():
                 abs(p_thrall - p_thrall_barb) < 1e-12 and p_thrall > 0.0)
     p_both = calcFactorsProb(["trait.thrall", "trait.chosen"], mods=("north",))
     ok &= check("thrall + chosen exclusive = 0", p_both == 0.0)
+
+    # NEM's barbarian raiders scenario hands one wildman starting bro a fixed
+    # {feral, iron_jaw} bundle with its other traits wiped
+    p_feral = calcFactorsProb(["trait.feral"], mods=("north",))
+    p_feral_v = calcFactorsProb(["trait.feral"], mods=())
+    ok &= check("NEM scenario feral wildman > 0: %.7f" % p_feral, p_feral > 0.0)
+    ok &= check("feral is north-only = 0: %.7f" % p_feral_v, p_feral_v == 0.0)
+    p_feral_wild = calcFactorsProb(["background.wildman", "trait.feral"], mods=("north",))
+    ok &= check("feral only on the wildman bro: %.7f" % p_feral_wild,
+                abs(p_feral_wild - p_feral) < 1e-12 and p_feral_wild > 0.0)
+    p_feral_ij = calcFactorsProb(["trait.feral", "trait.iron_jaw"], mods=("north",))
+    ok &= check("feral bro also always has iron_jaw", abs(p_feral_ij - p_feral) < 1e-12)
+    p_feral_bt = calcFactorsProb(["trait.feral", "trait.bloodthirsty"], mods=("north",))
+    ok &= check("feral bro rolls no other traits = 0", p_feral_bt == 0.0)
 
     p_fear = calcFactorsProb(["trait.elem_fear_fire"], mods=("black_pyramid",))
     p_fear_v = calcFactorsProb(["trait.elem_fear_fire"], mods=())

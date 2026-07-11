@@ -182,10 +182,10 @@ print("aliases: BgPerks fallback perk matches canonical perk titles OK\n");
 
 // ── North Expansion traits ───────────────────────────────────────────────────
 
-// trait.skald inspires allies → woven into the Bannerman
-local broSkald = makeBro("background.sellsword", null, ["trait.skald"]);
-assertIn("the Bannerman", candidateTitles(broSkald));
-print("NE: trait.skald matches the Bannerman OK\n");
+// trait.feral (the scenario wildman) → the Wildling
+local broFeral = makeBro("background.wildman", null, ["trait.feral"]);
+assertIn("the Wildling", candidateTitles(broFeral));
+print("NE: trait.feral matches the Wildling OK\n");
 
 // trait.chosen → the Chosen
 local broChosen = makeBro("background.sellsword", null, ["trait.chosen"]);
