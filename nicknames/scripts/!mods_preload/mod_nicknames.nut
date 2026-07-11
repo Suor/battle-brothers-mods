@@ -71,9 +71,11 @@ def.buildFactorSet <- function(_bro) {
     // attrs
     local changeAttrs = bg.onChangeAttributes();
     local props = _bro.getCurrentProperties();
+    local talents = _bro.m.Talents; // may be empty for event bros (setStartValuesEx with _addTraits=false)
     foreach (attr, br in def.BaseAttrRanges) {
         local low = br[0] + changeAttrs[attr][0], high =  br[1] + changeAttrs[attr][1];
-        local stars = _bro.m.Talents[::Const.Attributes[attr == "Stamina" ? "Fatigue" : attr]];
+        local idx = ::Const.Attributes[attr == "Stamina" ? "Fatigue" : attr];
+        local stars = idx < talents.len() ? talents[idx] : 0;
         if (stars > 0 && props[attr] >= high - stars + 1)
             set["attr." + attr + ".high"] <- true;
         if (stars == 0 && props[attr] <= low)
