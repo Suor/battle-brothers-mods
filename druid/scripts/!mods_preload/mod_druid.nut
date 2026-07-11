@@ -1,7 +1,7 @@
 local def = ::Druid <- {
     ID = "mod_druid"
     Name = "Proper Druid"
-    Version = "0.5.0"
+    Version = "0.5.1"
     Updates = {
         nexus = ""
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/druid"

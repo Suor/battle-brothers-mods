@@ -1,3 +1,6 @@
+0.5.1
+- fixed load order crash
+
 0.5.0
 - rebalances, renames and rewordings
 - adapt to work in vanilla
