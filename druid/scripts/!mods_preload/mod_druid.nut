@@ -20,7 +20,7 @@ local def = ::Druid <- {
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("mod_msu >= 1.6.0", "stdlib >= 2.1");
-mod.queue(">mod_reforged", ">mod_background_perks",
+mod.queue(">mod_msu", ">mod_reforged", ">mod_background_perks",
           ">mod_backgrounds_and_events", ">mod_backgrounds_and_events_reforged_patch",
         function () {
     ::include("druid/rosetta_ru");
