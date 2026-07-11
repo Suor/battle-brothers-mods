@@ -409,13 +409,11 @@ def.Titles <- [
         ["trait.greedy", "trait.disloyal"],  // жадный предатель
     ]}
     {ru = "Гадюка", en = "the Viper", factors = [
-        ["trait.weasel"],
-        ["background.thief"],
-        ["trait.disloyal"],
-        ["trait.weasel", "trait.disloyal"],  // хитрый и ненадёжный — змея в траве
+        ["background.thief", "trait.weasel"],
+        ["background.thief", "trait.disloyal"],
+        ["trait.weasel", "trait.disloyal"],
     ]}
     {ru = "Мятежник", en = "the Rebel", factors = [
-        ["trait.disloyal"],
         ["trait.disloyal", "trait.cocky"],    // наглый и нелояльный
         ["trait.disloyal", "trait.impatient"],
     ]}
@@ -975,7 +973,7 @@ def.Titles <- [
     ]}
     {ru = "Мозгоправ", en = "the Headshrinker", factors = [
         ["weapon.mace", "trait.brute"],                    // вправляет мозги ударом булавы
-        ["background.hackflows_surgeon", "trait.brute"],
+        ["background.hackflows_surgeon", "trait.dumb"],
     ]}
     {ru = "Трубочист", en = "the Chimney Sweep", factors = [
         ["weapon.firearm", "trait.dumb"],  // вечно с чёрной от пороха мордой
@@ -1810,8 +1808,8 @@ def.Titles <- [
         ["trait.pessimist", "trait.superstitious"],
     ]}
     {ru = "Коновал", en = "the Quack", factors = [
-        ["background.butcher", "trait.dumb"],               // вообще-то лекарь, но пациенты помирают
-        ["background.hackflows_surgeon", "trait.clumsy"],
+        ["background.butcher", "trait.dumb"],
+        ["background.butcher", "trait.clumsy"],
         ["background.hackflows_surgeon", "trait.dumb"],
     ]}
     {ru = "Отшельник", en = "the Hermit", factors = [
@@ -2064,16 +2062,13 @@ def.Titles <- [
         ["weapon.spear", "trait.hate_beasts"],
         ["weapon.spear", "background.hunter"],
     ]}
-    {ru = "Клевец", en = "the War Pick", factors = [
-        ["weapon.hammer", "attr.MeleeSkill.high"],
-        ["weapon.hammer", "perk.head_hunter"],
-    ]}
     {ru = "Кол", en = "the Stake", factors = [
         ["weapon.spear", "trait.hate_undead"],
         ["background.witchhunter", "weapon.spear"],
     ]}
     {ru = "Ледоруб", en = "the Ice-Cutter", factors = [
         ["weapon.axe", "perk.head_hunter"],
+        ["weapon.axe", "trait.brute"],
         ["weapon.axe", "trait.strong"],
     ]}
     {ru = "Меткий", en = "the Sharpshooter", factors = [
@@ -3321,7 +3316,7 @@ def.Titles <- [
     {ru = "Козья Морда", en = "the Goat Face", factors = [
         ["perk.fearsome"],
         ["perk.fearsome", "trait.dumb"],
-        ["perm.missing_nose"],
+        ["injury.missing_nose"],
     ]}
     {ru = "Сивый Мерин", en = "the Fibber", factors = [
         ["trait.legend_double_tongued"],
@@ -3366,7 +3361,7 @@ def.Titles <- [
         ["group.noble", "trait.fragile"],
     ]}
     {ru = "Зубодёр", en = "the Tooth-Puller", factors = [
-        ["background.hackflows_surgeon", "trait.brute"],
+        ["background.hackflows_surgeon", "trait.strong"],
         ["background.hackflows_torturer"],
     ]}
     {ru = "Свинопас", en = "the Swineherd", factors = [
@@ -3378,7 +3373,7 @@ def.Titles <- [
         ["group.pauper", "attr.Stamina.high"],
     ]}
     {ru = "Кабысдох", en = "the Deathdodger", factors = [
-        ["trait.ailing", "trait.survivor"],
+        ["trait.fragile", "trait.survivor"],
         ["trait.ailing", "perk.nine_lives"],
     ]}
     {ru = "Слон", en = "the Elephant", factors = [
