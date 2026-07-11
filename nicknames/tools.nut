@@ -650,10 +650,25 @@ function cmdLoadNew(filename) {
     for (local i = insertBefore; i < content.len(); i++) { writeStr(out, content[i]); writeStr(out, "\n"); }
     out.close();
 
+    // A title whose en name also exists as a built-in is still added on purpose —
+    // annotate it so the overlap is visible rather than looking like a silent skip.
+    local builtInNames = parseBuiltInNames();
+    function normEn(s) {
+        s = s.tolower();
+        if (s.len() > 4 && s.slice(0, 4) == "the ") s = s.slice(4);
+        return s;
+    }
+
     print("Added " + newEntries.len() + " new titles to " + titlesPath + ":\n");
     foreach (entry in newEntries) {
         local enLabel = entry.en != null ? " / " + entry.en : "";
-        print("  " + entry.ru + enLabel + "\n");
+        local note = "";
+        if (entry.en != null) {
+            local bi = normEn(entry.en);
+            if (bi in builtInNames)
+                note = "  (also built-in \"" + builtInNames[bi].en + "\" in " + builtInNames[bi].factor + " — added anyway)";
+        }
+        print("  " + entry.ru + enLabel + note + "\n");
     }
 }
 
