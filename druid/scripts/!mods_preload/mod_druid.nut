@@ -35,14 +35,18 @@ mod.queue(">mod_msu", ">mod_reforged", ">mod_background_perks",
     def.msu.Registry.setUpdateSource(msd.GitHubTags);
 
     if ("BgPerks" in getroottable()) {
-        ::std.Table.extend(::BgPerks.chances.hackflows_druid, {
+        ::BgPerks.chances.hackflows_druid <- {
+            "pathfinder": 33
+            "fortified_mind": 33
+            "hackflows.flesh_on_the_bones": 50
+
             "druid.entangle": 5
             "druid.hatch": 3
             "druid.beastform": 4
             "druid.beast_aura": 2
             "druid.beast_rage": 2
             "druid.venom": 2
-        })
+        }
     }
 
     // Shared helpers (relocateItem, applyBeastform[Look], onBeastJoinedPack, isDruidScenario).
