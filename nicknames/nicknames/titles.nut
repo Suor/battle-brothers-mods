@@ -61,7 +61,7 @@
 //   refugee, thief, monk, butcher, shepherd, beggar, cultist, minstrel, juggler, gambler,
 //   lumberjack, miner, fisherman, killer_on_the_run, deserter, hunter, nomad, raider, slave,
 //   gladiator, beast_slayer, anatomist, bladedancer, converted_cultist, cripple, eunuch,
-//   historian, manhunter, paladin
+//   historian, manhunter, paladin, belly_dancer
 //
 // background.*  (hackflows/XBE)
 //   hackflows_falconer, hackflows_hangman, hackflows_pirate, hackflows_berserker,
@@ -2558,8 +2558,7 @@ def.Titles <- [
         ["perk.rotation", "trait.teamplayer"],
     ]}
     {ru = "Петух в мешке", en = "Cock-in-Bag", factors = [
-        ["trait.cocky", "attr.Bravery.low"],
-        ["trait.cocky", "trait.craven"],
+        ["trait.cocky", "type.melee", "attr.MeleeSkill.low"],
         ["perk.taunt", "trait.craven"],
     ]}
     {ru = "Подмётка", en = "the Sole", factors = [
@@ -2981,7 +2980,7 @@ def.Titles <- [
     ]}
     {ru = "Пугач", en = "the Noisemaker", factors = [
         ["weapon.firearm", "attr.RangedSkill.low"],
-        ["trait.cocky", "attr.Bravery.low"],
+        ["trait.cocky", "attr.MeleeSkill.low"],  // много шума, мало толку (cocky не даёт Bravery.low)
     ]}
     {ru = "Обух", en = "the Blunt End", factors = [
         ["weapon.axe", "trait.dumb"],
@@ -3301,7 +3300,7 @@ def.Titles <- [
         ["trait.tiny", "trait.impatient"],
     ]}
     {ru = "Мешок Костей", en = "Bag o' Bones", factors = [
-        ["attr.Hitpoints.low", "trait.tough"],
+        ["attr.Hitpoints.low", "trait.fragile"],  // tough даёт +10 HP — Hitpoints.low с ним недостижим
         ["attr.Hitpoints.low", "trait.athletic"],
         ["attr.Hitpoints.low", "trait.survivor"],
     ]}
@@ -3434,9 +3433,11 @@ def.Titles <- [
     ]}
     {ru = "Попугай", en = "the Parrot", factors = [
         ["trait.cocky"],
+        ["background.hackflows_pirate"],
     ]}
     {ru = "Одуванчик", en = "the Dandelion", factors = [
         ["trait.tiny", "trait.fragile"],
+        ["trait.optimist", "trait.fragile"],
     ]}
     {ru = "Шито Крыто", en = "Stitch-Cover", factors = [
         ["background.tailor", "trait.disloyal"],
@@ -3446,6 +3447,7 @@ def.Titles <- [
     {ru = "Кривой Глаз", en = "Crooked Eye", factors = [
         ["injury.missing_eye"],
         ["trait.short_sighted"],
+        ["type.ranged", "attr.RangedSkill.low"],
     ]}
     {ru = "Сопливый", en = "the Sniveler", factors = [
         ["trait.ailing", "trait.tiny"],
@@ -3658,5 +3660,53 @@ def.Titles <- [
     {ru = "Кирка", en = "the Pick", factors = [
         ["background.miner", "trait.strong"],
         ["background.miner", "trait.determined"],
+    ]}
+    {ru = "Сноп", en = "the Sheaf", factors = [
+        ["background.farmhand", "attr.Hitpoints.low"],
+        ["background.farmhand", "trait.fragile"],
+    ]}
+    {ru = "Фарш", en = "the Mince", factors = [
+        ["background.butcher", "weapon.cleaver"],
+        ["weapon.cleaver", "perk.crippling_strikes"],
+    ]}
+    {ru = "Компас", en = "the Compass", factors = [
+        ["background.hackflows_cartographer"],
+        ["background.hackflows_cartographer", "trait.sure_footing"],
+    ]}
+    {ru = "Шпана", en = "the Riffraff", factors = [
+        ["background.hackflows_myrmidon"],
+        ["background.hackflows_myrmidon", "trait.cocky"],
+    ]}
+    {ru = "Застрельщик", en = "First Shot", factors = [
+        ["background.hackflows_skirmisher", "trait.impatient"],
+        ["background.hackflows_skirmisher", "perk.adrenaline"],
+    ]}
+    {ru = "Сковорода", en = "the Skillet", factors = [
+        ["background.hackflows_cook", "trait.iron_jaw"],
+        ["trait.iron_jaw", "trait.fat"],
+    ]}
+    {ru = "Ножны", en = "the Scabbard", factors = [
+        ["weapon.sword", "trait.craven"],
+        ["type.melee", "trait.craven", "attr.MeleeSkill.high"],
+    ]}
+    {ru = "Дыба", en = "the Rack", factors = [
+        ["background.hackflows_torturer"],
+        ["background.hackflows_torturer", "trait.strong"],
+    ]}
+    {ru = "Бутыль", en = "the Bottle", factors = [
+        ["trait.drunkard", "trait.fragile"],
+        ["background.hackflows_barkeep", "trait.fragile"],
+    ]}
+    {ru = "Шавка", en = "the Cur", factors = [
+        ["trait.dastard"],
+        ["trait.dastard", "trait.weasel"],
+    ]}
+    {ru = "Тапок", en = "the Slipper", factors = [
+        ["trait.fear_beasts"],
+        ["trait.fear_beasts", "trait.tiny"],
+    ]}
+    {ru = "Мотылёк", en = "the Moth", factors = [
+        ["trait.deathwish", "trait.tiny"],
+        ["trait.deathwish", "trait.night_owl"],
     ]}
 ];
