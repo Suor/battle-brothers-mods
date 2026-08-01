@@ -65,7 +65,7 @@ local KNOWN = {
         "cultist", "minstrel", "juggler", "gambler", "lumberjack", "miner", "fisherman",
         "killer_on_the_run", "deserter", "hunter", "nomad", "raider", "slave",
         "gladiator", "beast_slayer", "anatomist", "bladedancer", "converted_cultist",
-        "cripple", "eunuch", "historian", "manhunter", "paladin",
+        "cripple", "eunuch", "historian", "manhunter", "paladin", "belly_dancer",
         // hackflows/XBE
         "hackflows_falconer", "hackflows_hangman", "hackflows_pirate", "hackflows_berserker",
         "hackflows_carpenter", "hackflows_barkeep", "hackflows_herbalist", "hackflows_con_artist",
@@ -367,16 +367,15 @@ function cmdUsage(doSort) {
     totalRow += "  " + padR(grandTotal > 0 ? (grandTotal + "") : "-", totalW);
     print(totalRow + "\n");
 
-    // Unused: exclude factors covered by built-in titles or reachable via aliases
-    local aliasTargets = {};
-    foreach (_, target in ::Nicknames.Aliases) aliasTargets[target] <- true;
-
+    // Unused: exclude factors covered by built-in titles. Alias targets DO need
+    // titles of their own — bros reach them through the alias; alias sources are
+    // never valid in a factor array, so they are not in KNOWN in the first place.
     local unused = [];
     foreach (ns, vals in KNOWN)
         foreach (val in vals) {
             local f = ns + "." + val;
-            if (!(f in stats) && (!(f in ::BuiltInTitles) || ::BuiltInTitles[f] == 0)
-                    && !(f in aliasTargets)) unused.push(f);
+            if (!(f in stats) && (!(f in ::BuiltInTitles) || ::BuiltInTitles[f] == 0))
+                unused.push(f);
         }
     unused.sort(@(a, b) a <=> b);
     print("\nUnused (" + unused.len() + "):\n");
