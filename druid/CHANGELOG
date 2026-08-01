@@ -1,3 +1,6 @@
+0.5.2
+- fixed a crash when Starting Perks by Background is installed but not More Backgrounds and Events
+
 0.5.1
 - fixed load order crash
 
