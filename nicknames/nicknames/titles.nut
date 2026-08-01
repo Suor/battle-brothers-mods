@@ -194,6 +194,13 @@ def.Titles <- [
         ["trait.drunkard"],
         ["trait.fat", "trait.drunkard"],
     ]}
+    {ru = "Бочонок", en = "the Keg", factors = [
+        ["trait.fat", "trait.tiny"],  // бочонок — это малая бочка
+        ["trait.gluttonous", "trait.tiny"],
+        ["trait.drunkard", "trait.tiny"],
+        ["background.hackflows_barkeep", "trait.fat"],  // раздобрел на своём же пиве
+        ["background.hackflows_barkeep", "trait.gluttonous"],
+    ]}
     {ru = "Пузо", en = "the Belly", factors = [
         ["trait.fat"],
         ["trait.gluttonous"],  // заслужил привычкой
@@ -932,6 +939,9 @@ def.Titles <- [
     ]}
     {ru = "Щепка", en = "the Sliver", factors = [
         ["trait.tiny", "weapon.dagger"],
+        ["trait.tiny", "trait.swift"],              // мелкий и юркий — везде поспел
+        ["trait.tiny", "attr.Initiative.high"],
+        ["background.hackflows_carpenter", "trait.tiny"],  // щепка от плотника
     ]}
     {ru = "Зубодробитель", en = "the Toothbreaker", factors = [
         ["weapon.hammer", "trait.brute"],
