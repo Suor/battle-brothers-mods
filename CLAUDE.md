@@ -37,9 +37,13 @@ make zip            # Create release ZIP (checks for debug statements, uses git 
 make log            # Print first errors from the game's log.html with stacktraces (wraps `../_scripts/bb_log_errors.py`)
 ```
 
-Use `make log` (or `../_scripts/bb_log_errors.py`) to inspect failures — this is the default for almost any "what blew up" question. Look at the **first** error and ignore the JS/UI ConsoleAPI noise; those are downstream effects of an earlier squirrel failure.
+### Investigating crash
 
-For deeper traces use `../_scripts/parse_log.py` — flattens `log.html` to `HH:MM:SS [level] TAG | text`, plays nicely with `grep`. Default filter drops engine/rosetta noise; use `--all` to disable, `--level error,warning` / `--tag SQ` / `--tail N` to narrow. Reach for it only when you need context around `logInfo` calls our own code emits (decision loops, AI verbose mode, custom diagnostics), not for ordinary errors.
+Use `make log` (or `../_scripts/bb_log_errors.py`) to inspect failures — this is the default for almost any "what blew up" question. **The first error** is what usually matters, the rest is just a fallout.
+
+### Debugging
+
+If you need to debug an issue, and you cannot find a fix from a crash stacktrace (or it doesn't have one), then use `logInfo()/logWarning()/logError()` calls and `../_scripts/parse_log.py` to read the log. Default filter drops engine/rosetta noise; use `--all` to disable, `--level error,warning` / `--tag SQ` / `--tail N` to narrow.
 
 Build config is in `.env` at repo root — sets `STDLIB_DIR`, `DATA_DIR`, `SCRIPTS`, etc. All mods use `include ../Makefile.common`.
 
