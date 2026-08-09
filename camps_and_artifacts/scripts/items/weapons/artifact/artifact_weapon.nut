@@ -87,11 +87,13 @@ this.artifact_weapon <- this.inherit("scripts/items/weapons/weapon", {
 
 		if (this.m.AmmoMax > 0)
 		{
-			available.push(function ( _i )
+			local moreAmmo = function ( _i )
 			{
-				_i.m.AmmoMax = _i.m.AmmoMax + this.Math.rand(6, 10);
+				_i.m.AmmoMax = _i.m.AmmoMax + this.Math.rand(3, 7);
 				_i.m.Ammo = _i.m.AmmoMax;
-			});
+			};
+			moreAmmo(this);  // throwing weapons are useless without ammo, guarantee it
+			available.push(moreAmmo);
 		}
 
 		if (this.m.AdditionalAccuracy != 0 || this.isItemType(this.Const.Items.ItemType.RangedWeapon))
