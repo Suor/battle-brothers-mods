@@ -12,7 +12,8 @@ local def = ::PermaHackflow <- {
 ::include("perma_hackflow/rosetta_ru");
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
-mod.queue(">mod_reforged", function () {
+// Hardened and Legends replace asset_manager.restoreEquipment() wholesale, we wrap it on top
+mod.queue(">mod_reforged", ">mod_hardened", ">mod_legends", function () {
     foreach (file in ::IO.enumerateFiles("perma_hackflow/hooks")) ::include(file);
 
     // Legends have this already
