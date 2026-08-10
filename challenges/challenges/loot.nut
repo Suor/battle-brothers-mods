@@ -238,7 +238,13 @@ local function passiveHook(q) {
     }
 }
 
-mod.hook("scripts/items/weapons/weapon", passiveHook);
+// Black Pyramid replaces weapon.isDroppedAsLoot wholesale from an inherit-time hook, which
+// lands after any hook on the base class, so we have to wrap the leaves instead.
+// TODO: back to plain .hook() once BP chains the original instead of replacing it.
+if (::Hooks.hasMod("black_pyramid_beasts"))
+    mod.hookTree("scripts/items/weapons/weapon", passiveHook);
+else
+    mod.hook("scripts/items/weapons/weapon", passiveHook);
 mod.hook("scripts/items/shields/shield", passiveHook);
 mod.hook("scripts/items/armor/armor", passiveHook);
 mod.hook("scripts/items/helmets/helmet", passiveHook);

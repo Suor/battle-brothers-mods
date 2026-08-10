@@ -75,6 +75,7 @@ local Settings = {
             _func(q);
             HooksByPath[_path] <- q;
         }
+        function hookTree(_path, _func) { this.hook(_path, _func); }
     }
     function addPage(...) { return function (_elem) { return _elem; }; }
     function SliderSetting(...) { return {Data = {}}; }
