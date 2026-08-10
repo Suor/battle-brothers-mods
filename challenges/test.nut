@@ -69,7 +69,8 @@ local Settings = {
                 convertItemToUIData = null,
                 onLootAllItemsButtonPressed = null,
                 onLeaveButtonPressed = null,
-                onSwapItem = null
+                onSwapItem = null,
+                onDeserialize = null
             };
             _func(q);
             HooksByPath[_path] <- q;
@@ -376,5 +377,28 @@ lootAllHook(function () {
 if (state.m.CombatResultLoot.Items.find(cappedA) == null) throw "cappedA must be restored after auto-loot";
 if (state.m.CombatResultLoot.Items.find(cappedB) == null) throw "cappedB must be restored after auto-loot";
 print("loot cap: non-random auto-loot skips capped items OK\n");
+
+// Followers page under Pandora's Hobby: settings locked, retinue left untouched.
+local locks = {};
+::MSU.Class.BooleanSetting = function (_id, ...) {
+    return {
+        Data = {}, ID = _id,
+        function unlock() { locks[this.ID] <- null; }
+        function lock(_reason) { locks[this.ID] <- _reason; }
+    };
+}
+::MSU.Class.SettingsTitle = function (...) { return {Data = {}}; }
+::Hooks.hasMod = function (_id) { return _id == "mod_pandoras_hobby"; }
+dofile("challenges/followers.nut", true);
+
+assertEq("scripts/retinue/retinue_manager" in HooksByPath, false);
+assertEq(locks.len(), ::Challenges.Followers.len());
+foreach (id, reason in locks) assertEq(reason, "Pandora's Hobby has a retinue of its own");
+
+// A campaign load restores the saved (unlocked) flags, so we must re-lock on top of MSU.
+locks.clear();
+HooksByPath["scripts/states/world_state"].onDeserialize(@(_in) null)(null);
+assertEq(locks.len(), ::Challenges.Followers.len());
+print("followers: locked and unhooked under Pandora's Hobby OK\n");
 
 print("Tests OK\n")
