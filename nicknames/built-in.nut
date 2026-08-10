@@ -18,6 +18,7 @@
     ["background.deserter"] = 6,  // "the Deserter", "Turncloak", "the Betrayer", "the Runner", "the Dog", "the Worm"
     ["background.disowned_noble"] = 3,  // "the Disowned", "the Exiled", "the Disgraced"
     ["background.eunuch"] = 2,  // "the Eunuch", "the Gelding"
+    ["background.executioner"] = 7,  // "Headtaker", "Neckrender", "the Axe", "the Judicator", "the Headsman", "the Executioner", "the Hangman"
     ["background.fisherman"] = 2,  // "the Fisherman", "the Fisher"
     ["background.gambler"] = 6,  // "Deuces", "the Wild Card", "the Luck Maker", "the Lucky", "the Cardsharper", "the Gambler"
     ["background.hackflows_arbalester"] = 4,  // "the Arbalester", "the Crossbowman", "the Sniper", "the Precise"

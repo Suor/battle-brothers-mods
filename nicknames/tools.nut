@@ -66,6 +66,7 @@ local KNOWN = {
         "killer_on_the_run", "deserter", "hunter", "nomad", "raider", "slave",
         "gladiator", "beast_slayer", "anatomist", "bladedancer", "converted_cultist",
         "cripple", "eunuch", "historian", "manhunter", "paladin", "belly_dancer",
+        "executioner",
         // hackflows/XBE
         "hackflows_falconer", "hackflows_hangman", "hackflows_pirate", "hackflows_berserker",
         "hackflows_carpenter", "hackflows_barkeep", "hackflows_herbalist", "hackflows_con_artist",

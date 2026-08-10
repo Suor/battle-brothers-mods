@@ -61,7 +61,7 @@
 //   refugee, thief, monk, butcher, shepherd, beggar, cultist, minstrel, juggler, gambler,
 //   lumberjack, miner, fisherman, killer_on_the_run, deserter, hunter, nomad, raider, slave,
 //   gladiator, beast_slayer, anatomist, bladedancer, converted_cultist, cripple, eunuch,
-//   historian, manhunter, paladin, belly_dancer
+//   historian, manhunter, paladin, belly_dancer, executioner
 //
 // background.*  (hackflows/XBE)
 //   hackflows_falconer, hackflows_hangman, hackflows_pirate, hackflows_berserker,
@@ -715,8 +715,17 @@ def.Titles <- [
         ["weapon.axe", "trait.bloodthirsty"],
         ["background.killer_on_the_run"],
         ["background.hackflows_hangman"],
+        ["background.executioner"],
         ["perk.head_hunter"],  // literally goes for the head
         ["perk.backstabber"],  // attacks from behind
+    ]}
+    {ru = "Плаха", en = "the Block", factors = [
+        ["background.executioner"],
+        ["background.executioner", "attr.Hitpoints.high"],  // сам как плаха — по нему и рубят
+    ]}
+    {ru = "Один удар", en = "One Cut", factors = [
+        ["background.executioner", "attr.MeleeSkill.high"],  // голова слетает с первого маха
+        ["perk.coup_de_grace", "attr.MeleeSkill.high"],
     ]}
     {ru = "Маньяк", en = "the Maniac", factors = [
         ["trait.bloodthirsty", "trait.irrational"],
@@ -2481,6 +2490,7 @@ def.Titles <- [
     {ru = "Колун", en = "the Chopper", factors = [
         ["weapon.axe", "trait.strong"],
         ["background.lumberjack", "weapon.axe"],
+        ["background.executioner", "weapon.axe"],
         ["weapon.axe", "perk.brawny"],
         ["weapon.axe", "trait.huge"],
     ]}
@@ -2690,6 +2700,7 @@ def.Titles <- [
     {ru = "Капюшон", en = "the Hood", factors = [
         ["background.thief"],
         ["background.assassin"],
+        ["background.executioner"],  // палач под капюшоном
         ["perk.backstabber"],
     ]}
     {ru = "Сало", en = "the Lard", factors = [

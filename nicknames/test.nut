@@ -102,6 +102,11 @@ local broAffinity = makeBro("background.farmhand", null, [], null, null, 5, [], 
 assertIn("the Salamander", candidateTitles(broAffinity));
 print("titles: Black Pyramid elemental factors OK\n");
 
+// Executioner, a vanilla background added late
+local broExecutioner = makeBro("background.executioner");
+assertIn("the Block", candidateTitles(broExecutioner));
+print("titles: background.executioner OK\n");
+
 // ── attr.high / attr.low tests ───────────────────────────────────────────────
 
 // Helpers: explicit baseProps so we can tweak one stat at a time
