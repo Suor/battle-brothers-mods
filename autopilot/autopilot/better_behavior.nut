@@ -29,6 +29,9 @@ mod.hook("scripts/entity/tactical/actor", function (q) {
 
 // Prefer doing something else than wandering around/waiting
 mod.hook("scripts/ai/tactical/behaviors/ai_engage_melee", function (q) {
+    // Reforged Juggernaut's charge, same shape as vanilla actives.charge
+    q.m.PossibleSkills.push("actives.rf_swordmaster_charge");
+
     q.evaluate = @(__original) function (_entity) {
         if (!("_autopilot" in _entity.m)) return __original(_entity);
 
@@ -69,6 +72,8 @@ mod.hook("scripts/ai/tactical/behaviors/ai_attack_bow", function (q) {
     q.m.PossibleSkills.extend([
         // Fantasy Brothers
         "actives.xxitem_rifleaa_skill"
+        // Reforged, bow mastery
+        "actives.rf_arrow_to_the_knee"
     ]);
 })
 mod.hook("scripts/ai/tactical/behaviors/ai_attack_handgonne", function (q) {
@@ -100,6 +105,11 @@ mod.hook("scripts/ai/tactical/behaviors/ai_defend_rotation", function (q) {
     q.m.PossibleSkills.extend([
         "actives.spin" // Heroic Scenario Pack
         "actives.rf_dynamic_duo_shuffle" // Reforged
+    ]);
+});
+mod.hook("scripts/ai/tactical/behaviors/ai_boost_morale", function (q) {
+    q.m.PossibleSkills.extend([
+        "actives.rf_encourage" // Reforged, Supporter perk
     ]);
 });
 mod.hook("scripts/ai/tactical/behaviors/ai_boost_stamina", function (q) {
