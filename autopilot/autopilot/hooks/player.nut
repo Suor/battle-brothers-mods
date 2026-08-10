@@ -68,6 +68,7 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         agent.addBehavior(this.new("scripts/ai/autopilot_step_n_hit"));
         agent.addBehavior(this.new("scripts/ai/autopilot_unbag_shield"));
         agent.addBehavior(this.new("scripts/ai/autopilot_swap_quiver"));
+        agent.addBehavior(this.new("scripts/ai/autopilot_cleanse_ally"));
         agent.addBehavior(this.new("scripts/ai/autopilot_heal_ally"));
         if (::Autopilot.conf("dogs")) {
             agent.addBehavior(this.new("scripts/ai/autopilot_unleash_dog"));

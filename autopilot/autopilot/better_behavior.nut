@@ -8,6 +8,8 @@ local mod = ::Hooks.getMod("mod_autopilot_new");
 ::MSU.AI.addBehavior("AP_SwapQuiver", "AP.SwapQuiver", 39, 400);
 ::MSU.AI.addBehavior("AP_SummonBeast", "AP.SummonBeast", 40, 400);
 ::MSU.AI.addBehavior("AP_HealAlly", "AP.HealAlly", 41, 250);
+// Score is per unit of cure weight, so 1.0 (worth the whole action) lands on par with attacking
+::MSU.AI.addBehavior("AP_CleanseAlly", "AP.CleanseAlly", 42, ::Const.AI.Behavior.Score.Attack);
 ::MSU.AI.addBehavior("AP_AttackAlternate", "AP.AttackAlternate",
     ::Const.AI.Behavior.Order.AttackDefault - 1, ::Const.AI.Behavior.Score.Attack * 2);
 ::MSU.AI.addBehavior("AP_StepNHit", "AP.StepNHit",

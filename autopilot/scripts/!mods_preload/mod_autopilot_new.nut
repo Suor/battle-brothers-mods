@@ -46,6 +46,8 @@ mod.queue(">mod_msu", ">mod_reforged", ">mod_sellswords", ">mod_fantasybro", fun
 
     page.addElement(::MSU.Class.BooleanSetting("freewake", true, "Auto break free and wake up",
             "Auto break free out of nets and webs and wake allies when unused AP left"));
+    page.addElement(::MSU.Class.BooleanSetting("bandages", true, "Use Bandages",
+            "Use bandages on yourself and allies, both on autopilot and when unused AP left"));
     page.addElement(::MSU.Class.BooleanSetting("reload", true, "Auto reload",
             "Auto reload when unused AP left"));
     page.addElement(::MSU.Class.BooleanSetting("verbose", false, "Verbose AI",

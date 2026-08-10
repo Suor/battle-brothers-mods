@@ -135,6 +135,14 @@ local pairs = [
         ru = "Автоматически вырываться из сетей и паутины и будить союзников, когда остаются неиспользованные ОД"
     }
     {
+        en = "Use Bandages"
+        ru = "Использовать бинты"
+    }
+    {
+        en = "Use bandages on yourself and allies, both on autopilot and when unused AP left"
+        ru = "Перевязывать себя и союзников — и на автопилоте, и когда остаются неиспользованные ОД"
+    }
+    {
         en = "Auto reload"
         ru = "Авто-перезарядка"
     }
