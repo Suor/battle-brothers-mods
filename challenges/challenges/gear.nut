@@ -47,7 +47,10 @@ local function isBanned(_item) {
 // and AI alike - mirroring how the druid mod enforces its Beastform gear ban.
 mod.hook("scripts/items/item_container", function (q) {
     q.equip = @(__original) function (_item) {
-        if (::std.Util.isKindOf(m.Actor, "player") && isBanned(_item)) return false;
+        // MSU restores campaign settings only after the roster is deserialized, so during a
+        // load the ban would read the global value and scatter saved gear into the stash.
+        if (!::MSU.Serialization.isLoading()
+            && ::std.Util.isKindOf(m.Actor, "player") && isBanned(_item)) return false;
         return __original(_item);
     }
 })
