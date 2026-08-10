@@ -2938,11 +2938,6 @@ def.Titles <- [
         ["background.hackflows_master_archer"],
         ["attr.RangedSkill.high", "trait.eagle_eyes", "type.ranged"],
     ]}
-    {ru = "Ворот", en = "the Windlass", factors = [
-        ["background.hackflows_arbalester"],
-        ["background.hackflows_atilliator"],
-        ["weapon.crossbow"],
-    ]}
     {ru = "Конёк", en = "the Ridge", factors = [
         ["background.hackflows_roofer"],
         ["trait.sure_footing"],
@@ -3718,5 +3713,123 @@ def.Titles <- [
     {ru = "Мотылёк", en = "the Moth", factors = [
         ["trait.deathwish", "trait.tiny"],
         ["trait.deathwish", "trait.night_owl"],
+    ]}
+    {ru = "Безземельный", en = "the Landless", factors = [
+        ["background.disowned_noble"],
+        ["group.noble", "trait.pessimist"],
+    ]}
+    {ru = "Отрава", en = "the Poison", factors = [
+        ["background.ratcatcher"],
+        ["background.hackflows_herbalist", "trait.bloodthirsty"],
+        ["background.hackflows_cook", "trait.clumsy"],
+    ]}
+    {ru = "Пчела", en = "the Bee", factors = [
+        ["background.hackflows_gardener"],
+        ["background.hackflows_herbalist", "attr.Stamina.high"],
+        ["weapon.dagger", "trait.swift"],
+    ]}
+    {ru = "Уголёк", en = "the Ember", factors = [
+        ["background.hackflows_blacksmith", "trait.tiny"],
+        ["background.hackflows_blacksmith", "trait.impatient"],
+        ["background.miner", "trait.tiny"],
+    ]}
+    {ru = "Работяга", en = "the Toiler", factors = [
+        ["background.daytaler"],
+        ["group.peaceful", "attr.Stamina.high"],
+        ["group.peaceful", "trait.determined"],
+    ]}
+    {ru = "Медяк", en = "the Copper", factors = [
+        ["group.pauper"],
+        ["cost.low", "group.lowborn"],
+    ]}
+    {ru = "Чёрная кость", en = "Black Bone", factors = [
+        ["group.lowborn", "trait.strong"],
+        ["group.lowborn", "trait.tough"],
+        ["background.slave", "trait.strong"],
+    ]}
+    {ru = "Лыко", en = "the Bast", factors = [
+        ["group.lowborn", "trait.dumb"],
+        ["group.pauper", "trait.clumsy"],
+        ["group.pauper", "trait.survivor"],
+    ]}
+    {ru = "Чан", en = "the Vat", factors = [
+        ["background.hackflows_barkeep", "trait.fat"],
+        ["background.hackflows_barkeep", "trait.gluttonous"],
+        ["background.hackflows_cook", "trait.fat"],
+        ["background.hackflows_cook", "trait.gluttonous"],
+    ]}
+    {ru = "Удавка", en = "the Garrote", factors = [
+        ["background.assassin"],
+        ["background.hackflows_hangman"],
+        ["perk.backstabber", "trait.weasel"],
+    ]}
+    {ru = "Костоправ", en = "the Bonesetter", factors = [
+        ["background.hackflows_surgeon"],
+        ["background.anatomist"],
+        ["perk.crippling_strikes", "attr.MeleeSkill.high"],
+    ]}
+    {ru = "Требуха", en = "the Offal", factors = [
+        ["background.anatomist"],
+        ["background.butcher", "trait.bloodthirsty"],
+        ["background.hackflows_cook", "trait.bloodthirsty"],
+    ]}
+    {ru = "Отец", en = "Father", factors = [
+        ["background.monk", "attr.Bravery.high"],
+        ["background.monk", "perk.rally_the_troops"],
+        ["background.retired_soldier"],
+    ]}
+    {ru = "Оберег", en = "the Charm", factors = [
+        ["trait.superstitious"],
+        ["trait.superstitious", "attr.Bravery.low"],
+        ["trait.superstitious", "trait.lucky"],
+    ]}
+    {ru = "Песок", en = "the Sand", factors = [
+        ["background.gladiator"],
+        ["background.gladiator", "trait.survivor"],
+        ["background.nomad"],
+    ]}
+    {ru = "Веер", en = "the Fan", factors = [
+        ["background.bladedancer"],
+        ["weapon.sword", "perk.rotation"],
+        ["perk.footwork", "weapon.sword"],
+    ]}
+    {ru = "Клюка", en = "the Cane", factors = [
+        ["weapon.staff"],
+        ["background.cripple"],
+        ["injury.broken_knee", "attr.Initiative.low"],
+    ]}
+    {ru = "Козья ножка", en = "the Goat Foot", factors = [
+        ["weapon.crossbow", "attr.Stamina.low"],
+        ["background.hackflows_atilliator"],
+        ["background.hackflows_arbalester"],
+    ]}
+    {ru = "Ёж", en = "the Hedgehog", factors = [
+        ["weapon.spear", "attr.MeleeDefense.high"],
+        ["perk.reach_advantage", "attr.MeleeDefense.high"],
+        ["weapon.spear", "trait.paranoid"],
+    ]}
+    {ru = "Рубаха", en = "the Shirt", factors = [
+        ["trait.lucky", "perk.nimble"],
+        ["group.lowborn", "trait.lucky", "attr.MeleeDefense.high"],
+        ["trait.optimist", "trait.teamplayer"],
+    ]}
+    {ru = "Сердечко", en = "Little Heart", factors = [
+        ["injury.weakened_heart"],
+        ["injury.weakened_heart", "trait.craven"],
+        ["perk.bullseye", "attr.RangedSkill.high"],
+    ]}
+    {ru = "Мизинчик", en = "the Pinky", factors = [
+        ["injury.missing_finger"],
+        ["injury.missing_finger", "trait.tiny"],
+        ["trait.tiny", "attr.Hitpoints.low"],
+    ]}
+    {ru = "Шкет", en = "the Nipper", factors = [
+        ["trait.tiny", "background.apprentice"],
+        ["trait.tiny", "cost.low"],
+        ["background.thief", "trait.tiny"],
+    ]}
+    {ru = "Обормот", en = "the Scapegrace", factors = [
+        ["trait.dumb", "trait.impatient"],
+        ["background.brawler", "trait.dumb"],
     ]}
 ];

@@ -69,32 +69,32 @@
 // **Отруби / the Bran** — мельничная пыль в бороде; и звучит как приказ — `background.miller`; `background.miller + trait.brute`
 // **Мастерок / the Trowel** — кладёт ровно, что кирпич, что зубы — `background.mason`; `background.hackflows_carpenter`
 // **Набат / the Alarm Bell** — по нему сбегается всё село — `background.militia`; `background.hackflows_town_watchman + trait.paranoid`
-**Отрава / the Poison** — травил крыс, привычка осталась — `background.ratcatcher`; `background.hackflows_herbalist + trait.weasel` // why weasel  + cook clumsy
+**Отрава / the Poison** — травил крыс, привычка осталась — `background.ratcatcher`; `background.hackflows_herbalist + trait.bloodthirsty`; `background.hackflows_cook + trait.clumsy`
 // **Саван / the Shroud** — знает, во что заворачивать — `background.graverobber`; `background.gravedigger + trait.superstitious`
 // **Верста / the Milepost** — считает вёрсты, а не привалы — `background.messenger`; `background.messenger + attr.Stamina.high`
 // **Тис / the Yew** — из тиса гнут луки, из него — стрелков — `background.bowyer`; `background.hackflows_fletcher`; `weapon.bow + trait.determined`
 // **Замок / the Lock** — открывает что угодно, кроме своего рта — `background.hackflows_locksmith`; `background.hackflows_locksmith + trait.bright`
 // **Колокольчик / the Handbell** — прокажённому положено звенеть заранее — `background.hackflows_leper`; `background.hackflows_leper + trait.ailing`
-**Пчела / the Bee** — жужжит с рассвета, к вечеру жалит — `background.hackflows_gardener`; `background.hackflows_herbalist + attr.Stamina.high` // +dagger something
-**Уголёк / the Ember** — мелкий, чёрный и обжигает — `background.hackflows_blacksmith + trait.tiny`; `background.hackflows_blacksmith + trait.impatient`
-**Работяга / the Toiler** — руки помнят работу, а не меч — `group.peaceful + attr.Stamina.high` // more factors
-**Медяк / the Copper** — дешевле никого нет — `group.pauper`
-**Чёрная кость / Black Bone** — не голубая кровь, а чёрная кость — `group.lowborn + trait.strong` // more factors, but not very widespread
-**Лыко / the Bast** — лыком шит, а держит — `group.lowborn + trait.dumb`; `group.pauper + trait.clumsy`
+**Пчела / the Bee** — жужжит с рассвета, к вечеру жалит — `background.hackflows_gardener`; `background.hackflows_herbalist + attr.Stamina.high`; `weapon.dagger + trait.swift`
+**Уголёк / the Ember** — мелкий, чёрный и обжигает — `background.hackflows_blacksmith + trait.tiny`; `background.hackflows_blacksmith + trait.impatient`; `background.miner + trait.tiny`
+**Работяга / the Toiler** — руки помнят работу, а не меч — `background.daytaler`; `group.peaceful + attr.Stamina.high`; `group.peaceful + trait.determined`
+**Медяк / the Copper** — дешевле никого нет — `group.pauper`; `cost.low + group.lowborn`
+**Чёрная кость / Black Bone** — не голубая кровь, а чёрная кость — `group.lowborn + trait.strong`; `group.lowborn + trait.tough`; `background.slave + trait.strong`
+**Лыко / the Bast** — лыком шит, а держит — `group.lowborn + trait.dumb`; `group.pauper + trait.clumsy`; `group.pauper + trait.survivor`
 // **Копна / the Haystack** — здоровый, лохматый, из деревни — `background.farmhand + trait.huge`; `trait.huge + group.lowborn`
 // **Серп / the Sickle** — жал хлеб, жнёт остальное — `background.farmhand + weapon.cleaver`; `weapon.cleaver + group.lowborn`
 // **Ухват / the Pot Hook** — двумя руками и в печь — `background.hackflows_cook + trait.strong`; `weapon.polearm + trait.strong`
-**Чан / the Vat** — сколько влезет, столько и влезет — `background.hackflows_barkeep + trait.fat`; `background.hackflows_barkeep + trait.gluttonous` // +cook + something?
+**Чан / the Vat** — сколько влезет, столько и влезет — `background.hackflows_barkeep + trait.fat`; `background.hackflows_barkeep + trait.gluttonous`; `background.hackflows_cook + trait.fat`; `background.hackflows_cook + trait.gluttonous`
 // **Невод / the Seine** — тянет вместе со всеми и вытянет — `background.fisherman + trait.teamplayer`; `background.fisherman + attr.Stamina.high`
 // **Тюря / the Gruel** — хлеб, вода и никаких затей — `group.pauper + trait.gluttonous`; `background.beggar + attr.Stamina.low`
 // **Смола / the Tar** — прилип — не отдерёшь — `trait.determined + trait.loyal`; `background.hackflows_roofer + trait.determined`
 
 ## Кровавые ремёсла
 
-**Удавка / the Garrote** — тихо, коротко и без свидетелей — `background.assassin`; `perk.backstabber + trait.weasel`
+**Удавка / the Garrote** — тихо, коротко и без свидетелей — `background.assassin`; `background.hackflows_hangman`; `perk.backstabber + trait.weasel`
 // **Колодка / the Shackle** — носил сам, теперь надевает другим — `background.slave`; `background.manhunter`; `background.hackflows_torturer`
-**Костоправ / the Bonesetter** — правит кости, ломает по привычке — `background.hackflows_surgeon`; `background.anatomist`
-**Требуха / the Offal** — знает, что внутри у человека — `background.anatomist`; `background.anatomist + trait.bloodthirsty` // +cook combos
+**Костоправ / the Bonesetter** — правит кости, ломает по привычке — `background.hackflows_surgeon`; `background.anatomist`; `perk.crippling_strikes + attr.MeleeSkill.high`
+**Требуха / the Offal** — знает, что внутри у человека — `background.anatomist`; `background.butcher + trait.bloodthirsty`; `background.hackflows_cook + trait.bloodthirsty`
 // **Милость / the Mercy** — добивает раненых, называет это милостью — `perk.coup_de_grace`; `perk.coup_de_grace + trait.bloodthirsty`
 // **Дым / the Smoke** — после него от деревни остаётся дым — `background.raider`; `background.hackflows_pirate`
 // **Хвост / the Tail** — сел на след и не отвалится — `background.hackflows_bounty_hunter + trait.determined`; `background.manhunter + trait.determined`
@@ -103,11 +103,11 @@
 
 ## Вера, арена, чужие земли
 
-**Отец / Father** — командует и отпускает грехи, всё в одном — `background.paladin + perk.rally_the_troops`;`background.monk + perk.rally_the_troops`
+**Отец / Father** — командует и отпускает грехи, всё в одном — `background.hackflows_paladin_commander`; `background.paladin + perk.rally_the_troops`; `background.monk + perk.rally_the_troops`
 // **Купель / the Font** — отмыли от прежней веры, следы остались — `background.converted_cultist`; `background.witchhunter + trait.superstitious`
 // **Омела / the Mistletoe** — таскает пучки травы и бормочет — `background.hackflows_druid`; `background.shaman`
-**Оберег / the Charm** — без своей тряпочки в бой не пойдёт — `trait.superstitious`; `trait.superstitious + attr.Bravery.low`
-**Песок / the Sand** — вырос на арене, песок в крови — `background.gladiator`; `background.gladiator + trait.survivor` //+ nomad
+**Оберег / the Charm** — без своей тряпочки в бой не пойдёт — `trait.superstitious`; `trait.superstitious + attr.Bravery.low`; `trait.superstitious + trait.lucky`
+**Песок / the Sand** — вырос на арене, песок в крови — `background.gladiator`; `background.gladiator + trait.survivor`; `background.nomad`
 // **Венок / the Laurel** — победителю венок, остальным яма — `background.hackflows_champion`; `background.gladiator + trait.cocky`
 **Веер / the Fan** — крутится с клинками, не подойти — `background.bladedancer`; `weapon.sword + perk.rotation`; `perk.footwork + weapon.sword`
 // **Выпад / the Lunge** — учит одному движению, зато насмерть — `background.swordmaster`; `weapon.sword + perk.duelist`
@@ -117,7 +117,7 @@
 
 ## Оружие
 
-**Клюка / the Cane** — палка вместо меча, а хватает — `weapon.staff`; `background.shepherd + weapon.staff`; `weapon.staff + attr.Initiative.low` // staff not really used, need other factors
+**Клюка / the Cane** — палка вместо меча, а хватает — `weapon.staff`; `background.cripple`; `injury.broken_knee + attr.Initiative.low`
 // **Свирель / the Reed Pipe** — играет, пока другие копают могилы — `weapon.musical`; `background.shepherd + weapon.musical`
 // **Топорик / Handaxe** — метнёт раньше, чем ты замахнёшься — `weapon.throwing`; `weapon.throwing + trait.strong`
 **Козья ножка / the Goat Foot** — рычагом натягивает, руками не выходит — `weapon.crossbow + attr.Stamina.low`; `background.hackflows_atilliator`; `background.hackflows_arbalester`
@@ -125,7 +125,7 @@
 // **Свинец / the Lead** — свинец кладёт куда обещал — `weapon.firearm + attr.RangedSkill.high`; `weapon.sling + attr.RangedSkill.high`
 // **Огниво / the Firesteel** — искру высечет из чего угодно — `weapon.firearm`; `perk.elem_fire_affinity`
 // **Три локтя / Three Cubits** — три локтя древка между ним и тобой — `perk.reach_advantage`; `weapon.polearm + trait.huge`; `weapon.spear + perk.reach_advantage`
-**Ёж / the Hedgehog** — со всех сторон колется, не подступишься — `weapon.spear + attr.MeleeDefense.high`; `perk.reach_advantage + attr.MeleeDefense.high`
+**Ёж / the Hedgehog** — со всех сторон колется, не подступишься — `weapon.spear + attr.MeleeDefense.high`; `perk.reach_advantage + attr.MeleeDefense.high`; `weapon.spear + trait.paranoid`
 // **Тумак / the Wallop** — бьёт кулаком лучше, чем железом — `background.brawler + trait.strong`; `trait.brute + trait.strong`
 
 ## Перки и боевые привычки
@@ -140,7 +140,7 @@
 // **На ногах / Still Standing** — уже не должен стоять, а стоит — `perk.hold_out`; `perk.hold_out + trait.tough`
 // **Ломовой / the Drayhorse** — тянет и тянет, пока не кончится враг — `perk.relentless`; `perk.relentless + attr.Stamina.high`; `background.caravan_hand + trait.strong`
 // **Обвал / the Landslide** — навалился — и всё, накрыло — `perk.overwhelm`; `perk.overwhelm + trait.strong`
-**Рубаха / the Shirt** — в бой в одной рубахе; рубаха-парень — `trait.lucky + perk.nimble`; `group.lowborn + trait.lucky + attr.MeleeDefense.high`
+**Рубаха / the Shirt** — в бой в одной рубахе; рубаха-парень — `trait.lucky + perk.nimble`; `group.lowborn + trait.lucky + attr.MeleeDefense.high`; `trait.optimist + trait.teamplayer`
 // **Ремень / the Belt** — на нём висит всё, что нужно отряду — `perk.bags_and_belts`; `perk.quick_hands + perk.bags_and_belts`
 // **Хребет / the Backbone** — на нём держится вся линия — `attr.MeleeDefense.high + trait.loyal`; `perk.shield_expert + trait.loyal`
 // **Заслон / the Screen** — встанет перед тобой раньше, чем попросишь — `attr.MeleeDefense.high + trait.teamplayer`; `perk.shield_expert + trait.teamplayer`
@@ -153,9 +153,9 @@
 // **Скрип / the Creak** — сустав слышно раньше, чем шаги — `injury.broken_knee`; `injury.broken_elbow_joint`
 // **Локоть / the Elbow** — рука до конца не разгибается — `injury.broken_elbow_joint`; `injury.broken_elbow_joint + trait.brute`
 // **Свистун / the Wheezer** — дышит со свистом, слышно через поле — `injury.collapsed_lung_part`; `trait.asthmatic + attr.Stamina.low`
-**Сердечко / Little Heart** — сердечко пошаливает, а он всё лезет — `injury.weakened_heart`; `injury.weakened_heart + trait.craven` // +bulls eye?
+**Сердечко / Little Heart** — сердечко пошаливает, а он всё лезет; или кладёт стрелу точно в сердечко — `injury.weakened_heart`; `injury.weakened_heart + trait.craven`; `perk.bullseye + attr.RangedSkill.high`
 // **Дрожь / the Shakes** — руки не унимаются с той самой ночи — `injury.traumatized`; `injury.traumatized + trait.craven`
-**Мизинчик / the Pinky** — не хватает малости — `injury.missing_finger`; `injury.missing_finger + trait.tiny` // + tinty combos
+**Мизинчик / the Pinky** — не хватает малости — `injury.missing_finger`; `injury.missing_finger + trait.tiny`; `trait.tiny + attr.Hitpoints.low`
 // **Слепыш / the Blindworm** — днём щурится, ночью вообще стоит — `trait.night_blind + trait.short_sighted`; `trait.short_sighted + attr.RangedSkill.low`
 // **Ржа / the Rust** — старое железо, старый солдат — `background.retired_soldier + trait.ailing`; `cost.low + perk.battle_forged`
 
@@ -179,5 +179,5 @@
 // **Плечи / Broad Shoulders** — в плечах косая сажень — `trait.athletic`; `trait.athletic + attr.Stamina.high`
 // **Сажень / the Fathom** — мерят им, а не портновским аршином — `trait.athletic + trait.huge`; `trait.huge + perk.brawny`
 // **Вожжа / the Rein** — вожжа под хвост попала — и понесло — `trait.irrational + attr.Initiative.high`; `background.caravan_hand + trait.impatient`
-**Шкет / the Nipper** — мелкий, дешёвый, за старшими бегает — `trait.tiny + background.apprentice`; `trait.tiny + cost.low`
+**Шкет / the Nipper** — мелкий, дешёвый, за старшими бегает — `trait.tiny + background.apprentice`; `trait.tiny + cost.low`; `background.thief + trait.tiny`
 **Обормот / the Scapegrace** — ни ума, ни терпения, зато рвётся первым — `trait.dumb + trait.impatient`; `background.brawler + trait.dumb`
