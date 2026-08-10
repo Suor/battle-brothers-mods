@@ -33,12 +33,13 @@ Tested with:
 - Swifter
 - Reforged (some active skills won't be used)
 - Legends
+- [Proper Necromancer][necro] (uses Raise Undead and Possess)
+- [Proper Druid][druid] (summon, entangle and regrowth)
 - Accessory Companions (including Legends)
+- Pandora's Hobby (new skills work)
 - North Expansion
 - Heroic Scenario Pack
 - Fantasy Brothers (only some custom skills will be used)
-- [Proper Necromancer][necro] (uses Raise Undead and Possess)
-- [Proper Druid][druid] (summon, entangle and regrowth)
 - NgGH Magic Origins
 
 

@@ -57,6 +57,12 @@ mod.hook("scripts/ai/tactical/behaviors/ai_attack_default", function (q) {
         // Fantasy Brothers
         "actives.xxitem_leftsaa_skill" // Dual Attack
         "actives.sb_devablow_skill"
+        // Pandora's Hobby
+        "actives.ph_scalpel_stab"    // Bistoury, anatomist's starting weapon
+        "actives.ph_vivisect"        // ditto
+        "actives.ph_whack"           // Golden Whacker
+        "actives.ph_magic_bonk"      // Hexe Wand
+        "actives.ph_bro_slap"        // Artificer helm/armor
         // Looks like these are already added
         // "actives.xx_a" // Cut with Ring blade
         // "actives.xx_b" // Throw Ring blade
@@ -110,6 +116,11 @@ mod.hook("scripts/ai/tactical/behaviors/ai_defend_rotation", function (q) {
 mod.hook("scripts/ai/tactical/behaviors/ai_boost_morale", function (q) {
     q.m.PossibleSkills.extend([
         "actives.rf_encourage" // Reforged, Supporter perk
+    ]);
+});
+mod.hook("scripts/ai/tactical/behaviors/ai_always_use", function (q) {
+    q.m.PossibleSkills.extend([
+        "actives.ph_coat_with_spider_poison" // Pandora's Hobby, Poison Pot
     ]);
 });
 mod.hook("scripts/ai/tactical/behaviors/ai_boost_stamina", function (q) {

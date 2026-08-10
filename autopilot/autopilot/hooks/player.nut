@@ -84,6 +84,8 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_rally"));
         // Reforged's Encourage (Supporter perk), a goblin overseer behavior in vanilla
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_boost_morale"));
+        // Pandora's Hobby Poison Pot; vanilla skills here are all entity-granted to enemies
+        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_always_use"));
         // Bandit-only behavior; Reforged hangs Throw Pocket Sand and shield bash off it
         agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_distract"));
         // Disabled since doesn't consult offhand/backpack at all

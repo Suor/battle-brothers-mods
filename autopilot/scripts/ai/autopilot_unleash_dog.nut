@@ -5,6 +5,7 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
             "actives.unleash_wolf"
             "actives.unleash_direwolf"   // North Expansion
             "actives.unleash_companion"  // AC Legends
+            "actives.ph_unleash_dreadwolf"  // Pandora's Hobby
         ],
         Skill = null,
         TargetTile = null,
