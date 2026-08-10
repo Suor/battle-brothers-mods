@@ -68,6 +68,7 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         agent.addBehavior(this.new("scripts/ai/autopilot_step_n_hit"));
         agent.addBehavior(this.new("scripts/ai/autopilot_unbag_shield"));
         agent.addBehavior(this.new("scripts/ai/autopilot_swap_quiver"));
+        agent.addBehavior(this.new("scripts/ai/autopilot_heal_ally"));
         if (::Autopilot.conf("dogs")) {
             agent.addBehavior(this.new("scripts/ai/autopilot_unleash_dog"));
         }
@@ -131,11 +132,10 @@ mod.hook("scripts/entity/tactical/player", function (q) {
             agent.m.Properties.BehaviorMult[::Const.AI.Behavior.ID.EngageRanged] = 0.5;
         }
 
-        // Druid: summon beasts, root foes and bestow regrowth on allies
+        // Druid: summon beasts and root foes; regrowth rides along in autopilot_heal_ally
         if (::Hooks.hasMod("mod_druid")) {
             agent.addBehavior(::new("scripts/ai/autopilot_summon_beast"));
             agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_root"));
-            agent.addBehavior(::new("scripts/ai/autopilot_regrowth"));
         }
 
         // Fantasy Brothers: prefer shooting to walking
