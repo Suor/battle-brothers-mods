@@ -1,3 +1,9 @@
+0.8.0
+- 160+ new titles
+- support Black Pyramid factors: elemental phobias and affinities
+- fix a crash and badly fitting titles for event bros
+- fix impossible, non-working or too broad factor sets
+
 0.7.1
 - protect against bad traits and bgs, i.e. Black Pyramid
 
