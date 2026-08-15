@@ -8,7 +8,7 @@ local def = ::ImmortalWarriors <- {
         tagPrefix = "immortal-"
     }
 };
-local Rand = ::std.Rand.using(::rng), Util = ::std.Util, Table = ::std.Table;
+local Rand = ::std.Rand.using(::rng), Util = ::std.Util, Table = ::std.Table, Str = ::std.Str;
 local Debug = ::std.Debug.with({prefix = "iw: "})//.noop();
 
 ::mods_registerMod(def.ID, def.Version, def.Name);
@@ -166,6 +166,7 @@ def.RetainTraits <- [
     "trait.wolfmaster"
 ]
 def.RetainFlags <- [
+    "ActiveMutations" // Anatomist potions, kept in sync with the effects we restore
     "ArenaFights"
     "ArenaFightsWon"
     // North Expansion
@@ -187,6 +188,9 @@ def.DefaultInfo <- {
     Battles = 0
     Kills = 0
     Deaths = 0
+    Traits = null  // script names of def.RetainTraits the immortal had
+    Potions = null // script names of anatomist potion effects
+    Flags = null   // def.RetainFlags values
 }
 def.getImmortalInfo <- function (_i) {
     // if ("_ImmortalInfo" in mod) return null;
@@ -195,6 +199,60 @@ def.getImmortalInfo <- function (_i) {
 
     if (!(_i in this._ImmortalInfo)) this._ImmortalInfo[_i] <- clone this.DefaultInfo;
     return this._ImmortalInfo[_i];
+}
+
+// Anatomist potions leave a permanent effect, the rest of them are drugs
+local function isMutation(_skill) {
+    local id = _skill.getID();
+    return !_skill.m.IsRemovedAfterBattle
+        && Str.startswith(id, "effects.") && Str.endswith(id, "_potion");
+}
+// "effects.hyena_potion" -> "isHyenaPotionAcquired"
+local function acquiredFlag(_id) {
+    local words = Str.split("_", Str.cutprefix(_id, "effects.")).map(@(w) Str.capitalize(w));
+    return "is" + Str.join("", words) + "Acquired";
+}
+
+def.saveExtras <- function (_actor, _info) {
+    _info.Traits = [];
+    _info.Potions = [];
+    foreach (skill in _actor.getSkills().m.Skills) {
+        // Traits and effects are not data, we only remember how to make them anew,
+        // same as a savegame does.
+        local hash = skill.ClassNameHash;
+        if (this.RetainTraits.find(skill.getID()) != null) _info.Traits.push(hash);
+        else if (isMutation(skill)) _info.Potions.push(hash);
+    }
+
+    _info.Flags = {};
+    local flags = _actor.getFlags();
+    foreach (name in this.RetainFlags) {
+        if (flags.has(name)) _info.Flags[name] <- flags.get(name);
+    }
+}
+
+def.restoreExtras <- function (_actor, _info) {
+    // Flags go first, arena and duel traits read them as they are added
+    if (_info.Flags) foreach (name, value in _info.Flags) _actor.getFlags().set(name, value);
+
+    local hashes = [];
+    if (_info.Traits) hashes.extend(_info.Traits);
+    if (_info.Potions) hashes.extend(_info.Potions);
+
+    foreach (hash in hashes) {
+        local script = ::IO.scriptFilenameByHash(hash);
+        if (script == null) continue; // The mod providing it is gone
+
+        // Duplicates are up to the skill container, it knows what stacks and what doesn't
+        local skill = ::new(script);
+        _actor.getSkills().add(skill);
+
+        // The mutation is not lost, so the anatomist should not offer it again
+        if (!isMutation(skill)) continue;
+        local flag = acquiredFlag(skill.getID());
+        if (::World.Statistics.getFlags().has(flag))
+            ::World.Statistics.getFlags().set(flag, true);
+    }
 }
 
 def.boostTalents <- function (_player, _num) {

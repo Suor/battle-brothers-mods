@@ -1,6 +1,6 @@
 # Immortal Warriors
 
-You start with several jars containing soul of ancient warriors. These might be used onto your brothers to imbue them with immortal powers, which are configurable :). Upon death the soul is returned to a jar.
+You start with several jars containing soul of ancient warriors. These might be used onto your brothers to imbue them with immortal powers, which are configurable :). Upon death the soul is returned to a jar. It carries over the name, the deeds, the special traits like Gladiator or Chosen and the anatomist mutations to the next body.
 
 Immortal warriors also have a chance to heal a permanent injury on level up.
 

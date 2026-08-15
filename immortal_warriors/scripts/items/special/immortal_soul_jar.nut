@@ -116,11 +116,13 @@ this.immortal_soul_jar <- this.inherit("scripts/items/item", {
         trait.m.immortal_Index = this.m.immortal_Index;
         _actor.getSkills().add(trait);
 
+        local info = mod.getImmortalInfo(this.m.immortal_Index);
+        // Bring back the past self first, so that new traits are rolled around it
+        mod.restoreExtras(_actor, info);
+
         // Add powers
         mod.boostTalents(_actor, mod.conf("talents"));
         Player.addTraits(_actor, mod.conf("traits"), {good = true, bad = false, soso = false});
-
-        local info = mod.getImmortalInfo(this.m.immortal_Index);
 
         Player.giveLevels(_actor, this.levelsBoost(info));
 

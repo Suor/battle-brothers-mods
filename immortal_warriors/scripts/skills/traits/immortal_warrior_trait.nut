@@ -87,6 +87,7 @@ this.immortal_warrior_trait <- this.inherit("scripts/skills/traits/character_tra
         info.Battles += stats.Battles;
         info.Kills += stats.Kills;
         info.Deaths ++;
+        mod.saveExtras(actor, info);
 
         // Return the soul to a jar
         local jar = ::new("scripts/items/special/immortal_soul_jar");
