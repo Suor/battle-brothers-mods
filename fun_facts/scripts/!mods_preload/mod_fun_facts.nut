@@ -40,7 +40,8 @@ mod.s2ff <- function (_skill) {
 }
 
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
-::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.4), mod_msu(>=1.6.0), >mod_reforged", function() {
+// Pandora's Hobby replaces town_temple_dialog_module.onTreatInjury wholesale, we wrap it on top
+::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.4), mod_msu(>=1.6.0), >mod_reforged, >mod_pandoras_hobby", function() {
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
 
     local msd = ::MSU.System.Registry.ModSourceDomain, upd = mod.Updates;
