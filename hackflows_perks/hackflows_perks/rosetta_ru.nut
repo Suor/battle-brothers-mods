@@ -94,7 +94,7 @@ local pairs = [
         en = "Specialize in medium armor! Hitpoint and armor damage is reduced by <bonus:str_tag> when the total penalty to Maximum Fatigue from head and body armor is between <fat_low:int_tag> and <fat_high:int_tag>. Outside this range the bonus drops rapidly.\n\nCombines multiplicatively with Nimble and Battle Forged."
         ru = "Специализация на средней броне! Урон по здоровью и броне снижен на <bonus>, когда общий штраф к максимальной выносливости от шлема и брони между <fat_low> и <fat_high>. Вне этого диапазона бонус быстро снижается.\n\nСкладывается мультипликативно с навыками 'Ловкач' и 'Закалённый в боях'."
     }
-    // FILE: scripts/hackflows_perks/potential.nut
+    // FILE: hackflows_perks/potential.nut
     {
         en = "Promised Potential"
         ru = "Ожидаемый потенциал"

@@ -32,7 +32,7 @@ local def = ::HackflowsPerks <- {
 }
 local Str = ::std.Str, Text = ::std.Text;
 
-::include("scripts/hp_rosetta_ru");
+::include("hackflows_perks/rosetta_ru");
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
 mod.require("stdlib");
@@ -157,6 +157,6 @@ mod.queue(">mod_msu", ">mod_heal_repair_fix", ">mod_reforged", function () {
             add(_perkGroup);
         }
 
-        ::include("scripts/hackflows_perks/potential");
+        ::include("hackflows_perks/potential");
     }
 })
