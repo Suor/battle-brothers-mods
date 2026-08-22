@@ -1,3 +1,6 @@
+1.6.3
+- fixed the mod not working under vanilla (without Reforged)
+
 1.6.2
 - use level up changes for potential perk
 - fixed occasional crash
