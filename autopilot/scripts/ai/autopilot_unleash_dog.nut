@@ -41,21 +41,17 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         if (_entity.getSkills().hasSkill("background.companions_beastmaster")) score *= 3; // AC
         if (_entity.getSkills().hasSkill("trait.wolfmaster")) score *= 10; // North Expansion
 
-        // Find tile and count allies and enemies
+        local spot = ::Autopilot.summonSpot(this, _entity, this.m.Skill);
+        if (spot == null) return this.Const.AI.Behavior.Score.Zero;
+        this.m.TargetTile = spot.Tile;
+
+        // Count allies and enemies around us
         local myTile = _entity.getTile();
         local us = 1, enemies = 0;
-        for (local i = 0; i < ::Const.Direction.COUNT; i++) {
-            if (!myTile.hasNextTile(i)) continue;
-
-            local tile = myTile.getNextTile(i);
-            if (tile.IsOccupiedByActor) {
-                if (tile.getEntity().isAlliedWith(_entity)) {us++; }
-                else {enemies++; }
-            } else if (this.m.Skill.onVerifyTarget(myTile, tile)) {
-                if (!this.m.TargetTile) this.m.TargetTile = tile;
-            }
+        foreach (actor in ::std.Tile.iterAdjacentActors(myTile)) {
+            if (actor.isAlliedWith(_entity)) us++;
+            else enemies++;
         }
-        if (this.m.TargetTile == null) return this.Const.AI.Behavior.Score.Zero;
 
         if (enemies > us) {
             ::logInfo("Defending with dog")

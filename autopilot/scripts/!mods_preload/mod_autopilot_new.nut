@@ -54,6 +54,7 @@ mod.queue(">mod_msu", ">mod_reforged", ">mod_sellswords", ">mod_fantasybro", fun
             "Show AI debugging for auto bros"));
 
     foreach (file in ::IO.enumerateFiles("autopilot/hooks")) ::include(file);
+    ::include("autopilot/beasts");
     ::include("autopilot/better_attack_default");
     ::include("autopilot/better_behavior");
     ::include("autopilot/better_raise_undead");

@@ -30,41 +30,18 @@ this.autopilot_summon_beast <- this.inherit("scripts/ai/tactical/behavior", {
         this.m.Skill = this.selectSkill(this.m.PossibleSkills);
         if (this.m.Skill == null) return 0;
 
-        local myTile = _entity.getTile();
-
-        // Distance to the nearest known enemy decides how eager we are and where to plant the beast
-        local nearest = 99, nearestTile = null;
-        foreach (o in this.getAgent().getKnownOpponents()) {
-            local oTile = o.Actor.getTile();
-            local d = myTile.getDistanceTo(oTile);
-            if (d < nearest) { nearest = d; nearestTile = oTile; }
-        }
-
-        // Need a free tile beside us to plant the beast on; prefer the one closest to the foe so
-        // it lands on the line between us, screening the bro rather than spawning behind him.
-        local bestDist = 99;
-        foreach (tile in ::std.Tile.iterAdjacent(myTile)) {
-            if (!this.m.Skill.onVerifyTarget(myTile, tile)) continue;
-            local d = nearestTile == null ? 0 : tile.getDistanceTo(nearestTile);
-            if (this.m.TargetTile == null || d < bestDist) {
-                bestDist = d;
-                this.m.TargetTile = tile;
-            }
-        }
-        if (this.m.TargetTile == null) return 0;
+        local spot = ::Autopilot.summonSpot(this, _entity, this.m.Skill);
+        if (spot == null) return 0;
+        this.m.TargetTile = spot.Tile;
 
         // With Hatch use it more, basically on cooldown. Without it - wait for the moment.
         if (this.m.Skill.hasHatch()) {
-            if (debug) ::logInfo("summon: hatch, nearest=" + nearest + " score=" + score);
+            if (debug) ::logInfo("summon: hatch, nearest=" + spot.Nearest + " score=" + score);
             return score * 2;
         }
 
-        // Do not summon too soon, so that a beast won't need to run by itself, wasting AP
-        local ideal = _entity.getIdealRange();
-        if (nearest > ideal) return 0;
-        // Closer foe -> bigger payoff for committing the one summon now
-        score *= 1.0 + (ideal - nearest).tofloat() / ideal;
-        if (debug) ::logInfo("summon: single, nearest=" + nearest + " score=" + score);
+        score *= spot.Mult;
+        if (debug) ::logInfo("summon: single, nearest=" + spot.Nearest + " score=" + score);
         return score;
     }
 
