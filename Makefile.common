@@ -59,7 +59,7 @@ check-gfx:
 check: test check-gfx
 
 upload: zip
-	python3 ../_scripts/nexus_upload.py $(URL)
+	python3 ../_scripts/nexus.py upload
 
 log:
 	@python3 ../_scripts/bb_log_errors.py
