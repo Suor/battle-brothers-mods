@@ -9,6 +9,7 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         ],
         Skill = null,
         TargetTile = null,
+        Mode = "defensive",  // or "atwill", set from the "dogsMode" setting
     },
     function create()
     {
@@ -78,6 +79,12 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         if (q.Weak > q.Strong) {
             ::logInfo("Bullying with dog")
             return score / 2 * (q.Weak - q.Strong) //* this.getFatigueScoreMult(this.m.Skill);
+        }
+
+        // At will we spend the only dog as soon as a foe is close enough to be met by it
+        if (this.m.Mode == "atwill") {
+            ::logInfo("Unleashing dog at will")
+            return score * spot.Mult;
         }
 
         // Do not feel outnumbered and nobody to bully, maybe unleash just for fun :)

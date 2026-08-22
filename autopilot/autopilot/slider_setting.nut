@@ -1,0 +1,41 @@
+::Hooks.registerJS("ui/mods/autopilot_new/slider_setting.js");
+
+::Autopilot.SliderSetting <- class extends ::MSU.Class.RangeSetting {
+    Values = null;
+    Labels = null;
+    LabelInTitle = false;
+    static Type = "Autopilot_Slider";
+
+    constructor(_id, _value, _values, _labels = null, _name = null, _description = null) {
+        if (_values.find(_value) == null) {
+            ::logError("SliderSetting: _value must be an element in _values");
+            throw ::MSU.Exception.KeyNotFound(_value);
+        }
+        if (_labels == null) {
+            _labels = _values;
+        }
+        assert(_values.len() == _labels.len());
+
+        base.constructor(_id, _value, 0, _values.len() - 1, 1, _name, _description);
+        this.Values = _values;
+        this.Labels = _labels;
+    }
+
+    function setLabelInTitle(_value) {
+        this.LabelInTitle = _value;
+    }
+
+    function getUIData(_flags = []) {
+        return ::std.Table.merge(
+            base.getUIData(_flags), {values = this.Values, labels = this.Labels, labelInTitle = this.LabelInTitle})
+    }
+
+    function flagDeserialize(_in) {
+        base.flagDeserialize(_in);
+        if (this.Values.find(this.Value) == null) {
+            ::logError("Value \'" + this.Value + "\' not contained in array for setting "
+                 + this.getID() + " in mod " + this.getMod().getID());
+            this.reset();
+        }
+    }
+}

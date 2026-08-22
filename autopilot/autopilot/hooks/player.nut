@@ -70,8 +70,11 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         agent.addBehavior(this.new("scripts/ai/autopilot_swap_quiver"));
         agent.addBehavior(this.new("scripts/ai/autopilot_cleanse_ally"));
         agent.addBehavior(this.new("scripts/ai/autopilot_heal_ally"));
-        if (::Autopilot.conf("dogs")) {
-            agent.addBehavior(this.new("scripts/ai/autopilot_unleash_dog"));
+        local dogsMode = ::Autopilot.conf("dogsMode");
+        if (dogsMode != "never") {
+            local dogs = this.new("scripts/ai/autopilot_unleash_dog");
+            dogs.m.Mode = dogsMode;
+            agent.addBehavior(dogs);
         }
         if (::Autopilot.conf("nets")) {
             agent.addBehavior(this.new("scripts/ai/autopilot_unbag_net"));

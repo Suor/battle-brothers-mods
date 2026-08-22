@@ -115,8 +115,20 @@ local pairs = [
         ru = "Спустить псов"
     }
     {
-        en = "Use dogs in autopilot mode"
-        ru = "Использовать псов в режиме автопилота"
+        en = "How eagerly to unleash dogs in autopilot mode: never, only when hard pressed or as soon as a foe comes close"
+        ru = "Насколько охотно автопилот спускает псов: никогда, только когда приходится туго, или как только враг подойдёт"
+    }
+    {
+        en = "never"
+        ru = "никогда"
+    }
+    {
+        en = "defensive"
+        ru = "в защите"
+    }
+    {
+        en = "at will"
+        ru = "по желанию"
     }
     {
         en = "Throw Nets"
@@ -158,6 +170,9 @@ local pairs = [
         en = "Show AI debugging for auto bros"
         ru = "Показывать отладку ИИ для автоматических бойцов"
     }
+    // Setting value id, only its label is shown.
+    // FILE: scripts/!mods_preload/mod_autopilot_new.nut
+    // en = "atwill"
     // Internal ActorRef suffix used only in warning/crash messages — not user-facing.
     // FILE: autopilot/fixes.nut
     // en = " of <_obj.getName()>"

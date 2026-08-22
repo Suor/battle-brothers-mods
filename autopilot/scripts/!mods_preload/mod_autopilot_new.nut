@@ -38,8 +38,13 @@ mod.queue(">mod_msu", ">mod_reforged", ">mod_sellswords", ">mod_fantasybro", fun
     page.addElement(::MSU.Class.SettingsDivider("behaviorsDiv"));
     page.addElement(::MSU.Class.SettingsTitle("behaviorsTitle", "Behaviors"));
 
-    page.addElement(::MSU.Class.BooleanSetting("dogs", true, "Let The Dogs Out",
-            "Use dogs in autopilot mode"));
+    ::include("autopilot/slider_setting");
+    local dogs = page.addElement(::Autopilot.SliderSetting("dogsMode", "defensive",
+            ["never", "defensive", "atwill"], ["never", "defensive", "at will"],
+            "Let The Dogs Out",
+            "How eagerly to unleash dogs in autopilot mode: never, only when hard pressed"
+            + " or as soon as a foe comes close"));
+    dogs.setLabelInTitle(true);
     page.addElement(::MSU.Class.BooleanSetting("nets", true, "Throw Nets",
             "Use Throwing Nets when in autopilot mode"));
     // page.addElement(::MSU.Class.SettingsDivider("autoDiv"));
