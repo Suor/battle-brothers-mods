@@ -8,22 +8,28 @@ local rosetta = {
 }
 local pairs = [
     // FILE: scripts/!mods_preload/mod_swifter.nut
+    // en = "f1"
+    // en = "f2"
+    // en = "f3"
+    // en = "f4"
     // en = "Swifter"
     {
         en = "World Keybinds"
         ru = "Клавиши мира"
     }
     {
-        en = "4x World Speed"
-        ru = "4x скорость мира"
+        mode = "pattern"
+        en = "<n:int>x World Speed"
+        ru = "<n>x скорость мира"
     }
     {
         en = "Combat Keybinds"
         ru = "Клавиши боя"
     }
     {
-        en = "1x Combat Speed"
-        ru = "1x скорость боя"
+        mode = "pattern"
+        en = "<n:int>x Combat Speed"
+        ru = "<n>x скорость боя"
     }
     {
         en = "General"
