@@ -2,7 +2,7 @@ if (!("Rosetta" in getroottable())) return;
 if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.4.0")) return;
 
 local rosetta = {
-    mod = {id = "backgroundBonuses", version = "1.11"}
+    mod = {id = "backgroundBonuses", version = "1.15.1"}
     author = "hackflow"
     lang = "ru"
 }
@@ -51,14 +51,9 @@ local pairs = [
         ru = "Получает одно дополнительное очко навыка."
     }
     {
-        en = "Deal 5 non-lethal damage to enemies whenever this character dodges their attack."
-        ru = "При уклонении наносит 5 единиц нелетального урона атакующему."
-    }
-    {
-        // this.Tactical.EventLog.log(this.Const.UI.getColorizedEntityName(_attacker) + " takes 5 damage.");
         mode = "pattern"
-        en = "<attacker:str_tag> takes 5 damage."
-        ru = "<attacker> получает 5 урона."
+        en = "Deal <n:int> damage to enemies whenever this character dodges their attack."
+        ru = "При уклонении наносит атакующему <n> урона."
     }
     {
         en = "Deals +1 additional damage with each tile distant from target."
@@ -89,8 +84,9 @@ local pairs = [
         ru = "+2 ко всем характеристикам за каждую травму."
     }
     {
-        en = "Deals 30% increased damage to undead."
-        ru = "Наносит на 30% больше урона нежити."
+        mode = "pattern"
+        en = "Deals <pct:val> increased damage to undead."
+        ru = "Наносит на <pct> больше урона нежити."
     }
     {
         en = "Has a positive morale check upon allies dying."
@@ -105,7 +101,7 @@ local pairs = [
         ru = "Наносит на 20% больше урона при нерешительном боевом духе и на 40% при сломленном."
     }
     {
-        en = "The effects of a positive morale state are twice as strong. The effects of negative morale states are 50% stronger."
+        en = "The effects of a positive morale state are twice as strong. The effects of negative morale states are 50% more potent."
         ru = "Эффекты положительного боевого духа вдвое сильнее. Эффекты отрицательного боевого духа на 50% сильнее."
     }
     {
@@ -125,8 +121,9 @@ local pairs = [
         ru = "Невосприимчив к обаянию, страху и другим ментальным эффектам."
     }
     {
-        en = "Increases base fatigue by 10%. Gain +5% chance to hit with pitchforks and hooked blades."
-        ru = "Базовая выносливость увеличивается на 10%. +5% к шансу попасть вилами и крюками."
+        mode = "pattern"
+        en = "Increases base fatigue by <fat:val>. Gain <pitch:val> chance to hit with pitchforks and <hook:val> with hooked blades."
+        ru = "Базовая выносливость увеличивается на <fat>. <pitch> к шансу попасть вилами и <hook> крюками."
     }
     {
         en = "Increases base fatigue by 10%."
@@ -157,8 +154,9 @@ local pairs = [
         ru = "+1 к выносливости за каждого погибшего союзника, до +30."
     }
     {
-        en = "Gain +1 head and body armor for each ally who has died, up to +30."
-        ru = "+1 к прочности шлема и доспеха за каждого погибшего союзника, до +30."
+        mode = "pattern"
+        en = "Gain <n:int> head and body armor for each ally who has died, up to <max:int>."
+        ru = "<n> к прочности шлема и доспеха за каждого погибшего союзника, до <max>."
     }
     {
         en = "Reduces armor penetrating damage by 10%."
@@ -211,8 +209,9 @@ local pairs = [
         ru = "Умения с кнутом стоят на 2 выносливости меньше и дают +5 к шансу попасть."
     }
     {
-        en = "Base melee defense is increased by 50%. Melee skill is reduced by the same amount."
-        ru = "Базовая защита в ближнем бою увеличивается на 50%. Навык ближнего боя снижается на столько же."
+        mode = "pattern"
+        en = "Base melee defense is increased by <pct:val>. Melee skill is reduced by the same amount."
+        ru = "Базовая защита в ближнем бою увеличивается на <pct>. Навык ближнего боя снижается на столько же."
     }
     {
         en = "Reduces fatigue cost of movement by 50%."
@@ -223,8 +222,9 @@ local pairs = [
         ru = "Наносит на 15% больше урона, когда союзников больше, чем врагов."
     }
     {
-        en = "Gains HP equal to 15% of max fatigue."
-        ru = "Получает ОЗ, равные 15% максимальной выносливости."
+        mode = "pattern"
+        en = "Gains HP equal to <pct:val> of max fatigue."
+        ru = "Получает ОЗ, равные <pct> максимальной выносливости."
     }
     {
         en = "Deals an additional 10% damage to armor."
@@ -257,8 +257,9 @@ local pairs = [
         ru = "Наносит на 30% больше урона зеленокожим."
     }
     {
-        en = "Gain +1 head and body armor per 1000 gold, up to +50."
-        ru = "+1 к прочности шлема и доспеха за каждые 1000 крон в казне, до +50."
+        mode = "pattern"
+        en = "Gain <n:int> head and body armor per <per:int> gold, up to <max:int>."
+        ru = "<n> к прочности шлема и доспеха за каждые <per> крон в казне, до <max>."
     }
     {
         en = "All allies start combat at one higher morale state."
@@ -297,12 +298,12 @@ local pairs = [
         ru = "Реже становится целью врагов."
     }
     {
-        en = "Can use slings in melee range. Gain +10% chance to hit with slings."
-        ru = "Может использовать пращу в ближнем бою. +10% к шансу попасть из пращи."
+        en = "Can use slings in melee range, and slings exert zone of control. Gain +10% chance to hit with slings."
+        ru = "Может использовать пращу в ближнем бою, и праща создаёт зону контроля. +10% к шансу попасть из пращи."
     }
     {
-        en = "Can use slings in melee range."
-        ru = "Может использовать пращу в ближнем бою."
+        en = "Can use slings in melee range, and slings exert zone of control."
+        ru = "Может использовать пращу в ближнем бою, и праща создаёт зону контроля."
     }
     {
         en = "Gain +1 melee skill per 20 days with the company, up to +30 melee skill."
@@ -317,8 +318,8 @@ local pairs = [
         ru = "Полностью чинит броню в конце каждого боя."
     }
     {
-        en = "Gain 10 crowns on each hit against non-beast enemies."
-        ru = "+10 крон за каждое попадание по небестиальным врагам."
+        en = "Upon dodging a melee attack, has a chance equal to 10% of current initiative to disarm the attacker."
+        ru = "При уклонении от атаки в ближнем бою обезоруживает атакующего с шансом, равным 10% текущей инициативы."
     }
     {
         en = "Gain +5% damage for each tile moved this turn."
@@ -549,8 +550,8 @@ local pairs = [
         ru = "Копья и древковое оружие наносят дополнительные 20% урона по броне."
     }
     {
-        en = "Deals 10% of max HP to all adjacent units at the start of this unit's turn as non-lethal damage (only affects units who can bleed)."
-        ru = "В начале хода наносит 10% от максимальных ОЗ всем соседним юнитам как нелетальный урон (только юнитам, способным истекать кровью)."
+        en = "Deals 10% of max HP to all adjacent units at the start of this unit's turn (only affects units who can bleed)."
+        ru = "В начале хода наносит 10% от максимальных ОЗ всем соседним юнитам (только юнитам, способным истекать кровью)."
     }
     {
         // this.Tactical.EventLog.log(getColorizedEntityName(actor) + " deals " + Math.floor(actor.getHitpointsMax() * 0.1) + " damage to all adjacent units.");
@@ -559,8 +560,9 @@ local pairs = [
         ru = "<actor> наносит <n> урона всем соседним юнитам."
     }
     {
-        en = "Always deals a minimum of 5 HP damage with each hit."
-        ru = "Каждое попадание наносит не менее 5 урона по ОЗ."
+        mode = "pattern"
+        en = "Always deals a minimum of <n:int> HP damage with each hit."
+        ru = "Каждое попадание наносит не менее <n> урона по ОЗ."
     }
     {
         en = "The penalty to hitchance from obstructed line-of-sight is reduced by 20%."
@@ -575,8 +577,8 @@ local pairs = [
         ru = "+1 ко всем характеристикам за каждую клетку расстояния от ближайшего союзника, до +15."
     }
     {
-        en = "Gains +15 to all stats. This bonus is lost upon dealing or receiving damage."
-        ru = "+15 ко всем характеристикам. Бонус теряется при нанесении или получении урона."
+        en = "Gains +15 to all stats. This bonus is lost upon dealing damage."
+        ru = "+15 ко всем характеристикам. Бонус теряется при нанесении урона."
     }
     {
         en = "Reduce damage received to armor and health by a flat amount equal to 2% of resolve."
@@ -603,8 +605,8 @@ local pairs = [
         ru = "Наносит на 25% больше урона, но не снижает ОЗ врагов ниже 1 (если они уже не были на 1 ОЗ)."
     }
     {
-        en = "Gains +5 melee skill and melee defense after waiting."
-        ru = "+5 к навыку и защите в ближнем бою после ожидания."
+        en = "Gains +5 to all stats after waiting."
+        ru = "+5 ко всем характеристикам после ожидания."
     }
     {
         en = "When nothing is equipped in the offhand, follow up each attack against adjacent targets with a clawed swipe."
@@ -646,6 +648,76 @@ local pairs = [
     {
         en = "Gains +1 to all stats for each controlled undead."
         ru = "+1 ко всем характеристикам за каждую подконтрольную нежить."
+    }
+    {
+        en = "General"
+        ru = "Общие"
+    }
+    {
+        en = "Force Perk Groups"
+        ru = "Навязать группы навыков"
+    }
+    {
+        en = "If true, backgrounds with bonuses related to specific weapons will always roll that weapon's perk group in reforged (affected backgrounds: Juggler, Shepherd, Carpenter, Fletcher, Pirate)"
+        ru = "Если включено, происхождения с бонусами к определённому оружию в Reforged всегда получают группу навыков этого оружия (затронуты: Жонглёр, Пастух, Плотник, Мастер по изготовлению стрел, Пират)"
+    }
+    {
+        en = "Any hit that deals HP damage and leaves the enemy below 10% max HP will kill with a fatality."
+        ru = "Любое попадание по ОЗ, оставляющее врага ниже 10% максимальных ОЗ, добивает его."
+    }
+    {
+        en = "Any hit that deals HP damage and leaves the enemy below 10% max HP will kill."
+        ru = "Любое попадание по ОЗ, оставляющее врага ниже 10% максимальных ОЗ, убивает его."
+    }
+    {
+        // ::Tactical.EventLog.log(::Const.UI.getColorizedEntityName(this.getContainer().getActor()) + " has disarmed " + ::Const.UI.getColorizedEntityName(_attacker) + " for " + effect.m.TurnsLeft + " turn(s)");
+        mode = "pattern"
+        en = "<actor:str_tag> has disarmed <attacker:str_tag> for <turns:int> turn(s)"
+        ru = "<actor> обезоружил противника <attacker> на <turns> ход(а,ов)"
+    }
+    {
+        en = "Lose 5 non-lethal HP per turn. Regain 10 HP, 10 fatigue, and +1 AP upon ending a movement on a corpse."
+        ru = "Теряет 5 ОЗ за ход (не насмерть). Восстанавливает 10 ОЗ, 10 выносливости и +1 ОД, закончив движение на трупе."
+    }
+    {
+        en = "Upon killing an enemy, gain temporary HP equal to 10% of their max health. Lasts until battle end."
+        ru = "За убийство врага даёт временные ОЗ, равные 10% его максимальных ОЗ. Держится до конца боя."
+    }
+    {
+        en = "On turn start, gain +1 AP for each adjacent enemy."
+        ru = "В начале хода +1 ОД за каждого соседнего врага."
+    }
+    {
+        en = "On hits that deal at least 5 HP damage, summon vines around the target."
+        ru = "При попаданиях с уроном не менее 5 ОЗ оплетает цель лозой."
+    }
+    {
+        en = "Has +30% armor piercing when attacking from behind."
+        ru = "+30% пробивания брони при атаке со спины."
+    }
+    {
+        en = "Chill adjacent attacker upon being hit in melee."
+        ru = "При попадании в ближнем бою замораживает атакующего рядом."
+    }
+    {
+        en = "Modifications to melee skill, melee defense, ranged skill, ranged defense, and max hitpoints, both positive and negative, are increased by 50%."
+        ru = "Все изменения навыка и защиты в ближнем бою, навыка и защиты в дальнем бою и максимальных ОЗ — как положительные, так и отрицательные — усилены на 50%."
+    }
+    {
+        en = "Deals 20% increased damage and has +20 melee skill for any attacks made outside of this bro's turn."
+        ru = "Атаки вне своего хода наносят на 20% больше урона и получают +20 к навыку ближнего боя."
+    }
+    {
+        en = "Gains +2 melee defense for each attack the previous turn. Gains +2 melee skill for each time attacked the previous turn."
+        ru = "+2 к защите в ближнем бою за каждую свою атаку в прошлый ход. +2 к навыку ближнего боя за каждую атаку по нему в прошлый ход."
+    }
+    {
+        en = "If this bro did not attack on the previous turn, gain +1 AP, 20% damage reduction, and deal 20% increased damage."
+        ru = "Если в прошлый ход не атаковал: +1 ОД, урон по нему снижен на 20%, свой урон выше на 20%."
+    }
+    {
+        en = "Immune to root effects (nets, webs, etc.)."
+        ru = "Невосприимчив к обездвиживанию (сети, паутина и прочее)."
     }
 ]
 ::Rosetta.add(rosetta, pairs);
