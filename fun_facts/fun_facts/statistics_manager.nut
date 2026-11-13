@@ -38,8 +38,8 @@ local Debug = ::std.Debug, Util = std.Util;
             }
             if (!ffState) continue;
             fallen.FunFacts <- ::new("scripts/mods/fun_facts/fun_facts");
-            fallen.FunFacts.unpack(ffState);
             fallen.FunFacts.setName(fallen.Name);
+            fallen.FunFacts.unpack(ffState);
         }
 
         ::FunFacts.Buys.unpack(this.m.Flags);
