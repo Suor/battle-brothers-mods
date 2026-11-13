@@ -99,7 +99,6 @@ this.fun_facts <- {
 
     function setPlayer(_player) {
         this.m.Player = ::WeakTableRef(_player);
-        this.m.Name = _player.getName();
     }
     function setName(_name) {
         this.m.Name = _name;
