@@ -7,7 +7,8 @@ local mod = ::FunFacts <- {
         github = "https://github.com/Suor/battle-brothers-mods/tree/master/fun_facts"
         tagPrefix = "fun-facts-"
     }
-    BattleId = null
+    // In the campaign's flags: ids keep growing through loads, whoever holds the last one
+    BattleIdFlag = "FunFacts.BattleId"
 
     // Switcheroo flags
     LastFallen = null
@@ -17,8 +18,10 @@ mod.Debug <- ::std.Debug.with({prefix = "ff: "})
 mod.getBattleId <- function() {
     // Main-menu scenarios have no campaign, so no battles to number
     if (!("Statistics" in ::World) || ::World.Statistics == null) return 0;
-    if (this.BattleId) return this.BattleId;
+    local id = ::World.Flags.get(this.BattleIdFlag);
+    if (id) return id;
 
+    // A save from before the flag continues after its records
     local bros = ::World.getPlayerRoster().getAll();
     local fallen = ::World.Statistics.getFallen();
     local ffs = bros.map(@(b) b.m.FunFacts);
@@ -30,11 +33,12 @@ mod.getBattleId <- function() {
         if (lastId != null && lastId > maxId) maxId = lastId;
     }
 
-    this.BattleId = maxId + 1;
-    return this.BattleId;
+    ::World.Flags.set(this.BattleIdFlag, maxId + 1);
+    return maxId + 1;
 }
 mod.incrBattleId <- function() {
-    if (this.BattleId) this.BattleId++;
+    local id = this.getBattleId();
+    if (id) ::World.Flags.set(this.BattleIdFlag, id + 1);
 }
 mod.s2ff <- function (_skill) {
     local actor = _skill.getContainer().getActor();
