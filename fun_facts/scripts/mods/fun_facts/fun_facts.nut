@@ -232,10 +232,6 @@ this.fun_facts <- {
 
     function onDeath(_killer, _fatalityType) {
         // TODO: check how killer is null on reposte???
-        if (!_killer) {
-            ::logError("ff: no killer in FunFacts.onDeath")
-            ::MSU.Log.printStackTrace()
-        }
         local record = {
             BattleId = ::FunFacts.getBattleId()
             IsPlayer = _killer ? _killer.isPlayerControlled() : false
