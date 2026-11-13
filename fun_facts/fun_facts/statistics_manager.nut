@@ -30,7 +30,10 @@ local Debug = ::std.Debug, Util = std.Util;
         onDeserialize(_in);
 
         foreach (i, fallen in this.m.Fallen) {
-            local ffState;
+            local packed = this.m.Flags.get("FallenFunFacts." + i), ffState;
+            // A fallen without fun facts is saved as null, which the engine stringifies
+            if (typeof packed == "string" && packed.find(::std.Packer.magic) != 0
+                && packed.find(::std.Flags.ChunkMagic) != 0) continue;
             try {
                 ffState = ::std.Flags.unpack(this.m.Flags, "FallenFunFacts." + i);
             } catch (err) {
