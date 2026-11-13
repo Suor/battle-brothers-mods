@@ -124,5 +124,5 @@ local function joinNames(_names) {
     local parts = groupOrder.map(function(verb) {
         return format(verb, joinNames(groups[verb]));
     });
-    return "Unwittingly " + Str.join(". ", parts);
+    return "Unwittingly " + Str.join(", ", parts);
 }

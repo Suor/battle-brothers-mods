@@ -152,12 +152,18 @@ local pairs = [
     }
     // en = "enemy"
     {
-        // return "Unwittingly " + Str.join(". ", parts);
+        // return "Unwittingly " + Str.join(", ", parts);
         mode = "pattern"
         en = "Unwittingly <kills:str>"
         function use(_str, _m) {
-            return "Нечаянно " + Str.join(". ",
-                Str.split(". ", _m.kills).map(@(p) Str.replace(verbsRosetta._(p), " and ", " и ")));
+            // Names are colored, so a chunk starting with a tag continues a list of names
+            local parts = [];
+            foreach (chunk in Str.split(", ", _m.kills)) {
+                if (parts.len() > 0 && Str.startswith(chunk, "[")) parts[parts.len() - 1] += ", " + chunk;
+                else parts.push(chunk);
+            }
+            return "Нечаянно " + Str.join(", ",
+                parts.map(@(p) Str.replace(verbsRosetta._(p), " and ", " и ")));
                 // Str.split(". ", _m.kills).map(@(p) joinAnd("и", splitAnd("and", verbsRosetta._(p)))));
         }
     }
