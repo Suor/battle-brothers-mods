@@ -2,8 +2,8 @@ local Str = ::std.Str, Text = ::std.Text;
 
 local fatalities = {};
 fatalities[1] <- "chopped %s";
-fatalities[2] <- "smashed %s";
-fatalities[3] <- "gutted %s";
+fatalities[2] <- "gutted %s";
+fatalities[3] <- "smashed %s";
 
 local function expand(_groups) {
     local result = {};

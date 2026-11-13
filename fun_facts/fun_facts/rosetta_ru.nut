@@ -339,16 +339,16 @@ local verbPairs = [
         ru = "снёс башку <names>"
     }
     {
-        // fatalities[2] <- "smashed %s";
-        mode = "pattern"
-        en = "smashed <names:str>"
-        ru = "размозжил башку <names>"
-    }
-    {
-        // fatalities[3] <- "gutted %s";
+        // fatalities[2] <- "gutted %s";
         mode = "pattern"
         en = "gutted <names:str>"
         ru = "выпотрошил <names>"
+    }
+    {
+        // fatalities[3] <- "smashed %s";
+        mode = "pattern"
+        en = "smashed <names:str>"
+        ru = "размозжил башку <names>"
     }
     {
         // ["shot %s in the back", [
