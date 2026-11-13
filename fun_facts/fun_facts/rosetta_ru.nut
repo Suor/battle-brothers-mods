@@ -164,21 +164,23 @@ local pairs = [
     // en = "<_names[0]> and <_names[1]>"
     // en = "<Str.join(, , _names.slice(0, _names.len()-1))> and <_names[_names.len()-1]>"
     {
-        // format("Suffered %s injuries", red(this.m.Stats.Injuries.len())))
+        // format("Suffered %s %s", red(injuries), injuries == 1 ? "injury" : "injuries"))
         plural = "n"
-        en = "Suffered <n:int_tag> injuries"
+        en = "Suffered <n:int_tag> injur<_:word>"
         n1 = "Получил <n> травму"
         n2 = "Получил <n> травмы"
         n5 = "Получил <n> травм"
     }
     {
-        // format("Inflicted %s injuries", red(this.m.Stats.InjuriesDealt.len())))
+        // format("Inflicted %s %s", red(injuriesDealt), injuriesDealt == 1 ? "injury" : "injuries"))
         plural = "n"
-        en = "Inflicted <n:int_tag> injuries"
+        en = "Inflicted <n:int_tag> injur<_:word>"
         n1 = "Нанёс <n> травму"
         n2 = "Нанёс <n> травмы"
         n5 = "Нанёс <n> травм"
     }
+    // en = "injury"
+    // en = "injuries"
     {
         // text = "Used nine lives " + (uses  > 1 ? uses + " times" : "once");
         plural = "uses"
@@ -230,9 +232,10 @@ local pairs = [
         ru = "Как-то раз выжил на кошечке"
     }
     {
-        // local text = format("Fled %s times in %s battles", red(fled), red(fledBattles));
+        // local text = format("Fled %s %s in %s %s", red(fled), fled == 1 ? "time" : "times",
+        //                     red(fledBattles), fledBattles == 1 ? "battle" : "battles");
         plural = "fled"
-        en = "Fled <fled:int_tag> times in <battles:int_tag> battles"
+        en = "Fled <fled:int_tag> time<_t:str> in <battles:int_tag> battle<_b:str>"
         // TODO:
         //   ru = "Бежал <fled:p(раз,раза,раз)> в <battles:p(битве,битвах,битвах)>"
         //   ru = "Бежал <fled> <fled:p:раз,раза,раз> в <battles> <battles:p:битве,битвах,битвах>"
@@ -240,10 +243,11 @@ local pairs = [
         n2 = "Бежал <fled> раза в <battles> битвах"
         n5 = "Бежал <fled> раз в <battles> битвах"
     }
+    // en = "battles"
     {
-        // local text = "Slacked for " + this.m.Stats.BattlesSkipped + " battles of total " + total;
+        // local text = "Slacked for " + skipped + (skipped == 1 ? " battle" : " battles") + " of total " + total;
         plural = "n"
-        en = "Slacked for <n:int> battles of total <total:int><end:str>"
+        en = "Slacked for <n:int> battle<_:str> of total <total:int><end:str>"
         n1 = "Профилонил <n:int> битву из <total:int><end:t>"
         n2 = "Профилонил <n:int> битвы из <total:int><end:t>"
         n5 = "Профилонил <n:int> битв из <total:int><end:t>"
@@ -256,9 +260,9 @@ local pairs = [
     }
         // en = "Effects"
     {
-        // .map(@(n) format("%s %d times", n, effects[n]));
+        // .map(@(n) format("%s %d %s", n, effects[n], effects[n] == 1 ? "time" : "times"));
         plural = "n"
-        en = "<effect:str> <n:int> times"
+        en = "<effect:str> <n:int> time<_:str>"
         n1 = "<effect:t> <n> раз"
         n2 = "<effect:t> <n> раза"
         n5 = "<effect:t> <n> раз"
@@ -266,9 +270,9 @@ local pairs = [
     {
         // local text = "Was " + Str.join(", ", desc);
         mode = "pattern"
-        en = "Was <middle:str> times"
+        en = "Was <middle:str> time<s:str>"
         function use(_str, _m) {
-            return "Был " + ::Rosetta.useSplit(this, ", ", _m.middle + " times")
+            return "Был " + ::Rosetta.useSplit(this, ", ", _m.middle + " time" + _m.s)
         }
     }
     {

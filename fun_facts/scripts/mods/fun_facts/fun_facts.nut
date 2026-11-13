@@ -388,13 +388,15 @@ this.fun_facts <- {
             addHint("ui/icons/asset_brothers.png", ::FunFacts.PlayerKillsHint(playerKills));
         }
 
-        if (this.m.Stats.Injuries.len() > 0) {
+        local injuries = this.m.Stats.Injuries.len();
+        if (injuries > 0) {
             addHint("ui/icons/damage_received.png",
-                format("Suffered %s injuries", red(this.m.Stats.Injuries.len())))
+                format("Suffered %s %s", red(injuries), injuries == 1 ? "injury" : "injuries"))
         }
-        if (this.m.Stats.InjuriesDealt.len() > 0) {
+        local injuriesDealt = this.m.Stats.InjuriesDealt.len();
+        if (injuriesDealt > 0) {
             addHint("ui/icons/damage_dealt.png",
-                format("Inflicted %s injuries", red(this.m.Stats.InjuriesDealt.len())))
+                format("Inflicted %s %s", red(injuriesDealt), injuriesDealt == 1 ? "injury" : "injuries"))
         }
 
         if (this.m.Stats.NineLivesSaves > 0 || this.m.Stats.NineLivesUses > 0) {
@@ -422,13 +424,15 @@ this.fun_facts <- {
             if (battle.Fled) fledBattles++;
         }
         if (fled > 0) {
-            local text = format("Fled %s times in %s battles", red(fled), red(fledBattles));
+            local text = format("Fled %s %s in %s %s", red(fled), fled == 1 ? "time" : "times",
+                                red(fledBattles), fledBattles == 1 ? "battle" : "battles");
             addHint("ui/icons/tracking_disabled.png", text);
         }
 
         if (this.m.Stats.BattlesSkipped > 0) {
             local total = this.m.Stats.BattlesSkipped + this.m.Stats.Battles;
-            local text = "Slacked for " + this.m.Stats.BattlesSkipped + " battles of total " + total;
+            local skipped = this.m.Stats.BattlesSkipped;
+            local text = "Slacked for " + skipped + (skipped == 1 ? " battle" : " battles") + " of total " + total;
             local skippedDrunk = this.getProp("SkippedDrunk");
             if (skippedDrunk != 0) {
                 text += ". " + skippedDrunk + " of them being drunk or hangover.";
@@ -441,7 +445,7 @@ this.fun_facts <- {
         if (effects.len() > 0) {
             local names = ["swallowed" "charmed" "netted" "stunned"];
             local desc = names.filter(@(_, n) n in effects)
-                              .map(@(n) format("%s %d times", n, effects[n]));
+                              .map(@(n) format("%s %d %s", n, effects[n], effects[n] == 1 ? "time" : "times"));
             local text = "Was " + Str.join(", ", desc);
             addHint("ui/perks/perk_04.png", text)
         }
