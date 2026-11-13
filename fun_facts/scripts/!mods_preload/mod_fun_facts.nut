@@ -15,6 +15,8 @@ local mod = ::FunFacts <- {
 }
 mod.Debug <- ::std.Debug.with({prefix = "ff: "})
 mod.getBattleId <- function() {
+    // Main-menu scenarios have no campaign, so no battles to number
+    if (!("Statistics" in ::World) || ::World.Statistics == null) return 0;
     if (this.BattleId) return this.BattleId;
 
     local bros = ::World.getPlayerRoster().getAll();
