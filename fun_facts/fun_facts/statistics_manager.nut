@@ -65,6 +65,9 @@ local Debug = ::std.Debug, Util = std.Util;
                 text = "Noone remembers anything fun about this dude."
             })
         }
+        // Career Stats binds the same obituary row, only the last bound tooltip shows
+        if ("CareerStats_getTooltipForFallen" in this)
+            tooltip.extend(this.CareerStats_getTooltipForFallen(_idx).slice(1));
         return tooltip;
     }
 });
