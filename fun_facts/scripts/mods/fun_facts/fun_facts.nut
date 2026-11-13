@@ -255,8 +255,8 @@ this.fun_facts <- {
         local record = {
             BattleId = ::FunFacts.getBattleId()
             Injury = _injury.m.ID.slice("injury.".len())
-            AttackerClass = _attacker.ClassName
-            AttackerName = _attacker.getName()
+            AttackerClass = _attacker ? _attacker.ClassName : null
+            AttackerName = _attacker ? _attacker.getName() : null
             Day = this.World.getTime().Days
         }
         ::FunFacts.Debug.log("onInjury record", record);
