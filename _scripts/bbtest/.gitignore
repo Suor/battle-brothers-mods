@@ -1,5 +1,0 @@
-work/
-mods/*
-!mods/registry.toml
-!mods/VERSIONS.md
-__pycache__/
