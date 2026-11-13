@@ -1,3 +1,5 @@
+// Without stdlib the mod loader should report it, not this file failing at boot
+if (!("std" in getroottable())) return;
 local Str = ::std.Str, Text = ::std.Text,
       Array = ::std.Array, Table = ::std.Table, Util = ::std.Util;
 

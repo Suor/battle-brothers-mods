@@ -14,7 +14,6 @@ local mod = ::FunFacts <- {
     LastFallen = null
     Hiring = false
 }
-mod.Debug <- ::std.Debug.with({prefix = "ff: "})
 mod.getBattleId <- function() {
     // Main-menu scenarios have no campaign, so no battles to number
     if (!("Statistics" in ::World) || ::World.Statistics == null) return 0;
@@ -45,9 +44,13 @@ mod.s2ff <- function (_skill) {
      return "FunFacts" in actor.m ? actor.m.FunFacts : {}.setdelegate({_get = @(k) @(...) null});
 }
 
+// TODO: finish moving to Modern Hooks, beware of hooks' slightly different semantics
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 // Pandora's Hobby replaces town_temple_dialog_module.onTreatInjury wholesale, we wrap it on top
 ::mods_queue(mod.ID, "mod_hooks(>=20), stdlib(>=2.4), mod_msu(>=1.6.0), >mod_reforged, >mod_pandoras_hobby", function() {
+    // Modern Hooks runs this even with a requirement missing, its popup reports that
+    if (!("std" in getroottable())) return;
+    mod.Debug <- ::std.Debug.with({prefix = "ff: "})
     mod.Mod <- ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
 
     local msd = ::MSU.System.Registry.ModSourceDomain, upd = mod.Updates;
