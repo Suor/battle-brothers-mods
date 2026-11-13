@@ -1,0 +1,10 @@
+# Regexes (one per line) for errors outside tests that don't fail a run: known noise of the
+# game version and frameworks, not of the mods under test. Matched against the error text.
+# The page's errors (`[Error JS]`, --ui-js) matching one don't fail a test either.
+
+# MSU 1.8.0 predates vanilla 1.5.2 adding IsSpent to perk_quick_hands.
+Mod mod_msu .* is adding a new field IsSpent to bb class scripts/skills/perks/perk_quick_hands
+
+# Vanilla turn bar (--ui-js): an entity leaves the bar while its first-slot resize animation
+# runs, and the animation's end reads the removed portrait's data.
+^\[Error JS\] uncaught: TypeError: Cannot read properties of undefined \(reading '(css|velocity)'\)\s+at Array\.complete \(coui://ui/screens/tactical/modules/tactical_screen_turnsequencebar/turnsequencebar_module\.js:(996|1011):

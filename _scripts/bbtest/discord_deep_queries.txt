@@ -1,0 +1,61 @@
+autopilot	{"content":"autopilot"}
+autopilot_new	{"content":"autopilot_new"}
+nicknames	{"content":"nicknames"}
+mod_nicknames	{"content":"mod_nicknames"}
+fun_facts	{"content":"fun facts"}
+fun_facts_id	{"content":"fun_facts"}
+funfacts	{"content":"funfacts"}
+camps_artifacts	{"content":"camps artifacts"}
+camps_and_artifacts	{"content":"camps_and_artifacts"}
+retinue_promotions	{"content":"retinue promotions"}
+retinue_ups	{"content":"retinue_ups"}
+elite_few	{"content":"elite few"}
+elite_few_id	{"content":"elite_few"}
+master_bros	{"content":"master bros"}
+bro_studio	{"content":"bro studio"}
+bro_studio_id	{"content":"bro_studio"}
+proper_necro	{"content":"proper necro"}
+mod_necro	{"content":"mod_necro"}
+proper_druid	{"content":"proper druid"}
+mod_druid	{"content":"mod_druid"}
+hackflows_perks	{"content":"hackflows perks"}
+hackflows_perks_id	{"content":"hackflows_perks"}
+permanent_injuries	{"content":"permanent injuries hackflow"}
+perma_hackflow	{"content":"perma_hackflow"}
+immortal_warriors	{"content":"immortal warriors"}
+immortal_warriors_id	{"content":"immortal_warriors"}
+standout_enemies	{"content":"standout enemies"}
+standout_enemies_id	{"content":"standout_enemies"}
+useful_things	{"content":"useful things"}
+mod_useful	{"content":"mod_useful"}
+background_perks	{"content":"starting perks background"}
+background_perks_id	{"content":"background_perks"}
+events_delayed	{"content":"delayed fix"}
+events_delayed_fix_id	{"content":"events_delayed_fix"}
+hackflows_fixes	{"content":"hackflow fixes"}
+mod_fixes	{"content":"mod_fixes"}
+reforged_fix	{"content":"reforged_fix"}
+fix_reforged	{"content":"fix_reforged"}
+cool_blacksmith	{"content":"blacksmith fix"}
+heal_repair_fix	{"content":"heal_repair_fix"}
+beast_loot	{"content":"beast loot"}
+mod_beast_loot	{"content":"mod_beast_loot"}
+vap	{"content":"veteran attrs"}
+mod_vap	{"content":"mod_vap"}
+more_blood	{"content":"more blood"}
+mod_more_blood	{"content":"mod_more_blood"}
+random_perk	{"content":"random perk"}
+mod_random_perk	{"content":"mod_random_perk"}
+bro_renamer	{"content":"bro renamer"}
+mod_renamer	{"content":"mod_renamer"}
+translations	{"content":"hackflows_translations"}
+mod_challenges	{"content":"mod_challenges"}
+accessory_companions	{"content":"accessory companions"}
+mod_AC	{"content":"mod_AC"}
+cheap_meat	{"content":"cheap meat"}
+hackflow	{"content":"hackflow"}
+hackflows	{"content":"hackflows"}
+author_hackflow	{"author_id":"428871099040792587"}
+mentions_hackflow	{"mentions":"428871099040792587"}
+logs_html	{"attachment_extension":"html"}
+logs_zip_log	{"attachment_filename":"log"}

@@ -1,0 +1,41 @@
+# What bbtest's resolver can't read from the mod zips (README, "Mods").
+# Ids and versions come from each zip's preload registration, requirements from its `require`/`mods_queue`.
+
+# File name regex -> variant, for every mod a file registers; such files are picked only by `id[variant]`.
+[variants]
+russian = "-russian"
+
+# Per mod id:
+#   requires    = ids it needs without declaring them ("id if SPEC": only those versions of it)
+#   variants    = {name = file name regex}, default = the variant a bare id means
+#   version     = "declared": the Nexus declared version / file name's, for mods registering a bogus one
+#   match       = file name regex giving this id to zips whose preload is compiled
+#   version_file = "file:regex": where the version is when the preload's registration can't show it
+[mods.stdlib]
+# Up to 2.6 it registers through mod_hooks when that is loaded and fails with Modern Hooks alone.
+requires = ["mod_hooks if <=2.6"]
+version_file = 'scripts/config/!stdlib.nut:local version = ([\d.]+)'
+
+[mods.mod_fantasybro]
+version = "declared"  # registers 1 in every release; 5.0e is mod_fantasybro-473-5-0e-1749340176.zip
+variants = {legend = "_legend"}
+
+[mods.mod_breditor]
+version = "declared"
+variants = {legends = "(?i)legends", vanilla = "(?i)vanilla|hx_breditor-"}
+
+[mods.sato_balance_mod]
+version = "declared"  # 2.3.1 registers 2.3
+match = "sato_balance"
+
+[mods.mod_legacy]
+version = "declared"  # 2.13 registers 2.12.2
+
+[mods.mod_black_pyramid]
+version = "declared"  # 1.4.4 registers 1.3
+
+[mods.mod_davkul_rising]
+version = "declared"  # the RF/HD compat 0.4 registers 1.05.2
+
+[mods.mod_elite_few]
+requires = ["mod_msu"]  # builds its settings with ::MSU.Class at queue time, unguarded
