@@ -185,9 +185,12 @@ this.fun_facts <- {
 
         // Look at lost condition
         foreach (pair in tmpCombat.Items) {
+            // A lost item is replaced, not repaired; a destroyed one may be uncollected yet
             if (pair.item.isNull()) continue;
+            local item = pair.item.get();
+            if (item.getContainer() == null && item.m.Tile == null) continue;
 
-            local lostCond =  pair.cond - pair.item.getCondition();
+            local lostCond =  pair.cond - item.getCondition();
             if (lostCond > 0)
                 this.m.Stats.Spent.Parts += lostCond * ::World.Assets.m.ArmorPartsPerArmor;
         }
