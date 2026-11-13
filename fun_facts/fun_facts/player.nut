@@ -27,7 +27,9 @@
     o.onBeforeCombatResult = function( ... ) {
         vargv.insert(0, this);
         local ret = onBeforeCombatResult.acall(vargv);
-        this.m.FunFacts.onCombatEnd(this);
+        // A struck-down survivor's battle was recorded in onDeath, he may still be left to die
+        if (::Tactical.getSurvivorRoster().getAll().find(this) == null)
+            this.m.FunFacts.onCombatEnd(this);
         return ret;
     }
 
