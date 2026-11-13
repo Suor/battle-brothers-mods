@@ -309,8 +309,8 @@ this.fun_facts <- {
     function extendTooltip( _tooltip, _idCounter ) {
         // ::FunFacts.Debug.log("battleId", ::FunFacts.getBattleId());
 
-        local function red(text) {return ::MSU.Text.colorRed(text + "")}
-        local function green(text) {return ::MSU.Text.colorGreen(text + "")}
+        local function red(text) {return ::std.Text.negative(text)}
+        local function green(text) {return ::std.Text.positive(text)}
         local function addHint(icon, text) {
             if (text == "") return;
             _idCounter++;
