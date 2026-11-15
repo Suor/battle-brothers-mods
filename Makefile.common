@@ -39,6 +39,8 @@ squirrel $1 2> >(tee "$$TMP_FILE" >&2)
 if [ -s "$$TMP_FILE" ]; then rm "$$TMP_FILE"; exit 1; fi
 endef
 
+rosetta_check = rosetta -qc $1 $$($(list_sources) | grep '\.nut$$')
+
 test: include check-compile
 	@if [[ -f "test.nut" ]]; then $(call run_squirrel,test.nut); fi
 

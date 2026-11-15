@@ -7,4 +7,4 @@ SUBDIR = scripts/\!mods_preload
 include ../Makefile.common
 
 check:
-	@rosetta -qc bro_studio/rosetta_ru.nut .
+	@$(call rosetta_check,bro_studio/rosetta_ru.nut)

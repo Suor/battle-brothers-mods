@@ -5,4 +5,4 @@ SOURCES = fixes scripts
 include ../Makefile.common
 
 check:
-	@rosetta -qc fixes/rosetta_ru.nut .
+	@$(call rosetta_check,fixes/rosetta_ru.nut)

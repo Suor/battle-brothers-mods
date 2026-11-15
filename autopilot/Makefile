@@ -5,4 +5,4 @@ SOURCES = autopilot gfx scripts ui
 include ../Makefile.common
 
 check:
-	@rosetta -qc autopilot/rosetta_ru.nut .
+	@$(call rosetta_check,autopilot/rosetta_ru.nut)

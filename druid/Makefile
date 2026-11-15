@@ -5,4 +5,4 @@ SOURCES = brushes gfx druid scripts ui
 include ../Makefile.common
 
 check:
-	@rosetta -qc druid/rosetta_ru.nut .
+	@$(call rosetta_check,druid/rosetta_ru.nut)

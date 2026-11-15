@@ -5,4 +5,4 @@ SOURCES = camps_and_artifacts gfx scripts
 include ../Makefile.common
 
 check:
-	@rosetta -qc camps_and_artifacts/rosetta_ru.nut .
+	@$(call rosetta_check,camps_and_artifacts/rosetta_ru.nut)

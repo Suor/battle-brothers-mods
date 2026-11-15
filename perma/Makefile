@@ -6,4 +6,4 @@ SOURCES = perma_hackflow scripts
 include ../Makefile.common
 
 check:
-	@rosetta -qc perma_hackflow/rosetta_ru.nut .
+	@$(call rosetta_check,perma_hackflow/rosetta_ru.nut)

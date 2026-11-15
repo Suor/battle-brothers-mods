@@ -7,4 +7,4 @@ INCLUDES = levelup_changes
 include ../Makefile.common
 
 check:
-	@rosetta -qc hackflows_perks/rosetta_ru.nut .
+	@$(call rosetta_check,hackflows_perks/rosetta_ru.nut)

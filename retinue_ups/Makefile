@@ -6,4 +6,4 @@ INCLUDES = levelup_changes
 include ../Makefile.common
 
 check:
-	@rosetta -qc retinue_ups/rosetta_ru.nut .
+	@$(call rosetta_check,retinue_ups/rosetta_ru.nut)
