@@ -38,6 +38,14 @@
 
 local function makeHook(_kind) {
     return function (o) {
+        if (_kind == "Food") {
+            // The shop charges before the stash starts the food's freshness, which can cost it a day of value
+            local onAddedToStash = ::mods_getMember(o, "onAddedToStash");
+            o.onAddedToStash <- function (_stashID) {
+                this.m.FunFactsPaid <- this.getBuyPrice();
+                onAddedToStash(_stashID);
+            }
+        }
         local setBought = ::mods_getMember(o, "setBought");
         o.setBought <- function (_f) {
             setBought(_f);
@@ -45,7 +53,8 @@ local function makeHook(_kind) {
                 && ("State" in this.World) && this.World.State != null
                 && this.World.State.getCurrentTown() != null)
             {
-                ::FunFacts.Buys.record(_kind, this.m.Amount, this.getBuyPrice());
+                local price = "FunFactsPaid" in this.m ? this.m.FunFactsPaid : this.getBuyPrice();
+                ::FunFacts.Buys.record(_kind, this.m.Amount, price);
             }
         }
     }
