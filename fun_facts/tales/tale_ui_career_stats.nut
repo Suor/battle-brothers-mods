@@ -1,0 +1,67 @@
+// mode: campaign seed=bbtest-battle fresh=1
+// mods: mod_reforged==0.9.3 mod_career_stats==1.0.2 mod_fun_facts stdlib@dev
+// include: lib/helpers.nut
+// needs: page
+
+// KNOWN_BUGS #8 in the page, in jsdom and in Chromium (`needs: page`; runner README): Career Stats 1.0.2 and
+// Fun Facts both bind a tooltip to each obituary row (MSU 'msu-generic', elementId "Fallen"); vanilla's
+// bindToElement unbinds what was bound before, so the row shows only the last mod's (Fun Facts loads after
+// Career Stats). Correct: hovering a fallen bro's row shows both mods' lines.
+
+test("KB8: a fallen bro's obituary row shows both mods' tooltips", function (t) {
+    ::FFT.reset();
+    ::BBT.toughen(null, true);
+    local victim = t.roster()[0], hero = t.roster()[1];
+    t.state.victim <- victim;
+    t.state.hero <- hero;
+    local name = victim.getName();
+    ::FFT.setSurvival(victim, false);
+    yield t.battle({entities = ::BBT.thugs(2), player = ::BBT.scripted([
+        @(t) ::FFT.hit(::BBT.hostiles()[0], t.state.hero, 20),
+        function (t) { local thug = ::BBT.hostiles()[0]; t.state.victim.kill(thug, ::BBT.attack(thug), ::Const.FatalityType.None); },
+        @(t) ::BBT.killAll(t.state.hero)
+    ])});
+    local idx = ::FFT.fallenByName(name);
+    t.eq(idx, 0, "the victim is the latest fallen");
+    ::World.State.topbar_options_module_onObituaryButtonClicked();
+    yield t.untilJs("$('.world-obituary-screen .l-row').length == 1");
+    t.hover(".world-obituary-screen .l-row");
+    yield t.untilJs("$('.tooltip-module').hasClass('display-block')", 120);
+    local lines = t.js("$('.tooltip-module').find('.title, .description, .text').map(function () { return $(this).text(); }).get()");
+    // Whether the tooltip shows the line: its text up to the first BBCode tag (colours and
+    // images render as markup).
+    local shows = function (_text) {
+        local at = _text.find("[");
+        local prefix = at == null ? _text : _text.slice(0, at);
+        foreach (l in lines) if (l.find(prefix) == 0) return true;
+        return false;
+    };
+    local ff = ::FFT.fallenHints(idx), cs = ::FFT.obituaryTooltip(idx, "mod_career_stats", "CareerStats_Idx").slice(1);
+    t.eq({FunFacts = ff.filter(@(_, l) shows(l)).len() == ff.len(), CareerStats = cs.filter(@(_, l) shows(l)).len() == cs.len()},
+         {FunFacts = true, CareerStats = true}, "the row's tooltip has every line of both mods");
+});
+
+// The bro popup (a 'roster-entity' tooltip) is built in Squirrel by both mods' getRosterTooltip hooks.
+test("KB8: a bro's popup in the character screen shows both mods' lines", function (t) {
+    ::FFT.reset();
+    ::BBT.toughen(null, true);
+    local hero = t.roster()[0];
+    t.state.hero <- hero;
+    yield t.battle({entities = ::BBT.thugs(2), player = ::BBT.scripted([
+        @(t) ::FFT.hit(::BBT.hostiles()[0], t.state.hero, 20),
+        @(t) ::BBT.killAll(t.state.hero)
+    ])});
+    hero = ::BBT.byName(hero.getName());
+    ::World.State.showCharacterScreen();
+    yield t.untilJs("$('.is-brother-slot .brother').length > 0");
+    t.hover(".is-brother-slot .brother");
+    yield t.untilJs("$('.tooltip-module').hasClass('display-block')", 120);
+    // Let the screen and the tooltip finish fading in before the shot
+    yield t.untilJs("(window.ffShotWait = (window.ffShotWait || 0) + 1) > 60", 120);
+    t.shot("bro_popup");
+    local lines = t.js("$('.tooltip-module').find('.title, .description, .text').map(function () { return $(this).text(); }).get()");
+    t.probe("bro popup lines", lines);
+    local has = @(s) lines.filter(@(_, l) l.find(s) != null).len() > 0;
+    t.eq({FunFacts = has("Inflicted"), CareerStats = has("DMG Dealt")}, {FunFacts = true, CareerStats = true},
+         "the popup has both mods' lines");
+});
