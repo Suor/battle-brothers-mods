@@ -20,7 +20,12 @@ Russian localization included - need to install [Rosetta][] and it's dependencie
 
 ## Compatibility
 
-Safe to add or remove midgame. Compatible with most other mods, including Legends and Reforged. With [Career Stats][] the obituary shows both mods' lines.
+Safe to add or remove midgame. Plays nice with:
+
+- Reforged
+- Legends
+- [Career Stats][] - popups show both mods' lines
+- [Pandora's Hobby][pandora]
 
 
 ## Install
@@ -36,3 +41,4 @@ To use built-in russian translation will also need to install [Rosetta][] and th
 [msu]: https://www.nexusmods.com/battlebrothers/mods/479
 [Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
 [Career Stats]: https://www.nexusmods.com/battlebrothers/mods/569
+[pandora]: https://www.nexusmods.com/battlebrothers/mods/992
