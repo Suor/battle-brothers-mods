@@ -1,5 +1,5 @@
 if (!("Rosetta" in getroottable())) return;
-if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.3.1")) return;
+if (::Hooks.SQClass.ModVersion(::Rosetta.Version) < ::Hooks.SQClass.ModVersion("0.4.0")) return;
 
 local Array = ::std.Array, Str = ::std.Str;
 
