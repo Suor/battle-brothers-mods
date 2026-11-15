@@ -1,3 +1,27 @@
+1.1.0
+- show money spent in temple
+- proper kill verbs for fellow bros: chopped, stabbed, shot in the back, ... joined with commas
+- track real food and whatever prices for TCO
+- singular forms for counts of one
+Compatibility:
+- fixed Reforged 0.8.9+ incompat
+- Pandora's Hobby compat
+- Career Stats compat, show both mods' obituary lines
+- translation now needs Rosetta 0.4.0+
+Fixes:
+- report missing stdlib with a popup, not a script error
+- don't log an error on deaths without a killer
+- don't charge destroyed shields as tools
+- fixed food counted eaten when no food
+- fixed food price for TCO sometimes lower than paid
+- fixed last combat not recorded for a bro who died or was left to die in it
+- fixed crash when a bro is injured with no attacker
+- fixed killed enemies staying alive in main menu scenarios
+- fixed gutted and smashed swapped
+- fixed fallen's old self-inflicted deaths shown as from a hand of a bro
+- fixed part of the costs tooltip left untranslated
+- fixed "Failed to load fallen FunFacts" errors on every load
+
 1.0.3
 - track temple payments
 - updated some phrasing and translation
