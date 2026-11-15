@@ -5,7 +5,7 @@ Keeps some history on your brothers shows it in bro's popups. Shows the same inf
 - deaths
 - chopped or crushed heads and gutted enemies
 - max kills in a single battle
-- killing your teammates
+- killing your teammates, and how: chopped, stabbed, shot in the back, ...
 - injuries dealt and received
 - saves by Nine Lives
 - battles slacked while other bros fighting
@@ -16,6 +16,11 @@ Keeps some history on your brothers shows it in bro's popups. Shows the same inf
 If you have ideas for fun stats you are welcome to post here or find me on Discord.
 
 Russian localization included - need to install [Rosetta][] and it's dependencies.
+
+
+## Compatibility
+
+Safe to add or remove midgame. Compatible with most other mods, including Legends and Reforged. With [Career Stats][] the obituary shows both mods' lines.
 
 
 ## Install
@@ -30,3 +35,4 @@ To use built-in russian translation will also need to install [Rosetta][] and th
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
 [msu]: https://www.nexusmods.com/battlebrothers/mods/479
 [Rosetta]: https://www.nexusmods.com/battlebrothers/mods/802
+[Career Stats]: https://www.nexusmods.com/battlebrothers/mods/569
