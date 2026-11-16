@@ -3,10 +3,28 @@
 // include: lib/helpers.nut
 // needs: page
 
-// KNOWN_BUGS #8 in the page, in jsdom and in Chromium (`needs: page`; runner README): Career Stats 1.0.2 and
+// KNOWN_BUGS #8 in the page, in Chromium and the original (`needs: page`; runner README): Career Stats 1.0.2 and
 // Fun Facts both bind a tooltip to each obituary row (MSU 'msu-generic', elementId "Fallen"); vanilla's
 // bindToElement unbinds what was bound before, so the row shows only the last mod's (Fun Facts loads after
 // Career Stats). Correct: hovering a fallen bro's row shows both mods' lines.
+
+// Whether every text shows among the tooltip's lines: up to its first BBCode tag (colours and images
+// render as markup).
+local function showsAll(_lines, _texts) {
+    foreach (text in _texts) {
+        local at = text.find("[");
+        local prefix = at == null ? text : text.slice(0, at);
+        local found = false;
+        foreach (l in _lines) if (l.find(prefix) == 0) found = true;
+        if (!found) return false;
+    }
+    return true;
+}
+
+local function hasLine(_lines, _s) {
+    foreach (l in _lines) if (l.find(_s) != null) return true;
+    return false;
+}
 
 test("KB8: a fallen bro's obituary row shows both mods' tooltips", function (t) {
     ::FFT.reset();
@@ -28,16 +46,8 @@ test("KB8: a fallen bro's obituary row shows both mods' tooltips", function (t) 
     t.hover(".world-obituary-screen .l-row");
     yield t.untilJs("$('.tooltip-module').hasClass('display-block')", 120);
     local lines = t.js("$('.tooltip-module').find('.title, .description, .text').map(function () { return $(this).text(); }).get()");
-    // Whether the tooltip shows the line: its text up to the first BBCode tag (colours and
-    // images render as markup).
-    local shows = function (_text) {
-        local at = _text.find("[");
-        local prefix = at == null ? _text : _text.slice(0, at);
-        foreach (l in lines) if (l.find(prefix) == 0) return true;
-        return false;
-    };
     local ff = ::FFT.fallenHints(idx), cs = ::FFT.obituaryTooltip(idx, "mod_career_stats", "CareerStats_Idx").slice(1);
-    t.eq({FunFacts = ff.filter(@(_, l) shows(l)).len() == ff.len(), CareerStats = cs.filter(@(_, l) shows(l)).len() == cs.len()},
+    t.eq({FunFacts = showsAll(lines, ff), CareerStats = showsAll(lines, cs)},
          {FunFacts = true, CareerStats = true}, "the row's tooltip has every line of both mods");
 });
 
@@ -61,7 +71,6 @@ test("KB8: a bro's popup in the character screen shows both mods' lines", functi
     t.shot("bro_popup");
     local lines = t.js("$('.tooltip-module').find('.title, .description, .text').map(function () { return $(this).text(); }).get()");
     t.probe("bro popup lines", lines);
-    local has = @(s) lines.filter(@(_, l) l.find(s) != null).len() > 0;
-    t.eq({FunFacts = has("Inflicted"), CareerStats = has("DMG Dealt")}, {FunFacts = true, CareerStats = true},
+    t.eq({FunFacts = hasLine(lines, "Inflicted"), CareerStats = hasLine(lines, "DMG Dealt")}, {FunFacts = true, CareerStats = true},
          "the popup has both mods' lines");
 });
