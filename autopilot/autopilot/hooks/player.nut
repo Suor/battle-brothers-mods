@@ -123,6 +123,11 @@ mod.hook("scripts/entity/tactical/player", function (q) {
             agent.addBehavior(::new("scripts/ai/autopilot_tame"));
         }
 
+        // Cultist prophet
+        if (getSkills().hasSkill("actives.voice_of_davkul")) {
+            agent.addBehavior(::new("scripts/ai/autopilot_voice_of_davkul"));
+        }
+
         // Necromancers
         local necroSkills = [
             "actives.raise_undead"

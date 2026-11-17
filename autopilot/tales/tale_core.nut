@@ -375,7 +375,7 @@ test("the behaviors are registered and instantiate", function (t) {
     local ids = [];
     foreach (f in ::IO.enumerateFiles("scripts/ai/"))
         if (f.find("scripts/ai/autopilot_") == 0) ids.push(::new(f).getID());
-    t.eq(ids.len(), 10, "autopilot behaviors");
+    t.eq(ids.len(), 11, "autopilot behaviors");
     t.eq(ids.filter(@(_, id) id == null), [], "all with an ID");
 });
 
