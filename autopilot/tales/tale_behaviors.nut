@@ -31,6 +31,23 @@ local function rooted(_bro) {
     _bro.getSkills().add(::new("scripts/skills/special/oath_of_fortification_warning"));
 }
 
+test("sling in the bag: a melee bro who can't reach draws it and shoots", function (t) {
+    ::Tales.toughen(null, true);
+    ::APT.probeReset();
+    ::Tales.byName("Bertel").setPlaceInFormation(18);
+    ::Tales.byName("Torkel").setPlaceInFormation(19);
+    local wendel = ::Tales.byName("Wendel");
+    rooted(wendel);
+    wendel.getItems().unequip(wendel.getItems().getItemAtSlot(::Const.ItemSlot.Offhand));
+    ::APT.clearBag(wendel);
+    ::APT.bag(wendel, "scripts/items/weapons/staff_sling");
+    local p = ::APT.pilot({before = thugTwoOff()});
+    yield aiBattle(t, p, 1);
+    t.probe("Wendel's behaviors", ::Tales.uniq(::APT.autoBehaviors("Wendel").map(@(b) b.what), true));
+    t.eq([chose("Wendel", "ai_switchto_ranged"), did("Wendel", "actives.sling_stone")], [true, true], "drawn and shot");
+    t.eq(p.st.stuck, [], "no stuck turn");
+});
+
 // Wendel alone (the others in reserve), under the Oath of Fortification (can't move in round 1), against one thug
 // put 2 tiles off on his first turn: out of his spear's reach, in the net's, so unbagging and throwing the net is the
 // AI's only choice but idling, whatever the rolls.
