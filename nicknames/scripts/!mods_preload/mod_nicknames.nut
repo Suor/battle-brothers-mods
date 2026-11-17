@@ -313,7 +313,13 @@ mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ul
 
     // Need to handle that separately to not overwrite the scenario based title
     mod.hook("scripts/states/world_state", function (q) {
+        // The state belongs to a campaign: another world must read its own flag
+        q.onDeserialize = @(__original) function (_in) {
+            def.State = null;
+            __original(_in);
+        }
         q.startNewCampaign = @(__original) function () {
+            def.State = null;
             starting = true;
             __original();
             starting = false;
