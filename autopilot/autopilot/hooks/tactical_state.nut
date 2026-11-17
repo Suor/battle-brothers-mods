@@ -27,6 +27,10 @@ mod.hook("scripts/states/tactical_state", function (q) {
                 Tactical.TurnSequenceBar.onAIButtonPressed();
                 return true;
             }
+            else if (key.getKey() == 34) { // X
+                Tactical.TurnSequenceBar.onIgnoreButtonPressed();
+                return true;
+            }
         }
 
         return result;

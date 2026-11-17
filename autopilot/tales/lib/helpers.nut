@@ -196,7 +196,7 @@
 ::APT.key <- function (_code, _state = 0, _modifier = 0) {
     return {getKey = @() _code, getState = @() _state, getModifier = @() _modifier};
 }
-::APT.Keys <- {Q = 27, H = 18, N = 24, V = 32, Num1 = 1};
+::APT.Keys <- {Q = 27, H = 18, N = 24, V = 32, X = 34, Num1 = 1};
 
 // Charms the bro for the first hostile's faction, as a hexe does (no master, so it lasts its turns).
 ::APT.charm <- function (_bro) {

@@ -17,8 +17,8 @@ local pairs = [
         ru = "Откладывает ход всех бойцов, ещё не ждавших в этом раунде, и отправляет их в конец очереди. Ожидание в этом ходу отодвинет их и в следующем раунде."
     }
     {
-        en = "Ignore"
-        ru = "Игнорировать"
+        en = "Ignore (X)"
+        ru = "Игнорировать (X)"
     }
     {
         en = "Ends this character's turn and causes him to be ignored on future turns."
