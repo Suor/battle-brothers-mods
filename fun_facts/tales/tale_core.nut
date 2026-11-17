@@ -1,5 +1,5 @@
 // mode: campaign seed=bbtest-battle fresh=1
-// mods: mod_fun_facts stdlib@dev
+// mods: mod_fun_facts@dev stdlib@dev
 // include: lib/helpers.nut
 
 // Stat accounting in real battles, checked against the game's own counters (LifetimeStats,
@@ -21,7 +21,7 @@ test("every bro has his own FunFacts", function (t) {
 // of the hooks, so the test counts kills on its own.
 ::FFT.recordDeaths <- function (_out) {
     return function () {
-        foreach (e in ::BBT.hostiles()) {
+        foreach (e in ::Tales.hostiles()) {
             local orig = e.onDeath;
             e.onDeath = function (_killer, _skill, _tile, _fatalityType) {
                 _out.push({Name = this.getName(), Killer = _killer == null ? null : _killer.getName(),
@@ -34,7 +34,7 @@ test("every bro has his own FunFacts", function (t) {
 
 test("AI battle: kills, battles and repairs match the game's counters", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local deaths = [], bros = t.roster();
     yield t.battle({spawn = "BanditRaiders", resources = 60, setup = function (p) {
         p.AfterDeploymentCallback = ::FFT.recordDeaths(deaths);
@@ -75,9 +75,9 @@ test("AI battle: kills, battles and repairs match the game's counters", function
 
 test("battle ids go up battle by battle", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
-    yield t.battle({entities = ::BBT.thugs(2), player = ::BBT.scripted(@(t) ::BBT.killAll(t.roster()[0]))});
-    yield t.battle({entities = ::BBT.thugs(2), player = ::BBT.scripted(@(t) ::BBT.killAll(t.roster()[1]))});
+    ::Tales.toughen(null, true);
+    yield t.battle({entities = ::Tales.thugs(2), player = ::Tales.scripted(@(t) ::Tales.killAll(t.roster()[0]))});
+    yield t.battle({entities = ::Tales.thugs(2), player = ::Tales.scripted(@(t) ::Tales.killAll(t.roster()[1]))});
     local a = ::FFT.stats(t.roster()[0]), b = ::FFT.stats(t.roster()[1]);
     t.eq(a.BattlesLog.map(@(r) r.Id), [1, 2], "first bro's battle ids");
     t.eq(a.Kills.map(@(r) r.BattleId), [1, 1], "first bro's kills");
@@ -87,7 +87,7 @@ test("battle ids go up battle by battle", function (t) {
 
 test("a bro killed in battle: casualty, obituary, death record", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local victim = t.roster()[0], hero = t.roster()[1];
     local name = victim.getName(), ff = victim.m.FunFacts;
     ::FFT.setSurvival(victim, false);
@@ -95,19 +95,19 @@ test("a bro killed in battle: casualty, obituary, death record", function (t) {
     t.state.hero <- hero;
     t.state.ff <- ff;
     local seen = t.state.seen <- {};
-    yield t.battle({entities = ::BBT.thugs(2), player = ::BBT.scripted([
+    yield t.battle({entities = ::Tales.thugs(2), player = ::Tales.scripted([
         function (t) {
-            local thug = ::BBT.hostiles()[0];
-            t.state.victim.kill(thug, ::BBT.attack(thug), ::Const.FatalityType.None);
+            local thug = ::Tales.hostiles()[0];
+            t.state.victim.kill(thug, ::Tales.attack(thug), ::Const.FatalityType.None);
             t.state.seen.killer <- thug.getName();
             local stub = ::Tactical.getCasualtyRoster().getAll().top();
             t.state.seen.stubFF <- stub.m.FunFacts == t.state.ff;
             t.state.seen.stubHints <- ::FFT.hints(stub.getRosterTooltip(), 4);
         },
-        @(t) ::BBT.killAll(t.state.hero)
+        @(t) ::Tales.killAll(t.state.hero)
     ])});
     t.eq(t.result.survivors, {player = 2, enemies = 0}, "battle won");
-    t.eq(::BBT.byName(name), null, "the victim left the roster");
+    t.eq(::Tales.byName(name), null, "the victim left the roster");
     t.eq(seen.stubFF, true, "casualty stub carries his FunFacts");
     t.eq(seen.stubHints, ["Died once"], "casualty tooltip on the result screen");
     local idx = ::FFT.fallenByName(name);
@@ -124,17 +124,17 @@ test("a bro killed in battle: casualty, obituary, death record", function (t) {
 
 test("save/load keeps every stat of the living and the fallen", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local victim = t.roster()[2], hero = t.roster()[0];
     local victimName = victim.getName();
     ::FFT.setSurvival(victim, false);
     t.state.victim <- victim;
     t.state.hero <- hero;
-    yield t.battle({entities = ::BBT.thugs(3), player = ::BBT.scripted([
-        @(t) ::FFT.hit(t.state.hero, ::BBT.hostiles()[0], 20),
-        @(t) ::FFT.hit(::BBT.hostiles()[0], t.state.hero, 20),
-        @(t) t.state.victim.kill(t.state.hero, ::BBT.attack(t.state.hero), ::Const.FatalityType.Decapitated),
-        @(t) ::BBT.killAll(t.state.hero, ::Const.FatalityType.Smashed)
+    yield t.battle({entities = ::Tales.thugs(3), player = ::Tales.scripted([
+        @(t) ::FFT.hit(t.state.hero, ::Tales.hostiles()[0], 20),
+        @(t) ::FFT.hit(::Tales.hostiles()[0], t.state.hero, 20),
+        @(t) t.state.victim.kill(t.state.hero, ::Tales.attack(t.state.hero), ::Const.FatalityType.Decapitated),
+        @(t) ::Tales.killAll(t.state.hero, ::Const.FatalityType.Smashed)
     ])});
     local before = {}, fallenBefore = ::FFT.snapshot(::World.Statistics.getFallen()[0].FunFacts);
     foreach (bro in t.roster()) before[bro.getName()] <- ::FFT.snapshot(bro.m.FunFacts);
@@ -147,7 +147,7 @@ test("save/load keeps every stat of the living and the fallen", function (t) {
     local fallen = ::World.Statistics.getFallen()[0];
     t.eq(fallen.Name, victimName, "fallen after load");
     t.eq("FunFacts" in fallen ? ::FFT.snapshot(fallen.FunFacts) : null, fallenBefore, "fallen stats after load");
-    hero = ::BBT.byName(hero.getName());
+    hero = ::Tales.byName(hero.getName());
     t.eq(::FFT.rosterHints(hero), hintsBefore, "roster tooltip after load");
     t.eq(::FFT.fallenHints(0), fallenHintsBefore, "obituary tooltip after load");
     t.eq(hero.m.FunFacts.getProp("PlayerKills").len(), 1, "PlayerKills rebuilt after load");
@@ -161,15 +161,15 @@ test("save/load keeps every stat of the living and the fallen", function (t) {
 
 test("friendly fire: the killer's PlayerKills, the victim's KilledByBros", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local killer = t.roster()[0], victim = t.roster()[1];
     local kn = killer.getName(), vn = victim.getName();
     ::FFT.setSurvival(victim, false);
     t.state.killer <- killer;
     t.state.victim <- victim;
-    yield t.battle({entities = ::BBT.thugs(1), player = ::BBT.scripted([
-        @(t) t.state.victim.kill(t.state.killer, ::BBT.attack(t.state.killer), ::Const.FatalityType.Decapitated),
-        @(t) ::BBT.killAll(t.roster()[1])
+    yield t.battle({entities = ::Tales.thugs(1), player = ::Tales.scripted([
+        @(t) t.state.victim.kill(t.state.killer, ::Tales.attack(t.state.killer), ::Const.FatalityType.Decapitated),
+        @(t) ::Tales.killAll(t.roster()[1])
     ])});
     local ks = ::FFT.stats(killer);
     local pk = killer.m.FunFacts.getProp("PlayerKills");
@@ -186,13 +186,13 @@ test("friendly fire: the killer's PlayerKills, the victim's KilledByBros", funct
 
 test("a bro who kills himself isn't a friendly-fire victim", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local bro = t.roster()[0], name = bro.getName(), ff = bro.m.FunFacts;
     ::FFT.setSurvival(bro, false);
     t.state.bro <- bro;
-    yield t.battle({entities = ::BBT.thugs(1), player = ::BBT.scripted([
-        @(t) t.state.bro.kill(t.state.bro, ::BBT.attack(t.state.bro), ::Const.FatalityType.None),
-        @(t) ::BBT.killAll(t.roster()[0])
+    yield t.battle({entities = ::Tales.thugs(1), player = ::Tales.scripted([
+        @(t) t.state.bro.kill(t.state.bro, ::Tales.attack(t.state.bro), ::Const.FatalityType.None),
+        @(t) ::Tales.killAll(t.roster()[0])
     ])});
     local s = ff.m.Stats;
     t.eq([s.Deaths.len(), s.Deaths[0].Self, s.Kills.len(), s.Kills[0].Self], [1, true, 1, true], "self records");
@@ -202,26 +202,26 @@ test("a bro who kills himself isn't a friendly-fire victim", function (t) {
 
 test("injuries suffered and inflicted", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local bro = t.roster()[0], other = t.roster()[1];
     t.state.bro <- bro;
     t.state.other <- other;
     local got = t.state.got <- {};
-    yield t.battle({entities = ::BBT.thugs(2), player = ::BBT.scripted([
+    yield t.battle({entities = ::Tales.thugs(2), player = ::Tales.scripted([
         function (t) {
-            local thug = ::BBT.hostiles()[0];
+            local thug = ::Tales.hostiles()[0];
             t.state.got.attacker <- thug.getName();
             ::FFT.hit(t.state.bro, thug, 25);
             t.state.got.suffered <- t.state.bro.getSkills().query(::Const.SkillType.TemporaryInjury).map(@(s) s.getID());
         },
         function (t) {
-            local thug = ::BBT.hostiles()[1];
+            local thug = ::Tales.hostiles()[1];
             thug.getBaseProperties().Hitpoints = 300; thug.getSkills().update(); thug.setHitpoints(300);
             t.state.got.target <- thug.getName();
             ::FFT.hit(thug, t.state.other, 25);
             t.state.got.inflicted <- thug.getSkills().query(::Const.SkillType.TemporaryInjury).map(@(s) s.getID());
         },
-        @(t) ::BBT.killAll(t.state.other)
+        @(t) ::Tales.killAll(t.state.other)
     ])});
     local s = ::FFT.stats(bro), o = ::FFT.stats(other);
     t.eq(got.suffered.len(), 1, "the hit injured the bro");
@@ -235,14 +235,14 @@ test("injuries suffered and inflicted", function (t) {
 
 test("nine lives: a save", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local bro = t.roster()[0];
     bro.getSkills().add(::new("scripts/skills/perks/perk_nine_lives"));
     t.state.bro <- bro;
     local hp = t.state.hp <- {};
-    yield t.battle({entities = ::BBT.thugs(1), player = ::BBT.scripted([
-        function (t) { ::FFT.hit(t.state.bro, ::BBT.hostiles()[0], 1000); t.state.hp.after <- t.state.bro.getHitpoints(); },
-        @(t) ::BBT.killAll(t.state.bro)
+    yield t.battle({entities = ::Tales.thugs(1), player = ::Tales.scripted([
+        function (t) { ::FFT.hit(t.state.bro, ::Tales.hostiles()[0], 1000); t.state.hp.after <- t.state.bro.getHitpoints(); },
+        @(t) ::Tales.killAll(t.state.bro)
     ])});
     t.ok(hp.after > 0, "nine lives kept him alive");
     local s = ::FFT.stats(bro);
@@ -252,17 +252,17 @@ test("nine lives: a save", function (t) {
 
 test("nine lives: used, then died anyway", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local bro = t.roster()[0], name = bro.getName(), ff = bro.m.FunFacts;
     ::FFT.setSurvival(bro, false);
     bro.getSkills().add(::new("scripts/skills/perks/perk_nine_lives"));
     t.state.bro <- bro;
-    yield t.battle({entities = ::BBT.thugs(1), player = ::BBT.scripted([
-        @(t) ::FFT.hit(t.state.bro, ::BBT.hostiles()[0], 1000, ::BBT.attack(::BBT.hostiles()[0])),
-        @(t) ::FFT.hit(t.state.bro, ::BBT.hostiles()[0], 1000, ::BBT.attack(::BBT.hostiles()[0])),
-        @(t) ::BBT.killAll(t.roster()[0])
+    yield t.battle({entities = ::Tales.thugs(1), player = ::Tales.scripted([
+        @(t) ::FFT.hit(t.state.bro, ::Tales.hostiles()[0], 1000, ::Tales.attack(::Tales.hostiles()[0])),
+        @(t) ::FFT.hit(t.state.bro, ::Tales.hostiles()[0], 1000, ::Tales.attack(::Tales.hostiles()[0])),
+        @(t) ::Tales.killAll(t.roster()[0])
     ])});
-    t.eq(::BBT.byName(name), null, "he died");
+    t.eq(::Tales.byName(name), null, "he died");
     t.eq([ff.m.Stats.NineLivesUses, ff.m.Stats.NineLivesSaves], [1, 0], "uses, saves");
     local hints = ::FFT.fallenHints(::FFT.fallenByName(name));
     t.eq(hints.filter(@(_, h) h.find("nine lives") != null), ["Used nine lives once, died anyway"], "obituary");
@@ -270,15 +270,15 @@ test("nine lives: used, then died anyway", function (t) {
 
 test("effects added in battle are counted", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local bro = t.state.bro <- t.roster()[0];
-    yield t.battle({entities = ::BBT.thugs(1), player = ::BBT.scripted([
+    yield t.battle({entities = ::Tales.thugs(1), player = ::Tales.scripted([
         function (t) {
             t.state.bro.getSkills().add(::new("scripts/skills/effects/stunned_effect"));
             t.state.bro.getSkills().add(::new("scripts/skills/effects/net_effect"));
             t.state.bro.getSkills().add(::new("scripts/skills/effects/dazed_effect"));
         },
-        @(t) ::BBT.killAll(t.roster()[1])
+        @(t) ::Tales.killAll(t.roster()[1])
     ])});
     local s = ::FFT.stats(bro);
     t.eq(s.BattlesLog[0].Added, {stunned = 1, net = 1, dazed = 1}, "effects in the battle log");
@@ -288,11 +288,11 @@ test("effects added in battle are counted", function (t) {
 
 test("reserve bros slack, drunk ones noted", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local slacker = t.roster()[2];
     slacker.setPlaceInFormation(20);
     slacker.getSkills().add(::new("scripts/skills/effects_world/drunk_effect"));
-    yield t.battle({entities = ::BBT.thugs(1), player = ::BBT.scripted(@(t) ::BBT.killAll(t.roster()[0]))});
+    yield t.battle({entities = ::Tales.thugs(1), player = ::Tales.scripted(@(t) ::Tales.killAll(t.roster()[0]))});
     local s = ::FFT.stats(slacker);
     t.eq([s.Battles, s.BattlesSkipped, s.CombatsSkipped.len(), s.BattlesLog.len()], [0, 1, 1, 0], "slacker's counts");
     t.eq(s.CombatsSkipped[0].Effects, ["effects.drunk"], "skipped while drunk");
@@ -302,10 +302,10 @@ test("reserve bros slack, drunk ones noted", function (t) {
 
 test("fleeing and rallying", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local bro = t.state.bro <- t.roster()[0];
     local states = t.state.states <- [];
-    yield t.battle({entities = ::BBT.thugs(1), player = ::BBT.scripted([
+    yield t.battle({entities = ::Tales.thugs(1), player = ::Tales.scripted([
         function (t) {
             local bro = t.state.bro;
             for (local i = 0; i < 4; i++) bro.checkMorale(-1, -1000);
@@ -314,7 +314,7 @@ test("fleeing and rallying", function (t) {
                 bro.checkMorale(2, 1000);
             t.state.states.push(bro.getMoraleState());
         },
-        @(t) ::BBT.killAll(t.roster()[1])
+        @(t) ::Tales.killAll(t.roster()[1])
     ])});
     t.eq(states[0], ::Const.MoraleState.Fleeing, "fled");
     t.ok(states[1] != ::Const.MoraleState.Fleeing, "rallied");
@@ -325,8 +325,8 @@ test("fleeing and rallying", function (t) {
 
 test("a bro killed outside battle (event) keeps his facts in the obituary", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
-    yield t.battle({entities = ::BBT.thugs(2), player = ::BBT.scripted(@(t) ::BBT.killAll(t.roster()[0]))});
+    ::Tales.toughen(null, true);
+    yield t.battle({entities = ::Tales.thugs(2), player = ::Tales.scripted(@(t) ::Tales.killAll(t.roster()[0]))});
     local bro = t.roster()[0], name = bro.getName(), ff = bro.m.FunFacts;
     // What vanilla events do, e.g. cultist_finale_event, killer_vs_others_event
     ::World.Statistics.addFallen({Name = name, Time = ::World.getTime().Days, TimeWithCompany = 1,

@@ -1,5 +1,5 @@
 // mode: campaign seed=bbtest-battle fresh=1 launch=misc
-// mods: mod_fun_facts stdlib@dev
+// mods: mod_fun_facts@dev stdlib@dev
 // include: lib/helpers.nut
 
 // The texts the Squirrel side hands to the UI: roster and obituary tooltips, the obituary
@@ -82,19 +82,22 @@ test("other lines, plural counts", function (t) {
 
 test("costs line and TCO", function (t) {
     ::FFT.resetBuys();
-    t.eq(::FFT.texts({Spent = {Hire = 100, Wages = 50, Food = 10.4, Parts = 2.6, Ammo = 5, Herbs = 1, Temple = [30, 20]}}),
+    t.eq(::FFT.texts({Spent = {Hire = 100, Wages = 50, Food = 10.4, Parts = 2.6, Ammo = 5, Herbs = 1, Temple = [30, 20], Training = [130, 145]}}),
          ["Hired for " + money + "100, earned " + money + "50 as wages.\n"
           + "Spent [img]gfx/fun_facts/food.png[/img]10&nbsp;[img]gfx/fun_facts/supplies.png[/img]3"
           + "&nbsp;[img]gfx/fun_facts/ammo.png[/img]5&nbsp;[img]gfx/fun_facts/medicine.png[/img]1\n"
           + "Healed 2 times, " + money + "50 total.\n"
-          // 200 + 10.4 * 4 + 2.6 * 12 + 5 * 3 + 1 * 15 = 302.8, rounded to tens
-          + "TCO ~ " + money + "300"], "full costs");
+          + "Trained 2 times, " + money + "275 total.\n"
+          // 200 + 275 + 10.4 * 4 + 2.6 * 12 + 5 * 3 + 1 * 15 = 577.8, rounded to tens
+          + "TCO ~ " + money + "580"], "full costs");
     t.eq(::FFT.texts({Spent = {Hire = 0, Wages = 0, Food = 0.0, Parts = 0.0, Ammo = 0, Herbs = 0, Temple = [45]}}),
          ["Healed for " + money + "45.\nTCO ~ " + money + "45"], "temple only");
+    t.eq(::FFT.texts({Spent = {Hire = 0, Wages = 0, Food = 0.0, Parts = 0.0, Ammo = 0, Herbs = 0, Temple = [], Training = [130]}}),
+         ["Trained for " + money + "130.\nTCO ~ " + money + "130"], "training only");
     // Bought prices replace the fallbacks: food at 2 a unit
     ::FunFacts.Buys.Stats.Food = {Amount = 50.0, Spent = 100};
     t.eq(::FFT.texts({Spent = {Hire = 0, Wages = 20, Food = 30.0, Parts = 0.0, Ammo = 0, Herbs = 0, Temple = []}}),
-         ["Was payed " + money + "20 as wages.\nSpent [img]gfx/fun_facts/food.png[/img]30\nTCO ~ " + money + "80"],
+         ["Was paid " + money + "20 as wages.\nSpent [img]gfx/fun_facts/food.png[/img]30\nTCO ~ " + money + "80"],
          "wages and food at the bought price");
     ::FFT.resetBuys();
 });
@@ -109,7 +112,7 @@ test("roster, casualty and obituary tooltips carry the lines", function (t) {
     local ids = tooltip.map(@(e) e.id);
     local unique = {};
     foreach (id in ids) unique[id] <- true;
-    t.eq(unique.len(), ids.len(), "tooltip ids are unique: " + ::BBTales.repr(ids));
+    t.eq(unique.len(), ids.len(), "tooltip ids are unique: " + ::Tales.repr(ids));
 
     local fallen = ::World.Statistics.getFallen();
     fallen.insert(0, {Name = "Old Timer", Time = 1, TimeWithCompany = 1, Kills = 0, Battles = 0,

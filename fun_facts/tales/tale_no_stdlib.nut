@@ -1,5 +1,5 @@
 // mode: menu
-// mods: mod_fun_facts !stdlib
+// mods: mod_fun_facts@dev !stdlib
 // allow-errors: ^\[Error SQ\] mod_fun_facts \(Fun Facts\) requires stdlib
 // allow-errors: ^\[Error SQ\] Errors occured when validating mod compatibility
 

@@ -1,5 +1,5 @@
 // mode: campaign seed=bbtest-battle fresh=1
-// mods: mod_reforged==0.9.3 mod_career_stats==1.0.2 mod_fun_facts stdlib@dev
+// mods: mod_reforged==0.9.3 mod_career_stats==1.0.2 mod_fun_facts@dev stdlib@dev
 // include: lib/helpers.nut
 
 // KNOWN_BUGS #8: "Career Stats and Fun Facts are both incompatible" (Reforged, 2026-05). Career
@@ -13,19 +13,19 @@ test("KB8: both mods loaded", function (t) {
 
 test("KB8: a battle with a death: both mods' tooltips, obituary and save/load", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local victim = t.roster()[0], hero = t.roster()[1];
     local name = victim.getName();
     ::FFT.setSurvival(victim, false);
     t.state.victim <- victim;
     t.state.hero <- hero;
-    yield t.battle({entities = ::BBT.thugs(2), player = ::BBT.scripted([
-        @(t) ::FFT.hit(::BBT.hostiles()[0], t.state.hero, 20),
-        function (t) { local thug = ::BBT.hostiles()[0]; t.state.victim.kill(thug, ::BBT.attack(thug), ::Const.FatalityType.None); },
-        @(t) ::BBT.killAll(t.state.hero)
+    yield t.battle({entities = ::Tales.thugs(2), player = ::Tales.scripted([
+        @(t) ::FFT.hit(::Tales.hostiles()[0], t.state.hero, 20),
+        function (t) { local thug = ::Tales.hostiles()[0]; t.state.victim.kill(thug, ::Tales.attack(thug), ::Const.FatalityType.None); },
+        @(t) ::Tales.killAll(t.state.hero)
     ])});
     t.eq(t.result.survivors.enemies, 0, "battle won");
-    hero = ::BBT.byName(hero.getName());
+    hero = ::Tales.byName(hero.getName());
     local tip = hero.getRosterTooltip();
     local texts = tip.map(@(e) e.text);
     t.probe("hero tooltip ids", tip.map(@(e) e.id));
@@ -49,7 +49,7 @@ test("KB8: a battle with a death: both mods' tooltips, obituary and save/load", 
     local before = [::FFT.snapshot(hero.m.FunFacts), hero.m.CareerStats_Stats.m.Stats.Battles];
     t.save("kb8");
     yield t.load("kb8");
-    hero = ::BBT.byName(hero.getName());
+    hero = ::Tales.byName(hero.getName());
     t.eq([::FFT.snapshot(hero.m.FunFacts), hero.m.CareerStats_Stats.m.Stats.Battles], before, "both after load");
     fallen = ::World.Statistics.getFallen()[0];
     t.eq(["FunFacts" in fallen, "CareerStats_Stats" in fallen], [true, true], "the fallen carries both after load");

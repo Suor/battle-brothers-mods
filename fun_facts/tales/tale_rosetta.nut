@@ -1,5 +1,5 @@
 // mode: campaign seed=bbtest-battle fresh=1
-// mods: mod_rosetta==0.4.0 mod_fun_facts stdlib@dev
+// mods: mod_rosetta==0.4.0 mod_fun_facts@dev stdlib@dev
 // include: lib/helpers.nut
 
 // The Russian tooltips through Rosetta 0.4.0 (the game runs in English here: the language is

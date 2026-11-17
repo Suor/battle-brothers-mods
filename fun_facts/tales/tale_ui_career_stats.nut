@@ -1,9 +1,9 @@
 // mode: campaign seed=bbtest-battle fresh=1
-// mods: mod_reforged==0.9.3 mod_career_stats==1.0.2 mod_fun_facts stdlib@dev
+// mods: mod_reforged==0.9.3 mod_career_stats==1.0.2 mod_fun_facts@dev stdlib@dev
 // include: lib/helpers.nut
-// needs: page
+// needs: ui
 
-// KNOWN_BUGS #8 in the page, in Chromium and the original (`needs: page`; runner README): Career Stats 1.0.2 and
+// KNOWN_BUGS #8 in the page, in Chromium and the original (`needs: ui`; runner README): Career Stats 1.0.2 and
 // Fun Facts both bind a tooltip to each obituary row (MSU 'msu-generic', elementId "Fallen"); vanilla's
 // bindToElement unbinds what was bound before, so the row shows only the last mod's (Fun Facts loads after
 // Career Stats). Correct: hovering a fallen bro's row shows both mods' lines.
@@ -28,16 +28,16 @@ local function hasLine(_lines, _s) {
 
 test("KB8: a fallen bro's obituary row shows both mods' tooltips", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local victim = t.roster()[0], hero = t.roster()[1];
     t.state.victim <- victim;
     t.state.hero <- hero;
     local name = victim.getName();
     ::FFT.setSurvival(victim, false);
-    yield t.battle({entities = ::BBT.thugs(2), player = ::BBT.scripted([
-        @(t) ::FFT.hit(::BBT.hostiles()[0], t.state.hero, 20),
-        function (t) { local thug = ::BBT.hostiles()[0]; t.state.victim.kill(thug, ::BBT.attack(thug), ::Const.FatalityType.None); },
-        @(t) ::BBT.killAll(t.state.hero)
+    yield t.battle({entities = ::Tales.thugs(2), player = ::Tales.scripted([
+        @(t) ::FFT.hit(::Tales.hostiles()[0], t.state.hero, 20),
+        function (t) { local thug = ::Tales.hostiles()[0]; t.state.victim.kill(thug, ::Tales.attack(thug), ::Const.FatalityType.None); },
+        @(t) ::Tales.killAll(t.state.hero)
     ])});
     local idx = ::FFT.fallenByName(name);
     t.eq(idx, 0, "the victim is the latest fallen");
@@ -54,14 +54,14 @@ test("KB8: a fallen bro's obituary row shows both mods' tooltips", function (t) 
 // The bro popup (a 'roster-entity' tooltip) is built in Squirrel by both mods' getRosterTooltip hooks.
 test("KB8: a bro's popup in the character screen shows both mods' lines", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local hero = t.roster()[0];
     t.state.hero <- hero;
-    yield t.battle({entities = ::BBT.thugs(2), player = ::BBT.scripted([
-        @(t) ::FFT.hit(::BBT.hostiles()[0], t.state.hero, 20),
-        @(t) ::BBT.killAll(t.state.hero)
+    yield t.battle({entities = ::Tales.thugs(2), player = ::Tales.scripted([
+        @(t) ::FFT.hit(::Tales.hostiles()[0], t.state.hero, 20),
+        @(t) ::Tales.killAll(t.state.hero)
     ])});
-    hero = ::BBT.byName(hero.getName());
+    hero = ::Tales.byName(hero.getName());
     ::World.State.showCharacterScreen();
     yield t.untilJs("$('.is-brother-slot .brother').length > 0");
     t.hover(".is-brother-slot .brother");

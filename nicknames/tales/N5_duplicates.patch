@@ -1,0 +1,34 @@
+--- a/nicknames/scripts/!mods_preload/mod_nicknames.nut
++++ b/nicknames/scripts/!mods_preload/mod_nicknames.nut
+@@ -302,6 +302,13 @@
+     return false;
+ }
+ 
++// A title rolled before the mod could check it (vanilla's or an origin's) is kept unless it's a duplicate
++local function wornByAnother(_bro) {
++    foreach (b in ::World.getPlayerRoster().getAll())
++        if (b.getID() != _bro.getID() && b.getTitle() == _bro.getTitle()) return true;
++    return false;
++}
++
+ mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ultrabros", function () {
+     ::include("nicknames/titles");
+     ::include("nicknames/rosetta_auto");
+@@ -332,7 +339,7 @@
+             local roster = World.getPlayerRoster().getAll();
+             local hired = def.loadState().hired;
+             foreach (bro in roster) {
+-                if (bro.getTitle() == "") def.fillTitle(bro);
++                if (bro.getTitle() == "" || wornByAnother(bro)) def.fillTitle(bro);
+                 // vanilla never calls onHired() for the starting company
+                 local title = bro.getTitle();
+                 if (title != "" && !(title in hired)) hired[title] <- 1;
+@@ -366,7 +373,7 @@
+ 
+         q.onHired = @(__original) function () {
+             __original();
+-            if (this.getTitle() == "") {
++            if (this.getTitle() == "" || wornByAnother(this)) {
+                 ::logInfo("nicknames: filling deferred title of " + this.getName() + " on hire");
+                 def.fillTitle(this);
+             }

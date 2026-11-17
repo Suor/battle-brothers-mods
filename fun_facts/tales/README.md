@@ -47,10 +47,10 @@ Own launches:
 - `tale_rosetta.nut` — Rosetta 0.4.0, Russian switched on by hand: #5, #9 in Russian.
 - `tale_scenario_mode.nut` — KNOWN_BUGS #2: a kill in the main menu's Combat Basics scenario.
 - `tale_no_stdlib.nut` — KNOWN_BUGS #6: the mod without stdlib.
-- `tale_ui_page.nut`, `tale_ui_career_stats.nut` — in the real UI page, in jsdom and in Chromium (`// needs: page`, the runner's
+- `tale_ui_page.nut`, `tale_ui_career_stats.nut` — in the real UI page, in jsdom and in Chromium (`// needs: ui`, the runner's
   README): the obituary rows' hover tooltips; KNOWN_BUGS #8 in the page (Reforged 0.9.3 + Career Stats).
 - `lib/helpers.nut` — `::FFT` helpers, included by the `// include:` header; the shared ones are the runner's
-  `::BBT` (its README, "Helpers"): `::BBT.scripted` plays the company in `t.battle`.
+  `::Tales` (its README, "Helpers"): `::Tales.scripted` plays the company in `t.battle`.
 
 Packed and `--isolate` runs give the same statuses and asserts (a generated recruit's name
 differs); repeated runs too, except one probe of the Reforged AI battle (kills per bro vary:

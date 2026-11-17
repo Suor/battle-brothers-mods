@@ -1,10 +1,10 @@
 // mode: campaign seed=bbtest-battle fresh=1 launch=ui
-// mods: mod_fun_facts stdlib@dev
+// mods: mod_fun_facts@dev stdlib@dev
 // include: lib/helpers.nut
-// needs: page
+// needs: ui
 
 // The obituary screen's real JS with Fun Facts' (ui/mods/fun_facts/world_obituary_screen.js) in the page, in
-// Chromium and the original (`needs: page`; runner README): the tooltip a fallen bro's row shows on hover, from the
+// Chromium and the original (`needs: ui`; runner README): the tooltip a fallen bro's row shows on hover, from the
 // Squirrel side. Page errors fail the test they happen in.
 
 ::FFT.uiLoad <- function (_stats) {

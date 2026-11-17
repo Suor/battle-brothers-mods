@@ -1,5 +1,5 @@
 // mode: campaign seed=bbtest-battle fresh=1 launch=misc
-// mods: mod_fun_facts stdlib@dev
+// mods: mod_fun_facts@dev stdlib@dev
 // include: lib/helpers.nut
 
 // Reproductions of KNOWN_BUGS.md entries on vanilla: open ones fail, fixed ones guard against
@@ -9,15 +9,15 @@
 // KNOWN_BUGS #3, open: a hit with no attacker injures a bro.
 test("KB3: a bro injured by an attacker-less hit", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local bro = t.state.bro <- t.roster()[0];
     local got = t.state.got <- {};
-    yield t.battle({entities = ::BBT.thugs(1), player = ::BBT.scripted([
+    yield t.battle({entities = ::Tales.thugs(1), player = ::Tales.scripted([
         function (t) {
             try { ::FFT.hit(t.state.bro, null, 25); } catch (e) { t.state.got.error <- e; }
             t.state.got.injuries <- t.state.bro.getSkills().query(::Const.SkillType.TemporaryInjury).map(@(s) s.getID());
         },
-        @(t) ::BBT.killAll(t.roster()[1])
+        @(t) ::Tales.killAll(t.roster()[1])
     ])});
     t.eq("error" in got ? got.error : null, null, "error from the hit");
     t.eq(got.injuries.len(), 1, "the hit injured him");
@@ -28,16 +28,16 @@ test("KB3: a bro injured by an attacker-less hit", function (t) {
 // KNOWN_BUGS #11, fixed in 1.0.2: the same hit on an enemy (corpse explosion in Reforged).
 test("KB11: an enemy injured by an attacker-less hit", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local got = t.state.got <- {};
-    yield t.battle({entities = ::BBT.thugs(1), player = ::BBT.scripted([
+    yield t.battle({entities = ::Tales.thugs(1), player = ::Tales.scripted([
         function (t) {
-            local thug = ::BBT.hostiles()[0];
+            local thug = ::Tales.hostiles()[0];
             thug.getBaseProperties().Hitpoints = 300; thug.getSkills().update(); thug.setHitpoints(300);
             ::FFT.hit(thug, null, 25);
             t.state.got.injuries <- thug.getSkills().query(::Const.SkillType.TemporaryInjury).len();
         },
-        @(t) ::BBT.killAll(t.roster()[1])
+        @(t) ::Tales.killAll(t.roster()[1])
     ])});
     t.eq(got.injuries, 1, "the hit injured the thug");
     t.eq(t.roster().map(@(b) ::FFT.stats(b).InjuriesDealt.len()), [0, 0, 0], "nobody inflicted it");
@@ -52,7 +52,7 @@ test("KB4: fallen without fun facts load without errors", function (t) {
     t.save("kb4");
     yield t.load("kb4");
     local errors = [];
-    local restore = ::BBT.catchErrors(errors);
+    local restore = ::Tales.catchErrors(errors);
     t.save("kb4_again");
     yield t.load("kb4_again");
     restore();
@@ -75,7 +75,7 @@ test("KB10: a huge fun facts blob survives save/load", function (t) {
     local before = ::FFT.snapshot(ff);
     t.save("kb10");
     yield t.load("kb10");
-    bro = ::BBT.byName(bro.getName());
+    bro = ::Tales.byName(bro.getName());
     t.eq(bro.m.FunFacts.m.Stats.Kills.len(), 3000, "kills after load");
     t.eq(::FFT.snapshot(bro.m.FunFacts), before, "stats after load");
 });
@@ -96,7 +96,7 @@ test("KB7: packed size grows linearly with history", function (t) {
         sizes.push(::std.Packer.pack(ff.pack()).len());
     }
     t.probe("packed bytes for 100/200/400 battles with 2 kills each", sizes);
-    t.ok(sizes[2] - sizes[1] <= 2.1 * (sizes[1] - sizes[0]), "linear growth: " + ::BBTales.repr(sizes));
+    t.ok(sizes[2] - sizes[1] <= 2.1 * (sizes[1] - sizes[0]), "linear growth: " + ::Tales.repr(sizes));
 });
 
 // KNOWN_BUGS #13, fixed in 1.0.1: Fun Facts added to a running campaign. The save is made
@@ -112,8 +112,8 @@ test("KB13: adding the mod to an existing campaign", function (t) {
     yield t.load("kb13_nomod");
     foreach (bro in t.roster())
         t.eq(bro.m.FunFacts.pack().Battles, 0, bro.getName() + " starts with empty facts");
-    ::BBT.toughen(null, true);
-    yield t.battle({entities = ::BBT.thugs(2), player = ::BBT.scripted(@(t) ::BBT.killAll(t.roster()[0]))});
+    ::Tales.toughen(null, true);
+    yield t.battle({entities = ::Tales.thugs(2), player = ::Tales.scripted(@(t) ::Tales.killAll(t.roster()[0]))});
     t.eq(::FFT.stats(t.roster()[0]).Kills.map(@(k) k.BattleId), [1, 1], "kills tracked");
     t.eq(::FFT.rosterHints(t.roster()[0]), [], "tooltip works");
 });

@@ -1,5 +1,5 @@
 // mode: campaign seed=bbtest-battle fresh=1
-// mods: mod_hardened==1.26.3 mod_fun_facts stdlib@dev
+// mods: mod_hardened==1.26.3 mod_fun_facts@dev stdlib@dev
 // include: lib/helpers.nut
 
 // Fun Facts with the current Reforged 0.9.3 + Hardened 1.26.3 (KNOWN_BUGS #1 was reported with
@@ -13,13 +13,13 @@ test("Reforged and Hardened are loaded", function (t) {
 // KNOWN_BUGS #1, fixed in the working tree: 1.0.3 threw `the index 'getID' does not exist`
 // from Reforged's nested tooltips creating a bro during an event screen.
 test("KB1: the vanilla event that crashed, under Hardened", function (t) {
-    ::BBTales.Autoplay = false;
+    ::Tales.Autoplay = false;
     local event = ::World.Events.getEvent("event.master_no_use_apprentice");
     event.m.Town = ::World.EntityManager.getSettlements()[0];
     t.eq(::World.Events.fire("event.master_no_use_apprentice", false), true, "event fired");
     local dude = event.m.Dude;
     t.ok(dude != null && dude.m.FunFacts != null, "the apprentice has FunFacts");
-    ::BBTales.Autoplay = true;
+    ::Tales.Autoplay = true;
     yield t.until(@() !::World.State.getEventScreen().isVisible() && ::World.Events.m.ActiveEvent == null, 600, "the event answered");
     local hired = t.roster().filter(@(_, b) b.getBackground().getID() == "background.apprentice");
     t.eq(hired.len(), 1, "the apprentice hired");
@@ -30,16 +30,16 @@ test("KB1: the vanilla event that crashed, under Hardened", function (t) {
 // KNOWN_BUGS #11, fixed in 1.0.2: an attacker-less hit injures an enemy (corpse explosion).
 test("KB11: an enemy injured by an attacker-less hit", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local got = t.state.got <- {};
-    yield t.battle({entities = ::BBT.thugs(1), player = ::BBT.scripted([
+    yield t.battle({entities = ::Tales.thugs(1), player = ::Tales.scripted([
         function (t) {
-            local thug = ::BBT.hostiles()[0];
+            local thug = ::Tales.hostiles()[0];
             thug.getBaseProperties().Hitpoints = 300; thug.getSkills().update(); thug.setHitpoints(300);
             ::FFT.hit(thug, null, 25);
             t.state.got.injuries <- thug.getSkills().query(::Const.SkillType.TemporaryInjury).len();
         },
-        @(t) ::BBT.killAll(t.roster()[1])
+        @(t) ::Tales.killAll(t.roster()[1])
     ])});
     t.eq(got.injuries, 1, "the hit injured the thug");
     t.eq(t.roster().map(@(b) ::FFT.stats(b).InjuriesDealt.len()), [0, 0, 0], "nobody inflicted it");
@@ -48,9 +48,9 @@ test("KB11: an enemy injured by an attacker-less hit", function (t) {
 // KNOWN_BUGS #12, fixed in 1.0.0: kills tracked in a Reforged (+ Hardened) AI battle.
 test("KB12: an AI battle under Reforged 0.9.3 + Hardened", function (t) {
     ::FFT.reset();
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local bros = t.roster();
-    local errors = [], restore = ::BBT.catchErrors(errors);
+    local errors = [], restore = ::Tales.catchErrors(errors);
     yield t.battle({spawn = "BanditRaiders", resources = 60});
     restore();
     foreach (e in errors) if (e.find("activeEntity null") == null) t.fail("error: " + e);

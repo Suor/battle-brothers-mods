@@ -1,5 +1,5 @@
 // mode: campaign seed=bbtest-battle fresh=1 launch=economy
-// mods: mod_fun_facts stdlib@dev
+// mods: mod_fun_facts@dev stdlib@dev
 // include: lib/helpers.nut
 
 // The "Spent" facts (1.0.0's TCO, 1.0.3's temple, HEAD's buy prices) against what the
@@ -91,25 +91,25 @@ test("herbs: medicine used on a bro's injury", function (t) {
 });
 
 test("ammo: what an archer shot", function (t) {
-    ::BBT.toughen(null, true);
+    ::Tales.toughen(null, true);
     local bro = t.roster()[0];
     local offhand = bro.getItems().getItemAtSlot(::Const.ItemSlot.Offhand);
     if (offhand != null) bro.getItems().unequip(offhand);
-    ::BBT.equip(bro, "scripts/items/weapons/short_bow");
-    ::BBT.equip(bro, "scripts/items/ammo/quiver_of_arrows");
+    ::Tales.equip(bro, "scripts/items/weapons/short_bow");
+    ::Tales.equip(bro, "scripts/items/ammo/quiver_of_arrows");
     local quiver = bro.getItems().getItemAtSlot(::Const.ItemSlot.Ammo);
     local before = quiver.getAmmo();
     local stock = ::World.Assets.getAmmo(), left = {};
     t.state.bro <- bro;
     t.state.quiver <- quiver;
     t.state.left <- left;
-    yield t.battle({entities = ::BBT.thugs(2), player = ::BBT.scripted([
+    yield t.battle({entities = ::Tales.thugs(2), player = ::Tales.scripted([
         function (t) {
             local skill = t.state.bro.getSkills().getSkillByID("actives.quick_shot");
-            for (local i = 0; i < 3; i++) skill.onUse(t.state.bro, ::BBT.hostiles()[0].getTile());
+            for (local i = 0; i < 3; i++) skill.onUse(t.state.bro, ::Tales.hostiles()[0].getTile());
             t.state.left.ammo <- t.state.quiver.getAmmo();
         },
-        @(t) ::BBT.killAll(t.roster()[1])
+        @(t) ::Tales.killAll(t.roster()[1])
     ])});
     local shot = (before - left.ammo) * quiver.getAmmoCost();
     t.eq(before - left.ammo, 3, "arrows shot");
@@ -119,10 +119,10 @@ test("ammo: what an archer shot", function (t) {
 });
 
 test("hiring in town: the price paid", function (t) {
-    local town = ::BBT.townWith("building.crowd");
+    local town = ::Tales.townWith("building.crowd");
     t.ok(town != null, "a town to hire in");
     town.updateRoster(true);
-    local screen = ::BBT.visit(town, "building.crowd");
+    local screen = ::Tales.visit(town, "building.crowd");
     local entry = ::World.getRoster(town.getID()).getAll()[0];
     ::World.Assets.addMoney(10000);
     local money = ::World.Assets.getMoney();
@@ -139,9 +139,9 @@ test("temple: the healing paid for", function (t) {
     local bro = t.roster()[0];
     bro.getSkills().add(::new("scripts/skills/injury/cut_arm_injury"));
     bro.getSkills().add(::new("scripts/skills/injury/bruised_leg_injury"));
-    local town = ::BBT.townWith("building.temple");
+    local town = ::Tales.townWith("building.temple");
     t.ok(town != null, "a town with a temple");
-    local screen = ::BBT.visit(town, "building.temple");
+    local screen = ::Tales.visit(town, "building.temple");
     ::World.Assets.addMoney(10000);
     local money = ::World.Assets.getMoney(), prices = [];
     foreach (id in ["injury.cut_arm", "injury.bruised_leg"]) {
@@ -157,10 +157,34 @@ test("temple: the healing paid for", function (t) {
          "healing line: " + costs[0]);
 });
 
+test("training hall: the lessons paid for", function (t) {
+    local bro = t.roster()[0];
+    local town = ::Tales.townWith("building.training_hall");
+    t.ok(town != null, "a town with a training hall");
+    local screen = ::Tales.visit(town, "building.training_hall");
+    ::World.Assets.addMoney(10000);
+    local prices = [];
+    foreach (id in [0, 2]) {
+        bro.getSkills().removeByID("effects.trained");
+        local m = ::World.Assets.getMoney();
+        screen.getTrainingDialogModule().onTrain([bro.getID(), id]);
+        prices.push(m - ::World.Assets.getMoney());
+    }
+    // Already trained: nothing paid, nothing counted
+    screen.getTrainingDialogModule().onTrain([bro.getID(), 1]);
+    t.ok(prices[0] > 0 && prices[1] > 0, "paid for both");
+    t.eq(::FFT.stats(bro).Spent.Training, prices, "Spent.Training vs money paid");
+    local lines = [];
+    foreach (h in ::FFT.rosterHints(bro)) lines.extend(split(h, "\n"));
+    t.eq(lines.filter(@(_, l) l.find("Trained") == 0),
+         ["Trained 2 times, [img]gfx/ui/tooltips/money.png[/img]" + (prices[0] + prices[1]) + " total."],
+         "training line");
+});
+
 test("buying supplies in a marketplace: the average price", function (t) {
-    local town = ::BBT.townWith("building.marketplace");
+    local town = ::Tales.townWith("building.marketplace");
     t.ok(town != null, "a town with a marketplace");
-    local screen = ::BBT.visit(town, "building.marketplace");
+    local screen = ::Tales.visit(town, "building.marketplace");
     local market = town.getBuilding("building.marketplace");
     local shop = screen.getShopDialogModule();
     ::World.Assets.addMoney(100000);
