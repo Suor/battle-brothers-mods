@@ -11,7 +11,7 @@
                 t.state.thug = ::Tales.hostiles()[0];
                 foreach (tile in ::std.Tile.iterAdjacent(_e.getTile())) {
                     if (!tile.IsEmpty) continue;
-                    ::Tactical.getNavigator().teleport(t.state.thug, tile, null, null, false);
+                    ::Tactical.getNavigator().teleport(t.state.thug, tile, null, null, false, 0.0);
                     break;
                 }
                 t.state.seen.bro <- _e;
