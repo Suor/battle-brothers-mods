@@ -246,3 +246,18 @@ test("cleanse ally: a bleeding ally is bandaged by a bro on AI", function (t) {
     t.probe("bandaged by", ::Tales.uniq(::APT.autoUses().filter(@(_, u) u.what == "actives.bandage_ally").map(@(u) u.who), true));
     t.eq(t.result.survivors.enemies, 0, "company wins");
 });
+
+// A minstrel keeps his lute for Background Bonuses' party buff, he stays back instead of charging in.
+test("lute: the minstrel stays back, a club bro engages", function (t) {
+    ::Tales.toughen(null, true);
+    ::APT.probeReset();
+    ::Tales.equip(::Tales.byName("Bertel"), "scripts/items/weapons/lute");
+    ::Tales.equip(::Tales.byName("Wendel"), "scripts/items/weapons/wooden_stick");
+    local p = ::APT.pilot();
+    yield aiBattle(t, p);
+    t.probe("Bertel's uses", ::Tales.uniq(::APT.autoUses("Bertel").map(@(u) u.what), true));
+    t.eq([chose("Bertel", "ai_engage_melee"), chose("Wendel", "ai_engage_melee")], [false, true],
+         "minstrel doesn't engage, club bro does");
+    t.eq(p.st.stuck, [], "no stuck turn");
+    t.eq(t.result.survivors.enemies, 0, "company wins");
+});

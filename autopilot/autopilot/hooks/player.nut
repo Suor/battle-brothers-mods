@@ -43,6 +43,10 @@ mod.hook("scripts/entity/tactical/player", function (q) {
             for (local i = 0; i < this.autopilot_mults.len(); i++) {
                 m.Properties.BehaviorMult[i] *= this.autopilot_mults[i];
             }
+            // A minstrel is kept for his lute's party buff, not for charging in with it
+            local main = m.Actor.getItems().getItemAtSlot(::Const.ItemSlot.Mainhand);
+            if (main != null && main.getID() == "weapon.lute")
+                m.Properties.BehaviorMult[::Const.AI.Behavior.ID.EngageMelee] = 0.0;
         }
 
         // Make backrow more active
