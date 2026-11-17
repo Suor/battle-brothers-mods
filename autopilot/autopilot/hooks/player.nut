@@ -64,43 +64,43 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         }
 
         // Our behaviors
-        agent.addBehavior(this.new("scripts/ai/autopilot_attack_alternate"));
-        agent.addBehavior(this.new("scripts/ai/autopilot_step_n_hit"));
-        agent.addBehavior(this.new("scripts/ai/autopilot_unbag_shield"));
-        agent.addBehavior(this.new("scripts/ai/autopilot_swap_quiver"));
-        agent.addBehavior(this.new("scripts/ai/autopilot_cleanse_ally"));
-        agent.addBehavior(this.new("scripts/ai/autopilot_heal_ally"));
+        agent.addBehavior(::new("scripts/ai/autopilot_attack_alternate"));
+        agent.addBehavior(::new("scripts/ai/autopilot_step_n_hit"));
+        agent.addBehavior(::new("scripts/ai/autopilot_unbag_shield"));
+        agent.addBehavior(::new("scripts/ai/autopilot_swap_quiver"));
+        agent.addBehavior(::new("scripts/ai/autopilot_cleanse_ally"));
+        agent.addBehavior(::new("scripts/ai/autopilot_heal_ally"));
         local dogsMode = ::Autopilot.conf("dogsMode");
         if (dogsMode != "never") {
-            local dogs = this.new("scripts/ai/autopilot_unleash_dog");
+            local dogs = ::new("scripts/ai/autopilot_unleash_dog");
             dogs.m.Mode = dogsMode;
             agent.addBehavior(dogs);
         }
         if (::Autopilot.conf("nets")) {
-            agent.addBehavior(this.new("scripts/ai/autopilot_unbag_net"));
-            agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_throw_net"));
+            agent.addBehavior(::new("scripts/ai/autopilot_unbag_net"));
+            agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_attack_throw_net"));
         }
 
         // Military agents don't have this
-        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_disengage"));
-        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_adrenaline"));
-        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_pickup_weapon"));
-        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_line_breaker"));
-        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_rally"));
+        agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_disengage"));
+        agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_adrenaline"));
+        agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_pickup_weapon"));
+        agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_line_breaker"));
+        agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_rally"));
         // Reforged's Encourage (Supporter perk), a goblin overseer behavior in vanilla
-        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_boost_morale"));
+        agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_boost_morale"));
         // Pandora's Hobby Poison Pot; vanilla skills here are all entity-granted to enemies
-        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_always_use"));
+        agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_always_use"));
         // Bandit-only behavior; Reforged hangs Throw Pocket Sand and shield bash off it
-        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_distract"));
+        agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_distract"));
         // Disabled since doesn't consult offhand/backpack at all
-        // agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_throw_bomb"));
+        // agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_throw_bomb"));
 
         // military doesn't have it, but bandit does
-        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_attack_deathblow"));
+        agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_attack_deathblow"));
 
         // If we somehow get drum, say with North Expansion mod
-        agent.addBehavior(this.new("scripts/ai/tactical/behaviors/ai_boost_stamina"));
+        agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_boost_stamina"));
 
         // Only works because we overwrite break_free.onEvaluate()
         agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.BreakFree] = 2.5;
@@ -113,8 +113,8 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         agent.m.Properties.TargetPriorityHittingAlliesMult = -0.8;
 
         // AC (Accessory Companions)
-        if (this.getSkills().hasSkill("actives.companions_tame")) {
-            agent.addBehavior(this.new("scripts/ai/autopilot_tame"));
+        if (getSkills().hasSkill("actives.companions_tame")) {
+            agent.addBehavior(::new("scripts/ai/autopilot_tame"));
         }
 
         // Necromancers
@@ -143,19 +143,19 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         }
 
         // Fantasy Brothers: prefer shooting to walking
-        if (this.getSkills().hasSkill("actives.xxitem_rifleaa_skill")) {
+        if (getSkills().hasSkill("actives.xxitem_rifleaa_skill")) {
             agent.m.Properties.BehaviorMult[Const.AI.Behavior.ID.EngageRanged] = 0.1;
         }
 
         // Load behaviors for any skills, which declare those. Mostly Reforged stuff.
-        foreach (skill in this.getSkills().getSkillsByFunction(@(s) s.m.AIBehaviorID)) {
+        foreach (skill in getSkills().getSkillsByFunction(@(s) s.m.AIBehaviorID)) {
             // Reforged tags throw_net with AIBehaviorID, which would sneak it past the "nets" toggle
             if (!::Autopilot.conf("nets") && skill.m.AIBehaviorID == ::Const.AI.Behavior.ID.ThrowNet) continue;
             agent.addBehavior(::new(::MSU.AI.getBehaviorScriptFromID(skill.m.AIBehaviorID)));
         }
 
         // Do not pick up weapons by unarmed bros
-        if (this.getSkills().hasSkill("perk.legend_mastery_fist")) {
+        if (getSkills().hasSkill("perk.legend_mastery_fist")) {
             agent.removeBehavior(Const.AI.Behavior.ID.PickupWeapon);
         }
 
