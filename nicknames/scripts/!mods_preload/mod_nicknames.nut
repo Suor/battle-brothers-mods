@@ -283,7 +283,7 @@ def.logOut <- function () {
             ::World.Flags.remove(def.FlagPrefix + key + "." + batchIdx);
         }
         // Start from scratch
-        ::World.Flags.remove(def.FlagPrefix + _key)
+        ::World.Flags.remove(def.FlagPrefix + key)
         def.Logs[key] = {idx = null, items = []};
     }
 }
