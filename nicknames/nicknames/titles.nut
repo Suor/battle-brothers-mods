@@ -3372,9 +3372,6 @@ def.Titles <- [
         ["trait.strong", "attr.Initiative.low"],
         ["trait.huge", "attr.Initiative.low"],
     ]}
-    {ru = "Король", en = "the King", factors = [
-        ["trait.cocky", "group.pauper"],
-    ]}
     {ru = "Принцесса", en = "the Princess", factors = [
         ["group.noble", "trait.insecure"],
         ["group.noble", "trait.fragile"],
@@ -3483,7 +3480,10 @@ def.Titles <- [
         ["background.daytaler", "attr.Stamina.high"],
         ["background.farmhand", "attr.Stamina.high"],
     ]}
-    {ru = "Скелет", en = "the Skeleton", factors = [
+    {names = [
+        {ru = "Скелет", en = "the Skeleton"},
+        {ru = "Дрищ", en = "the Twig"},
+    ], factors = [
         ["attr.Hitpoints.low", "attr.Stamina.low"],
         ["attr.Hitpoints.low", "trait.fragile"],
     ]}
@@ -3529,7 +3529,10 @@ def.Titles <- [
         ["trait.tiny", "trait.fear_greenskins"],
         ["trait.tiny", "trait.bloodthirsty"],
     ]}
-    {ru = "Голодранец", en = "the Ragamuffin", factors = [
+    {names = [
+        {ru = "Голодранец", en = "the Ragamuffin"},
+        {ru = "Король", en = "the King"},
+    ], factors = [
         ["group.pauper", "trait.cocky"],
     ]}
     {ru = "Прохвост", en = "the Scoundrel", factors = [
@@ -3562,10 +3565,6 @@ def.Titles <- [
     {ru = "Доходяга", en = "the Wreck", factors = [
         ["attr.Hitpoints.low", "trait.ailing"],
         ["trait.ailing", "attr.Stamina.low"],
-    ]}
-    {ru = "Дрищ", en = "the Twig", factors = [
-        ["attr.Hitpoints.low", "trait.fragile"],
-        ["attr.Hitpoints.low", "attr.Stamina.low"],
     ]}
     {ru = "Дурак", en = "the Fool", factors = [
         ["trait.dumb", "trait.lucky"],
