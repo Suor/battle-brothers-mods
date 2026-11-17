@@ -85,7 +85,11 @@ TacticalScreenTurnSequenceBarModule.prototype.showStatsPanel = function (_show, 
 AutopilotNew.TacticalScreenTurnSequenceBarModule_showEntityStatusEffectbar
     = TacticalScreenTurnSequenceBarModule.prototype.showEntityStatusEffectbar;
 TacticalScreenTurnSequenceBarModule.prototype.showEntityStatusEffectbar = function (_show) {
-    if (!_show) this.notifyStatusEffectTooltipsToHide();
+    if (!_show) {
+        this.notifyStatusEffectTooltipsToHide();
+        // A non-empty container is shown again by the next stats panel update
+        this.mStatusEffectsContainer.empty();
+    }
 
     // The original function uses animation and forgets to toggle class in the end.
     this.mStatusEffectsContainer.css({ opacity: _show ? 1 : 0 });

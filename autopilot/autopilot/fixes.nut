@@ -310,6 +310,8 @@ local function getBound(_actor, _index) {
     function isAlive() {return false}
     function isDying() {return true}
     function isPlacedOnMap() {return false}
+    function isTurnDone() {return true}
+    function getCurrentProperties() {return clone ::Const.CharacterProperties}
     function getAlliedFactions() {return []}
     function getMoraleState() {return ::Const.MoraleState.Fleeing}
     function getAIAgent() {

@@ -23,8 +23,9 @@ this.autopilot_swap_quiver <- this.inherit("scripts/ai/tactical/behavior", {
 
         local items = _entity.getItems().getAllItemsAtSlot(::Const.ItemSlot.Bag);
         local ammoType = ammoItem.getAmmoType();
+        // Throwing weapons and firelances are Ammo too, but have no getAmmoType()
         local quivers = items.filter(
-            @(_, item) item.isItemType(::Const.Items.ItemType.Ammo) && item.getAmmo() > 0
+            @(_, item) item.getSlotType() == ::Const.ItemSlot.Ammo && item.getAmmo() > 0
                 && item.getAmmoType() == ammoType);
         if (quivers.len() == 0) return 0;
 
