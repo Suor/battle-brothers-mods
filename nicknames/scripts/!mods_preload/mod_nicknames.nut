@@ -294,28 +294,22 @@ local starting = false;
 
 // Bros spawned by an event/contract are only half-configured when setStartValuesEx() returns
 // (their talents/traits/own title are set afterwards), so we defer their title to onHired().
-// True while a screen of such an interaction is being processed — matches how mod_elite_few detects it.
-local inEvent = false;
+// Such a bro is made while a method of the interaction is on the stack. Checked by `this`, not by a hook:
+// mods replace setScreen() outright (Legends does), and with no flag an error can't leave it on.
+local function inEvent() {
+    for (local i = 2, info = null; (info = ::getstackinfos(i)) != null; i++) {
+        local self = "this" in info.locals ? info.locals["this"] : null;
+        if (typeof self == "table" && (::isKindOf(self, "event") || ::isKindOf(self, "contract")
+                || ::isKindOf(self, "encounter")))
+            return true;
+    }
+    return false;
+}
 
 mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ultrabros", function () {
     ::include("nicknames/titles");
     ::include("nicknames/rosetta_auto");
     // ::include("nicknames/bench");
-
-    local function hookScreen1(q) {  // events/event
-        q.setScreen = @(__original) function (_screen) {
-            inEvent = true; __original(_screen); inEvent = false;
-        }
-    }
-    local function hookScreen2(q) {  // contracts/contract, encounters/encounter
-        q.setScreen = @(__original) function (_screen, _restartIfAlreadyActive = true) {
-            inEvent = true; __original(_screen, _restartIfAlreadyActive); inEvent = false;
-        }
-    }
-    mod.hook("scripts/events/event", hookScreen1);
-    mod.hook("scripts/contracts/contract", hookScreen2);
-    if (::Hooks.hasMod("mod_legends"))
-        mod.hook("scripts/encounters/encounter", hookScreen2);
 
     // Need to handle that separately to not overwrite the scenario based title
     mod.hook("scripts/states/world_state", function (q) {
@@ -340,14 +334,14 @@ mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ul
             {
                 __original(_backgrounds, _addTraits, _gender, _addEquipment);
                 if (starting) return;
-                if (inEvent) { ::logInfo("nicknames: deferring title of event bro " + this.getName() + " to onHired"); return; }
+                if (inEvent()) { ::logInfo("nicknames: deferring title of event bro " + this.getName() + " to onHired"); return; }
                 def.fillTitle(this);
             }
         } else {
             q.setStartValuesEx = @(__original) function (_backgrounds, _addTraits = true) {
                 __original(_backgrounds, _addTraits);
                 if (starting) return;
-                if (inEvent) { ::logInfo("nicknames: deferring title of event bro " + this.getName() + " to onHired"); return; }
+                if (inEvent()) { ::logInfo("nicknames: deferring title of event bro " + this.getName() + " to onHired"); return; }
                 def.fillTitle(this);
             }
         }
