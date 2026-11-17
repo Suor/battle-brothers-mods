@@ -20,6 +20,7 @@ It is possible to configure whether bros will free themselves and other bros fro
 - `Q` - Switch to Auto
 - `H` - Mass Wait Turn
 - `N` - Mass Shield Wall
+- `X` - Ignore
 - `V` - Cancel Auto or Mass Action
 - `Enter` / `Esc` - confirm / dismiss a popup dialog
 

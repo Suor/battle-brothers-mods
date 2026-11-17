@@ -15,7 +15,7 @@
         {
             id = 1,
             type = "title",
-            text = "Ignore"
+            text = "Ignore (X)"
         },
         {
             id = 2,

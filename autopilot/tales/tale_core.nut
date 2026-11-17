@@ -196,6 +196,26 @@ test("H: mass wait makes every bro wait once in the round", function (t) {
     t.eq(t.result.survivors.enemies, 0, "company wins");
 });
 
+test("X: the active bro is ignored, the rest fight on AI", function (t) {
+    ::Tales.toughen(null, true);
+    ::APT.probeReset();
+    local seen = t.state.seen <- {};
+    local ai = t.state.ai <- thenAI(@() true);
+    local p = ::APT.pilot({press = false,
+        before = function (_e, t) {
+            t.state.seen.first <- _e.getName();
+            t.state.seen.handled <- ::Tactical.State.onKeyInput(::APT.key(::APT.Keys.X));
+            t.state.seen.ignored <- ::std.Util.isIn("_isIgnored", _e.m) && _e.m._isIgnored;
+        },
+        each = @(_st, t) t.state.ai(_st)});
+    yield t.battle({entities = ::Tales.thugs(3), player = p.fn, maxFrames = 30000});
+    t.probe("turns", p.st.turns);
+    t.eq(seen.handled, true, "X handled");
+    t.eq(seen.ignored, true, "the active bro is ignored");
+    t.eq(p.st.stuck, [], "no stuck turn");
+    t.eq(t.result.survivors.enemies, 0, "company wins");
+});
+
 test("N: mass shield wall raises the shields of the bros who have them", function (t) {
     ::Tales.toughen(null, true);
     ::APT.probeReset();
