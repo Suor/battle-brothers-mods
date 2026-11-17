@@ -31,10 +31,19 @@ So a sprite id is a global key in the engine's brush table. **When vendoring spr
 brush, rename the ids** (e.g. `bust_naked_body_7873` → `druid_beast_body_01`) so your atlas doesn't
 collide with the source mod's brush if both load.
 
+Sprite names in `setBrush(...)`, `spawnIcon(...)` and `m.IconMini` are such ids; `m.Icon` is a plain
+`gfx/...png` path. The game loads every `*.brush` in a mod's `brushes/` dir, so a sprite is there by id
+once its brush ships (`druid/brushes/druid_icons.brush` + `gfx/druid_icons.png` give `druid_regrowth` and
+`druid_regrowth_mini`). Status-effect floating icons are 56×56, their `_mini` status-strip versions 20×20.
+
+Vanilla sprites are unpacked in `~/projects/bbm/base/unpacked_brushes/<brush>/metadata.xml`: grep there for
+an existing id (e.g. `status_effect_79` is the regen heart) or its attributes. For a simple icon sheet
+`width`/`height`/`ic` and offsets may be left out, pack computes them.
+
 ## Tooling: bbrusher via wine
 
 `bbrusher.exe` lives at `../../3rdparty/bbrusher.exe` (relative to a mod dir, i.e.
-`~/projects/bbm/3rdparty/bbrusher.exe`). It's a .NET exe; **mono is not installed — run it under
+`~/projects/bbm/3rdparty/bbrusher.exe`; `../base/bbrusher.sh` runs a copy without the noise filter). It's a .NET exe; **mono is not installed — run it under
 `wine`**. wine spews `libEGL`/`pci id`/`fixme` noise to stderr; filter it:
 
 ```bash
