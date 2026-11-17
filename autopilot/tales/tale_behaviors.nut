@@ -247,6 +247,51 @@ test("cleanse ally: a bleeding ally is bandaged by a bro on AI", function (t) {
     t.eq(t.result.survivors.enemies, 0, "company wins");
 });
 
+// The bro whose turn comes first is the prophet, the other two are tired, cultists or not.
+// His own evaluation is checked on his first AI turn.
+local function prophetBattle(_t, _cultists) {
+    ::Tales.toughen(null, true);
+    ::APT.probeReset();
+    local seen = _t.state.seen <- {};
+    local p = ::APT.pilot({
+        before = function (_e, t) {
+            t.state.seen.prophet <- _e;
+            _e.getSkills().add(::new("scripts/skills/actives/voice_of_davkul_skill"));
+            foreach (bro in t.roster()) {
+                if (bro.getID() == _e.getID()) continue;
+                if (_cultists) {
+                    bro.getSkills().removeByID(bro.getBackground().getID());
+                    bro.getSkills().add(::new("scripts/skills/backgrounds/cultist_background"));
+                }
+                bro.setFatigue(40);
+            }
+        },
+        each = function (_st, t) {
+            if ("eval" in t.state.seen) return;
+            local prophet = t.state.seen.prophet;
+            local b = prophet.getAIAgent().getBehavior(::Const.AI.Behavior.ID.AP_VoiceOfDavkul);
+            t.state.seen.eval <- b.onEvaluate(prophet) > 0;
+        }});
+    return aiBattle(_t, p);
+}
+
+test("voice of davkul: the prophet speaks to tired cultists", function (t) {
+    yield prophetBattle(t, true);
+    local seen = t.state.seen, prophet = seen.prophet.getName();
+    t.probe("prophet", prophet);
+    t.eq(seen.eval, true, "voice wants to speak");
+    t.eq(did(prophet, "actives.voice_of_davkul"), true, "spoke");
+    t.eq(t.result.survivors.enemies, 0, "company wins");
+});
+
+test("voice of davkul: silent with no cultists around", function (t) {
+    yield prophetBattle(t, false);
+    local seen = t.state.seen, prophet = seen.prophet.getName();
+    t.eq(seen.eval, false, "voice doesn't want to speak");
+    t.eq(did(prophet, "actives.voice_of_davkul"), false, "silent");
+    t.eq(t.result.survivors.enemies, 0, "company wins");
+});
+
 // A minstrel keeps his lute for Background Bonuses' party buff, he stays back instead of charging in.
 test("lute: the minstrel stays back, a club bro engages", function (t) {
     ::Tales.toughen(null, true);
