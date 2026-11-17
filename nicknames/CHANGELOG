@@ -1,8 +1,17 @@
+0.8.1
+- support new vanilla Executioner background
+- fixed title history leaking between campaigns and saves in one game session
+- fixed a fallen starting bro's title being given again
+- fixed equipment affecting attribute titles
+- fixed a Starting Perks by Background fallback counting for one perk only
+- fixed event recruits titled too early under Legends or after an event error
+
 0.8.0
 - 160+ new titles
 - support Black Pyramid factors: elemental phobias and affinities
-- fix a crash and badly fitting titles for event bros
-- fix impossible, non-working or too broad factor sets
+- some Northern Expansion related fixes
+- fixed a crash and badly fitting titles for event bros
+- fixed impossible, non-working or too broad factor sets
 
 0.7.1
 - protect against bad traits and bgs, i.e. Black Pyramid
