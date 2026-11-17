@@ -19,11 +19,7 @@
         bro.setTitle("");
     }
 }
-local campaignStarted = ::__Tales.onCampaignStarted;
-::__Tales.onCampaignStarted = function () {
-    ::APT.nameCompany();
-    campaignStarted();
-}
+::Tales.setupCampaign(@() ::APT.nameCompany());
 
 ::APT.bag <- function (_bro, _script) {
     local item = typeof _script == "string" ? ::new(_script) : _script;

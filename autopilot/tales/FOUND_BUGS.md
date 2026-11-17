@@ -96,7 +96,7 @@ New findings are A1–A5; the repro status of every KNOWN_BUGS.md entry follows.
 | 7 | not reproduced | — | A swallowed bro gets no turn in vanilla, so no end of turn; guard `isPlacedOnMap()` at `autopilot/hooks/actor.nut:40`. Ghoul stress battles pass. |
 | 8 | by design, works | `known_bugs::KB8…` passes | A guest stays manual, the turn order goes on. |
 | 9 | **partly reproduced** (latent) | `known_bugs::KB9…` | An `ActorRef` whose actor is gone throws `null ActorRef, index = isTurnDone` / `getCurrentProperties`: `ActorFake` (`autopilot/fixes.nut:307-320`) lacks what vanilla `ai_protect.nut:70-72` asks of known allies. Legends' `ai_engage_melee:1032` itself not testable here. |
-| 10 | **not reproduced** (open, cause unknown; the mechanism below fails only on the engine) | `known_bugs::KB10…` | Wait-all requested twice before the popup is shown (the UI shows it asynchronously, `DialogScreen.isVisible()` is false meanwhile) pushes two `MenuStack` backsteps; one Yes leaves one, which holds the battle's end (`onBattleEndedDelayed` waits for no backsteps) and the keys. One press works (control). Autopilot's `H`/`N`/`Q` handlers don't check `MenuStack.hasBacksteps()` (`turn_sequence_bar.nut:30-52, 87-90`); vanilla's `showDialogPopup` guard has the same gap. Whether this is the users' case is unconfirmed. **Not in the original game**: its `DialogScreen.show` is animating at once, so vanilla's guard drops the second request (KB10 in the original game, below). |
+| 10 | **not reproduced** (open, cause unknown; the mechanism below isn't the original's) | `known_bugs::KB10…` | Wait-all requested twice before the popup is shown (the UI shows it asynchronously, `DialogScreen.isVisible()` is false meanwhile) pushes two `MenuStack` backsteps; one Yes leaves one, which holds the battle's end (`onBattleEndedDelayed` waits for no backsteps) and the keys. One press works (control). Autopilot's `H`/`N`/`Q` handlers don't check `MenuStack.hasBacksteps()` (`turn_sequence_bar.nut:30-52, 87-90`); vanilla's `showDialogPopup` guard has the same gap. Whether this is the users' case is unconfirmed. **Not in the original game**: its `DialogScreen.show` is animating at once, so vanilla's guard drops the second request (KB10 in the original game, below). |
 | 11 | not testable | — | Needs SSU. |
 | 12 | fixed, regression passes | `reforged::KB12…` (+ control) | |
 | 14, 16, 21 | not testable | — | NgGH / Legends. |
@@ -279,10 +279,9 @@ Tests: `tale_ui_page.nut`, its vanilla control `tale_ui_page_vanilla.nut` (no Au
   (`::APT.dialogReady`, `confirmDialog`, `cancelDialog`), Flee waits for the AI popup's fade-out, KB10 reads the menu
   stack after the popup's fade-out, and `unbag shield` asserts the shield goes on by his second turn (whether he
   swings first is the AI's scores and the map's). With the stable RNG all 7 pass or fail alike in engine and ui.
-  One divergence is left, `known_bugs::KB10: wait-all pressed twice…` (engine FAIL, ui PASS): the page answers
-  `DialogScreen.show` inline, so `isAnimating()` holds after the first press and vanilla's guard drops the second
-  (menu stack depth 1 after both presses, 2 headless). The original's `asyncCall` answers in a later frame, as the
-  headless stub does, so the engine's FAIL is the likelier one; unconfirmed in the game.
+  `known_bugs::KB10: wait-all pressed twice…` passes in every env since code and the engine report a screen animating
+  inside its `show`, as the original does (its parity probe `campaign/screen_animating`): vanilla's guard drops the
+  second press.
 
 ## KB10 in the original game (2026-11-13)
 
