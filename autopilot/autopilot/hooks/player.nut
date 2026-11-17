@@ -81,6 +81,8 @@ mod.hook("scripts/entity/tactical/player", function (q) {
             agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_attack_throw_net"));
         }
 
+        // The melee agent draws a sling or bow from the bag (ai_switchto_ranged) but can't shoot it
+        if (mode.agent == "military_melee") agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_attack_bow"));
         // Military agents don't have this
         agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_disengage"));
         agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_adrenaline"));
