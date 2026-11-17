@@ -70,15 +70,19 @@ def.buildFactorSet <- function(_bro) {
 
     // attrs
     local changeAttrs = bg.onChangeAttributes();
+    // traits' effects count, equipment's (armor weight, shields' defense) don't: subtract them
     local props = _bro.getCurrentProperties();
+    local baseProps = _bro.getBaseProperties(), withItems = baseProps.getClone();
+    foreach (skill in _bro.getSkills().query(::Const.SkillType.Item, true)) skill.onUpdate(withItems);
     local talents = _bro.m.Talents; // may be empty for event bros (setStartValuesEx with _addTraits=false)
     foreach (attr, br in def.BaseAttrRanges) {
         local low = br[0] + changeAttrs[attr][0], high =  br[1] + changeAttrs[attr][1];
         local idx = ::Const.Attributes[attr == "Stamina" ? "Fatigue" : attr];
         local stars = idx < talents.len() ? talents[idx] : 0;
-        if (stars > 0 && props[attr] >= high - stars + 1)
+        local value = props[attr] - withItems[attr] + baseProps[attr];
+        if (stars > 0 && value >= high - stars + 1)
             set["attr." + attr + ".high"] <- true;
-        if (stars == 0 && props[attr] <= low)
+        if (stars == 0 && value <= low)
             set["attr." + attr + ".low"] <- true;
     }
 

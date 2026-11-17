@@ -6,7 +6,7 @@
     RangedSkill = 4, Bravery = 5, MeleeDefense = 6, RangedDefense = 7,
     COUNT = 8
 }
-::Const.SkillType <- {Trait = 1, Perk = 4, PermanentInjury = 4096, All = 0xFFFF}
+::Const.SkillType <- {Trait = 1, Perk = 4, PermanentInjury = 4096, Item = 32, All = 0xFFFF}
 ::Const.ItemSlot  <- {Mainhand = 0}
 ::Const.Items <- {
     WeaponType = {
@@ -111,7 +111,8 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
         MeleeSkill = 52, RangedSkill = 37,
         MeleeDefense = 2, RangedDefense = 2, Initiative = 105
     };
-    local props = baseProps != null ? baseProps : defaultProps;
+    local props = clone (baseProps != null ? baseProps : defaultProps);
+    props.getClone <- @() clone this;
 
     local title = "";
     return {
@@ -142,7 +143,7 @@ function makeBro(bgId, bgAttrs = null, traits = [], talents = null, baseProps = 
                     foreach (inj in injuryList) if (inj == id) return true;
                     return false;
                 }
-                function query(_type) {
+                function query(_type, _includeHidden = false) {
                     local result = [];
                     if (_type & ::Const.SkillType.Trait) result.extend(getAllSkillsOfType(::Const.SkillType.Trait));
                     if (_type & ::Const.SkillType.Perk)  result.extend(getAllSkillsOfType(::Const.SkillType.Perk));
