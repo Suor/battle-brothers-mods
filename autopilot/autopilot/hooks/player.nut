@@ -155,7 +155,8 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         }
 
         // Do not pick up weapons by unarmed bros
-        if (getSkills().hasSkill("perk.legend_mastery_fist")) {
+        // Legends before 2025-01-18 names it mastery_fist
+        if (getSkills().hasSkill("perk.legend_mastery_unarmed") || getSkills().hasSkill("perk.legend_mastery_fist")) {
             agent.removeBehavior(Const.AI.Behavior.ID.PickupWeapon);
         }
 

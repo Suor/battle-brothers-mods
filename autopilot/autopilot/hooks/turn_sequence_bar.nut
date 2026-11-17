@@ -14,7 +14,8 @@ mod.hook("scripts/ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_ba
     // Q: call it shouldAuto()?
     q.canAuto <- function (_entity = null) {
         if (_entity == null) _entity = getActiveEntity();
-        return this.isHumanControlled(_entity)
+        // Other player-controlled actors (summons, charmed foes) bring their own AI
+        return this.isHumanControlled(_entity) && ::std.Util.isKindOf(_entity, "player")
             && !_entity.isGuest() && (!("_isIgnored" in _entity.m) || !_entity.m._isIgnored)
             && (::Autopilot.conf("player") || !_entity.getSkills().hasSkill("trait.player"));
     }
@@ -90,6 +91,7 @@ mod.hook("scripts/ui/screens/tactical/modules/turn_sequence_bar/turn_sequence_ba
         Tactical.State.showDialogPopup("AI Control", "Turn control over to the AI?", function ()
         {
             cancelAutoActions(false); // reset changes we may have made (except ignoring bros)
+            Tactical.State.cancelCurrentAction(); // a skill left selected would stay armed under AI
             m.IsOnAI = true;
             m.JSHandle.call("showStatsPanel", false);
             foreach(e in m.AllEntities) {

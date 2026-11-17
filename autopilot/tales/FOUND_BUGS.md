@@ -27,6 +27,9 @@ New findings are A1–A5; the repro status of every KNOWN_BUGS.md entry follows.
 
 ## A2. AI button with a non-player ally under the player's control: `isGuest` does not exist — medium (modded)
 
+- **Fixed 2026-11-17**: `canAuto` takes only `player`s; NgGH minions and Hexe-charmed foes keep their own AI
+  (NgGH has its own autopilot toggle for minions). Passes code, engine, game.
+
 - Tests: `known_bugs::A2: AI button on a non-player ally's turn: no error` and
   `known_bugs::A2: AI confirmed with a non-player ally in the company: no error, bros on AI` —
   `./bbtales.py -k A2 ../mods/autopilot/tales/tale_known_bugs.nut`
@@ -43,6 +46,8 @@ New findings are A1–A5; the repro status of every KNOWN_BUGS.md entry follows.
 
 ## A3. A bro charmed when AI is switched on stays manual after the charm ends — low
 
+- **Not a bug** (user, 2026-11-17): pressing AI again takes him in; no reports.
+
 - Test: `edge::A3: a bro charmed when AI is switched on joins AI when the charm ends` —
   `./bbtales.py -k A3 ../mods/autopilot/tales/tale_edge.nut`
 - Observed: `ASSERT on autopilot's agent when the charm ends: expected ["military_melee_agent", true],
@@ -57,6 +62,8 @@ New findings are A1–A5; the repro status of every KNOWN_BUGS.md entry follows.
 - 2.9.0: same.
 
 ## A4. Attack choice goes NaN with a negative-scored option and always takes the last one — low (latent)
+
+- **Fixed 2026-11-17**: a score ≤ 0 weighs 0; passes code, engine, game.
 
 - Test: `known_bugs::A4: attack choice with a negative-scored option still prefers the good one` —
   `./bbtales.py -k A4 ../mods/autopilot/tales/tale_known_bugs.nut` (drives the real
@@ -75,6 +82,8 @@ New findings are A1–A5; the repro status of every KNOWN_BUGS.md entry follows.
 
 ## A5. Skill tooltip for an entity no longer in battle throws — low
 
+- **Fixed 2026-11-17**: a gone entity gives null; passes code, engine, game.
+
 - Test: `known_bugs::A5: skill tooltip for an entity that is gone: null, as vanilla` —
   `./bbtales.py -k A5 ../mods/autopilot/tales/tale_known_bugs.nut`
 - Observed: `onQuerySkillTooltipData(-1, "actives.no_such_skill")` →
@@ -91,11 +100,11 @@ New findings are A1–A5; the repro status of every KNOWN_BUGS.md entry follows.
 | 2 | **reproduced** | `known_bugs::KB2…` ×2 | `quickSwitch = false`: the number key and a click with a bag item's id both swap (`got [false, 4]`: weapon changed, 4 AP). `autopilot/hooks/tactical_state.nut:48-68`. |
 | 3 | **reproduced** (Reforged) | `reforged::KB3…` | Auto Recover runs with `isActiveEntity(bro) == false`; Unstoppable stays at 3 stacks (Recover by hand resets them, control passes). `autopilot/hooks/actor.nut:79` (before the original `onTurnEnd`, while the bar's active entity is no longer him). |
 | 4 | not reproducible headless | `known_bugs::KB4…` passes | The Squirrel side answers each active bro's `onQueryEntityStatusEffects` with his own effects; the stale icons are JS-side (`ui/mods/autopilot_new.js:85-93` or vanilla's JS). |
-| 5 | **partly reproduced** | `known_bugs::KB5…` | After AI is pressed with Aimed Shot selected, `CurrentActionState` stays `SkillSelected` (2) and `SelectedSkillID` `actives.aimed_shot`; but shots stay within AP (1 a round), "shoots until out of ammo" not seen. `autopilot/hooks/turn_sequence_bar.nut:87-103` doesn't clear the state (`swapToItem` does, `tactical_state.nut:35-42`). |
+| 5 | **fixed** 2026-11-17 (AI press calls vanilla `cancelCurrentAction()`; passes code, engine, game) | `known_bugs::KB5…` | After AI is pressed with Aimed Shot selected, `CurrentActionState` stays `SkillSelected` (2) and `SelectedSkillID` `actives.aimed_shot`; but shots stay within AP (1 a round), "shoots until out of ammo" not seen. `autopilot/hooks/turn_sequence_bar.nut:87-103` doesn't clear the state (`swapToItem` does, `tactical_state.nut:35-42`). |
 | 6 | **reproduced** | `known_bugs::KB6…` | Same `getPerkPoints` error via `swapToItem` → `onEquipBagItem` (`tactical_state.nut:45`) for a non-player ally. See A1, A2 for the same root (player-only methods on any player-controlled actor). |
 | 7 | not reproduced | — | A swallowed bro gets no turn in vanilla, so no end of turn; guard `isPlacedOnMap()` at `autopilot/hooks/actor.nut:40`. Ghoul stress battles pass. |
 | 8 | by design, works | `known_bugs::KB8…` passes | A guest stays manual, the turn order goes on. |
-| 9 | **partly reproduced** (latent) | `known_bugs::KB9…` | An `ActorRef` whose actor is gone throws `null ActorRef, index = isTurnDone` / `getCurrentProperties`: `ActorFake` (`autopilot/fixes.nut:307-320`) lacks what vanilla `ai_protect.nut:70-72` asks of known allies. Legends' `ai_engage_melee:1032` itself not testable here. |
+| 9 | **fixed** 2026-11-17 (`ActorFake` has `isTurnDone`, `getCurrentProperties`; known_bugs and legends_bugs KB9 pass in engine, game) | `known_bugs::KB9…` | An `ActorRef` whose actor is gone throws `null ActorRef, index = isTurnDone` / `getCurrentProperties`: `ActorFake` (`autopilot/fixes.nut:307-320`) lacks what vanilla `ai_protect.nut:70-72` asks of known allies. Legends' `ai_engage_melee:1032` itself not testable here. |
 | 10 | **not reproduced** (open, cause unknown; the mechanism below isn't the original's) | `known_bugs::KB10…` | Wait-all requested twice before the popup is shown (the UI shows it asynchronously, `DialogScreen.isVisible()` is false meanwhile) pushes two `MenuStack` backsteps; one Yes leaves one, which holds the battle's end (`onBattleEndedDelayed` waits for no backsteps) and the keys. One press works (control). Autopilot's `H`/`N`/`Q` handlers don't check `MenuStack.hasBacksteps()` (`turn_sequence_bar.nut:30-52, 87-90`); vanilla's `showDialogPopup` guard has the same gap. Whether this is the users' case is unconfirmed. **Not in the original game**: its `DialogScreen.show` is animating at once, so vanilla's guard drops the second request (KB10 in the original game, below). |
 | 11 | not testable | — | Needs SSU. |
 | 12 | fixed, regression passes | `reforged::KB12…` (+ control) | |
@@ -154,7 +163,7 @@ stash item, as a necromancer does (then toughened so the thugs don't kill them b
 - Cause: the #21 fix (`b3b794b`, 2025-01-17) checks `hasSkill("perk.legend_mastery_fist")`
   (`autopilot/hooks/player.nut:158`); Legends renamed the perk to `perk.legend_mastery_unarmed` the next day
   (Legends `97f6434bae`, 2025-01-18, "Rename mastery fists to mastery unarmed"), so the check never matches since.
-- Fix: check `perk.legend_mastery_unarmed` (keep the old ID for older Legends).
+- **Fixed 2026-11-17**: both IDs checked; passes engine and game.
 
 ### KB6 reproduced on Legends 19.4.23 — Legends' own bug as well
 
@@ -256,6 +265,7 @@ Tests: `tale_ui_page.nut`, its vanilla control `tale_ui_page_vanilla.nut` (no Au
   with the reports' "once you hover a tile".
 - Fix: empty the container in the override when hiding (`if (!_show) this.mStatusEffectsContainer.empty();`);
   with that patched into the page by `t.js` the test passes.
+- **Fixed 2026-11-17** that way: `ui_page::KB4` fails before, passes after in `--env ui` and `--env game`.
 
 ### Also checked
 

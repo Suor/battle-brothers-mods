@@ -74,6 +74,7 @@
         if (tooltip != null) return tooltip;
 
         local entity = Tactical.getEntityByID(_entityId);
+        if (entity == null) return null;
         local items = entity.getItems();
         local item = items.getItemByInstanceID(_skillId);
         if (item == null) return null;

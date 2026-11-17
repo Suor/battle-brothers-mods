@@ -80,7 +80,8 @@ mod.hook("scripts/ai/tactical/behaviors/ai_attack_default", function (q) {
         // How we choose a skill is borrowed from ai_attack_bow, we do it for different options
         // though not for different skills inside target.
         local scores =  options.map(@(_r) _r.score)
-        local weights = scores.map(@(_s) ::Math.pow(_s, ::Const.AI.Behavior.AttackRangedChancePOW));
+        // A non-positive score (hitting next to an ally) would make pow() NaN and the whole draw with it
+        local weights = scores.map(@(_s) _s > 0 ? ::Math.pow(_s, ::Const.AI.Behavior.AttackRangedChancePOW) : 0.0);
         local cutoff = ::std.Array.max(weights) * ::Const.AI.Behavior.AttackRangedScoreCutoff;
         local choice = ::std.Rand.choice(options, weights.map(@(_w) _w < cutoff ? 0 : _w));
         // Debug.logRepr("choice", choice);
