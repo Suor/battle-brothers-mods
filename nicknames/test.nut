@@ -183,6 +183,7 @@ print("empty m.Talents (King's Guard event) tolerated OK\n");
 // perk.rf_promised_potential is a fallback for perk.student → should match Pedant
 local broFallbackPerk = makeBro("background.farmhand", null, [], null, null, 5, [], ["perk.rf_promised_potential"]);
 assertIn("the Pedant", candidateTitles(broFallbackPerk));
+assertIn("the Natural", candidateTitles(broFallbackPerk));  // also stands in for perk.gifted
 print("aliases: BgPerks fallback perk matches canonical perk titles OK\n");
 
 // ── North Expansion traits ───────────────────────────────────────────────────

@@ -766,15 +766,14 @@ def _parse_bgperks():
 
 
 def _parse_perk_fallbacks():
-    """fallback perk -> canonical perk, as titles.nut aliases them
-    (later entries overwrite earlier ones for a shared fallback)."""
+    """fallback perk -> set of canonical perks, as titles.nut aliases them."""
     if not BGPERKS_FALLBACKS.exists():
         return {}
     text = _array_block(_read(BGPERKS_FALLBACKS), r"::BgPerks\.fallbacks\s*<-\s*\{") or ""
     out = {}
     for m in re.finditer(r'"([\w.]+)"\s*:\s*\[([^\]]*)\]', text):
         for fallback in _strings(m.group(2)):
-            out[fallback] = m.group(1)
+            out.setdefault(fallback, set()).add(m.group(1))
     return out
 
 
@@ -1178,7 +1177,7 @@ def _perk_chance(bg, perk, data, days):
 def _perk_prob(bg, perk, data, days):
     """P(perk factor matches): the perk itself or any fallback perk that
     titles.nut aliases back to it (independent rolls)."""
-    keys = {perk} | set(f for f, c in data.perk_fallbacks.items() if c == perk)
+    keys = {perk} | set(f for f, c in data.perk_fallbacks.items() if perk in c)
     q = 1.0
     for k in keys:
         q *= 1.0 - _perk_chance(bg, k, data, days)

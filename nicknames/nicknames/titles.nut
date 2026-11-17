@@ -161,8 +161,12 @@ def.Aliases <- {
 // Alias Starting Perks by Background falllbacks
 if ("BgPerks" in getroottable() && "fallbacks" in ::BgPerks) {
     foreach (canonical, fallbacks in ::BgPerks.fallbacks)
-        foreach (fallback in fallbacks)
-            def.Aliases["perk." + fallback] <- "perk." + canonical;
+        foreach (fallback in fallbacks) {
+            // one fallback may stand in for several perks
+            local key = "perk." + fallback;
+            if (!(key in def.Aliases)) def.Aliases[key] <- [];
+            def.Aliases[key].push("perk." + canonical);
+        }
 }
 
 

@@ -18,6 +18,7 @@
 ::BgPerks <- {
     fallbacks = {
         "student": ["rf_promised_potential"]
+        "gifted": ["rf_promised_potential"]
         "fast_adaption": ["rf_pattern_recognition"]
     }
 }

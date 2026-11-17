@@ -111,7 +111,11 @@ def.buildFactorSet <- function(_bro) {
     // add aliases
     local extra = {};
     foreach (factor, _ in set)
-        if (factor in def.Aliases) extra[def.Aliases[factor]] <- true;
+        if (factor in def.Aliases) {
+            local alias = def.Aliases[factor];
+            if (typeof alias == "array") foreach (a in alias) extra[a] <- true;
+            else extra[alias] <- true;
+        }
     foreach (canonical, _ in extra) set[canonical] <- true;
     return set;
 }
