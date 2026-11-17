@@ -54,6 +54,7 @@ function resetTestFlags() {_flagStore.clear();}
 
 // Captured hooked methods (populated by mod_obj.hook below)
 local captured_onHired = null;
+local captured_startNewCampaign = null;
 
 local mod_obj = {
     function require(...) {}
@@ -67,6 +68,7 @@ local mod_obj = {
         local q = {}.setdelegate({
             _set = function (k, v) {
                 if (k == "onHired") captured_onHired = v(@() null);
+                if (k == "startNewCampaign") captured_startNewCampaign = v(@() null);
                 return v;
             }
         });
@@ -89,6 +91,9 @@ local mod_obj = {
 // Returns the captured onHired function after loading the mod
 function getNicknamesOnHired() {
     return captured_onHired;
+}
+function getNicknamesStartNewCampaign() {
+    return captured_startNewCampaign;
 }
 
 // Build a minimal bro mock.

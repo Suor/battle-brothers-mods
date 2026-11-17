@@ -398,4 +398,13 @@ onHiredFn.call(hiredBro);
 assertEq(def.loadState().hired.Bjorn, 2);
 print("onHired hook records into state.hired OK\n");
 
+// Starting brothers never go through onHired(), the campaign start records them
+resetTestFlags();
+def.State = null;
+setTestRoster([makeRosterBro("Bjorn")]);
+getNicknamesStartNewCampaign()();
+assertEq(def.loadState().hired, {Bjorn = 1});
+setTestRoster([]);
+print("startNewCampaign records starting titles into state.hired OK\n");
+
 print("Tests OK\n");

@@ -324,8 +324,14 @@ mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ul
             __original();
             starting = false;
             local roster = World.getPlayerRoster().getAll();
-            foreach (bro in roster)
+            local hired = def.loadState().hired;
+            foreach (bro in roster) {
                 if (bro.getTitle() == "") def.fillTitle(bro);
+                // vanilla never calls onHired() for the starting company
+                local title = bro.getTitle();
+                if (title != "" && !(title in hired)) hired[title] <- 1;
+            }
+            def.saveState();
         }
     });
 })
