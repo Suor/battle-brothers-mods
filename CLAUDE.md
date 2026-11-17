@@ -127,42 +127,12 @@ To verify a rosetta translation file, run:
 rosetta -c <path/to/translation.nut> <path/to/mod/dir>
 ```
 
-## Brushes & Sprites (bbrusher)
+## Brushes & Sprites
 
-Sprite names passed to `setBrush(...)`, `spawnIcon(...)` and `m.IconMini` are **brush-atlas
-sprites**, not PNG paths (unlike `m.Icon`, which is a direct `gfx/...png` path). Each `.brush`
-file describes a sprite sheet; the game auto-loads every `*.brush` in a mod's `brushes/` dir, so
-a sprite is available by id once its brush ships (e.g. `druid/brushes/druid_icons.brush` +
-`gfx/druid_icons.png` provide `druid_regrowth` / `druid_regrowth_mini`).
+Sprite names in `setBrush(...)`, `spawnIcon(...)` and `m.IconMini` are brush-atlas ids, not PNG paths (unlike
+`m.Icon`). Packing, unpacking and finding sprites: the `brushes` skill.
 
-**`bbrusher`** (`../base/bbrusher.sh`, a wine wrapper around `bbrusher.exe`) packs/unpacks brushes:
 
-```bash
-# Unpack an existing sheet to inspect sprites + metadata
-../base/bbrusher.sh unpack path/to/file.brush [outDir]
-
-# Pack a dir of PNGs into file.brush + the sheet named in metadata.xml
-../base/bbrusher.sh pack path/to/file.brush <inputDir>
-```
-
-The input dir for `pack` **must** contain a `metadata.xml` (note: `unpack` writes that same
-`metadata.xml`; the `--help` text calling it `sprites.xml` is wrong). Format:
-
-```xml
-<brush name="gfx/druid_icons.png" version="17" b1="2" b5="0">
-  <sprite id="druid_regrowth" img="druid_regrowth.png" />
-  <sprite id="druid_regrowth_mini" offsetY="35" img="druid_regrowth_mini.png" />
-</brush>
-```
-
-`id` is the runtime sprite name; `img` is the source PNG in the input dir; `width`/`height`/`ic`
-(avg color) and offsets are auto-computed if omitted. `name` is the output sheet path, written
-relative to the brush file's grandparent dir by default (`brushes/x.brush` → `gfx/...`); override
-with `--gfxPath`. Status-effect floating icons are 56×56; their `_mini` status-strip versions are
-20×20. Vanilla sprites live in `../base/unpacked_brushes/<brush>/metadata.xml` — grep there to find
-an existing sprite id (e.g. `status_effect_79` = the regen heart) or copy its attributes.
-Commit only the resulting `.brush` + sheet PNG (source PNGs/metadata are kept out of the mod, like
-`druid_beast.brush`).
 
 ## Utility Scripts
 
