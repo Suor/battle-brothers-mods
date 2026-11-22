@@ -13,4 +13,5 @@ mh.queue(function() {
     ::include("hackflows_translations/backgrounds_reforged");
     ::include("hackflows_translations/prepare_for_battle");
     ::include("hackflows_translations/shield_damage");
+    ::include("hackflows_translations/the_shorn");
 });

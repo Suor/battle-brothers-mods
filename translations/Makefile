@@ -13,3 +13,4 @@ check: test
 	rosetta -qc hackflows_translations/backgrounds_reforged.nut ~/projects/bbm/3rdparty/mod_backgrounds_reforged_compatibility
 	rosetta -qc hackflows_translations/prepare_for_battle.nut ~/projects/bbm/3rdparty/prepare_for_battle
 	rosetta -qc hackflows_translations/shield_damage.nut ~/projects/bbm/3rdparty/shield_damage
+	rosetta -qc hackflows_translations/the_shorn.nut ~/projects/bbm/3rdparty/the_shorn
