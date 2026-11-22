@@ -1,5 +1,21 @@
 local mod = ::Hooks.getMod("mod_autopilot_new");
 
+// Share of HP and head and body armor left
+local function stayingPower(_bro) {
+    local B = ::Const.BodyPart;
+    local now = _bro.getHitpoints() + _bro.getArmor(B.Head) + _bro.getArmor(B.Body);
+    local max = _bro.getHitpointsMax() + _bro.getArmorMax(B.Head) + _bro.getArmorMax(B.Body);
+    return now.tofloat() / max;
+}
+// Badly wounded bros don't approach enemies while some other bro is fit to.
+// Stops at the first fit one, so it's all the bros only when all are wounded.
+local function isCareful(_bro, _allies) {
+    if (stayingPower(_bro) >= ::Autopilot.CarefulBelow) return false;
+    foreach (a in _allies)
+        if (::std.Util.isKindOf(a, "player") && stayingPower(a) >= ::Autopilot.CarefulBelow) return true;
+    return false;
+}
+
 mod.hook("scripts/entity/tactical/player", function (q) {
     q.enableAIControl <- function() {
         m._oldAgent <- getAIAgent();
@@ -47,6 +63,14 @@ mod.hook("scripts/entity/tactical/player", function (q) {
             local main = m.Actor.getItems().getItemAtSlot(::Const.ItemSlot.Mainhand);
             if (main != null && main.getID() == "weapon.lute")
                 m.Properties.BehaviorMult[::Const.AI.Behavior.ID.EngageMelee] = 0.0;
+
+            local mode = m.Actor.m._autopilot;
+            mode.careful <- isCareful(m.Actor, m.KnownAllies);
+            if (mode.careful) {
+                local ID = ::Const.AI.Behavior.ID;
+                foreach (id in [ID.EngageMelee, ID.AP_StepNHit])
+                    m.Properties.BehaviorMult[id] = 0.0;
+            }
         }
 
         // Make backrow more active

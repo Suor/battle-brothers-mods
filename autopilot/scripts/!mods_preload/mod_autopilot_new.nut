@@ -9,6 +9,8 @@ local def = ::Autopilot <- {
     }
     function isUnderAIControl(_actor) {return "_autopilot" in _actor.m}
     quickSwitch = true
+    // Staying power below which a bro doesn't approach enemies, 0 turns this off
+    CarefulBelow = 0.35
 }
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
