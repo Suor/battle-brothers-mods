@@ -32,6 +32,15 @@
     foreach (item in items.getAllItemsAtSlot(::Const.ItemSlot.Bag)) items.removeFromBag(item);
 }
 
+// Runs _do, a quick switch to _weapon from _e's bag, and tells what it did.
+::APT.quickSwap <- function (_e, _weapon, _do) {
+    local items = _e.getItems(), main = items.getItemAtSlot(::Const.ItemSlot.Mainhand), ap = _e.getActionPoints();
+    local cost = items.getActionCost([_weapon, main]);
+    local error = ::Tales.tryCall(_do);
+    return {error = error, inHand = items.getItemAtSlot(::Const.ItemSlot.Mainhand) == _weapon,
+            oldInBag = main != null && main.isInBag(), spent = ap - _e.getActionPoints(), cost = cost};
+}
+
 // Torkel with a short bow and an empty quiver; _bag goes into his cleared bag.
 ::APT.emptyQuiverArcher <- function (_bag) {
     local torkel = ::Tales.byName("Torkel");

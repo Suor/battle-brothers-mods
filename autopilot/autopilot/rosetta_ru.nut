@@ -191,5 +191,7 @@ local pairs = [
     // en = "execute: travel finished at (<_entity.getTile().SquareCoords.X>,<_entity.getTile().SquareCoords.Y>)"
     // en = "execute: attacking <target.getName()> with <skill.getID()>"
     // en = "no usable 2-reach melee attack"
+    // FILE: autopilot/hooks/turn_sequence_bar.nut
+    // en = "<::std.Util.isKindOf(_entity, , , player)&&!_entity.isGuest()&&!>_isIgnored<in_entity.m||!_entity.m._isIgnored&&::Autopilot.conf(player)||!_entity.getSkills().hasSkill(trait.player)>"
 ]
 ::Rosetta.add(rosetta, pairs);

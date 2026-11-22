@@ -1,5 +1,13 @@
 local mod = ::Hooks.getMod("mod_autopilot_new");
 
+local skipUIData = false;
+mod.hook("scripts/ui/global/data_helper", function (q) {
+    q.convertStashAndEntityToUIData = @(__original)
+        function (_entity = null, _activeEntity = null, _withoutStash = false, _filter = 0) {
+            return skipUIData ? null : __original(_entity, _activeEntity, _withoutStash, _filter);
+        }
+});
+
 mod.hook("scripts/states/tactical_state", function (q) {
     q.m.autopilot_IsInputLocked <- false;
 
@@ -46,12 +54,15 @@ mod.hook("scripts/states/tactical_state", function (q) {
             updateCursorAndTooltip();
         }
 
+        // The character screen's equip ends with building a bro's UI data (perk points), other actors lack it
+        skipUIData = !::std.Util.isKindOf(entity, "player");
         m.CharacterScreen.onEquipBagItem([entity.getID(), item.getInstanceID()]);
+        skipUIData = false;
     }
 
     q.turnsequencebar_onEntitySkillClicked = @(__original) function (skillId) {
         local activeEntity = this.Tactical.TurnSequenceBar.getActiveEntity();
-        if (activeEntity == null || activeEntity.getSkills().getSkillByID(skillId) != null) {
+        if (activeEntity == null || !::Autopilot.quickSwitch || activeEntity.getSkills().getSkillByID(skillId) != null) {
             __original(skillId);
         }
         else if (!isInputLocked()) {
@@ -62,7 +73,7 @@ mod.hook("scripts/states/tactical_state", function (q) {
 
     q.setActionStateBySkillIndex = @(__original) function (index) {
         local e = this.Tactical.TurnSequenceBar.getActiveEntity(), itemIndex = -1;
-        if (e != null && !isInputLocked()) itemIndex = index - e.getSkills().queryActives().len();
+        if (e != null && !isInputLocked() && ::Autopilot.quickSwitch && "querySwitchableItems" in e) itemIndex = index - e.getSkills().queryActives().len();
         if (itemIndex >= 0) {
             local items = e.querySwitchableItems();
             if(itemIndex < items.len()) swapToItem(e, items[itemIndex]);

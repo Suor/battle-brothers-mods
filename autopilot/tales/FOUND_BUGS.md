@@ -12,6 +12,10 @@ New findings are A1–A5; the repro status of every KNOWN_BUGS.md entry follows.
 
 ## A1. Number key past the skills on a non-player ally: `querySwitchableItems` does not exist — low
 
+- **Fixed 2026-11-17**: a number key past the skills of a non-`player` falls to vanilla; passes code, engine, game.
+  It shows no quick-switch buttons, so nothing is swapped (asserted: no error, weapon kept, no AP spent). Where
+  buttons are shown (Legends gives every actor `querySwitchableItems`) the key swaps, see KB6.
+
 - Test: `known_bugs::A1: number key past the skills on a non-player ally: no error` —
   `./bbtales.py -k A1 ../mods/autopilot/tales/tale_known_bugs.nut`
 - Setup: a bandit thug in the player's faction under human control (player's agent,
@@ -97,11 +101,11 @@ New findings are A1–A5; the repro status of every KNOWN_BUGS.md entry follows.
 | # | Status | Test | Notes |
 |---|--------|------|-------|
 | 1 | **fixed** (freeze; 2026-11-15, regression passes in engine and game) | `kb1_throwing::KB1…`, `kb1_firelance::KB1…` | The users' stack exactly: `getAmmoType` at `scripts/ai/autopilot_swap_quiver.nut:26` (the `filter` at :26-28 calls it on throwing weapons/firelance in the bag). Thrown from `onProcessAI` every think, so the turn never ends; here the engine stops the frame. 2.9.0 same. Control `known_bugs::swap quiver…` (full quiver in the bag) passes. |
-| 2 | **reproduced** | `known_bugs::KB2…` ×2 | `quickSwitch = false`: the number key and a click with a bag item's id both swap (`got [false, 4]`: weapon changed, 4 AP). `autopilot/hooks/tactical_state.nut:48-68`. |
+| 2 | **fixed** (2026-11-17, code, engine and game) | `known_bugs::KB2…` ×2 | Was: `quickSwitch = false`: the number key and a click with a bag item's id both swap (`got [false, 4]`: weapon changed, 4 AP). Now with `quickSwitch` off both input hooks fall to the original (Legends' / quickly_swap_items' own input handling). |
 | 3 | **fixed** (2026-11-17, code, engine, ui and game) | `reforged::KB3…` ×4 | Was: the bar sets `IsLocked` before calling `onTurnEnd`, so `getActiveEntity()` is null and end-of-turn skills ran with `isActiveEntity(bro) == false`: Reforged's Unstoppable ignored the Recover (kept 3 stacks) and Recover's `HasMovedOrUsedSkill` ignored an auto bandage, so a bro could auto-bandage and then Recover in one turn (`got [bandage_ally, recover]`). Now `actor.nut` `onTurnEnd` unlocks the bar while the auto skills run when he is first in `CurrentEntities`: Recover resets Unstoppable, no Recover after an auto bandage. A skill used by hand before already blocked the auto Recover (control). Vanilla's Recover has no such condition (9 AP is its only limit), Reforged 0.9.3 adds it. |
 | 4 | not reproducible headless | `known_bugs::KB4…` passes | The Squirrel side answers each active bro's `onQueryEntityStatusEffects` with his own effects; the stale icons are JS-side (`ui/mods/autopilot_new.js:85-93` or vanilla's JS). |
 | 5 | **fixed** 2026-11-17 (AI press calls vanilla `cancelCurrentAction()`; passes code, engine, game) | `known_bugs::KB5…` | After AI is pressed with Aimed Shot selected, `CurrentActionState` stays `SkillSelected` (2) and `SelectedSkillID` `actives.aimed_shot`; but shots stay within AP (1 a round), "shoots until out of ammo" not seen. `autopilot/hooks/turn_sequence_bar.nut:87-103` doesn't clear the state (`swapToItem` does, `tactical_state.nut:35-42`). |
-| 6 | **reproduced** | `known_bugs::KB6…` | Same `getPerkPoints` error via `swapToItem` → `onEquipBagItem` (`tactical_state.nut:45`) for a non-player ally. See A1, A2 for the same root (player-only methods on any player-controlled actor). |
+| 6 | **fixed** (2026-11-17, engine and game) | `known_bugs::KB6…` | Was: the `getPerkPoints` error via `swapToItem` → `onEquipBagItem` for a non-player ally. Now `swapToItem` goes through the vanilla `onEquipBagItem` for anyone, with the bro-only UI data (`convertStashAndEntityToUIData`) skipped for a non-`player`; the dagger is in hand, the old weapon in the bag, 4 AP paid. Legends too, see "KB6 reproduced on Legends" below. |
 | 7 | not reproduced | — | A swallowed bro gets no turn in vanilla, so no end of turn; guard `isPlacedOnMap()` at `autopilot/hooks/actor.nut:40`. Ghoul stress battles pass. |
 | 8 | by design, works | `known_bugs::KB8…` passes | A guest stays manual, the turn order goes on. |
 | 9 | **fixed** 2026-11-17 (`ActorFake` has `isTurnDone`, `getCurrentProperties`; known_bugs and legends_bugs KB9 pass in engine, game) | `known_bugs::KB9…` | An `ActorRef` whose actor is gone throws `null ActorRef, index = isTurnDone` / `getCurrentProperties`: `ActorFake` (`autopilot/fixes.nut:307-320`) lacks what vanilla `ai_protect.nut:70-72` asks of known allies. Legends' `ai_engage_melee:1032` itself not testable here. |
@@ -179,7 +183,13 @@ stash item, as a necromancer does (then toughened so the thugs don't kill them b
   through the player-only character screen. With Autopilot its `swapToItem` replaces Legends' (Modern Hooks warns
   `adding a new function swapToItem … already exists`), same call, same error. A1's `querySwitchableItems` error
   can't happen on Legends (every actor has it); it turns into this one.
-- Fix on Autopilot's side: in `swapToItem` / the two input hooks, do nothing for an entity that isn't a `player`.
+- **Fixed 2026-11-17** with Autopilot installed, Legends' own bug included: under Legends `::Autopilot.quickSwitch`
+  is off, so both input hooks fall to Legends', which call `swapToItem`, Autopilot's, which replaces Legends'.
+  For a non-`player` the vanilla equip runs without the bro-only UI data (KB6 row above). The three
+  `legends_summons` tests assert the dagger in hand, the old weapon in the bag, 4 AP paid, no error: pass engine
+  and game.
+  `legends_bugs::Legends: Legends' quick-switch input swaps a bro's bag item…` (a bro, key and click) passes too.
+  Without Autopilot (`tale_legends_summons_noap.nut`) Legends still throws: Legends' bug to report upstream.
 
 ### KB9 reproduced with Legends' real `ai_engage_melee`
 

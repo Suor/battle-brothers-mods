@@ -44,29 +44,34 @@ test("Legends: AI battle, autopilot plays it through", function (t) {
     t.probe("skills used", ::Tales.uniq(::APT.autoUses().map(@(u) u.what), true));
 });
 
-test("A1 Legends: number key past the skills on a Legends skeleton: no error", function (t) {
-    ::Tales.toughen(null, true);
-    local seen = t.state.seen <- {};
-    local p = ::APT.pilot({press = false, each = endBattle, before = onSummonTurn(seen, function (_e) {
-        ::APT.bag(_e, "scripts/items/weapons/dagger");
-        local n = _e.getSkills().queryActives().len();
-        ::Tales.ctx().state.seen.error <- ::Tales.tryCall(@() ::Tactical.State.setActionStateBySkillIndex(n));
-    })});
-    yield battle(t, p);
-    t.probe("summon", seen.summon);
-    t.eq(seen.error, null, "no error");
-});
-
-test("KB6 Legends: quick-switch click on a Legends skeleton: no error", function (t) {
+test("A1 Legends: number key past the skills on a Legends skeleton: the item swapped in, AP paid", function (t) {
     ::Tales.toughen(null, true);
     local seen = t.state.seen <- {};
     local p = ::APT.pilot({press = false, each = endBattle, before = onSummonTurn(seen, function (_e) {
         local dagger = ::APT.bag(_e, "scripts/items/weapons/dagger");
-        ::Tales.ctx().state.seen.error <- ::Tales.tryCall(@() ::Tactical.State.turnsequencebar_onEntitySkillClicked(dagger.getInstanceID()));
+        local n = _e.getSkills().queryActives().len();
+        ::Tales.ctx().state.seen.swap <- ::APT.quickSwap(_e, dagger, @() ::Tactical.State.setActionStateBySkillIndex(n));
     })});
     yield battle(t, p);
     t.probe("summon", seen.summon);
-    t.eq(seen.error, null, "no error");
+    t.probe("swap", seen.swap);
+    t.eq(seen.swap, {error = null, inHand = true, oldInBag = true, spent = seen.swap.cost, cost = seen.swap.cost},
+         "dagger in hand, the old weapon in the bag, AP paid");
+});
+
+test("KB6 Legends: quick-switch click on a Legends skeleton: the item swapped in, AP paid", function (t) {
+    ::Tales.toughen(null, true);
+    local seen = t.state.seen <- {};
+    local p = ::APT.pilot({press = false, each = endBattle, before = onSummonTurn(seen, function (_e) {
+        local dagger = ::APT.bag(_e, "scripts/items/weapons/dagger");
+        ::Tales.ctx().state.seen.swap <- ::APT.quickSwap(_e, dagger,
+            @() ::Tactical.State.turnsequencebar_onEntitySkillClicked(dagger.getInstanceID()));
+    })});
+    yield battle(t, p);
+    t.probe("summon", seen.summon);
+    t.probe("swap", seen.swap);
+    t.eq(seen.swap, {error = null, inHand = true, oldInBag = true, spent = seen.swap.cost, cost = seen.swap.cost},
+         "dagger in hand, the old weapon in the bag, AP paid");
 });
 
 test("A2 Legends: AI button on a Legends skeleton's turn: no error", function (t) {
@@ -107,15 +112,17 @@ test("A2 Legends: AI confirmed with a Legends skeleton in the company: no error,
     t.eq(seen.cancel, null, "KB19 fixed: cancel with a summon: no error");
 });
 
-test("A1 Legends: number key past the skills on a Legends zombie: no error", function (t) {
+test("A1 Legends: number key past the skills on a Legends zombie: the item swapped in, AP paid", function (t) {
     ::Tales.toughen(null, true);
     local seen = t.state.seen <- {};
     local p = ::APT.pilot({press = false, each = endBattle, before = onSummonTurn(seen, function (_e) {
-        ::APT.bag(_e, "scripts/items/weapons/dagger");
+        local dagger = ::APT.bag(_e, "scripts/items/weapons/dagger");
         local n = _e.getSkills().queryActives().len();
-        ::Tales.ctx().state.seen.error <- ::Tales.tryCall(@() ::Tactical.State.setActionStateBySkillIndex(n));
+        ::Tales.ctx().state.seen.swap <- ::APT.quickSwap(_e, dagger, @() ::Tactical.State.setActionStateBySkillIndex(n));
     }, "legend_spawn_zombie_low_skill", "legend_zombie_item")});
     yield battle(t, p);
     t.probe("summon", seen.summon);
-    t.eq(seen.error, null, "no error");
+    t.probe("swap", seen.swap);
+    t.eq(seen.swap, {error = null, inHand = true, oldInBag = true, spent = seen.swap.cost, cost = seen.swap.cost},
+         "dagger in hand, the old weapon in the bag, AP paid");
 });

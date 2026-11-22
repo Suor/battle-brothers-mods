@@ -104,3 +104,22 @@ test("KB16 fixed Legends: a bag item shows one quick-switch button, not two", fu
     yield t.battle({entities = ::Tales.thugs(3), player = p.fn, maxFrames = 8000});
     t.eq(seen.buttons, 1, "one button for the dagger");
 });
+
+test("Legends: Legends' quick-switch input swaps a bro's bag item by number key and by click", function (t) {
+    ::Tales.toughen(null, true);
+    local seen = t.state.seen <- {};
+    local p = ::APT.pilot({press = false, each = function (_st, t) { if (!("k" in t.state.seen)) { t.state.seen.k <- 1; ::Tales.killAll(); } },
+        before = function (_e, t) {
+            if (!::std.Util.isKindOf(_e, "player")) return "pass";
+            ::APT.clearBag(_e);
+            local dagger = ::APT.bag(_e, "scripts/items/weapons/dagger");
+            local n = _e.getSkills().queryActives().len();
+            t.state.seen.key <- ::APT.quickSwap(_e, dagger, @() ::Tactical.State.setActionStateBySkillIndex(n));
+            local old = _e.getItems().getAllItemsAtSlot(::Const.ItemSlot.Bag)[0];
+            t.state.seen.click <- ::APT.quickSwap(_e, old, @() ::Tactical.State.turnsequencebar_onEntitySkillClicked(old.getInstanceID()));
+        }});
+    yield t.battle({entities = ::Tales.thugs(3), player = p.fn, maxFrames = 8000});
+    t.probe("swaps", seen);
+    t.eq(seen.key, {error = null, inHand = true, oldInBag = true, spent = seen.key.cost, cost = seen.key.cost}, "key: dagger in hand, AP paid");
+    t.eq(seen.click, {error = null, inHand = true, oldInBag = true, spent = seen.click.cost, cost = seen.click.cost}, "click: back, AP paid");
+});
