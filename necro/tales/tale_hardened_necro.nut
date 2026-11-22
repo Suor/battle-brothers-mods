@@ -1,6 +1,5 @@
 // mode: campaign seed=bbtest-battle fresh=1
 // mods: mod_hardened==1.26.3 mod_necro@dev mod_hooks stdlib@dev
-// allow-errors: ImagePath coui://gfx/necro/perk_mastery.png already set by mod
 
 // Skipped report "Hardened breaks perks" (no log), checked on Reforged 0.9.3 + Hardened 1.26.3:
 // a necromancer bro can learn every necro perk.

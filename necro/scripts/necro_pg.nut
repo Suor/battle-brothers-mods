@@ -4,7 +4,7 @@ local def = {
     {
         this.m.ID = "pg.necro";
         this.m.Name = "Necromancer";
-        this.m.Icon = "necro/perk_mastery.png";
+        this.m.Icon = "necro/perk_group.png";
         this.m.Chance = 0;
         this.m.Tree = [[], [], [], [], [], [], []];
         foreach (perk in ::Const.Perks.Necro) {

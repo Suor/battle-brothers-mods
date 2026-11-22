@@ -26,7 +26,7 @@ engine divergences.
   allies only for attacks (`IsAttack` is false here).
 - Note: a raised zombie can't be possessed until it has risen (~1 s of game time).
 
-## NE1. Necromastery uses the perk group's icon: an MSU error at boot under Reforged — low (new)
+## NE1. Necromastery uses the perk group's icon: an MSU error at boot under Reforged — low (fixed)
 
 - Test: `reforged::NE1: no necro perk shares its icon with the pg.necro perk group`
 - Observed at boot with Reforged: `ImagePath coui://gfx/necro/perk_mastery.png already set by mod

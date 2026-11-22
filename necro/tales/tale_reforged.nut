@@ -1,6 +1,5 @@
 // mode: campaign seed=bbtest-battle fresh=1
 // mods: mod_reforged==0.9.3 mod_necro@dev mod_hooks stdlib@dev
-// allow-errors: ImagePath coui://gfx/necro/perk_mastery.png already set by mod
 
 // Necro under Reforged: its perks go through Dynamic Perks as the pg.necro group.
 
@@ -8,7 +7,6 @@ test("NE1: no necro perk shares its icon with the pg.necro perk group", function
     local group = ::DynamicPerks.PerkGroups.findById("pg.necro");
     local clash = [];
     foreach (perk in ::Const.Perks.Necro) if (perk.Icon == group.getIcon()) clash.push(perk.ID);
-    t.eq(group.getIcon(), "necro/perk_mastery.png", "group icon");
     // MSU's nested tooltips key image keywords by path: the second one is dropped with an error
     t.eq(clash, [], "perks with the group's icon");
 });
