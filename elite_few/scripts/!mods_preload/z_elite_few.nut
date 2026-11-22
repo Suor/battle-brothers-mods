@@ -99,7 +99,8 @@
         if (backgroundID == "background.slave" && !::EliteFew.conf("allowSlaves")) return false;
         if (::EliteFew.conf("selectMode") == "all") return true;
 
-        local multiplier = ::EliteFew.conf("multiplier")
+        local multiplier = ::EliteFew.conf("multiplier");
+        if (inEventOrContract) multiplier = 15;
         local rangedbg = isRangedBg(_background) ? 20 : 0;
         local chances = Math.max(30, 100 - 2 * _background.m.DailyCost - rangedbg);
         local roll = rng.next(1,  chances);
