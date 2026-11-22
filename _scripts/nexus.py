@@ -425,13 +425,17 @@ class Browser:
         sys.exit(f"Timed out loading {url}")
 
 
-def download_mod(mod, port, to=None, version=None):
-    """Fetch the latest main file, or the given version, return (dir, mod_id, saved name)."""
+def download_mod(mod, port, to=None, version=None, file_id=None):
+    """Fetch the latest main file, or the given version or file, return (dir, mod_id, saved name)."""
     data_dir = to or ENV_DICT["DATA_DIR"].replace("\\", "")
     mod_id = split_url(mod)[1]  # site id, not the v3 one
     game_id = api1(f"/games/{GAME}.json")["id"]
     files = api1(f"/games/{GAME}/mods/{mod_id}/files.json")["files"]
-    if version:  # an old version, to diff a repack against
+    if file_id:  # declared versions are unreliable, so a caller may pick the file itself
+        files = [f for f in files if f["file_id"] == file_id]
+        if not files:
+            sys.exit(f"Mod {mod_id} has no file {file_id}")
+    elif version:  # an old version, to diff a repack against
         known = sorted({f["version"] for f in files}, key=ver)
         files = [f for f in files if f["version"] == version]
         if not files:
@@ -444,16 +448,20 @@ def download_mod(mod, port, to=None, version=None):
     print(f"File: {file['name']} {file['version']} (id {file['file_id']})")
 
     browser = Browser(port)
-    if "nexusmods.com" not in (browser.js("location.host") or ""):
-        browser.goto(f"https://www.nexusmods.com/{GAME}/mods/{mod_id}")
+    # a fresh load also wakes a tab the browser froze in the background, where fetch never settles
+    browser.goto(f"https://www.nexusmods.com/{GAME}/mods/{mod_id}")
     # the site hands free users a signed CDN link only from a logged-in page
-    url = browser.js("""fetch("/Core/Libs/Common/Managers/Downloads?GenerateDownloadUrl",
+    link = lambda fid: browser.js("""fetch("/Core/Libs/Common/Managers/Downloads?GenerateDownloadUrl",
         {method: "POST", credentials: "include",
          headers: {"Content-Type": "application/x-www-form-urlencoded",
                    "X-Requested-With": "XMLHttpRequest"},
-         body: "fid=%s&game_id=%s"}).then(r => r.json()).then(d => d.url)""" % (
-        file["file_id"], game_id))
+         body: "fid=%s&game_id=%s"}).then(r => r.json()).then(d => d.url)""" % (fid, game_id))
+    url = link(file["file_id"])
     if not url:
+        # a removed file and a logged-out session get the same empty answer, a file the page offers tells them apart
+        main = [f for f in api1(f"/games/{GAME}/mods/{mod_id}/files.json")["files"] if f["category_name"] == "MAIN"]
+        if main and main[0]["file_id"] != file["file_id"] and link(main[0]["file_id"]):
+            sys.exit(f"File {file['file_id']} is unavailable on the site")
         sys.exit("Site returned no download url — logged out, or the endpoint changed")
 
     name = file["file_name"]  # the CDN path is a bare uuid on some mirrors
@@ -469,7 +477,7 @@ def download_mod(mod, port, to=None, version=None):
 
 
 def cmd_download(args):
-    download_mod(args.mod, args.port, args.to, args.version)
+    download_mod(args.mod, args.port, args.to, args.version, args.file_id)
 
 
 def cmd_update(args):
@@ -518,6 +526,7 @@ for cmd, func, what in [("download", cmd_download, "download latest main file in
     if cmd == "download":
         p.add_argument("--to", help="save here instead of DATA_DIR")
         p.add_argument("--version", help="grab this version instead of the latest main")
+        p.add_argument("--file-id", type=int, help="grab this file instead of the latest main")
     p.set_defaults(func=func)
 
 p = sub.add_parser("add-changelog", help="add a changelog entry")
