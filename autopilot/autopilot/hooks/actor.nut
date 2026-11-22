@@ -41,6 +41,10 @@ mod.hook("scripts/entity/tactical/actor", function (q) {
             local freewake = ::Autopilot.conf("freewake"), reload = ::Autopilot.conf("reload");
             local bandages = ::Autopilot.conf("bandages");
             local skills = getSkills(), tile = getTile();
+            // The turn bar is locked by now and reports no one acting, while some of these skills check
+            // it's his turn (Reforged's Recover, Unstoppable): unlock it for them, if the turn is still his
+            local bar = ::Tactical.TurnSequenceBar, locked = bar.m.IsLocked, current = bar.m.CurrentEntities;
+            if (current.len() != 0 && current[0].getID() == getID()) bar.m.IsLocked = false;
             local function tryUseSkill(id, t) {
                 local s = skills.getSkillByID(id);
                 return s != null && s.use(t);
@@ -77,6 +81,7 @@ mod.hook("scripts/entity/tactical/actor", function (q) {
             // finally, use the recover skill if it'd help
             if (getFatigue() > m.CurrentProperties.FatigueRecoveryRate)
                 tryUseSkill("actives.recover", tile);
+            bar.m.IsLocked = locked;
         }
 
         __original();

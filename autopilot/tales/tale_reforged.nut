@@ -53,7 +53,7 @@ local function unstoppable(_seen, _byHand) {
     };
 }
 
-test("KB3: auto Recover at the end of turn resets Reforged Unstoppable", function (t) {
+test("KB3 fixed: auto Recover at the end of turn resets Reforged Unstoppable", function (t) {
     ::Tales.toughen(null, true);
     local seen = t.state.seen <- {};
     local errors = [], restore = ::Tales.catchErrors(errors);
@@ -63,7 +63,7 @@ test("KB3: auto Recover at the end of turn resets Reforged Unstoppable", functio
     yield t.battle({entities = ::Tales.thugs(3), player = p.fn, maxFrames = 6000});
     restore();
     t.probe("who", seen.who);
-    t.eq(seen.active, [false], "Recover used once, with the bro not the active entity");
+    t.eq(seen.active, [true], "Recover used once, by the active bro");
     t.eq(seen.stacks, 0, "Unstoppable stacks after an auto Recover");
 });
 
@@ -78,6 +78,47 @@ test("KB3 control: Recover used by hand resets Unstoppable", function (t) {
     restore();
     t.eq(seen.active, [true], "Recover used once, by the active bro");
     t.eq(seen.stacks, 0, "Unstoppable stacks after Recover by hand");
+});
+
+// Reforged's Recover can't follow a used skill. The bro, bleeding with a bandage and AP for both,
+// bandages himself by hand or leaves it to the end of turn, then ends his turn.
+local function bandageThenEnd(_seen, _byHand) {
+    return [function (_e) {
+        local skills = _e.getSkills();
+        if (!skills.hasSkill("perk.recover")) skills.add(::new("scripts/skills/perks/perk_recover"));
+        ::Tales.equip(_e, "scripts/items/accessory/bandage_item");
+        skills.add(::new("scripts/skills/effects/bleeding_effect"));
+        _e.getBaseProperties().ActionPoints = 20;
+        skills.update();
+        _e.setActionPoints(20);
+        _e.setFatigue(40);
+        _seen.used <- [];
+        foreach (id in ["actives.bandage_ally", "actives.recover"]) {
+            local skill = skills.getSkillByID(id), use = skill.use, id = id;
+            skill.use <- function (_tile, _forFree = false) {
+                local ret = use(_tile, _forFree);
+                if (ret) _seen.used.push(id);
+                return ret;
+            };
+        }
+        if (_byHand) skills.getSkillByID("actives.bandage_ally").use(_e.getTile());
+    }, @(_e) ::Tactical.TurnSequenceBar.onNextTurnButtonPressed(), @(_e) null];  // the last waits for the next turn
+}
+
+test("KB3 control: no auto Recover after a skill used by hand", function (t) {
+    ::Tales.toughen(null, true);
+    local seen = {};
+    local p = ::APT.pilot({press = false, each = @(_st) ::Tales.killAll(), before = bandageThenEnd(seen, true)});
+    yield t.battle({entities = ::Tales.thugs(3), player = p.fn, maxFrames = 6000});
+    t.eq(seen.used, ["actives.bandage_ally"], "skills used");
+});
+
+test("KB3 fixed: no auto Recover after an auto bandage", function (t) {
+    ::Tales.toughen(null, true);
+    local seen = {};
+    local p = ::APT.pilot({press = false, each = @(_st) ::Tales.killAll(), before = bandageThenEnd(seen, false)});
+    yield t.battle({entities = ::Tales.thugs(3), player = p.fn, maxFrames = 6000});
+    t.eq(seen.used, ["actives.bandage_ally"], "skills used");
 });
 
 // Whether the net is thrown in a Reforged AI battle varies run to run, so the fix is checked on the
