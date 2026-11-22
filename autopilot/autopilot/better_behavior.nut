@@ -91,7 +91,20 @@ mod.hook("scripts/ai/tactical/behaviors/ai_attack_bow", function (q) {
         "actives.xxitem_rifleaa_skill"
         // Reforged, bow mastery
         "actives.rf_arrow_to_the_knee"
+        // Time-Crossing Commando
+        "actives.sniper_rifle_shot"
+        "actives.sniper_rifle_headshot"
     ]);
+})
+mod.hook("scripts/ai/tactical/behaviors/ai_reload", function (q) {
+    q.m.PossibleSkills.push("actives.sniper_rifle_reload"); // Time-Crossing Commando
+    // A magazine is reloadable once not full; topping it up is left to the end of turn auto reload
+    q.onEvaluate = @(__original) function (_entity) {
+        local score = __original(_entity);
+        local s = m.Skill;
+        if (s != null && s.getID() == "actives.sniper_rifle_reload" && s.getItem().getAmmo() > 0) return 0;
+        return score;
+    }
 })
 mod.hook("scripts/ai/tactical/behaviors/ai_attack_handgonne", function (q) {
     q.m.PossibleSkills.extend([
@@ -105,6 +118,9 @@ mod.hook("scripts/ai/tactical/behaviors/ai_engage_ranged", function (q) {
         // Fantasy Brothers
         "actives.xxitem_rifleaa_skill"
         "actives.xxitem_deadbookaa_skill"
+        // Time-Crossing Commando
+        "actives.sniper_rifle_shot"
+        "actives.sniper_rifle_headshot"
     ]);
 })
 

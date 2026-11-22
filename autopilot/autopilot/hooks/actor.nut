@@ -54,7 +54,7 @@ mod.hook("scripts/entity/tactical/actor", function (q) {
             if (freewake) tryUseSkill("actives.break_free", tile);
             if (bandages) tryUseSkill("actives.bandage_ally", tile); // reaches range 0, i.e. self
             if (reload) {
-                foreach (s in ["actives.reload_bolt", "actives.reload_handgonne"])
+                foreach (s in ["actives.reload_bolt", "actives.reload_handgonne", "actives.sniper_rifle_reload"])
                     tryUseSkill(s, tile);
             }
 
