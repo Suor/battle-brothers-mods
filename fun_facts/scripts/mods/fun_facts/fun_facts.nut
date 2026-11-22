@@ -460,7 +460,7 @@ this.fun_facts <- {
         else if (S.Hire > 0) {
             costs.push(format("Hired for %s%d.", moneyImg, S.Hire))
         } else if (S.Wages > 0) {
-            costs.push(format("Was payed %s%d as wages.", moneyImg, S.Wages))
+            costs.push(format("Was paid %s%d as wages.", moneyImg, S.Wages))
         }
         local spent = [];
         if (S.Food >= 1) spent.push("[img]gfx/fun_facts/food.png[/img]" + Util.round(S.Food));

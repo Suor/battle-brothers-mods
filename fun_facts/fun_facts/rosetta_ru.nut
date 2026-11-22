@@ -295,9 +295,9 @@ local pairs = [
         ru = "Нанят за <money><hire>."
     }
     {
-        // costs.push(format("Was payed %s%d as wages.", moneyImg, S.Wages))
+        // costs.push(format("Was paid %s%d as wages.", moneyImg, S.Wages))
         mode = "pattern"
-        en = "Was payed <money:img><wages:int> as wages."
+        en = "Was paid <money:img><wages:int> as wages."
         ru = "Уплачено <money><wages> зарплаты."
 
     }
