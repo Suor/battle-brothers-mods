@@ -67,6 +67,7 @@ mod.hook("scripts/ai/tactical/behaviors/ai_attack_default", function (q) {
         "actives.ph_whack"           // Golden Whacker
         "actives.ph_magic_bonk"      // Hexe Wand
         "actives.ph_bro_slap"        // Artificer helm/armor
+        "actives.DS_split" // Guts' Dragonslayer: a line strike, also the sword's only one for a single foe
         // Looks like these are already added
         // "actives.xx_a" // Cut with Ring blade
         // "actives.xx_b" // Throw Ring blade
@@ -104,11 +105,23 @@ mod.hook("scripts/ai/tactical/behaviors/ai_engage_ranged", function (q) {
 mod.hook("scripts/ai/tactical/behaviors/ai_attack_split", function (q) {
     q.m.PossibleSkills.extend([
         "actives.excalibur_split" // CleverFool's mod
+        "actives.DS_split"        // Guts' Dragonslayer, Guillotine Strike
     ]);
 });
 mod.hook("scripts/ai/tactical/behaviors/ai_attack_swing", function (q) {
     q.m.PossibleSkills.extend([
         "actives.censer_castigate" // Vanilla Legendary 1.5.1
+        "actives.DS_shatter"       // Guts' Dragonslayer, Decimate
+    ]);
+});
+mod.hook("scripts/ai/tactical/behaviors/ai_attack_thresh", function (q) {
+    q.m.PossibleSkills.extend([
+        "actives.DS_round_swing" // Guts' Dragonslayer, Steel Crescent
+    ]);
+});
+mod.hook("scripts/ai/tactical/behaviors/ai_attack_splitshield", function (q) {
+    q.m.PossibleSkills.extend([
+        "actives.DS_split_shield" // Guts' Dragonslayer, Demolish Shield
     ]);
 });
 mod.hook("scripts/ai/tactical/behaviors/ai_defend_rotation", function (q) {

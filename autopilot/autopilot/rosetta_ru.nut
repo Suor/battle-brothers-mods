@@ -191,6 +191,11 @@ local pairs = [
     // en = "execute: travel finished at (<_entity.getTile().SquareCoords.X>,<_entity.getTile().SquareCoords.Y>)"
     // en = "execute: attacking <target.getName()> with <skill.getID()>"
     // en = "no usable 2-reach melee attack"
+    // FILE: autopilot/better_behavior.nut
+    // en = "actives.DS_split"
+    // en = "actives.DS_shatter"
+    // en = "actives.DS_round_swing"
+    // en = "actives.DS_split_shield"
     // FILE: autopilot/hooks/player.nut
     // en = "<::std.Util.isKindOf(a, , , player)&&stayingPower(a)>=::Autopilot.CarefulBelow>"
     // FILE: autopilot/hooks/turn_sequence_bar.nut
