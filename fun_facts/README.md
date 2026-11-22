@@ -35,6 +35,17 @@ Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks
 To use built-in russian translation will also need to install [Rosetta][] and the translation of the game itself, i.e.data_014 and fonts. Once this is done the mod will switch to Russian automatically.
 
 
+## TODO
+
+- hire price of bros hired through events, i.e. the bastard assassin (6000) or the lindwurm slayer (5000)
+- money paid for a tryout
+- injuries from events (brawls, accidents) are not counted
+- surviving a killing blow with a permanent injury counts as a death, think of telling it apart
+- battles entered with a real injury, not just low HP: the battle log's `Start.Injured` already says so, but not which injury, which would make it funnier
+- a bro killed by an enemy after a fellow bro dealt him most of the damage: "Clubbed Some Bro and left him for the wolves", with the killer's name in place of the wolves
+- new facts: the most powerful enemy killed, the best turn (kills in one turn), the longest binge, whether a bro paid off
+
+
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/764
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
 [stdlib]: https://www.nexusmods.com/battlebrothers/mods/676
