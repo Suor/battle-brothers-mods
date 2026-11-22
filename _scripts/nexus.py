@@ -40,6 +40,11 @@ NEXUS_IDS = {
     "mod_reforged_core": 765,
     "mod_reforged_assets": 765,
 }
+# Installed zips of mods released on GitHub only.
+GITHUB_REPOS = {
+    "mod_crock_pot": "Darxo/Crock_Pot",
+    "mod_hardened": "Darxo/Hardened",
+}
 
 
 def api(method, path, **kw):
@@ -223,6 +228,19 @@ def cmd_check_updates(args):
             mod_id, local_ts, lineage = NEXUS_IDS[prefix], os.path.getmtime(path), name
             local_ver = (m.group(1) if (m := re.search(r"(\d+(?:\.\d+)+)", name)) else None) \
                 or zip_version(path)
+        elif prefix := max((p for p in GITHUB_REPOS if name.startswith(p)), key=len, default=None):
+            dups.setdefault(prefix, []).append(name)
+            if args.local:
+                continue
+            repo = GITHUB_REPOS[prefix]
+            local_ver = zip_version(path)
+            rel = requests.get(f"https://api.github.com/repos/{repo}/releases/latest").json()
+            if local_ver and ver(rel["tag_name"]) <= ver(local_ver):
+                fresh += 1
+            else:
+                print(f"{name}\n    {local_ver or '?'} -> {rel['tag_name']} "
+                      f"(updated {rel['published_at'][:10]})  {rel['html_url']}")
+            continue
         elif args.local:
             continue
         else:
