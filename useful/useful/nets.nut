@@ -14,10 +14,11 @@ local function hookNet(q) {
         this.m.useful_Icon <- this.m.Icon;
     }
 
+    // The vanilla line has no id or icon of its own: told by its text, as the Russian translation has it too.
+    local destroyedOnUse = {"Is destroyed on use": true, "Сеть одноразовая": true};
     q.getTooltip = @(__original) function () {
-        // TODO: find a better way to filter out this line, now language dependent
         local tooltip = __original().filter(
-            @(_, rec) rec.type != "text" || rec.text != "Is destroyed on use");
+            @(_, rec) rec.type != "text" || !(rec.text in destroyedOnUse));
 
         local icon = this.m.Ammo > 0 ? "ui/icons/ammo.png" : "ui/tooltips/warning.png";
         local text = this.m.Ammo > 0 ? "Can be used once" : "Broken";

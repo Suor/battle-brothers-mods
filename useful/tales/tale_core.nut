@@ -95,6 +95,12 @@ test("a thrown net comes back for 6 ammo after the battle", function (t) {
     ])});
     t.eq(during, [["tool.throwing_net", 0, false, true]], "[offhand, its ammo, usable, target netted] after the throw");
     local off = bro.getItems().getItemAtSlot(::Const.ItemSlot.Offhand);
-    t.eq([off.getID(), off.getAmmo(), off.getName()], ["tool.throwing_net", 1, "Throwing Net"], "net after the battle");
+    t.eq([off.getID(), off.getAmmo(), off.getName()], ["tool.throwing_net", 1, ::Tales.tr({en = "Throwing Net", ru = "Ловчая сеть"})], "net after the battle");
     t.eq(ammo0 - ::World.Assets.getAmmo(), 6, "ammo spent");
+});
+
+test("a net's tooltip drops the vanilla line that it's destroyed on use", function (t) {
+    local net = ::new("scripts/items/tools/throwing_net");
+    t.eq(net.getTooltip().filter(@(_, r) r.id == 4).map(@(r) r.text),
+        [::Tales.tr({en = "Will root a target in place and reduce their defenses", ru = "Обездвиживает цель и уменьшает её защиту"})]);
 });
