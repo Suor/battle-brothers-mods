@@ -353,7 +353,7 @@ CDP_PORT = 9222  # yandex-browser.desktop passes --remote-debugging-port
 class Browser:
     """Minimal DevTools client over a raw websocket — a free download needs a logged-in session."""
 
-    def __init__(self, port=CDP_PORT):
+    def __init__(self, port=CDP_PORT, site="nexusmods.com"):
         try:
             tabs = requests.get(f"http://127.0.0.1:{port}/json/list", timeout=5).json()
         except requests.ConnectionError:
@@ -361,7 +361,7 @@ class Browser:
         pages = [t for t in tabs if t["type"] == "page"]
         if not pages:
             sys.exit("Browser has no open tab")
-        tab = next((t for t in pages if "nexusmods.com" in t["url"]), pages[0])
+        tab = next((t for t in pages if site in t["url"]), pages[0])
         ws = urlparse(tab["webSocketDebuggerUrl"])
         self.sock = socket.create_connection((ws.hostname, ws.port), timeout=120)
         self.io = self.sock.makefile("rb")
@@ -526,5 +526,6 @@ p.add_argument("text", help="changelog text or file")
 p.add_argument("url", nargs="?", help="mod page url or id")
 p.set_defaults(func=cmd_changelog)
 
-args = parser.parse_args()
-args.func(args)
+if __name__ == "__main__":
+    args = parser.parse_args()
+    args.func(args)
