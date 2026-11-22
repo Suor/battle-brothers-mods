@@ -139,6 +139,14 @@ local pairs = [
         ru = "Использовать метательные сети в режиме автопилота"
     }
     {
+        en = "Throw Backup Weapons"
+        ru = "Метать запасное оружие"
+    }
+    {
+        en = "Throw backup axes, spears and daggers in autopilot mode"
+        ru = "Метать запасные топоры, копья и кинжалы в режиме автопилота"
+    }
+    {
         en = "Auto break free and wake up"
         ru = "Авто-освобождение и пробуждение"
     }

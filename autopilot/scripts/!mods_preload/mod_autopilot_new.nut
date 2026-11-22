@@ -49,6 +49,9 @@ mod.queue(">mod_msu", ">mod_reforged", ">mod_sellswords", ">mod_fantasybro", fun
     dogs.setLabelInTitle(true);
     page.addElement(::MSU.Class.BooleanSetting("nets", true, "Throw Nets",
             "Use Throwing Nets when in autopilot mode"));
+    if (::Hooks.hasMod("mod_legends"))
+        page.addElement(::MSU.Class.BooleanSetting("throwBackup", true, "Throw Backup Weapons",
+                "Throw backup axes, spears and daggers in autopilot mode"));
     // page.addElement(::MSU.Class.SettingsDivider("autoDiv"));
 
     page.addElement(::MSU.Class.BooleanSetting("freewake", true, "Auto break free and wake up",

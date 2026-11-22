@@ -153,6 +153,7 @@ mod.hook("scripts/ai/tactical/behaviors/ai_recover", function (q) {
 mod.hook("scripts/ai/tactical/behaviors/ai_root", function (q) {
     q.m.PossibleSkills.extend([
         "actives.druid_entangle" // Druid
+        "actives.legend_root"    // Legends
     ]);
 });
 
@@ -211,3 +212,19 @@ mod.hook("scripts/ai/tactical/behavior", function (q) {
         return mixed;
     }
 })
+
+// Legends' backup throws leave a bro without that weapon for the rest of the battle
+if (::Hooks.hasMod("mod_legends")) {
+    local function hookBackupThrow(_script, _flag) {
+        mod.hook("scripts/skills/actives/" + _script, function (q) {
+            q.isUsable = @(__original) function () {
+                if ((_flag == null || m[_flag]) && !::Autopilot.conf("throwBackup")
+                        && ::Autopilot.isUnderAIControl(getContainer().getActor())) return false;
+                return __original();
+            }
+        });
+    }
+    hookBackupThrow("throw_axe", "IsBackupAxe");
+    hookBackupThrow("throw_javelin", "IsBackupSpear");
+    hookBackupThrow("legend_throw_knife_skill", null);
+}

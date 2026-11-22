@@ -172,10 +172,10 @@ mod.hook("scripts/entity/tactical/player", function (q) {
         }
 
         // Druid: summon beasts and root foes; regrowth rides along in autopilot_heal_ally
-        if (::Hooks.hasMod("mod_druid")) {
-            agent.addBehavior(::new("scripts/ai/autopilot_summon_beast"));
+        if (::Hooks.hasMod("mod_druid")) agent.addBehavior(::new("scripts/ai/autopilot_summon_beast"));
+        // Druid's and Legends' roots
+        if (::Hooks.hasMod("mod_druid") || ::Hooks.hasMod("mod_legends"))
             agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_root"));
-        }
 
         // Fantasy Brothers: prefer shooting to walking
         if (getSkills().hasSkill("actives.xxitem_rifleaa_skill")) {
