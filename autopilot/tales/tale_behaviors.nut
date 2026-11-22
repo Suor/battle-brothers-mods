@@ -122,13 +122,56 @@ local function dogBattle(_t, _mode, _seen) {
     return aiBattle(_t, p, 4);
 }
 
+// Bertel alone against four: outnumbered next to them, as hard pressed as it gets
 test("dogs 'at will': the wardog is unleashed", function (t) {
-    local seen = {};
+    local seen = {}, place = 18;
+    foreach (bro in t.roster()) if (bro.getName() != "Bertel") bro.setPlaceInFormation(place++);
     yield dogBattle(t, "atwill", seen);
     ::APT.resetSettings();
     t.eq(did("Bertel", "actives.unleash_wardog"), true, "unleashed");
     t.eq(seen.p.st.stuck, [], "no stuck turn");
     t.eq(t.result.survivors.enemies, 0, "company wins");
+});
+
+// With no foe close yet the dog may still be let out for fun at full AP
+test("dogs 'at will': scored in the first round, foes far off", function (t) {
+    local seen = {};
+    yield dogBattle(t, "atwill", seen);
+    ::APT.resetSettings();
+    local first = ::APT.autoBehaviors("Bertel").filter(@(_, b) b.round == 1 && "autopilot_unleash_dog" in b.scores);
+    t.probe("first round scores", first.map(@(b) b.scores));
+    t.eq(first.len() > 0, true, "scored");
+});
+
+// Defensive is only the hard-pressed part of it: outnumbered or wounded next to a foe
+test("dogs 'defensive': not scored in the first round, foes far off", function (t) {
+    local seen = {};
+    yield dogBattle(t, "defensive", seen);
+    ::APT.resetSettings();
+    local first = ::APT.autoBehaviors("Bertel").filter(@(_, b) b.round == 1 && "autopilot_unleash_dog" in b.scores);
+    t.eq(first.len(), 0, "not scored");
+});
+
+test("dogs 'chase': not scored with no one fleeing", function (t) {
+    local seen = {};
+    yield dogBattle(t, "chase", seen);
+    ::APT.resetSettings();
+    t.eq(::APT.autoBehaviors("Bertel").filter(@(_, b) "autopilot_unleash_dog" in b.scores).len(), 0, "never scored");
+});
+
+// Two of the four thugs routed before Bertel's first turn
+test("dogs 'chase': the wardog is unleashed on two fleeing foes", function (t) {
+    ::Tales.toughen(null, true);
+    ::APT.probeReset();
+    ::APT.setting("dogsMode", "chase");
+    ::Tales.equip(::Tales.byName("Bertel"), "scripts/items/accessory/wardog_item");
+    local p = ::APT.pilot({before = function (_e, t) {
+        foreach (h in ::Tales.hostiles().slice(0, 2)) h.setMoraleState(::Const.MoraleState.Fleeing);
+    }});
+    yield aiBattle(t, p, 4);
+    ::APT.resetSettings();
+    t.eq(did("Bertel", "actives.unleash_wardog"), true, "unleashed");
+    t.eq(p.st.stuck, [], "no stuck turn");
 });
 
 test("dogs 'never': the wardog stays", function (t) {
@@ -139,7 +182,7 @@ test("dogs 'never': the wardog stays", function (t) {
     t.eq(t.result.survivors.enemies, 0, "company wins");
 });
 
-test("dogs 'defensive' (default): probe", function (t) {
+test("dogs 'defensive': probe", function (t) {
     local seen = {};
     yield dogBattle(t, "defensive", seen);
     ::APT.resetSettings();

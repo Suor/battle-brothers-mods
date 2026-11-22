@@ -115,12 +115,16 @@ local pairs = [
         ru = "Спустить псов"
     }
     {
-        en = "How eagerly to unleash dogs in autopilot mode: never, only when hard pressed or as soon as a foe comes close"
-        ru = "Насколько охотно автопилот спускает псов: никогда, только когда приходится туго, или как только враг подойдёт"
+        en = "How eagerly to unleash dogs in autopilot mode: never, only after fleeing foes, only when hard pressed or also on weak foes and for fun"
+        ru = "Насколько охотно автопилот спускает псов: никогда, только вдогонку бегущим, только когда приходится туго, или ещё и на слабых врагов и забавы ради"
     }
     {
         en = "never"
         ru = "никогда"
+    }
+    {
+        en = "chase"
+        ru = "в погоню"
     }
     {
         en = "defensive"

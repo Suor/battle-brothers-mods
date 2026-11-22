@@ -194,7 +194,7 @@
 ::APT.setting <- function (_id, _value) {
     if (::Autopilot.msu.ModSettings.hasSetting(_id)) ::getModSetting("mod_autopilot_new", _id).set(_value);
 }
-::APT.Defaults <- {player = true, dogsMode = "defensive", nets = true, freewake = true,
+::APT.Defaults <- {player = true, dogsMode = "atwill", nets = true, freewake = true,
                    bandages = true, reload = true, verbose = false, throwBackup = true};
 // Every Autopilot setting back to its default (settings are root state a fresh=1 reload keeps).
 ::APT.resetSettings <- function () {

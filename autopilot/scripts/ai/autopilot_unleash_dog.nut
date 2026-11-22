@@ -16,7 +16,7 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         ],
         Skill = null,
         TargetTile = null,
-        Mode = "defensive",  // or "atwill", set from the "dogsMode" setting
+        Mode = "atwill",  // or "defensive", only when hard pressed, or "chase"; set from the "dogsMode" setting
     },
     function create()
     {
@@ -53,6 +53,13 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         if (spot == null) return this.Const.AI.Behavior.Score.Zero;
         this.m.TargetTile = spot.Tile;
 
+        // Kept for running down a rout
+        if (m.Mode == "chase") {
+            local fleeing = getAgent().getKnownOpponents().filter(@(_, o) !::std.Util.isNull(o.Actor)
+                && o.Actor.getMoraleState() == ::Const.MoraleState.Fleeing);
+            return fleeing.len() >= 2 ? score : ::Const.AI.Behavior.Score.Zero;
+        }
+
         // Count allies and enemies around us
         local myTile = _entity.getTile();
         local us = 1, enemies = 0;
@@ -73,6 +80,8 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
             return score * 2;
         }
 
+        if (m.Mode == "defensive") return ::Const.AI.Behavior.Score.Zero;
+
         // Go for goblins, geists, alps, fleeing and ranged enemies
         local q = {
             Self = this
@@ -86,12 +95,6 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
         if (q.Weak > q.Strong) {
             ::logInfo("Bullying with dog")
             return score / 2 * (q.Weak - q.Strong) //* this.getFatigueScoreMult(this.m.Skill);
-        }
-
-        // At will we spend the only dog as soon as a foe is close enough to be met by it
-        if (this.m.Mode == "atwill") {
-            ::logInfo("Unleashing dog at will")
-            return score * spot.Mult;
         }
 
         // Do not feel outnumbered and nobody to bully, maybe unleash just for fun :)
