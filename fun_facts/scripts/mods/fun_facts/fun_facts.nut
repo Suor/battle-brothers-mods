@@ -49,6 +49,7 @@ this.fun_facts <- {
                 Parts = 0.0
                 Herbs = 0
                 Temple = []
+                Training = []
             }
 
             // Obsolete
@@ -128,9 +129,12 @@ this.fun_facts <- {
     function onUseHerbs(_amount) {
         this.m.Stats.Spent.Herbs += _amount;
     }
-    // TODO: training, drinking
+    // TODO: drinking
     function onTempleUsed(_cost) {
         this.m.Stats.Spent.Temple.push(_cost);
+    }
+    function onTrained(_cost) {
+        this.m.Stats.Spent.Training.push(_cost);
     }
 
     function onCombatStart(_player) {
@@ -453,6 +457,8 @@ this.fun_facts <- {
         local moneyImg = "[img]gfx/ui/tooltips/money.png[/img]";
         local templeTotal = 0;
         foreach (cost in S.Temple) templeTotal += cost;
+        local trainingTotal = 0;
+        foreach (cost in S.Training) trainingTotal += cost;
         local costs = [];
         if (S.Hire > 0 && S.Wages > 0)
             costs.push(format("Hired for %s%d, earned %s%d as wages.",
@@ -474,14 +480,20 @@ this.fun_facts <- {
                 : format("Healed %d times, %s%d total.", S.Temple.len(), moneyImg, templeTotal);
             costs.push(text);
         }
+        if (trainingTotal > 0) {
+            local text = S.Training.len() == 1
+                ? format("Trained for %s%d.", moneyImg, trainingTotal)
+                : format("Trained %d times, %s%d total.", S.Training.len(), moneyImg, trainingTotal);
+            costs.push(text);
+        }
 
         local Buys = ::FunFacts.Buys;
-        local total = S.Hire + S.Wages + templeTotal
+        local total = S.Hire + S.Wages + templeTotal + trainingTotal
             + S.Food  * Buys.getAvgPrice("Food",  4)
             + S.Parts * Buys.getAvgPrice("Parts", 12)
             + S.Ammo  * Buys.getAvgPrice("Ammo",  3)
             + S.Herbs * Buys.getAvgPrice("Herbs", 15);
-        if (total >= 1 && (spent.len() > 0 || templeTotal > 0)) {
+        if (total >= 1 && (spent.len() > 0 || templeTotal > 0 || trainingTotal > 0)) {
             local factor = total >= 2000 ? 100 :
                            total >= 1000 ? 50 :
                            total >=  200 ? 10 :

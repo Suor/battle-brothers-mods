@@ -321,8 +321,20 @@ local pairs = [
         n2 = "Лечился <n> раза, спустил <money><total>."
         n5 = "Лечился <n> раз, спустил <money><total>."
     }
+    {
+        mode = "pattern"
+        en = "Trained for <money:img><total:int>."
+        ru = "Тренировался за <money><total>."
+    }
+    {
+        plural = "n"
+        en = "Trained <n:int> times, <money:img><total:int> total."
+        n1 = "Тренировался <n> раз, спустил <money><total>."
+        n2 = "Тренировался <n> раза, спустил <money><total>."
+        n5 = "Тренировался <n> раз, спустил <money><total>."
+    }
     // Internal expression with table keys, not user-facing.
-    // en = "<S.Hire + S.Wages + templeTotal + S.Food*Buys.getAvgPrice(Food, 4) + S.Parts*Buys.getAvgPrice(Parts, 12) + S.Ammo*Buys.getAvgPrice(Ammo, 3) + S.Herbs*Buys.getAvgPrice(Herbs, 15)>"
+    // en = "<S.Hire + S.Wages + templeTotal + trainingTotal + S.Food*Buys.getAvgPrice(Food, 4) + S.Parts*Buys.getAvgPrice(Parts, 12) + S.Ammo*Buys.getAvgPrice(Ammo, 3) + S.Herbs*Buys.getAvgPrice(Herbs, 15)>"
     {
         // costs.push(format("TCO ~ %s%d", moneyImg, total))
         en = "<start:str>\nTCO ~ <end:str>"
