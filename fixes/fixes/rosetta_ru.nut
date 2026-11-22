@@ -12,6 +12,7 @@ local pairs = [
         ru = "Фиксы от Hackflow"
     }
         // en = "<!isKindOf(item, , , ammo)&&!isKindOf(item, , , weapon)>"
+    // en = "ironman"
     {
         // ret.top().text += format("\n\nShort of %s ammo to refill.",
         //                          ::std.Text.negative(ammoReq));

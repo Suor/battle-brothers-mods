@@ -1,6 +1,6 @@
 MOD_NAME = fixes
 TAG_NAME = fixes
-SOURCES = fixes scripts
+SOURCES = fixes scripts ui
 
 include ../Makefile.common
 

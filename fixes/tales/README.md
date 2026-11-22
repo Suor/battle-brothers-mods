@@ -11,6 +11,7 @@ cd ~/projects/bbm/bbtales
 - `tale_reforged.nut` — with Reforged 0.9.3 (+ mod_hooks shim): vanilla shield conditions restored.
 - `tale_reforged_noshim.nut` — FX1: the same without Adam's mod_hooks.
 - `tale_smoke.nut` — boot, AI battle, days, save/load.
+- `tale_new_campaign.nut` — the New Campaign screen restores the settings the last campaign started with.
 
 Not covered: enemies shown right after a load (rendering), despawning units without a home
 settlement, Shield Expert halving Reforged shield damage, the schrat shield, `ProjectileType` repair.

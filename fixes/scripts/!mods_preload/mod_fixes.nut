@@ -75,6 +75,32 @@ mod.queue(">mod_msu", function () {
         }
     })
 
+    // The New Campaign screen remembers its settings across game restarts
+    if ("msu" in def) {
+        ::Hooks.registerJS("ui/mods/fixes/new_campaign.js");
+        local keys = ["combatDifficulty", "economicDifficulty", "budgetDifficulty", "ironman", "explorationDifficulty",
+            "lateGameCrisis", "permanentDestruction"];
+        local restored = false;  // once a run: later shows keep what the player picked meanwhile
+        mod.hook("scripts/ui/screens/menu/main_menu_screen", function (q) {
+            q.showNewCampaignMenu = @(__original) function () {
+                if (!restored && def.msu.PersistentData.hasFile("new_campaign")) {
+                    restored = true;
+                    getNewCampaignMenuModule().m.JSHandle.asyncCall("fixesRestoreSettings",
+                        def.msu.PersistentData.readFile("new_campaign"));
+                }
+                __original();
+            }
+        })
+        mod.hook("scripts/ui/screens/menu/modules/new_campaign_menu_module", function (q) {
+            q.onStartButtonPressed = @(__original) function (_settings) {
+                local saved = {};
+                foreach (k in keys) if (k in _settings) saved[k] <- _settings[k];
+                def.msu.PersistentData.createFile("new_campaign", saved);
+                __original(_settings);
+            }
+        })
+    }
+
     // Despawn units, with no location of their faction
     mod.hook("scripts/factions/faction", function (q) {
         q.update = @(__original) function (_ignoreDelay = false, _isNewCampaign = false) {

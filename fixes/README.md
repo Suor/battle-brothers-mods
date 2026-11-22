@@ -7,6 +7,7 @@ A collection of bug fixes and minor UI tweaks to smooth the game:
 3. Cook fix.
 4. Blacksmith fix.
 5. Events delayed fix
+6. The New Campaign screen remembers its settings (difficulty, crisis) across game restarts (with MSU).
 
 More about these below (TBD).
 
