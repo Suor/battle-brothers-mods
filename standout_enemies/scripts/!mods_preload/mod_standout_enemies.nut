@@ -8,6 +8,9 @@ local mod = {
         tagPrefix = "standout-enemies-"
     }
 }
+// TODO: move to Modern Hooks, beware of hooks' slightly different semantics:
+//   descendant hooks may run nested in a parent's method or skip a grandchild class,
+//   the goblin wolfrider demount has lost or doubled the quirk this way many times.
 ::mods_registerMod(mod.ID, mod.Version, mod.Name);
 
 local gt = this.getroottable();
@@ -986,7 +989,9 @@ Util.extend(Mod, {
 })
 
 
-::mods_queue("mod_standout_enemies", "stdlib, mod_hooks(>=20), >mod_msu", function() {
+// ">black_pyramid_beasts": it replaces tactical_entity_manager.setupEntity wholesale, we wrap on top.
+::mods_queue("mod_standout_enemies", "stdlib, mod_hooks(>=20), >mod_msu, >black_pyramid_beasts",
+             function() {
     if ("MSU" in getroottable()) {
         local msu = ::MSU.Class.Mod(mod.ID, mod.Version, mod.Name);
         local msd = ::MSU.System.Registry.ModSourceDomain, upd = mod.Updates;
