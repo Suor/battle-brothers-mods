@@ -150,7 +150,10 @@ rosetta -c <path/to/translation.nut> <path/to/mod/dir>
 Sprite names in `setBrush(...)`, `spawnIcon(...)` and `m.IconMini` are brush-atlas ids, not PNG paths (unlike
 `m.Icon`). Packing, unpacking and finding sprites: the `brushes` skill.
 
+## Releasing a mod
 
+The steps, Nexus upload and Discord announcements: `_docs/releasing.md`; screenshots: `_docs/screenshots.md`.
+Posting to Nexus or Discord is outward-facing: show the text and get the user's go-ahead first.
 
 ## Utility Scripts
 
