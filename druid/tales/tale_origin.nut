@@ -4,7 +4,7 @@
 // The Druids origin: the Bear and the Wolf.
 
 test("origin: the Bear and the Wolf", function (t) {
-    local got = t.roster().map(@(b) [b.getTitle(), b.getLevel(), b.getBackground().getID(),
+    local got = t.roster().map(@(b) [b.m.Title, b.getLevel(), b.getBackground().getID(),
         b.getSkills().hasSkill("perk.druid.regrowth"), b.getSkills().hasSkill("perk.druid.beastform"),
         b.getSkills().hasSkill("actives.druid_summon_beast")]);
     t.eq(got, [["the Bear", 3, "background.hackflows_druid", true, false, true],
@@ -18,6 +18,6 @@ test("origin: a battle and a save/load keep the druids' perks", function (t) {
     t.eq(t.result.survivors, {enemies = 0, player = 2}, "won, both alive");
     t.save("druids");
     yield t.load("druids");
-    t.eq(t.roster().map(@(b) [b.getTitle(), b.getSkills().hasSkill("perk.druid.regrowth"), b.getSkills().hasSkill("perk.druid.beastform")]),
+    t.eq(t.roster().map(@(b) [b.m.Title, b.getSkills().hasSkill("perk.druid.regrowth"), b.getSkills().hasSkill("perk.druid.beastform")]),
         [["the Bear", true, false], ["the Wolf", false, true]], "[title, regrowth, beastform] after load");
 });

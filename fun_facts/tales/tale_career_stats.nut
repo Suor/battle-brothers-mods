@@ -39,7 +39,7 @@ test("KB8: a battle with a death: both mods' tooltips, obituary and save/load", 
     t.eq(["FunFacts" in fallen, "CareerStats_Stats" in fallen], [true, true], "the fallen carries both");
     local cs = ::FFT.obituaryTooltip(idx, "mod_career_stats", "CareerStats_Idx");
     t.ok(cs.len() > 1, "Career Stats obituary tooltip");
-    local expected = [name, "Died once"];
+    local expected = [name, ::Tales.tr({en = "Died once", ru = "Помер разок"})];
     expected.extend(cs.slice(1));
     t.eq(::FFT.obituaryTooltip(idx, "mod_fun_facts", "FunFacts_Idx"), expected,
          "Fun Facts obituary tooltip, Career Stats' lines appended");

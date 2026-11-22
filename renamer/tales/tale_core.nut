@@ -12,16 +12,16 @@ local hire = function (_bg) {
 test("hired bros get numbered titles by background, the fallen counted", function (t) {
     local a = hire("farmhand_background"), b = hire("farmhand_background");
     local k = hire("hedge_knight_background");
-    t.eq([a.getTitle(), b.getTitle(), k.getTitle()], ["Farmer I", "Farmer II", "Knight I"], "titles");
+    t.eq([a.getTitle(), b.getTitle(), k.getTitle()], ::Tales.tr({en = ["Farmer I", "Farmer II", "Knight I"], ru = ["Батрак I", "Батрак II", "Рыцарь I"]}), "titles");
     t.eq(a.getFlags().get("renamer_initialTitle"), a.m.__titleBefore, "the old title is kept in a flag");
 
     // as vanilla events record a death (cultist_finale_event)
     ::World.Statistics.addFallen({Name = b.getName(), Time = 1, TimeWithCompany = 1, Kills = 0, Battles = 0,
         KilledBy = "Testing", Expendable = false});
     ::World.getPlayerRoster().remove(b);
-    t.eq(hire("farmhand_background").getTitle(), "Farmer III", "after II fell");
+    t.eq(hire("farmhand_background").getTitle(), ::Tales.tr({en = "Farmer III", ru = "Батрак III"}), "after II fell");
 
     local i = 0;
     while (i++ < 7) hire("farmhand_background");
-    t.eq(hire("farmhand_background").getTitle(), "Farmer XI", "roman past ten");
+    t.eq(hire("farmhand_background").getTitle(), ::Tales.tr({en = "Farmer XI", ru = "Батрак XI"}), "roman past ten");
 });

@@ -3,7 +3,7 @@
 // include: lib/helpers.nut
 
 test("militia: twelve starting brothers, all titled, no repeats", function (t) {
-    local titles = t.roster().map(@(b) b.getTitle());
+    local titles = t.roster().map(@(b) b.m.Title);
     t.probe("titles", titles);
     t.eq(titles.len(), 12, "company size");
     local seen = {}, dups = [];
@@ -15,6 +15,6 @@ test("militia: twelve starting brothers, all titled, no repeats", function (t) {
     t.eq(dups, [], "repeated titles");
     local generated = ::Nicknames.loadState().generated;
     foreach (bro in t.roster())
-        if (bro.getTitle() in generated)
-            t.ok(::NickT.has(::NickT.titles(bro), bro.getTitle()), bro.getTitle() + " fits " + bro.getName());
+        if (bro.m.Title in generated)
+            t.ok(::NickT.has(::NickT.titles(bro), bro.m.Title), bro.m.Title + " fits " + bro.getName());
 });

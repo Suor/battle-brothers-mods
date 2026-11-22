@@ -47,7 +47,7 @@ test("F1: a bro struck down and left to die keeps the battle and the death", fun
     t.eq(t.result.result, ::Const.Tactical.CombatResult.PlayerRetreated, "the company retreated");
     t.eq(::Tales.byName(name), null, "off the roster");
     local idx = ::FFT.fallenByName(name), fallen = ::World.Statistics.getFallen()[idx];
-    t.eq(fallen.KilledBy, "Left to die", "fallen record");
+    t.eq(fallen.KilledBy, ::Tales.tr({en = "Left to die", ru = "Был брошен на поле боя"}), "fallen record");
     local s = fallen.FunFacts.m.Stats;
     t.eq([s.Battles, s.BattlesLog.map(@(r) r.Id)], [1, [1]], "his battle");
     t.eq(s.Deaths.map(@(d) [d.Fatality, d.ClassName]), [[::Const.FatalityType.Unconscious, "bandit_thug"]], "his death");

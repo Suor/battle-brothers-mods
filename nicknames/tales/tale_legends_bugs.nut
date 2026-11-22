@@ -7,7 +7,7 @@
 test("Legends and Nicknames are loaded, starting titles set", function (t) {
     t.eq([::Hooks.hasMod("mod_legends"), ::Hooks.hasMod("mod_nicknames")], [true, true], "registered");
     t.probe("Legends", ::Legends.Version);
-    local titles = t.roster().map(@(b) b.getTitle());
+    local titles = t.roster().map(@(b) b.m.Title);
     t.probe("starting titles", titles);
     foreach (title in titles) t.ok(typeof title == "string", "a title string");
 });
@@ -20,7 +20,7 @@ test("KB6: setStartValuesEx keeps Legends' parameters", function (t) {
         ["this", "_backgrounds", "_addTraits", "_gender", "_addEquipment"], "final wrapper's parameters");
     bro.setStartValuesEx(["sellsword_background"], true, 1, false);
     t.eq(bro.getItems().getAllItems().len(), 0, "_addEquipment = false honoured");
-    t.ok(bro.getTitle() != "", "titled");
+    t.ok(bro.m.Title != "", "titled");
     ::World.getTemporaryRoster().clear();
 });
 
@@ -35,12 +35,12 @@ test("KB4: Legends' King's Guard recruit is titled, shows in the roster, survive
     local ev = ::World.Events.getEvent("event.kings_guard_1");
     local dude = ev.m.Dude;
     t.eq(dude.getFlags().get("IsKingsGuard"), true, "Legends' version of the event");
-    t.eq(dude.getTitle(), "", "no title while shown");
+    t.eq(dude.m.Title, "", "no title while shown");
     ::World.Events.processInput(0);  // "We have a place for you, friend." -> C
     ::World.Events.processInput(0);  // hires him
     ::Tales.Autoplay = true;
     t.eq(t.roster().len(), n + 1, "hired");
-    t.ok(dude.getTitle() != "", "titled on hire: " + dude.getTitle());
+    t.ok(dude.m.Title != "", "titled on hire: " + dude.m.Title);
     t.ok(::UIDataHelper.convertEntityToUIData(dude, null) != null, "roster UI data builds");
     local name = dude.getName();
     t.save("kb4l");

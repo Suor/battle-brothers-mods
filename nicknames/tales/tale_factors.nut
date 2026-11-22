@@ -157,7 +157,7 @@ test("Executioner background has its titles", function (t) {
     local bro = ::NickT.recruit(["executioner_background"]);
     t.eq(bro.getBackground().getID(), "background.executioner");
     t.ok(::NickT.has(::NickT.titles(bro), "the Block"), "the Block among candidates");
-    t.ok(bro.getTitle() != "", "titled");
+    t.ok(bro.m.Title != "", "titled");
     ::World.getTemporaryRoster().clear();
 });
 

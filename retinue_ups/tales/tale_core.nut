@@ -30,7 +30,7 @@ test("promote through the campfire handler", function (t) {
     t.eq(campfire().ru_onSlotCtrlClicked(0), {Result = 0}, "promoted");
     t.eq(::World.Assets.getMoney(), 0, "paid 7000");
     t.eq(state(f), {cost = 10500, effects = 2, hasBase = true, promoted = true}, "promoted state");
-    t.eq(f.getName(), "The Trader (Promoted)", "name");
+    t.eq(f.getName(), ::Tales.tr({en = "The Trader (Promoted)", ru = "Торговец (Promoted)"}), "name");
     t.eq(campfire().ru_onSlotCtrlClicked(0), {Result = 999}, "second click does nothing");
 });
 

@@ -13,7 +13,7 @@ test("starting roster: every brother titled, titles distinct", function (t) {
     ::NickT.resetState();
     local titles = [], seen = {};
     foreach (bro in t.roster()) {
-        local title = bro.getTitle();
+        local title = bro.m.Title;
         titles.push(title);
         t.ok(title != "", bro.getName() + " has a title");
         t.ok(!(title in seen), "title " + title + " repeats");
@@ -23,8 +23,8 @@ test("starting roster: every brother titled, titles distinct", function (t) {
     // Titles the mod gave are recorded and fit the brother; the rest come from the origin.
     local generated = ::Nicknames.loadState().generated;
     foreach (bro in t.roster())
-        if (bro.getTitle() in generated)
-            t.ok(::NickT.has(::NickT.titles(bro), bro.getTitle()), bro.getTitle() + " fits " + bro.getName());
+        if (bro.m.Title in generated)
+            t.ok(::NickT.has(::NickT.titles(bro), bro.m.Title), bro.m.Title + " fits " + bro.getName());
     t.ok(generated.len() > 0, "the mod titled some starting brother");
 });
 
@@ -33,7 +33,7 @@ test("recruits get a title that fits them", function (t) {
     local misfits = [], untitled = 0;
     for (local i = 0; i < 45; i++) {
         local bro = ::NickT.recruit([Backgrounds[i % Backgrounds.len()]]);
-        local title = bro.getTitle();
+        local title = bro.m.Title;
         if (title == "") { untitled++; continue; }
         if (!::NickT.has(::NickT.titles(bro), title))
             misfits.push(bro.getBackground().getID() + ": " + title);
@@ -47,10 +47,10 @@ test("recruit's title is recorded as generated today", function (t) {
     ::NickT.resetState();
     local bro = ::NickT.recruit(["farmhand_background"]);
     local today = ::World.getTime().Days;
-    t.eq(::Nicknames.loadState().generated[bro.getTitle()].days.top(), today);
+    t.eq(::Nicknames.loadState().generated[bro.m.Title].days.top(), today);
     // Persisted in the world flags, not only in the cache
     ::NickT.resetState();
-    t.eq(::Nicknames.loadState().generated[bro.getTitle()].days.top(), today, "after a cache reset");
+    t.eq(::Nicknames.loadState().generated[bro.m.Title].days.top(), today, "after a cache reset");
     ::World.getTemporaryRoster().clear();
 });
 
@@ -62,8 +62,8 @@ test("recruits avoid recent and taken titles while others are left", function (t
         local bro = ::World.getTemporaryRoster().create("scripts/entity/tactical/player");
         bro.setStartValuesEx(["farmhand_background"]);
         local free = ::NickT.titles(bro).filter(@(_, c) !(c in blocked));
-        if (free.len() > 0 && bro.getTitle() in blocked)
-            repeats.push(bro.getTitle() + " (free: " + free.len() + ")");
+        if (free.len() > 0 && bro.m.Title in blocked)
+            repeats.push(bro.m.Title + " (free: " + free.len() + ")");
     }
     t.eq(repeats, [], "picked a blocked title while free ones existed");
     ::World.getTemporaryRoster().clear();
@@ -78,9 +78,9 @@ test("settlement recruits all get distinct fitting titles", function (t) {
     foreach (town in towns.slice(0, 4)) {
         town.updateRoster(true);
         foreach (bro in ::World.getRoster(town.getID()).getAll()) {
-            all.push(bro.getTitle());
-            if (bro.getTitle() == "" || !::NickT.has(::NickT.titles(bro), bro.getTitle()))
-                problems.push(town.getName() + ": " + bro.getName() + " '" + bro.getTitle() + "'");
+            all.push(bro.m.Title);
+            if (bro.m.Title == "" || !::NickT.has(::NickT.titles(bro), bro.m.Title))
+                problems.push(town.getName() + ": " + bro.getName() + " '" + bro.m.Title + "'");
         }
     }
     t.probe("recruits", all.len());
@@ -97,9 +97,9 @@ test("settlement recruits all get distinct fitting titles", function (t) {
 test("hiring keeps the title and records it", function (t) {
     ::NickT.resetState();
     local bro = ::NickT.recruit(["sellsword_background"]);
-    local title = bro.getTitle();
+    local title = bro.m.Title;
     ::NickT.hire(bro);
-    t.eq(bro.getTitle(), title, "title after hire");
+    t.eq(bro.m.Title, title, "title after hire");
     ::NickT.resetState();
     t.eq(::Nicknames.loadState().hired[title], 1, "hired count, read back from the flags");
 });
@@ -107,7 +107,7 @@ test("hiring keeps the title and records it", function (t) {
 test("a gone brother's title isn't given again", function (t) {
     ::NickT.resetState();
     local bro = ::NickT.recruit(["farmhand_background"]);
-    local title = bro.getTitle();
+    local title = bro.m.Title;
     ::NickT.hire(bro);
     ::World.getPlayerRoster().remove(bro);
     t.ok(::NickT.titles(bro).len() > 1, "has alternatives");
@@ -115,7 +115,7 @@ test("a gone brother's title isn't given again", function (t) {
     for (local i = 0; i < 20; i++) {
         ::Nicknames.loadState().generated.clear();  // as if 14 days passed
         ::Nicknames.fillTitle(bro);
-        if (bro.getTitle() == title) reused++;
+        if (bro.m.Title == title) reused++;
     }
     t.eq(reused, 0, "times " + title + " was picked again");
 });
@@ -127,22 +127,22 @@ test("N1: starting brothers' titles count as hired", function (t) {
     local hired = ::Nicknames.loadState().hired;
     local missing = [];
     foreach (bro in t.roster())
-        if (!(bro.getTitle() in hired)) missing.push(bro.getTitle());
+        if (!(bro.m.Title in hired)) missing.push(bro.m.Title);
     t.eq(missing, [], "starting titles missing from state.hired");
 
     // The fallout: a fallen starting brother's title is handed out again. He needs another candidate
     // nobody wears, or the cascade rightly falls back to his own.
     local worn = {}, bro = null;
-    foreach (b in t.roster()) worn[b.getTitle()] <- true;
+    foreach (b in t.roster()) worn[b.m.Title] <- true;
     foreach (b in t.roster())
         if (bro == null && ::NickT.titles(b).filter(@(_, c) !(c in worn)).len() > 0) bro = b;
-    local title = bro.getTitle();
+    local title = bro.m.Title;
     ::World.getPlayerRoster().remove(bro);
     local reused = 0;
     for (local i = 0; i < 20; i++) {
         ::Nicknames.loadState().generated.clear();  // as if 14 days passed
         ::Nicknames.fillTitle(bro);
-        if (bro.getTitle() == title) reused++;
+        if (bro.m.Title == title) reused++;
     }
     t.eq(reused, 0, "times the fallen " + title + " was picked again");
 });
@@ -152,13 +152,13 @@ test("titles and state survive save and load", function (t) {
     local bro = ::NickT.recruit(["monk_background"]);
     ::NickT.hire(bro);
     local before = [];
-    foreach (b in t.roster()) before.push(b.getTitle());
+    foreach (b in t.roster()) before.push(b.m.Title);
     local state = ::Nicknames.loadState();
     local hired = clone state.hired, generated = ::NickT.keys(state.generated);
     t.save("nick_saveload");
     yield t.load("nick_saveload");
     local after = [];
-    foreach (b in t.roster()) after.push(b.getTitle());
+    foreach (b in t.roster()) after.push(b.m.Title);
     t.eq(after, before, "roster titles");
     ::NickT.resetState();
     t.eq(::Nicknames.loadState().hired, hired, "state.hired");
@@ -188,7 +188,7 @@ test("generated records older than 14 days are dropped on the next record", func
     foreach (title, rec in generated) expected[title] <- {days = clone rec.days};
     generated["old title"] <- {days = [today - 14]};
     generated["recent title"] <- {days = [today - 14, today - 13]};
-    local title = ::NickT.recruit(["farmhand_background"]).getTitle();
+    local title = ::NickT.recruit(["farmhand_background"]).m.Title;
     ::World.getTemporaryRoster().clear();
     expected["recent title"] <- {days = [today - 13]};
     if (!expected.rawin(title)) expected[title] <- {days = []};
@@ -199,11 +199,11 @@ test("generated records older than 14 days are dropped on the next record", func
 test("generated titles expire after 14 days", function (t) {
     ::NickT.resetState();
     local day0 = ::World.getTime().Days;
-    local first = ::NickT.recruit(["farmhand_background"]).getTitle();
+    local first = ::NickT.recruit(["farmhand_background"]).m.Title;
     ::World.getTemporaryRoster().clear();
     yield t.days(15, {speed = 16.0});
     local today = ::World.getTime().Days;
-    local second = ::NickT.recruit(["farmhand_background"]).getTitle();
+    local second = ::NickT.recruit(["farmhand_background"]).m.Title;
     ::World.getTemporaryRoster().clear();
     // Towns refresh their recruits meanwhile, so the first title may be recorded again later.
     local generated = ::Nicknames.loadState().generated;

@@ -6,7 +6,7 @@ local mod = ::Hooks.register("mod_onhired_stub", "1.0.0", "onHired at campaign s
 local function hireAll(_point) {
     local roster = ::World.getPlayerRoster().getAll();
     ::OnHiredStub.seen.push({point = _point, hired = clone ::Nicknames.loadState().hired,
-        titles = roster.map(@(b) b.getTitle())});
+        titles = roster.map(@(b) b.m.Title)});
     foreach (bro in roster) bro.onHired();
 }
 local function hookStart(_point) {

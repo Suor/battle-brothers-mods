@@ -59,12 +59,12 @@ test("the roster blocks its titles, the cascade falls back when all are blocked"
     for (local i = 0; i < 10; i++) {
         ::Nicknames.loadState().generated.clear();
         ::Nicknames.fillTitle(bro);
-        picked.push(bro.getTitle());
+        picked.push(bro.m.Title);
     }
     t.eq(picked.filter(@(_, x) x == "Shorty"), [], "Shorty is worn");
     foreach (title in all) ::Nicknames.loadState().generated[title] <- {days = [::World.getTime().Days]};
     ::Nicknames.fillTitle(bro);
-    t.eq(::NickT.has(all, bro.getTitle()), true, "a candidate when all are recent");
+    t.eq(::NickT.has(all, bro.m.Title), true, "a candidate when all are recent");
     ::World.getTemporaryRoster().clear();
 });
 

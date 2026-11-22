@@ -23,16 +23,16 @@ test("event recruits are titled on hire, distinct and fitting", function (t) {
     ::NickT.resetState();
     local ev = fireEvent("event.volunteers");
     local dudes = [ev.m.Dude1, ev.m.Dude2, ev.m.Dude3];
-    t.probe("titles while shown", dudes.map(@(d) d.getTitle()));
+    t.probe("titles while shown", dudes.map(@(d) d.m.Title));
     answer(0);  // "Welcome aboard."
     done();
-    local titles = dudes.map(@(d) d.getTitle()), seen = {};
+    local titles = dudes.map(@(d) d.m.Title), seen = {};
     foreach (i, d in dudes) {
-        t.ok(d.getTitle() != "", d.getName() + " titled on hire");
-        t.ok(!(d.getTitle() in seen), d.getTitle() + " repeats");
-        seen[d.getTitle()] <- true;
-        t.ok(::NickT.has(::NickT.titles(d), d.getTitle()), d.getTitle() + " fits");
-        t.eq(::Nicknames.loadState().hired[d.getTitle()], 1, "hired " + d.getTitle());
+        t.ok(d.m.Title != "", d.getName() + " titled on hire");
+        t.ok(!(d.m.Title in seen), d.m.Title + " repeats");
+        seen[d.m.Title] <- true;
+        t.ok(::NickT.has(::NickT.titles(d), d.m.Title), d.m.Title + " fits");
+        t.eq(::Nicknames.loadState().hired[d.m.Title], 1, "hired " + d.m.Title);
     }
     t.eq(t.roster().len(), 6, "roster size");
 });
@@ -42,10 +42,11 @@ test("an event's own title for its recruit is kept", function (t) {
     local hired = clone ::Nicknames.loadState().hired;
     local ev = ::World.Events.getEvent("event.the_horseman");
     ev.setScreen(ev.getScreen("C"));
-    t.eq(ev.m.Dude.getTitle(), "the Filly Fiddler");
+    local title = ::Tales.tr({en = "the Filly Fiddler", ru = "Конелюб"});
+    t.eq(ev.m.Dude.m.Title, title);
     ev.processInput(0);  // "Welcome aboard, you horse whore."
-    t.eq(ev.m.Dude.getTitle(), "the Filly Fiddler", "after hire");
-    hired["the Filly Fiddler"] <- 1;
+    t.eq(ev.m.Dude.m.Title, title, "after hire");
+    hired[title] <- 1;
     t.eq(::Nicknames.loadState().hired, hired);
     ev.clear();
 });
@@ -67,8 +68,8 @@ test("recruits made after an event are titled at once again", function (t) {
     answer(1);
     done();
     local bro = ::NickT.recruit(["farmhand_background"]);
-    t.ok(bro.getTitle() != "", "titled at creation");
-    t.eq(::Nicknames.loadState().generated[bro.getTitle()].days, [::World.getTime().Days]);
+    t.ok(bro.m.Title != "", "titled at creation");
+    t.eq(::Nicknames.loadState().generated[bro.m.Title].days, [::World.getTime().Days]);
     ::World.getTemporaryRoster().clear();
 });
 
@@ -83,7 +84,7 @@ test("N4: an error inside an event screen doesn't stop titling recruits", functi
     try { ev.setScreen(broken); } catch (e) { t.log("event screen threw: " + e); }
     ev.clear();
     local bro = ::NickT.recruit(["farmhand_background"]);
-    t.ok(bro.getTitle() != "", "a town recruit made after the broken event has a title");
+    t.ok(bro.m.Title != "", "a town recruit made after the broken event has a title");
     // Undo for the tests after this: a screen that completes clears the flag.
     ev.setScreen({ID = "Ok", Text = "", Image = "", List = [], Characters = [], Options = [],
         function start(_event) {}});
@@ -99,19 +100,19 @@ test("N5 report: an event recruit keeps a vanilla-rolled title", function (t) {
     for (local i = 0; i < 40 && dude == null; i++) {
         local ev = fireEvent("event.volunteers");
         foreach (d in [ev.m.Dude1, ev.m.Dude2, ev.m.Dude3])
-            if (d.getTitle() != "") dude = d;
+            if (d.m.Title != "") dude = d;
         if (dude == null) {
             answer(1);
             yield ::NickT.eventIdle(t);
         }
     }
     if (!t.ok(dude != null, "an event recruit with a vanilla-rolled title")) return done();
-    local title = dude.getTitle();
+    local title = dude.m.Title;
     t.roster()[0].setTitle(title);
     answer(0);  // hire all three
     done();
     t.probe("rolled title", title);
-    t.probe("kept", dude.getTitle() == title);
+    t.probe("kept", dude.m.Title == title);
 });
 
 // N7: detection doesn't rely on a setScreen wrapper (Legends replaces setScreen); tale_setscreen_replaced.nut and

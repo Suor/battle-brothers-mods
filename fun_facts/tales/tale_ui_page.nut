@@ -44,7 +44,7 @@ test("obituary rows: Fun Facts' tooltip on hover", function (t) {
     t.eq(t.js("$('.world-obituary-screen .l-row .name').map(function () { return $(this).text(); }).get()"),
          ["Remembered", "Old Timer"], "rows");
     yield ::FFT.uiRowTooltip(t, 0);
-    t.eq(::FFT.uiTooltipLines(t), ["Remembered", "Died once", "Chopped 3 heads"], "with facts");
+    t.eq(::FFT.uiTooltipLines(t), ["Remembered", ::Tales.tr({en = "Died once", ru = "Помер разок"}), ::Tales.tr({en = "Chopped 3 heads", ru = "Срубил 3 головы"})], "with facts");
     yield ::FFT.uiRowTooltip(t, 1);
-    t.eq(::FFT.uiTooltipLines(t), ["Old Timer", "Noone remembers anything fun about this dude."], "without facts");
+    t.eq(::FFT.uiTooltipLines(t), ["Old Timer", ::Tales.tr({en = "Noone remembers anything fun about this dude.", ru = "Никто не помнит ничего забавного об этом парне."})], "without facts");
 });

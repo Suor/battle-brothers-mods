@@ -46,7 +46,9 @@ test("KB8: a fallen bro's obituary row shows both mods' tooltips", function (t) 
     t.hover(".world-obituary-screen .l-row");
     yield t.untilJs("$('.tooltip-module').hasClass('display-block')", 120);
     local lines = t.js("$('.tooltip-module').find('.title, .description, .text').map(function () { return $(this).text(); }).get()");
-    local ff = ::FFT.fallenHints(idx), cs = ::FFT.obituaryTooltip(idx, "mod_career_stats", "CareerStats_Idx").slice(1);
+    // As the page has them, translated: Fun Facts' own lines lead its tooltip, Career Stats' follow
+    local ff = ::FFT.obituaryTooltip(idx, "mod_fun_facts", "FunFacts_Idx").slice(1, 1 + ::FFT.fallenHints(idx).len());
+    local cs = ::FFT.obituaryTooltip(idx, "mod_career_stats", "CareerStats_Idx").slice(1);
     t.eq({FunFacts = showsAll(lines, ff), CareerStats = showsAll(lines, cs)},
          {FunFacts = true, CareerStats = true}, "the row's tooltip has every line of both mods");
 });
@@ -71,6 +73,6 @@ test("KB8: a bro's popup in the character screen shows both mods' lines", functi
     t.shot("bro_popup");
     local lines = t.js("$('.tooltip-module').find('.title, .description, .text').map(function () { return $(this).text(); }).get()");
     t.probe("bro popup lines", lines);
-    t.eq({FunFacts = hasLine(lines, "Inflicted"), CareerStats = hasLine(lines, "DMG Dealt")}, {FunFacts = true, CareerStats = true},
+    t.eq({FunFacts = hasLine(lines, ::Tales.tr({en = "Inflicted", ru = "Нанёс"})), CareerStats = hasLine(lines, "DMG Dealt")}, {FunFacts = true, CareerStats = true},
          "the popup has both mods' lines");
 });

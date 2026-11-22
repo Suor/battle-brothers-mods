@@ -4,8 +4,8 @@
 
 // The origin's own titles stay; the mod only fills empty ones at campaign start.
 test("gladiators keep their origin titles", function (t) {
-    local titles = t.roster().map(@(b) b.getTitle());
+    local titles = t.roster().map(@(b) b.m.Title);
     titles.sort();
-    t.eq(titles, ["the Bear", "the Lion", "the Viper"]);
+    t.eq(titles, ::Tales.tr({en = ["the Bear", "the Lion", "the Viper"], ru = ["Змей", "Лев", "Медведь"]}));
     t.eq(::Nicknames.loadState().generated, {}, "nothing generated");
 });

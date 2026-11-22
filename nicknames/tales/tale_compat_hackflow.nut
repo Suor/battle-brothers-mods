@@ -1,5 +1,5 @@
 // mode: campaign seed=bbtest-nick fresh=1
-// mods: mod_backgrounds_and_events==0.8 mod_hackflows_perks==1.6.3 mod_background_perks==2.6.2 mod_nicknames@dev mod_msu stdlib@dev
+// mods: mod_backgrounds_and_events@dev mod_hackflows_perks==1.6.3 mod_background_perks==2.6.2 mod_nicknames@dev mod_msu stdlib@dev
 // include: lib/helpers.nut
 
 // With the author's companion mods: XBE backgrounds, Hackflow's Perks, Starting Perks by Background.
@@ -45,7 +45,7 @@ test("recruits with starting perks get perk factors and titles", function (t) {
         local bro = ::NickT.recruit(["monk_background", "hunter_background", "historian_background",
             "brawler_background", "thief_background"]);
         if (::NickT.factorsWithPrefix(::Nicknames.buildFactorSet(bro), "perk.").len() > 0) withPerk++;
-        t.ok(bro.getTitle() != "" && ::NickT.has(::NickT.titles(bro), bro.getTitle()), "titled, fitting");
+        t.ok(bro.m.Title != "" && ::NickT.has(::NickT.titles(bro), bro.m.Title), "titled, fitting");
     }
     t.probe("with a perk factor", withPerk);
     t.ok(withPerk > 0, "some recruit has a starting perk factor");

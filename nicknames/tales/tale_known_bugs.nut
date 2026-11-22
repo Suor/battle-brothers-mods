@@ -11,7 +11,7 @@ test("KB1: title state doesn't leak into a loaded save", function (t) {
     t.save("kb1_before");
     local hiredBefore = clone ::Nicknames.loadState().hired;
     local bro = ::NickT.recruit(["sellsword_background"]);
-    local title = bro.getTitle();
+    local title = bro.m.Title;
     ::NickT.hire(bro);
     local hired = clone hiredBefore;
     hired[title] <- 1;
@@ -55,13 +55,13 @@ test("KB4: King's Guard recruit gets a title on hire", function (t) {
     t.ok(::World.Events.fire("event.kings_guard_1", false), "event fired");
     local ev = ::World.Events.getEvent("event.kings_guard_1");
     local dude = ev.m.Dude;
-    t.eq(dude.getTitle(), "", "no title while shown");
+    t.eq(dude.m.Title, "", "no title while shown");
     ::World.Events.processInput(0);  // "We have a place for you, friend." -> C
     ::World.Events.processInput(0);  // "We'll see." hires him
     ::Tales.Autoplay = true;
     t.eq(t.roster().len(), 4, "hired");
-    t.ok(dude.getTitle() != "", "titled on hire");
-    t.ok(::NickT.has(::NickT.titles(dude), dude.getTitle()), dude.getTitle() + " fits");
+    t.ok(dude.m.Title != "", "titled on hire");
+    t.ok(::NickT.has(::NickT.titles(dude), dude.m.Title), dude.m.Title + " fits");
     t.eq(dude.getTalents()[::Const.Attributes.MeleeDefense], 3, "event's talents in place");
 });
 
@@ -70,7 +70,7 @@ test("KB4: a recruit made without talents outside events is titled", function (t
     local bro = ::World.getTemporaryRoster().create("scripts/entity/tactical/player");
     bro.setStartValuesEx(["cripple_background"], false);
     t.eq(bro.m.Talents, [], "no talents");
-    t.ok(bro.getTitle() != "", "titled");
+    t.ok(bro.m.Title != "", "titled");
     ::World.getTemporaryRoster().clear();
 });
 
@@ -96,7 +96,7 @@ test("KB5: a trait and a background without m.Titles don't break titling", funct
         t.eq(["Titles" in bro.getBackground().m, "Titles" in trait.m], [false, false], "no Titles slots");
         bro.setTitle("");
         ::Nicknames.fillTitle(bro);
-        t.ok(bro.getTitle() != "", "titled");
+        t.ok(bro.m.Title != "", "titled");
         t.ok(::NickT.has(::NickT.titles(bro), "Shorty"), "the mod's own trait titles still apply");
     });
     ::World.getTemporaryRoster().clear();

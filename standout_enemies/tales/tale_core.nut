@@ -18,7 +18,8 @@ test("bandits of a party get quirks once the days scale allows", function (t) {
     }])});
     cfg.ScaleDays = days;
     if (p.party.isAlive()) p.party.die();
-    local quirked = names.filter(@(_, n) ["Agile ", "Huge "].filter(@(_, q) n.find(q) == 0).len() > 0);
+    local quirks = ::Tales.tr({en = ["Agile ", "Huge "], ru = ["Проворный ", "Огромный "]});
+    local quirked = names.filter(@(_, n) quirks.filter(@(_, q) n.find(q) == 0).len() > 0);
     t.probe("names", names);
     t.eq(quirked.len() > 0, true, "some bandit is Agile or Huge");
     t.eq(t.result.survivors.enemies, 0, "won");

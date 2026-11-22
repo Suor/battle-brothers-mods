@@ -59,7 +59,7 @@ local function campCounts() {
         if (f == null || (f.ClassName != "noble_faction" && f.ClassName != "city_state_faction")) continue;
         local camps = f.ca_getCamps();
         local alive = camps.filter(@(_, c) c.isAlive());
-        out[f.getName()] <- {camps = camps.len(), alive = alive.len(),
+        out[f.getName()] <- {noble = f.ClassName == "noble_faction", camps = camps.len(), alive = alive.len(),
             settlementsAreTowns = f.getSettlements().filter(@(_, s) !::isKindOf(s, "settlement")).len() == 0};
     }
     return out;
@@ -70,7 +70,7 @@ test("noble and city-state camps: built, capped, kept by a load", function (t) {
     local before = campCounts();
     local over = [];
     foreach (name, c in before) {
-        local cap = name.find("House") == 0 ? 12 : 5;
+        local cap = c.noble ? 12 : 5;
         if (c.camps > cap || c.camps == 0 || c.alive != c.camps || !c.settlementsAreTowns) over.push([name, c]);
     }
     t.eq(over, [], "camps within caps, alive, kept apart from towns");

@@ -7,7 +7,7 @@
 // snapshot=0: the stub records the calls at the campaign start, which a launch from a snapshot skips.
 
 test("N1: a mod calling onHired() for starting brothers keeps titles and hired right", function (t) {
-    local titles = t.roster().map(@(b) b.getTitle()), once = {}, twice = {};
+    local titles = t.roster().map(@(b) b.m.Title), once = {}, twice = {};
     foreach (title in titles) { once[title] <- 1; twice[title] <- 2; }
     t.probe("titles", titles);
     t.eq(titles.filter(@(_, x) x == "").len(), 0, "every brother titled");

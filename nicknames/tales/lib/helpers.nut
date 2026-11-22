@@ -42,7 +42,7 @@
 ::NickT.blocked <- function () {
     local out = {};
     local bros = {};
-    foreach (b in ::World.getPlayerRoster().getAll()) bros[b.getTitle()] <- true;
+    foreach (b in ::World.getPlayerRoster().getAll()) bros[b.m.Title] <- true;
     local state = ::Nicknames.loadState();
     local today = ::World.getTime().Days;
     foreach (title, rec in state.generated)
@@ -104,11 +104,11 @@
         dudes = _dudes(ev);
     });
     t.eq(shown, [], _id + ": titled while shown");
-    local untitled = dudes.filter(@(_, d) d.getTitle() == "").map(@(d) d.getName());
+    local untitled = dudes.filter(@(_, d) d.m.Title == "").map(@(d) d.getName());
     local hired = ::NickT.fills(@() ::World.Events.processInput(0));
     ::Tales.Autoplay = true;
     t.eq(hired, untitled, _id + ": titled on hire");
-    t.eq(dudes.filter(@(_, d) d.getTitle() == "").len(), 0, _id + ": untitled after hire");
+    t.eq(dudes.filter(@(_, d) d.m.Title == "").len(), 0, _id + ": untitled after hire");
 }
 
 // N7: a recruit made in a screen set directly, as events and their after-battle screens do.
