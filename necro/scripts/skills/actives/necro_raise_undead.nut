@@ -52,7 +52,7 @@ this.necro_raise_undead <- this.inherit("scripts/skills/actives/raise_undead", {
     function spawnUndead(_user, _tile) {
         local p = _tile.Properties.get("Corpse");
         // Leave our mark
-        p.necro_master <- ::MSU.asWeakTableRef(_user);
+        p.necro_master <- ::std.Util.weakTableRef(_user);
         p.Faction = _user.getFaction();
         // Raise as an animal, i.e. no control
         if (p.Faction == ::Const.Faction.Player) p.Faction = ::Const.Faction.PlayerAnimals;

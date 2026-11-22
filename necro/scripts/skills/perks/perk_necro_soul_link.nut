@@ -25,7 +25,7 @@ this.perk_necro_soul_link <- this.inherit("scripts/skills/skill", {
     }
 
     function onRaiseUndead(_undead) {
-        this.m.Minions.push(::MSU.asWeakTableRef(_undead));
+        this.m.Minions.push(::std.Util.weakTableRef(_undead));
     }
     function getMinions() {
         this.m.Minions = this.m.Minions.filter(@(_, a) ::std.Actor.isValidTarget(a));
