@@ -1,5 +1,5 @@
 // mode: campaign seed=bbtest-battle
-// mods: mod_AC@dev mod_msu
+// mods: mod_AC@dev mod_msu !stdlib
 // include: lib/helpers.nut
 
 // KNOWN_BUGS #3 (fixed in 2.1): without stdlib, Tame failed with `the index 'std' does not exist`.
