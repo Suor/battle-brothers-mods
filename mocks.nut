@@ -152,8 +152,8 @@ local function makePage(name) {
     Behavior = {
         ID = {COUNT = 100}
         Name = []
-        Order = {AttackDefault = 60, BoostStamina = 66}
-        Score = {Attack = 100, Rally = 130, Zero = 0}
+        Order = {AttackDefault = 60, BoostStamina = 66, EngageMelee = 10}
+        Score = {Attack = 100, Engage = 100, Rally = 130, Zero = 0}
     }
 }
 ::MSU.AI <- {

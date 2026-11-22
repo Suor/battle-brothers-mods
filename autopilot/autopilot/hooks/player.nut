@@ -68,7 +68,7 @@ mod.hook("scripts/entity/tactical/player", function (q) {
             mode.careful <- isCareful(m.Actor, m.KnownAllies);
             if (mode.careful) {
                 local ID = ::Const.AI.Behavior.ID;
-                foreach (id in [ID.EngageMelee, ID.AP_StepNHit])
+                foreach (id in [ID.EngageMelee, ID.AP_StepNHit, ID.AP_Leap])
                     m.Properties.BehaviorMult[id] = 0.0;
             }
         }
@@ -108,6 +108,8 @@ mod.hook("scripts/entity/tactical/player", function (q) {
             agent.addBehavior(::new("scripts/ai/autopilot_unbag_net"));
             agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_attack_throw_net"));
         }
+        agent.addBehavior(::new("scripts/ai/autopilot_move_engage"));
+        if (::Hooks.hasMod("mod_legends")) agent.addBehavior(::new("scripts/ai/autopilot_leap"));
 
         // The melee agent draws a sling or bow from the bag (ai_switchto_ranged) but can't shoot it
         if (mode.agent == "military_melee") agent.addBehavior(::new("scripts/ai/tactical/behaviors/ai_attack_bow"));

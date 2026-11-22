@@ -246,3 +246,13 @@
     ::APT.bag(::Tales.byName("Wendel"), "scripts/items/shields/wooden_shield");
     ::Tales.toughen(null, true);
 }
+
+// The bro's walk (engage_melee) never scores on AI, while moves planned on it still do
+::APT.noWalk <- function (_bro) {
+    local enable = _bro.enableAIControl;
+    _bro.enableAIControl <- function () {
+        enable();
+        local walk = this.getAIAgent().getBehavior(::Const.AI.Behavior.ID.EngageMelee);
+        walk.evaluate <- function (_entity) { this.m.Score = 0; return true; };
+    };
+}

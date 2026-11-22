@@ -16,6 +16,12 @@ local mod = ::Hooks.getMod("mod_autopilot_new");
     ::Const.AI.Behavior.Order.AttackDefault - 1, ::Const.AI.Behavior.Score.Attack * 2);
 ::MSU.AI.addBehavior("AP_StepNHit", "AP.StepNHit",
     ::Const.AI.Behavior.Order.AttackDefault - 1, ::Const.AI.Behavior.Score.Attack);
+// Moves that compete with engage_melee's walk
+::MSU.AI.addBehavior("AP_Leap", "AP.Leap",
+    ::Const.AI.Behavior.Order.EngageMelee - 1, ::Const.AI.Behavior.Score.Engage);
+// Scored as engage_melee is, ordered before it to leave agent intentions to the walk
+::MSU.AI.addBehavior("AP_MoveEngage", "AP.MoveEngage",
+    ::Const.AI.Behavior.Order.EngageMelee - 1, ::Const.AI.Behavior.Score.Engage);
 
 // When a 2-tile bro evaluates ai_engage_melee, make longer-reach non-ranged allies of the
 // same faction report ideal range 2. The PreferCarefulEngage orbit-around-ally branch
