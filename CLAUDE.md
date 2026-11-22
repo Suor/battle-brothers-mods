@@ -14,6 +14,7 @@ base/
 legends/          # Legends mod — a major overhaul mod
 stdlib/           # shared utility library used by mods
 rosetta/          # localization framework; rosetta.py CLI, AGENTS_TRANSLATING.md
+service/          # mod support service; data/ holds scraped Discord & Nexus threads, sources/ collected mod zips
 3rdparty/         # third-party mods and libraries
   msu/            # MSU — Modding Standards & Utilities, mod compatibility library
   reforged/       # Reforged — a newer but smaller major overhaul mod
@@ -95,7 +96,24 @@ mod.hook("scripts/path/to/class", function(q) {
 ### Common Idioms
 
 - **Null checks for game objects** — use `::std.Util.isNull(x)`, not `x == null`. Game objects are often `WeakRef` wrappers that compare oddly against `null`.
+- **stdlib over MSU** — when stdlib (`::std.*`) has the function, use it instead of the MSU one (e.g. `::std.Text.negative` / `positive`, not `::MSU.Text.colorRed` / `colorGreen`).
 - **Class detection** — use `::std.Util.isKindOf(item, "weapon")` to test the class hierarchy (weapon, shield, armor, helmet, player, etc.). `isItemType()` is for the type bitmask (`Named`, `Legendary`, `Armor`, `Helmet`, `Quest`, `Usable`...) and is not interchangeable with `isKindOf`.
+
+### Compatibility
+
+A fix or change must keep working with the older game, Legends and Reforged versions the mod supports, and with other mods doing unexpected things (calling a hook twice, replacing a function our hook wraps). Dropping support for anything is a deliberate decision, stated in the CHANGELOG, never a side effect of a fix.
+
+### Squirrel 3.0
+
+The game runs Squirrel 3.0; the standalone `squirrel` and modern-bb-engine run 3.2 and accept more (bbtales's `--env code` runs 3.0). Mods and their tests (`<mod>/tales/`) must stick to 3.0:
+
+- `push`, `append`, `extend`, `insert`, `resize`, `reverse`, `sort`, `clear` return null — call them as statements, never use their value.
+- Tables have no `keys()`, `values()`, `filter()`, `map()`; `reduce` takes no initial value, `tointeger` no base, `tolower`/`toupper` no range; no `in` on a class.
+- A statement after an if-block on the same line (`if (c) { ... } return;`) doesn't compile.
+- A closure made inside a generator reads the generator's locals as null after a `yield`.
+- `World.getRoster(id)` of a missing id raises instead of returning null.
+
+`~/projects/bbm/bbtales/lint.py <dir>` finds these with the game's own 3.0 compiler (bbtales runs it on tales). The full list: `~/projects/bbm/bbtales/docs/SQUIRREL_3_0.md`; engine differences: its README, "Engine issues".
 
 ### Testing
 
