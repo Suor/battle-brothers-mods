@@ -138,7 +138,7 @@ this.fun_facts <- {
             Start = this.getEffectsDesc(_player)
             Added = {}
             Items = _player.getItems().getAllItems().map(
-                @(item) {item = ::MSU.asWeakTableRef(item), cond = item.getCondition()})
+                @(item) {item = ::std.Util.weakTableRef(item), cond = item.getCondition()})
         }
         ::FunFacts.Debug.log("onCombatStart " + _player.getName(), this.m.TmpCombat.Start);
     }

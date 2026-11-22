@@ -1,7 +1,7 @@
 ::mods_hookExactClass("entity/tactical/actor", function (o) {
     local kill = o.kill;
     o.kill = function (_killer = null, _skill = null, _fatalityType = this.Const.FatalityType.None, _silent = false) {
-        if (_killer != null) this.ff_killer <- ::MSU.asWeakTableRef(_killer);
+        if (_killer != null) this.ff_killer <- ::std.Util.weakTableRef(_killer);
         return kill(_killer, _skill, _fatalityType, _silent);
     }
 
