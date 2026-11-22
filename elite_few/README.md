@@ -67,9 +67,10 @@ Math fixes:
 
 ## Install
 
-Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer.
+Download a zip from [NexusMods][] and put it into `data` dir. Requires [modhooks][] of version 20 or newer and [MSU][].
 
 
 [NexusMods]: https://www.nexusmods.com/battlebrothers/mods/665
 [modhooks]: https://www.nexusmods.com/battlebrothers/mods/42
+[MSU]: https://www.nexusmods.com/battlebrothers/mods/479
 [old-mod]: https://www.nexusmods.com/battlebrothers/mods/253
