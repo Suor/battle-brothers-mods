@@ -2,7 +2,7 @@
 // mods: mod_legends==19.4.23 mod_autopilot_new@dev mod_ap_probe stdlib@dev
 // include: lib/helpers.nut
 
-// Legends' actives used by bros on AI: Root and the backup throws of one-handed weapons.
+// Legends' actives used by bros on AI: Root, the animal summons and the backup throws of one-handed weapons.
 
 local function did(_who, _what) {
     return ::APT.autoUses(_who).filter(@(_, u) u.what == _what).len() > 0;
@@ -42,6 +42,40 @@ test("root: a bro with the Roots perk roots a foe", function (t) {
     t.eq(p.st.stuck, [], "no stuck turn");
     t.eq(t.result.survivors.enemies, 0, "company wins");
 });
+
+// Bertel, a melee bro. Wolf and hound come with their perks, the bear skill with nothing in Legends 19.4.23, so it's
+// added as is. Verbose AI logs the unleash, by the item for vanilla dogs, these skills have none. Whether the unleash,
+// once it scores, wins the weighted pick over his attacks is a roll.
+local function unleashBattle(_t, _skill) {
+    ::Tales.toughen(null, true);
+    ::APT.probeReset();
+    ::APT.setting("dogsMode", "atwill");
+    ::APT.setting("verbose", true);
+    ::Tales.byName("Bertel").getSkills().add(::new("scripts/skills/" + _skill));
+    local seen = _t.state.seen <- {beasts = []};
+    local p = _t.state.p <- ::APT.pilot({each = function (_st, t) {
+        foreach (u in ::Tactical.Entities.getInstancesOfFaction(::Const.Faction.PlayerAnimals))
+            if (t.state.seen.beasts.find(u.getName()) == null) t.state.seen.beasts.push(u.getName());
+    }});
+    return aiBattle(_t, p, 4);
+}
+foreach (c in [["perks/perk_legend_summon_wolf", "actives.legend_unleash_wolf", "Hound"],
+               ["perks/perk_legend_summon_hound", "actives.legend_unleash_hound", "Hound"],
+               ["actives/legend_unleash_bear_skill", "actives.legend_unleash_bear", "Bear"]]) {
+    local skill = c[0], id = c[1], beast = c[2];
+    test("dogs 'at will': " + id + " scores on AI, unleashed if picked", function (t) {
+        yield unleashBattle(t, skill);
+        ::APT.resetSettings();
+        local seen = t.state.seen;
+        local unleashed = did("Bertel", id);
+        t.probe("unleashed", unleashed);
+        t.eq(::APT.autoBehaviors("Bertel").filter(@(_, b) "autopilot_unleash_dog" in b.scores).len() > 0, true,
+             "unleash scores");
+        t.eq(seen.beasts, unleashed ? [beast] : [], "his beast, if unleashed");
+        t.eq(t.state.p.st.stuck, [], "no stuck turn");
+        t.eq(t.result.survivors.enemies, 0, "company wins");
+    });
+}
 
 // The bro whose turn comes first, rooted for the battle with a one-handed weapon, one thug put 3 tiles off: out of
 // reach, in the backup throw's, so on his first turn he either throws or idles. The thug is killed after round 2.

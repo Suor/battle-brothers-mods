@@ -6,6 +6,13 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
             "actives.unleash_direwolf"   // North Expansion
             "actives.unleash_companion"  // AC Legends
             "actives.ph_unleash_dreadwolf"  // Pandora's Hobby
+            // Legends
+            "actives.legend_unleash_hound"
+            "actives.legend_unleash_sighthound"
+            "actives.legend_unleash_wolf"
+            "actives.legend_unleash_white_wolf"
+            "actives.legend_unleash_bear"
+            "actives.legend_unleash_warbear"
         ],
         Skill = null,
         TargetTile = null,
@@ -130,7 +137,7 @@ this.autopilot_unleash_dog <- this.inherit("scripts/ai/tactical/behavior", {
     {
         if (this.Const.AI.VerboseMode) {
             ::logInfo("* " + _entity.getName()
-                + ": Unleashes " + this.m.Skill.m.Item.getName() + "!");
+                + ": Unleashes " + (this.m.Skill.m.Item == null ? this.m.Skill : this.m.Skill.m.Item).getName() + "!");
         }
 
         this.m.Skill.use(this.m.TargetTile);

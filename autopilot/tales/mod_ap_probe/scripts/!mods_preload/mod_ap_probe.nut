@@ -1,5 +1,6 @@
 // Test-only probe: records, while ::APProbe.on, every skill use (ok = use() returned anything but false) and
-// every AI behavior picked, as {who, what, round, auto (on autopilot)}. Loads in any mod set (no dependency on autopilot).
+// every AI behavior picked, as {who, what, round, auto (on autopilot), scores (of behaviors above 0)}.
+// Loads in any mod set (no dependency on autopilot).
 ::APProbe <- {on = false, uses = [], behaviors = []};
 local mod = ::Hooks.register("mod_ap_probe", "1.0.0", "Autopilot probe (bbtales)");
 mod.queue(">mod_autopilot_new", ">mod_msu", ">mod_reforged", function () {
@@ -21,8 +22,10 @@ mod.queue(">mod_autopilot_new", ">mod_msu", ">mod_reforged", function () {
         q.pickBehavior = @(__original) function () {
             local b = __original(), e = this.m.Actor;
             if (::APProbe.on && b != null && e != null) {
+                local scores = {};
+                foreach (x in this.m.Behaviors) if (x.getScore() > 0) scores[x.ClassName] <- x.getScore();
                 ::APProbe.behaviors.push({who = e.getName(), what = b.ClassName, round = round(),
-                    auto = "_autopilot" in e.m, agent = this.ClassName});
+                    auto = "_autopilot" in e.m, agent = this.ClassName, scores = scores});
             }
             return b;
         }
