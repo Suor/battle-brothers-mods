@@ -349,3 +349,97 @@ test("lute: the minstrel stays back, a club bro engages", function (t) {
     t.eq(p.st.stuck, [], "no stuck turn");
     t.eq(t.result.survivors.enemies, 0, "company wins");
 });
+
+// `each` of ::APT.pilot logging _bro's main hand changes: the round, the new weapon and the nearest foe's distance
+local function watchHand(_bro, _log) {
+    local last = {id = null};
+    return function (_st, t) {
+        if (!_bro.isAlive() || !_bro.isPlacedOnMap()) return;
+        local main = _bro.getItems().getItemAtSlot(::Const.ItemSlot.Mainhand);
+        local id = main == null ? null : main.getID();
+        if (last.id != null && id != last.id) {
+            local nearest = 99;
+            foreach (h in ::Tales.hostiles())
+                nearest = ::Math.min(nearest, h.getTile().getDistanceTo(_bro.getTile()));
+            _log.push({round = ::Time.getRound(), to = id, nearest = nearest});
+        }
+        last.id = id;
+    };
+}
+local function rounds(_who) {
+    return ::APT.autoBehaviors(_who).map(@(b) b.round + " " + b.what);
+}
+// _who alone against one thug, a weapon in hand and another in the bag. Rooted (by default) for the whole battle, so
+// the thug comes to him: the battle starts with it out of a throwing axe's range, and ends with it adjacent.
+local function handBattle(_t, _who, _ranged, _melee, _rooted = true) {
+    ::Tales.toughen(null, true);
+    ::APT.probeReset();
+    local place = 18;
+    foreach (bro in _t.roster()) if (bro.getName() != _who) bro.setPlaceInFormation(place++);
+    local bro = ::Tales.byName(_who);
+    ::Tales.equip(bro, "scripts/items/weapons/" + _ranged);
+    ::APT.clearBag(bro);
+    ::APT.bag(bro, "scripts/items/weapons/" + _melee);
+    local log = _t.state.log <- [];
+    _t.state.mode <- null;
+    local watch = watchHand(bro, log);
+    local p = _t.state.p <- ::APT.pilot({
+        before = function (_e, t) {
+            if (_rooted) bro.getSkills().add(::new("scripts/skills/effects/rooted_effect"));
+        },
+        each = function (_st, t) {
+            if (t.state.mode == null && "_autopilot" in bro.m) t.state.mode = clone bro.m._autopilot;
+            watch(_st, t);
+        }});
+    return aiBattle(_t, p, 1);
+}
+
+// The sling bro gets the ranged agent, whose ai_engage_ranged makes ai_switchto_melee skip its "no one to hit
+// from here" reason: he draws the melee weapon only with a foe adjacent (sling stones never run out).
+test("sling bro: draws his melee weapon only with a foe adjacent", function (t) {
+    yield handBattle(t, "Wendel", "staff_sling", "militia_spear");
+    local log = t.state.log;
+    t.probe("switches", log);
+    t.probe("behaviors", rounds("Wendel"));
+    t.eq(t.state.mode, {agent = "military_ranged", ranged = true, throwing = false}, "mode");
+    t.eq(log.map(@(s) [s.to, s.nearest]), [["weapon.militia_spear", 1]], "switched once, with the foe adjacent");
+    t.eq(did("Wendel", "actives.sling_stone"), true, "shot before");
+    t.eq(t.state.p.st.stuck, [], "no stuck turn");
+});
+
+// The thrower gets the melee agent, no ai_engage_ranged: ai_switchto_melee switches once no foe is in the throwing
+// range (2-4) from where he stands, so with the foes deployed farther off he goes melee without a throw.
+test("throwing bro: draws his melee weapon with no foe in throwing range", function (t) {
+    yield handBattle(t, "Torkel", "throwing_axe", "arming_sword");
+    local log = t.state.log;
+    t.probe("switches", log);
+    t.probe("behaviors", rounds("Torkel"));
+    t.eq(t.state.mode, {agent = "military_melee", ranged = true, throwing = true}, "mode");
+    t.eq([log[0].to, log[0].round, log[0].nearest > 4], ["weapon.arming_sword", 1, true],
+         "first turn, foes out of range");
+    t.eq(did("Torkel", "actives.throw_axe"), false, "never threw");
+    t.eq(t.state.p.st.stuck, [], "no stuck turn");
+});
+
+// A spear in hand and a sling in the bag, free to walk, the thug off: walking up with the spear and drawing
+// the sling both make the cut (a quarter of the best), so which one is a roll (the thug's spot varies too). With the sling in hand engage_melee
+// still scores, far below the shot, and ai_switchto_melee takes the sling off with the foe adjacent.
+test("melee bro with a sling in the bag: walking up or drawing it is a roll, the spear back with the foe adjacent", function (t) {
+    yield handBattle(t, "Wendel", "militia_spear", "staff_sling", false);
+    local log = t.state.log, picks = ::APT.autoBehaviors("Wendel");
+    t.probe("switches", log);
+    t.probe("scores", picks.map(@(b) [b.round, b.what, b.scores]));
+    t.eq(t.state.mode, {agent = "military_melee", ranged = false, throwing = false}, "mode");
+    local first = picks[0].scores, engage = first.ai_engage_melee, draw = first.ai_switchto_ranged;
+    t.eq([draw < engage, draw >= engage / 4], [true, true], "both in the roll, walking up likelier");
+    if (picks[0].what != "ai_switchto_ranged") {
+        t.eq([picks[0].what, log], ["ai_engage_melee", []], "walked up with the spear");
+    } else {
+        local shots = picks.filter(@(_, b) b.what == "ai_attack_bow");
+        t.eq(shots.map(@(b) b.scores.ai_engage_melee < b.scores.ai_attack_bow / 4), shots.map(@(_) true),
+             "with the sling in hand walking up scores under the cut");
+        t.eq([log.map(@(s) s.to), log.top().nearest], [["weapon.staff_sling", "weapon.militia_spear"], 1],
+             "the spear back with the foe adjacent");
+    }
+    t.eq(t.state.p.st.stuck, [], "no stuck turn");
+});
