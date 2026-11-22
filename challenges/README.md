@@ -10,7 +10,7 @@ Reduce equipment drops from enemies. This is only about weapons, shields, armors
 **Weapon & Shield Drop Chance** — chance for weapons and shields to drop when enemies die.<br>
 **Armor & Helmet Drop Chance** — chance for armor and helmets to drop when enemies die.<br>
 **Max Equipment Drops Per Battle** — hard cap on total equipment pieces that can drop in a single battle.<br>
-**Gold Compensation** — gold received per blocked item, proportional to its value. Full by default.<br>
+**Gold Compensation** — gold received per blocked item, proportional to its value and to what your origin gets selling. Full by default.<br>
 **Choose At Random** — when off you pick which drops to keep within the cap on the loot screen; when on the cap is applied for you at random, more valuable items are preferred.<br>
 **Protect Named Items** — named and legendary items always drop regardless of the settings above. On by default.<br>
 

@@ -24,7 +24,8 @@ local Settings = {
     function convertCombatResultLootToUIData() { return []; }
 };
 ::World <- {Assets = {
-    m = {IsBlacksmithed = false, Money = 0},
+    m = {IsBlacksmithed = false, Money = 0, SellPriceMult = 1.0},
+    function getSellPriceMult() { return this.m.SellPriceMult; }
     function getStash() { return {function getItems() { return []; }} }
     function addMoney(_amount) { this.m.Money += _amount; }
 }};
@@ -353,6 +354,17 @@ items = state.m.CombatResultLoot.Items;
 assertEq(moneyTotal(items), 19);
 assertEq(moneyCount(items), 1);
 print("loot compensation: merged money stack OK\n");
+
+// 11b. Compensation follows the origin's sell prices (The Shorn sells at 0.75).
+::World.Assets.m.SellPriceMult = 0.75;
+state = makeState();
+local cheapSeller = makeItem("cheap_seller", 80);
+state.m.CombatResultLoot.add(cheapSeller);
+weaponHook(function () { return true; }).call(cheapSeller);
+gatherLootHook(function () {}).call(state);
+assertEq(moneyTotal(state.m.CombatResultLoot.Items), 8);
+::World.Assets.m.SellPriceMult = 1.0;
+print("loot compensation: sell price mult OK\n");
 
 // 12. Non-random cap: auto-loot skips capped items (withoutCappedLoot uses find, not `in`).
 Settings.weaponDropChance = 1.0;

@@ -76,7 +76,8 @@ local function removeFromContainer(_item) {
 }
 
 local function compFor(_item) {
-    return ::Math.floor(_item.getValue() * def.conf("lootGoldComp") * 0.14);
+    // What selling it would bring: some origins sell cheaper or dearer
+    return ::Math.floor(_item.getValue() * def.conf("lootGoldComp") * 0.14 * ::World.Assets.getSellPriceMult());
 }
 
 // Remove items, return total gold compensation value.
