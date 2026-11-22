@@ -200,7 +200,7 @@ this.druid_summon_beast <- this.inherit("scripts/skills/skill", {
         }
         if (boostApex) this.makeApex(beast, beastType);
 
-        beast.m.druid_master <- ::MSU.asWeakTableRef(_user);
+        beast.m.druid_master <- ::std.Util.weakTableRef(_user);
         // Set before setFaction so the onFactionChanged hook flips the body sprites.
         beast.m.druid_Summoned = true;
         beast.setFaction(this.Const.Faction.PlayerAnimals);

@@ -19,7 +19,7 @@ local def = ::Druid <- {
 }
 
 local mod = def.mh <- ::Hooks.register(def.ID, def.Version, def.Name);
-mod.require("mod_msu >= 1.6.0", "stdlib >= 2.1");
+mod.require("mod_msu >= 1.6.0", "stdlib >= 2.7");
 mod.queue(">mod_msu", ">mod_reforged", ">mod_background_perks",
           ">mod_backgrounds_and_events", ">mod_backgrounds_and_events_reforged_patch",
         function () {
@@ -199,7 +199,7 @@ mod.queue(">mod_msu", ">mod_reforged", ">mod_background_perks",
                 if (ok && "Item" in m && m.Item != null) {
                     local beast = ("getEntity" in m.Item) ? m.Item.getEntity() : m.Item.m.Entity;
                     if (!::std.Util.isNull(beast)) {
-                        beast.m.druid_master <- ::MSU.asWeakTableRef(_user);
+                        beast.m.druid_master <- ::std.Util.weakTableRef(_user);
                         if (_user.getSkills().hasSkill("perk.druid.beast_aura"))
                             ::Druid.onBeastJoinedPack(_user, beast);
                     }
