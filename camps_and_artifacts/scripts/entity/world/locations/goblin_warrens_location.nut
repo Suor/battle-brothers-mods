@@ -8,6 +8,7 @@ this.goblin_warrens_location <- this.inherit("scripts/entity/world/location", {
 	function create()
 	{
 		this.location.create();
+		this.m.CombatLocation.Template[0] = "tactical.goblin_camp";
 		this.m.TypeID = "location.goblin_warrens";
 		this.m.LocationType = this.Const.World.LocationType.Lair;
 		this.m.IsDespawningDefenders = false;

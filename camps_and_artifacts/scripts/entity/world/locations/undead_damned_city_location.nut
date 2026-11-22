@@ -8,6 +8,7 @@ this.undead_damned_city_location <- this.inherit("scripts/entity/world/location"
 	function create()
 	{
 		this.location.create();
+		this.m.CombatLocation.Template[0] = "tactical.ruins";
 		this.m.TypeID = "location.undead_damned_city";
 		this.m.LocationType = this.Const.World.LocationType.Lair;
 		this.setDefenderSpawnList(this.Const.World.Spawn.UndeadCEO);

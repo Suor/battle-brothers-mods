@@ -8,6 +8,7 @@ this.barbarian_sacred_grove_location <- this.inherit("scripts/entity/world/locat
 	function create()
 	{
 		this.location.create();
+		this.m.CombatLocation.Template[0] = "tactical.barbarian_camp";
 		this.m.TypeID = "location.barbarian_sacred_grove";
 		this.m.LocationType = this.Const.World.LocationType.Lair;
 		this.m.IsDespawningDefenders = false;

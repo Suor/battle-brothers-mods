@@ -8,6 +8,7 @@ this.bandit_usurper_location <- this.inherit("scripts/entity/world/location", {
 	function create()
 	{
 		this.location.create();
+		this.m.CombatLocation.Template[0] = "tactical.human_camp";
 		this.m.TypeID = "location.bandit_usurper";
 		this.m.LocationType = this.Const.World.LocationType.Lair;
 		this.m.IsDespawningDefenders = false;
