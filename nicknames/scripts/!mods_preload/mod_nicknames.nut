@@ -53,6 +53,7 @@ def.BaseAttrRanges <- {
     Initiative = [100, 110]
 };
 
+local latinName = regexp("^[A-Za-z]+$");
 def.buildFactorSet <- function(_bro) {
     local set = {};
     local bg = _bro.getBackground();
@@ -103,9 +104,10 @@ def.buildFactorSet <- function(_bro) {
     if (bg.getID() in def.PauperBackgrounds) set["group.pauper"] <- true;
 
     local weapon = _bro.getItems().getItemAtSlot(::Const.ItemSlot.Mainhand);
+    // Rosetta adds Russian names of the same types, for MSU's isWeaponType(): factors are the English ones
     if (weapon != null && "MSU" in getroottable())
         foreach (name, val in ::Const.Items.WeaponType)
-            if (weapon.isWeaponType(val))
+            if (latinName.match(name) && weapon.isWeaponType(val))
                 set["weapon." + name.tolower()] <- true;
 
     // add aliases
@@ -327,8 +329,8 @@ mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ul
             local hired = def.loadState().hired;
             foreach (bro in roster) {
                 if (bro.getTitle() == "") def.fillTitle(bro);
-                // vanilla never calls onHired() for the starting company
-                local title = bro.getTitle();
+                // vanilla never calls onHired() for the starting company; untranslated, as `generated`
+                local title = bro.m.Title;
                 if (title != "" && !(title in hired)) hired[title] <- 1;
             }
             def.saveState();
@@ -364,7 +366,7 @@ mod.queue(">mod_bro_studio", ">mod_background_perks", ">mod_elite_few", ">mod_ul
                 ::logInfo("nicknames: filling deferred title of " + this.getName() + " on hire");
                 def.fillTitle(this);
             }
-            local title = this.getTitle();
+            local title = this.m.Title;  // untranslated, as `generated`
             if (title == null || title == "") return;
             local state = def.loadState();
             state.hired[title] <- (title in state.hired ? state.hired[title] : 0) + 1;
